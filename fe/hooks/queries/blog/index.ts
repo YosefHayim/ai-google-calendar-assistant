@@ -4,7 +4,7 @@ import type { BlogCategory, BlogQueryParams, CreateBlogPostData } from '@/types/
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { QUERY_CONFIG } from '@/lib/constants'
-import { blogService } from '@/services/blog.service'
+import { blogService } from '@/services/blog-service'
 import { toast } from 'sonner'
 
 export const blogKeys = {

@@ -9,10 +9,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AllyLogo } from '@/components/shared/logo'
 import { AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { eventsService } from '@/services/events.service'
+import { eventsService } from '@/services/events-service'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
-import { voiceService } from '@/services/voice.service'
+import { voiceService } from '@/services/voice-service'
 
 type QuickEventDialogProps = {
   isOpen: boolean

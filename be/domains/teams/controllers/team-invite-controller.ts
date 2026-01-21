@@ -1,51 +1,51 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 
-import { SUPABASE } from "@/config/clients";
-import { sendR } from "@/lib/http";
-import { z } from "zod";
+import { SUPABASE } from "@/config/clients"
+import { sendR } from "@/lib/http"
+import { z } from "zod"
 
 type InviteMetadata = {
-  team_name?: string;
-  role?: string;
-  message?: string;
-};
+  team_name?: string
+  role?: string
+  message?: string
+}
 
 const createInviteSchema = z.object({
   inviteeEmail: z.string().email("Invalid email address"),
   teamName: z.string().min(1).max(100).optional(),
   role: z.enum(["admin", "member", "viewer"]).default("member"),
   message: z.string().max(500).optional(),
-});
+})
 
 const respondToInviteSchema = z.object({
   inviteToken: z.string().min(1, "Invite token is required"),
   action: z.enum(["accept", "decline"]),
-});
+})
 
 const createTeamSchema = z.object({
   name: z.string().min(1, "Team name is required").max(100),
   description: z.string().max(500).optional(),
-});
+})
 
 export const teamInviteController = {
   async createInvite(req: Request, res: Response) {
-    const userId = req.user!.id;
-    const userEmail = req.user?.email;
+    const userId = req.user!.id
+    const userEmail = req.user?.email
 
     if (!(userId && userEmail)) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
-    const validation = createInviteSchema.safeParse(req.body);
+    const validation = createInviteSchema.safeParse(req.body)
     if (!validation.success) {
-      return sendR(res, 400, validation.error.errors[0].message, null);
+      return sendR(res, 400, validation.error.errors[0].message, null)
     }
 
-    const { inviteeEmail, teamName, role, message } = validation.data;
+    const { inviteeEmail, teamName, role, message } = validation.data
 
     try {
       if (inviteeEmail === userEmail) {
-        return sendR(res, 400, "You cannot invite yourself", null);
+        return sendR(res, 400, "You cannot invite yourself", null)
       }
 
       const { data: existingInvite } = await SUPABASE.from("invitations")
@@ -54,7 +54,7 @@ export const teamInviteController = {
         .eq("inviter_id", userId)
         .eq("invitee_email", inviteeEmail)
         .eq("status", "pending")
-        .single();
+        .single()
 
       if (existingInvite) {
         return sendR(
@@ -62,7 +62,7 @@ export const teamInviteController = {
           400,
           "An invite is already pending for this email",
           null
-        );
+        )
       }
 
       const { data: invite, error } = await SUPABASE.from("invitations")
@@ -82,13 +82,13 @@ export const teamInviteController = {
           invite_token: "",
         })
         .select("*")
-        .single();
+        .single()
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      const inviteLink = `${process.env.FE_BASE_URL || "https://askally.io"}/invite/${invite.invite_token}`;
+      const inviteLink = `${process.env.FE_BASE_URL || "https://askally.io"}/invite/${invite.invite_token}`
 
       return sendR(res, 201, "Invite sent successfully", {
         invite: {
@@ -99,18 +99,18 @@ export const teamInviteController = {
           inviteLink,
           expiresAt: invite.expires_at,
         },
-      });
+      })
     } catch (error) {
-      console.error("Create invite error:", error);
-      return sendR(res, 500, "Failed to create invite", null);
+      console.error("Create invite error:", error)
+      return sendR(res, 500, "Failed to create invite", null)
     }
   },
 
   async getSentInvites(req: Request, res: Response) {
-    const userId = req.user!.id;
+    const userId = req.user!.id
 
     if (!userId) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
     try {
@@ -118,14 +118,14 @@ export const teamInviteController = {
         .select("*")
         .eq("invite_type", "team")
         .eq("inviter_id", userId)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
 
       if (error) {
-        throw error;
+        throw error
       }
 
       const invites = invitations.map((inv) => {
-        const meta = inv.metadata as InviteMetadata | null;
+        const meta = inv.metadata as InviteMetadata | null
         return {
           id: inv.id,
           inviter_id: inv.inviter_id,
@@ -141,21 +141,21 @@ export const teamInviteController = {
           accepted_at: inv.accepted_at,
           created_at: inv.created_at,
           updated_at: inv.updated_at,
-        };
-      });
+        }
+      })
 
-      return sendR(res, 200, "Sent invites retrieved", { invites });
+      return sendR(res, 200, "Sent invites retrieved", { invites })
     } catch (error) {
-      console.error("Get sent invites error:", error);
-      return sendR(res, 500, "Failed to get sent invites", null);
+      console.error("Get sent invites error:", error)
+      return sendR(res, 500, "Failed to get sent invites", null)
     }
   },
 
   async getReceivedInvites(req: Request, res: Response) {
-    const userEmail = req.user?.email;
+    const userEmail = req.user?.email
 
     if (!userEmail) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
     try {
@@ -164,14 +164,14 @@ export const teamInviteController = {
         .eq("invite_type", "team")
         .eq("invitee_email", userEmail)
         .in("status", ["pending"])
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
 
       if (error) {
-        throw error;
+        throw error
       }
 
       const invites = invitations.map((inv) => {
-        const meta = inv.metadata as InviteMetadata | null;
+        const meta = inv.metadata as InviteMetadata | null
         return {
           id: inv.id,
           inviter_id: inv.inviter_id,
@@ -187,30 +187,30 @@ export const teamInviteController = {
           accepted_at: inv.accepted_at,
           created_at: inv.created_at,
           updated_at: inv.updated_at,
-        };
-      });
+        }
+      })
 
-      return sendR(res, 200, "Received invites retrieved", { invites });
+      return sendR(res, 200, "Received invites retrieved", { invites })
     } catch (error) {
-      console.error("Get received invites error:", error);
-      return sendR(res, 500, "Failed to get received invites", null);
+      console.error("Get received invites error:", error)
+      return sendR(res, 500, "Failed to get received invites", null)
     }
   },
 
   async respondToInvite(req: Request, res: Response) {
-    const userId = req.user!.id;
-    const userEmail = req.user?.email;
+    const userId = req.user!.id
+    const userEmail = req.user?.email
 
     if (!(userId && userEmail)) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
-    const validation = respondToInviteSchema.safeParse(req.body);
+    const validation = respondToInviteSchema.safeParse(req.body)
     if (!validation.success) {
-      return sendR(res, 400, validation.error.errors[0].message, null);
+      return sendR(res, 400, validation.error.errors[0].message, null)
     }
 
-    const { inviteToken, action } = validation.data;
+    const { inviteToken, action } = validation.data
 
     try {
       const { data: invite, error: fetchError } = await SUPABASE.from(
@@ -220,10 +220,10 @@ export const teamInviteController = {
         .eq("invite_type", "team")
         .eq("invite_token", inviteToken)
         .eq("invitee_email", userEmail)
-        .single();
+        .single()
 
       if (fetchError || !invite) {
-        return sendR(res, 404, "Invite not found", null);
+        return sendR(res, 404, "Invite not found", null)
       }
 
       if (invite.status !== "pending") {
@@ -232,17 +232,17 @@ export const teamInviteController = {
           400,
           `This invite has already been ${invite.status}`,
           null
-        );
+        )
       }
 
       if (invite.expires_at && new Date(invite.expires_at) < new Date()) {
         await SUPABASE.from("invitations")
           .update({ status: "expired", updated_at: new Date().toISOString() })
-          .eq("id", invite.id);
-        return sendR(res, 400, "This invite has expired", null);
+          .eq("id", invite.id)
+        return sendR(res, 400, "This invite has expired", null)
       }
 
-      const newStatus = action === "accept" ? "accepted" : "declined";
+      const newStatus = action === "accept" ? "accepted" : "declined"
 
       const { error: updateError } = await SUPABASE.from("invitations")
         .update({
@@ -251,33 +251,33 @@ export const teamInviteController = {
           accepted_at: action === "accept" ? new Date().toISOString() : null,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", invite.id);
+        .eq("id", invite.id)
 
       if (updateError) {
-        throw updateError;
+        throw updateError
       }
 
       return sendR(res, 200, `Invite ${newStatus} successfully`, {
         status: newStatus,
         inviterEmail: invite.inviter_email,
         teamName: (invite.metadata as InviteMetadata | null)?.team_name,
-      });
+      })
     } catch (error) {
-      console.error("Respond to invite error:", error);
-      return sendR(res, 500, "Failed to respond to invite", null);
+      console.error("Respond to invite error:", error)
+      return sendR(res, 500, "Failed to respond to invite", null)
     }
   },
 
   async cancelInvite(req: Request, res: Response) {
-    const userId = req.user!.id;
-    const inviteId = req.params.id as string;
+    const userId = req.user!.id
+    const inviteId = req.params.id as string
 
     if (!userId) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
     if (!inviteId) {
-      return sendR(res, 400, "Invite ID is required", null);
+      return sendR(res, 400, "Invite ID is required", null)
     }
 
     try {
@@ -288,14 +288,14 @@ export const teamInviteController = {
         .eq("id", inviteId)
         .eq("invite_type", "team")
         .eq("inviter_id", userId)
-        .single();
+        .single()
 
       if (fetchError || !invite) {
-        return sendR(res, 404, "Invite not found", null);
+        return sendR(res, 404, "Invite not found", null)
       }
 
       if (invite.status !== "pending") {
-        return sendR(res, 400, "Only pending invites can be cancelled", null);
+        return sendR(res, 400, "Only pending invites can be cancelled", null)
       }
 
       const { error: updateError } = await SUPABASE.from("invitations")
@@ -303,29 +303,29 @@ export const teamInviteController = {
           status: "cancelled",
           updated_at: new Date().toISOString(),
         })
-        .eq("id", inviteId);
+        .eq("id", inviteId)
 
       if (updateError) {
-        throw updateError;
+        throw updateError
       }
 
-      return sendR(res, 200, "Invite cancelled successfully", null);
+      return sendR(res, 200, "Invite cancelled successfully", null)
     } catch (error) {
-      console.error("Cancel invite error:", error);
-      return sendR(res, 500, "Failed to cancel invite", null);
+      console.error("Cancel invite error:", error)
+      return sendR(res, 500, "Failed to cancel invite", null)
     }
   },
 
   async resendInvite(req: Request, res: Response) {
-    const userId = req.user!.id;
-    const inviteId = req.params.id as string;
+    const userId = req.user!.id
+    const inviteId = req.params.id as string
 
     if (!userId) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
     if (!inviteId) {
-      return sendR(res, 400, "Invite ID is required", null);
+      return sendR(res, 400, "Invite ID is required", null)
     }
 
     try {
@@ -336,10 +336,10 @@ export const teamInviteController = {
         .eq("id", inviteId)
         .eq("invite_type", "team")
         .eq("inviter_id", userId)
-        .single();
+        .single()
 
       if (fetchError || !invite) {
-        return sendR(res, 404, "Invite not found", null);
+        return sendR(res, 404, "Invite not found", null)
       }
 
       if (invite.status !== "pending" && invite.status !== "expired") {
@@ -348,7 +348,7 @@ export const teamInviteController = {
           400,
           "Only pending or expired invites can be resent",
           null
-        );
+        )
       }
 
       const { error: updateError } = await SUPABASE.from("invitations")
@@ -359,31 +359,31 @@ export const teamInviteController = {
           ).toISOString(),
           updated_at: new Date().toISOString(),
         })
-        .eq("id", inviteId);
+        .eq("id", inviteId)
 
       if (updateError) {
-        throw updateError;
+        throw updateError
       }
 
-      const inviteLink = `${process.env.FE_BASE_URL || "https://askally.io"}/invite/${invite.invite_token}`;
+      const inviteLink = `${process.env.FE_BASE_URL || "https://askally.io"}/invite/${invite.invite_token}`
 
       return sendR(res, 200, "Invite resent successfully", {
         inviteLink,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      });
+      })
     } catch (error) {
-      console.error("Resend invite error:", error);
-      return sendR(res, 500, "Failed to resend invite", null);
+      console.error("Resend invite error:", error)
+      return sendR(res, 500, "Failed to resend invite", null)
     }
   },
 
   async getInviteByToken(req: Request, res: Response) {
     const token = Array.isArray(req.params.token)
       ? req.params.token[0]
-      : req.params.token;
+      : req.params.token
 
     if (!token) {
-      return sendR(res, 400, "Invite token is required", null);
+      return sendR(res, 400, "Invite token is required", null)
     }
 
     try {
@@ -391,17 +391,17 @@ export const teamInviteController = {
         .select("inviter_email, metadata, status, expires_at")
         .eq("invite_type", "team")
         .eq("invite_token", token)
-        .single();
+        .single()
 
       if (error || !invite) {
-        return sendR(res, 404, "Invite not found", { valid: false });
+        return sendR(res, 404, "Invite not found", { valid: false })
       }
 
       const isExpired =
-        invite.expires_at && new Date(invite.expires_at) < new Date();
-      const isPending = invite.status === "pending";
+        invite.expires_at && new Date(invite.expires_at) < new Date()
+      const isPending = invite.status === "pending"
 
-      const meta = invite.metadata as InviteMetadata | null;
+      const meta = invite.metadata as InviteMetadata | null
       return sendR(res, 200, "Invite details retrieved", {
         valid: !isExpired && isPending,
         expired: isExpired,
@@ -410,26 +410,26 @@ export const teamInviteController = {
         teamName: meta?.team_name,
         role: meta?.role,
         message: meta?.message,
-      });
+      })
     } catch (error) {
-      console.error("Get invite by token error:", error);
-      return sendR(res, 500, "Failed to get invite details", null);
+      console.error("Get invite by token error:", error)
+      return sendR(res, 500, "Failed to get invite details", null)
     }
   },
 
   async createTeam(req: Request, res: Response) {
-    const userId = req.user!.id;
+    const userId = req.user!.id
 
     if (!userId) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
-    const validation = createTeamSchema.safeParse(req.body);
+    const validation = createTeamSchema.safeParse(req.body)
     if (!validation.success) {
-      return sendR(res, 400, validation.error.errors[0].message, null);
+      return sendR(res, 400, validation.error.errors[0].message, null)
     }
 
-    const { name, description } = validation.data;
+    const { name, description } = validation.data
 
     try {
       const { data: team, error: teamError } = await SUPABASE.from("teams")
@@ -439,10 +439,10 @@ export const teamInviteController = {
           owner_id: userId,
         })
         .select("*")
-        .single();
+        .single()
 
       if (teamError) {
-        throw teamError;
+        throw teamError
       }
 
       const { error: memberError } = await SUPABASE.from("team_members").insert(
@@ -451,24 +451,24 @@ export const teamInviteController = {
           user_id: userId,
           role: "owner",
         }
-      );
+      )
 
       if (memberError) {
-        throw memberError;
+        throw memberError
       }
 
-      return sendR(res, 201, "Team created successfully", { team });
+      return sendR(res, 201, "Team created successfully", { team })
     } catch (error) {
-      console.error("Create team error:", error);
-      return sendR(res, 500, "Failed to create team", null);
+      console.error("Create team error:", error)
+      return sendR(res, 500, "Failed to create team", null)
     }
   },
 
   async getMyTeams(req: Request, res: Response) {
-    const userId = req.user!.id;
+    const userId = req.user!.id
 
     if (!userId) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
     try {
@@ -485,37 +485,37 @@ export const teamInviteController = {
             created_at
           )
         `)
-        .eq("user_id", userId);
+        .eq("user_id", userId)
 
       if (error) {
-        throw error;
+        throw error
       }
 
       const teams = memberships.map((m) => ({
         ...m.teams,
         myRole: m.role,
         joinedAt: m.joined_at,
-      }));
+      }))
 
-      return sendR(res, 200, "Teams retrieved", { teams });
+      return sendR(res, 200, "Teams retrieved", { teams })
     } catch (error) {
-      console.error("Get my teams error:", error);
-      return sendR(res, 500, "Failed to get teams", null);
+      console.error("Get my teams error:", error)
+      return sendR(res, 500, "Failed to get teams", null)
     }
   },
 
   async getTeamMembers(req: Request, res: Response) {
-    const userId = req.user!.id;
+    const userId = req.user!.id
     const teamId = Array.isArray(req.params.teamId)
       ? req.params.teamId[0]
-      : req.params.teamId;
+      : req.params.teamId
 
     if (!userId) {
-      return sendR(res, 401, "Unauthorized", null);
+      return sendR(res, 401, "Unauthorized", null)
     }
 
     if (!teamId) {
-      return sendR(res, 400, "Team ID is required", null);
+      return sendR(res, 400, "Team ID is required", null)
     }
 
     try {
@@ -523,24 +523,24 @@ export const teamInviteController = {
         .select("role")
         .eq("team_id", teamId)
         .eq("user_id", userId)
-        .single();
+        .single()
 
       if (!membership) {
-        return sendR(res, 403, "You are not a member of this team", null);
+        return sendR(res, 403, "You are not a member of this team", null)
       }
 
       const { data: members, error } = await SUPABASE.from("team_members")
         .select("user_id, role, joined_at")
-        .eq("team_id", teamId);
+        .eq("team_id", teamId)
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      return sendR(res, 200, "Team members retrieved", { members });
+      return sendR(res, 200, "Team members retrieved", { members })
     } catch (error) {
-      console.error("Get team members error:", error);
-      return sendR(res, 500, "Failed to get team members", null);
+      console.error("Get team members error:", error)
+      return sendR(res, 500, "Failed to get team members", null)
     }
   },
-};
+}

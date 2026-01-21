@@ -11,7 +11,7 @@ import {
   upgradeSubscription,
   type Plan,
   type PlanInterval,
-} from '@/services/payment.service'
+} from '@/services/payment-service'
 import { toast } from 'sonner'
 import { useSubscriptionStatus, usePlans } from '@/hooks/queries/billing'
 import { CurrentPlanCard } from './components/CurrentPlanCard'

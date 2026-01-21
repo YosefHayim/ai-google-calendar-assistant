@@ -2,7 +2,7 @@
 
 import type { ApiResponse, GapQueryParams, GapsResponse } from '@/types/api'
 
-import { gapsService } from '@/services/gaps.service'
+import { gapsService } from '@/services/gaps-service'
 import { queryKeys } from '@/lib/query/keys'
 import { useQuery } from '@tanstack/react-query'
 

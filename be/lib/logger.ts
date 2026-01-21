@@ -21,46 +21,50 @@
  * logger.error("Failed to connect", { error: err.message });
  */
 
-import { env } from "@/config/env";
-import fs from "node:fs";
-import path from "node:path";
-import winston from "winston";
+import { env } from "@/config/env"
+import fs from "node:fs"
+import path from "node:path"
+import winston from "winston"
 
 // Returns strictly "YYYY-MM-DD" (e.g., "2024-01-03")
-const getDate = () => new Date().toISOString().split("T")[0];
+const getDate = () => new Date().toISOString().split("T")[0]
 
 // Define the directory for local file logs
-const logDir = "logs";
+const logDir = "logs"
 
 const clearLogFilesOnStartup = () => {
   // Defensive check: ensure env is initialized before accessing properties
   if (!env?.isDev) {
-    return;
+    return
   }
 
-  const today = getDate();
+  const today = getDate()
 
   if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir, { recursive: true });
-    return;
+    fs.mkdirSync(logDir, { recursive: true })
+    return
   }
 
   try {
-    const files = fs.readdirSync(logDir);
-    const logFilePattern = new RegExp(`^${env.nodeEnv}-(error|combined|audit)-(\\d{4}-\\d{2}-\\d{2})\\.(log|json)$`);
+    const files = fs.readdirSync(logDir)
+    const logFilePattern = new RegExp(
+      `^${env.nodeEnv}-(error|combined|audit)-(\\d{4}-\\d{2}-\\d{2})\\.(log|json)$`
+    )
 
     for (const file of files) {
-      const match = file.match(logFilePattern);
+      const match = file.match(logFilePattern)
       if (match) {
-        const fileDate = match[2];
+        const fileDate = match[2]
         if (fileDate !== today) {
           // Delete files that are not from today
-          const filePath = path.join(logDir, file);
+          const filePath = path.join(logDir, file)
           try {
-            fs.unlinkSync(filePath);
-            logger.info(`Deleted old log file: ${file}`);
+            fs.unlinkSync(filePath)
+            logger.info(`Deleted old log file: ${file}`)
           } catch (error) {
-            logger.warn(`Failed to delete old log file: ${file}`, { error: error instanceof Error ? error.message : String(error) });
+            logger.warn(`Failed to delete old log file: ${file}`, {
+              error: error instanceof Error ? error.message : String(error),
+            })
           }
         }
       }
@@ -71,33 +75,36 @@ const clearLogFilesOnStartup = () => {
       path.join(logDir, `${env.nodeEnv}-error-${today}.log`),
       path.join(logDir, `${env.nodeEnv}-combined-${today}.log`),
       path.join(logDir, `${env.nodeEnv}-audit-${today}.json`),
-    ];
+    ]
 
     for (const logFile of todayLogFiles) {
       try {
-        fs.writeFileSync(logFile, "", { flag: "w" });
+        fs.writeFileSync(logFile, "", { flag: "w" })
       } catch (error) {
-        logger.warn(`Failed to initialize today's log file: ${path.basename(logFile)}`, { error: error instanceof Error ? error.message : String(error) });
+        logger.warn(
+          `Failed to initialize today's log file: ${path.basename(logFile)}`,
+          { error: error instanceof Error ? error.message : String(error) }
+        )
       }
     }
   } catch (error) {
-    logger.warn("Failed to clean up old log files", { error: error instanceof Error ? error.message : String(error) });
+    logger.warn("Failed to clean up old log files", {
+      error: error instanceof Error ? error.message : String(error),
+    })
   }
-};
+}
 
-clearLogFilesOnStartup();
+clearLogFilesOnStartup()
 
 // Custom Formatter: Stringify JSON + add an extra Newline (\n) for the gap
-const jsonWithGap = winston.format.printf(
-  (info) => `${JSON.stringify(info)}\n`
-);
+const jsonWithGap = winston.format.printf((info) => `${JSON.stringify(info)}\n`)
 
 // Build transports based on environment
-const transports: winston.transport[] = [];
+const transports: winston.transport[] = []
 
 // Defensive check: ensure env is initialized before accessing properties
-const isDev = env?.isDev ?? false;
-const nodeEnv = env?.nodeEnv ?? "production";
+const isDev = env?.isDev ?? false
+const nodeEnv = env?.nodeEnv ?? "production"
 
 if (isDev) {
   // Development: File logs + colorized console
@@ -115,7 +122,7 @@ if (isDev) {
         winston.format.simple()
       ),
     })
-  );
+  )
 } else {
   // Production: Console only (captured by AWS App Runner / CloudWatch)
   transports.push(
@@ -125,7 +132,7 @@ if (isDev) {
         winston.format.json()
       ),
     })
-  );
+  )
 }
 
 /**
@@ -159,4 +166,4 @@ export const logger = winston.createLogger({
   format: winston.format.combine(winston.format.timestamp(), jsonWithGap),
   defaultMeta: { service: "user-service" },
   transports,
-});
+})

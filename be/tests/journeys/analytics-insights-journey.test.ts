@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals"
 
 /**
  * Business Scenario: Analytics & Insights Dashboard Journey
@@ -59,24 +59,26 @@ describe("Analytics & Insights Dashboard Journey", () => {
         insights: [
           {
             type: "productivity",
-            message: "You spend 40% of your time in meetings, which is above the recommended 30%",
+            message:
+              "You spend 40% of your time in meetings, which is above the recommended 30%",
             recommendation: "Consider reducing meeting frequency or duration",
             impact: "high",
           },
           {
             type: "work_life_balance",
-            message: "You have 30% deep work time, which is within the optimal range",
+            message:
+              "You have 30% deep work time, which is within the optimal range",
             recommendation: "Continue protecting your deep work blocks",
             impact: "positive",
           },
         ],
-      };
+      }
 
-      expect(timeAllocation.totalTrackedTime).toBe(160);
-      expect(timeAllocation.categoryBreakdown).toHaveLength(4);
-      expect(timeAllocation.categoryBreakdown[0].percentage).toBe(40);
-      expect(timeAllocation.insights).toHaveLength(2);
-    });
+      expect(timeAllocation.totalTrackedTime).toBe(160)
+      expect(timeAllocation.categoryBreakdown).toHaveLength(4)
+      expect(timeAllocation.categoryBreakdown[0].percentage).toBe(40)
+      expect(timeAllocation.insights).toHaveLength(2)
+    })
 
     it("should validate meeting efficiency metrics", () => {
       const meetingEfficiency = {
@@ -123,7 +125,8 @@ describe("Analytics & Insights Dashboard Journey", () => {
             value: 0.78,
             benchmark: 0.85,
             status: "good",
-            recommendation: "Team meetings are efficient; consider more structured agendas",
+            recommendation:
+              "Team meetings are efficient; consider more structured agendas",
           },
         ],
         trends: {
@@ -131,13 +134,15 @@ describe("Analytics & Insights Dashboard Journey", () => {
           attendanceTrend: "stable",
           efficiencyTrend: "improving",
         },
-      };
+      }
 
-      expect(meetingEfficiency.meetingsAnalyzed).toBe(45);
-      expect(meetingEfficiency.efficiencyMetrics.averageMeetingDuration).toBe(62);
-      expect(meetingEfficiency.efficiencyMetrics.attendanceRate).toBe(0.89);
-      expect(meetingEfficiency.efficiencyInsights).toHaveLength(3);
-    });
+      expect(meetingEfficiency.meetingsAnalyzed).toBe(45)
+      expect(meetingEfficiency.efficiencyMetrics.averageMeetingDuration).toBe(
+        62
+      )
+      expect(meetingEfficiency.efficiencyMetrics.attendanceRate).toBe(0.89)
+      expect(meetingEfficiency.efficiencyInsights).toHaveLength(3)
+    })
 
     it("should validate calendar health scoring", () => {
       const calendarHealth = {
@@ -188,7 +193,8 @@ describe("Analytics & Insights Dashboard Journey", () => {
               leastBusyDay: "friday",
               distributionVariance: 0.22,
             },
-            recommendation: "Tuesday is busiest; consider redistributing some meetings",
+            recommendation:
+              "Tuesday is busiest; consider redistributing some meetings",
           },
           {
             factor: "buffer_time",
@@ -213,7 +219,8 @@ describe("Analytics & Insights Dashboard Journey", () => {
               recurringPercentage: 27,
               averageRecurringFrequency: 2, // per week
             },
-            recommendation: "Recurring meetings are reasonable; review necessity quarterly",
+            recommendation:
+              "Recurring meetings are reasonable; review necessity quarterly",
           },
         ],
         recommendations: [
@@ -221,7 +228,8 @@ describe("Analytics & Insights Dashboard Journey", () => {
             priority: "high",
             category: "buffer_time",
             title: "Add Buffer Time",
-            description: "Add 15-minute buffers between meetings to reduce stress",
+            description:
+              "Add 15-minute buffers between meetings to reduce stress",
             estimatedImpact: "20% reduction in meeting stress",
             effort: "medium",
             timeframe: "1_week",
@@ -243,14 +251,14 @@ describe("Analytics & Insights Dashboard Journey", () => {
           factorsImproved: ["overbooking"],
           factorsDeclined: ["buffer_time"],
         },
-      };
+      }
 
-      expect(calendarHealth.overallScore).toBe(72);
-      expect(calendarHealth.healthFactors).toHaveLength(5);
-      expect(calendarHealth.recommendations).toHaveLength(2);
-      expect(calendarHealth.trends.healthTrend).toBe("improving");
-    });
-  });
+      expect(calendarHealth.overallScore).toBe(72)
+      expect(calendarHealth.healthFactors).toHaveLength(5)
+      expect(calendarHealth.recommendations).toHaveLength(2)
+      expect(calendarHealth.trends.healthTrend).toBe("improving")
+    })
+  })
 
   describe("Scenario 2: Trend Analysis and Forecasting", () => {
     it("should validate productivity trend analysis", () => {
@@ -342,7 +350,8 @@ describe("Analytics & Insights Dashboard Journey", () => {
           {
             type: "productivity_peak",
             title: "Tuesday Productivity Peak",
-            description: "Tuesday shows your highest productivity with 92% efficiency",
+            description:
+              "Tuesday shows your highest productivity with 92% efficiency",
             recommendation: "Schedule important work sessions on Tuesdays",
             data: { day: "tuesday", efficiency: 0.92 },
           },
@@ -367,13 +376,15 @@ describe("Analytics & Insights Dashboard Journey", () => {
             recommendations: ["maintain_current_practices"],
           },
         },
-      };
+      }
 
-      expect(productivityTrends.metrics.meetingHours.trend).toBe("increasing");
-      expect(productivityTrends.trendAnalysis.weeklyPatterns).toHaveLength(5);
-      expect(productivityTrends.insights).toHaveLength(2);
-      expect(productivityTrends.forecasts.nextMonth.predictedMeetingHours).toBe(58);
-    });
+      expect(productivityTrends.metrics.meetingHours.trend).toBe("increasing")
+      expect(productivityTrends.trendAnalysis.weeklyPatterns).toHaveLength(5)
+      expect(productivityTrends.insights).toHaveLength(2)
+      expect(productivityTrends.forecasts.nextMonth.predictedMeetingHours).toBe(
+        58
+      )
+    })
 
     it("should validate meeting pattern recognition", () => {
       const meetingPatterns = {
@@ -464,7 +475,8 @@ describe("Analytics & Insights Dashboard Journey", () => {
           {
             type: "optimize_recurring",
             title: "Review Weekly Standups",
-            description: "5 weekly standups may be excessive; consider consolidating",
+            description:
+              "5 weekly standups may be excessive; consider consolidating",
             impact: "high",
             effort: "medium",
           },
@@ -478,18 +490,21 @@ describe("Analytics & Insights Dashboard Journey", () => {
           {
             type: "standardize_durations",
             title: "Set Meeting Time Limits",
-            description: "15% of meetings exceed planned duration by average of 12 minutes",
+            description:
+              "15% of meetings exceed planned duration by average of 12 minutes",
             impact: "medium",
             effort: "low",
           },
         ],
-      };
+      }
 
-      expect(meetingPatterns.patternAnalysis.recurringMeetings.total).toBe(15);
-      expect(meetingPatterns.patternAnalysis.meetingClusters).toHaveLength(3);
-      expect(meetingPatterns.patternAnalysis.attendancePatterns.mostReliableAttendees).toHaveLength(3);
-      expect(meetingPatterns.recommendations).toHaveLength(3);
-    });
+      expect(meetingPatterns.patternAnalysis.recurringMeetings.total).toBe(15)
+      expect(meetingPatterns.patternAnalysis.meetingClusters).toHaveLength(3)
+      expect(
+        meetingPatterns.patternAnalysis.attendancePatterns.mostReliableAttendees
+      ).toHaveLength(3)
+      expect(meetingPatterns.recommendations).toHaveLength(3)
+    })
 
     it("should validate work-life balance monitoring", () => {
       const workLifeBalance = {
@@ -564,14 +579,14 @@ describe("Analytics & Insights Dashboard Journey", () => {
           maxAfterHoursMeetings: 5, // per month
           minBreakTime: 15, // minutes between meetings
         },
-      };
+      }
 
-      expect(workLifeBalance.balanceMetrics.workHours.averageWeekly).toBe(42.5);
-      expect(workLifeBalance.balanceScore.overall).toBe(72);
-      expect(workLifeBalance.balanceScore.recommendations).toHaveLength(3);
-      expect(workLifeBalance.trends.balanceTrend).toBe("declining");
-    });
-  });
+      expect(workLifeBalance.balanceMetrics.workHours.averageWeekly).toBe(42.5)
+      expect(workLifeBalance.balanceScore.overall).toBe(72)
+      expect(workLifeBalance.balanceScore.recommendations).toHaveLength(3)
+      expect(workLifeBalance.trends.balanceTrend).toBe("declining")
+    })
+  })
 
   describe("Scenario 3: Personalized Recommendations Engine", () => {
     it("should validate AI-powered scheduling recommendations", () => {
@@ -634,7 +649,12 @@ describe("Analytics & Insights Dashboard Journey", () => {
               duration: 60,
               timezone: "America/New_York",
             },
-            reasoning: ["Alternative preferred day (Wednesday)", "Preferred time (10 AM)", "Minor conflict but resolvable", "Good historical attendance"],
+            reasoning: [
+              "Alternative preferred day (Wednesday)",
+              "Preferred time (10 AM)",
+              "Minor conflict but resolvable",
+              "Good historical attendance",
+            ],
           },
         ],
         insights: {
@@ -644,13 +664,13 @@ describe("Analytics & Insights Dashboard Journey", () => {
           alternativeOptions: 3,
           reasoningQuality: "high",
         },
-      };
+      }
 
-      expect(aiRecommendations.recommendations).toHaveLength(2);
-      expect(aiRecommendations.recommendations[0].confidence).toBe(0.95);
-      expect(aiRecommendations.recommendations[0].reasoning).toHaveLength(5);
-      expect(aiRecommendations.insights.optimalTimeFound).toBe(true);
-    });
+      expect(aiRecommendations.recommendations).toHaveLength(2)
+      expect(aiRecommendations.recommendations[0].confidence).toBe(0.95)
+      expect(aiRecommendations.recommendations[0].reasoning).toHaveLength(5)
+      expect(aiRecommendations.insights.optimalTimeFound).toBe(true)
+    })
 
     it("should validate productivity optimization suggestions", () => {
       const productivityOptimizations = {
@@ -675,7 +695,12 @@ describe("Analytics & Insights Dashboard Journey", () => {
             implementation: {
               effort: "medium",
               timeframe: "2_weeks",
-              steps: ["Audit current 1:1 schedule", "Identify batching opportunities", "Communicate changes to stakeholders", "Monitor impact for 4 weeks"],
+              steps: [
+                "Audit current 1:1 schedule",
+                "Identify batching opportunities",
+                "Communicate changes to stakeholders",
+                "Monitor impact for 4 weeks",
+              ],
             },
             confidence: 0.88,
             data: {
@@ -722,7 +747,12 @@ describe("Analytics & Insights Dashboard Journey", () => {
             implementation: {
               effort: "high",
               timeframe: "4_weeks",
-              steps: ["Audit current meeting load", "Set personal meeting limits", "Decline or reschedule excess meetings", "Track impact on productivity"],
+              steps: [
+                "Audit current meeting load",
+                "Set personal meeting limits",
+                "Decline or reschedule excess meetings",
+                "Track impact on productivity",
+              ],
             },
             confidence: 0.76,
             data: {
@@ -736,14 +766,22 @@ describe("Analytics & Insights Dashboard Journey", () => {
           recommendedOrder: ["focus_block", "meeting_batch", "meeting_limit"],
           reasoning: "Start with quick wins, then tackle harder changes",
           expectedTimeline: "6_weeks",
-          successMetrics: ["utilization_rate_improvement", "deep_work_hours_increase", "meeting_stress_reduction"],
+          successMetrics: [
+            "utilization_rate_improvement",
+            "deep_work_hours_increase",
+            "meeting_stress_reduction",
+          ],
         },
-      };
+      }
 
-      expect(productivityOptimizations.optimizations).toHaveLength(3);
-      expect(productivityOptimizations.optimizations[0].potentialBenefit.timeSaved).toBe(240);
-      expect(productivityOptimizations.prioritization.recommendedOrder).toHaveLength(3);
-    });
+      expect(productivityOptimizations.optimizations).toHaveLength(3)
+      expect(
+        productivityOptimizations.optimizations[0].potentialBenefit.timeSaved
+      ).toBe(240)
+      expect(
+        productivityOptimizations.prioritization.recommendedOrder
+      ).toHaveLength(3)
+    })
 
     it("should validate behavioral insights and coaching", () => {
       const behavioralInsights = {
@@ -844,18 +882,30 @@ describe("Analytics & Insights Dashboard Journey", () => {
             communication: 15,
           },
           goals: {
-            meeting_efficiency: { current: 65, target: 85, deadline: "2026-03-01" },
-            time_management: { current: 72, target: 90, deadline: "2026-04-01" },
+            meeting_efficiency: {
+              current: 65,
+              target: 85,
+              deadline: "2026-03-01",
+            },
+            time_management: {
+              current: 72,
+              target: 90,
+              deadline: "2026-04-01",
+            },
           },
         },
-      };
+      }
 
-      expect(behavioralInsights.behavioralPatterns).toHaveLength(4);
-      expect(behavioralInsights.coachingRecommendations).toHaveLength(2);
-      expect(behavioralInsights.coachingRecommendations[0].actions).toHaveLength(3);
-      expect(behavioralInsights.progressTracking.improvements.meeting_efficiency).toBe(12);
-    });
-  });
+      expect(behavioralInsights.behavioralPatterns).toHaveLength(4)
+      expect(behavioralInsights.coachingRecommendations).toHaveLength(2)
+      expect(
+        behavioralInsights.coachingRecommendations[0].actions
+      ).toHaveLength(3)
+      expect(
+        behavioralInsights.progressTracking.improvements.meeting_efficiency
+      ).toBe(12)
+    })
+  })
 
   describe("Scenario 4: Advanced Reporting and Export", () => {
     it("should validate comprehensive analytics export", () => {
@@ -938,12 +988,12 @@ describe("Analytics & Insights Dashboard Journey", () => {
           dataPoints: 2847,
           exportSize: "2.3MB",
         },
-      };
+      }
 
-      expect(analyticsExport.sections).toHaveLength(5);
-      expect((analyticsExport.sections[0].data as any).totalHours).toBe(160);
-      expect(analyticsExport.metadata.dataPoints).toBe(2847);
-    });
+      expect(analyticsExport.sections).toHaveLength(5)
+      expect((analyticsExport.sections[0].data as any).totalHours).toBe(160)
+      expect(analyticsExport.metadata.dataPoints).toBe(2847)
+    })
 
     it("should validate executive summary generation", () => {
       const executiveSummary = {
@@ -954,8 +1004,16 @@ describe("Analytics & Insights Dashboard Journey", () => {
             grade: "B+",
             score: 82,
             trend: "improving",
-            keyStrengths: ["Strong meeting attendance", "Good time utilization", "Consistent productivity"],
-            keyAreas: ["Meeting efficiency could improve", "Buffer time between meetings", "Calendar fragmentation"],
+            keyStrengths: [
+              "Strong meeting attendance",
+              "Good time utilization",
+              "Consistent productivity",
+            ],
+            keyAreas: [
+              "Meeting efficiency could improve",
+              "Buffer time between meetings",
+              "Calendar fragmentation",
+            ],
           },
           keyMetrics: {
             utilizationRate: 0.7,
@@ -1013,13 +1071,13 @@ describe("Analytics & Insights Dashboard Journey", () => {
             data: "weekly_calendar_heatmap_data",
           },
         },
-      };
+      }
 
-      expect(executiveSummary.summary.overallPerformance.grade).toBe("B+");
-      expect(executiveSummary.summary.keyMetrics.utilizationRate).toBe(0.7);
-      expect(executiveSummary.summary.priorities).toHaveLength(3);
-      expect(executiveSummary.charts.productivityTrend.data).toHaveLength(3);
-    });
+      expect(executiveSummary.summary.overallPerformance.grade).toBe("B+")
+      expect(executiveSummary.summary.keyMetrics.utilizationRate).toBe(0.7)
+      expect(executiveSummary.summary.priorities).toHaveLength(3)
+      expect(executiveSummary.charts.productivityTrend.data).toHaveLength(3)
+    })
 
     it("should validate custom analytics dashboards", () => {
       const customDashboard = {
@@ -1085,7 +1143,12 @@ describe("Analytics & Insights Dashboard Journey", () => {
             id: "top_recommendations",
             type: "list",
             title: "Top Recommendations",
-            items: ["Add buffer time between meetings", "Implement meeting agendas", "Review recurring meeting necessity", "Protect deep work time blocks"],
+            items: [
+              "Add buffer time between meetings",
+              "Implement meeting agendas",
+              "Review recurring meeting necessity",
+              "Protect deep work time blocks",
+            ],
             size: "medium",
           },
         ],
@@ -1104,12 +1167,12 @@ describe("Analytics & Insights Dashboard Journey", () => {
           timezone: "America/New_York",
           theme: "professional",
         },
-      };
+      }
 
-      expect(customDashboard.widgets).toHaveLength(6);
-      expect(customDashboard.layout.columns).toBe(3);
-      expect(customDashboard.layout.rows).toBe(2);
-      expect(customDashboard.settings.autoRefresh).toBe(true);
-    });
-  });
-});
+      expect(customDashboard.widgets).toHaveLength(6)
+      expect(customDashboard.layout.columns).toBe(3)
+      expect(customDashboard.layout.rows).toBe(2)
+      expect(customDashboard.settings.autoRefresh).toBe(true)
+    })
+  })
+})

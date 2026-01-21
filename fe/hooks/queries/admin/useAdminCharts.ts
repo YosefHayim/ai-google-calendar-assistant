@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getRevenueTrends, getSubscriptionTrends, getAdminMe } from '@/services/admin.service'
+import { getRevenueTrends, getSubscriptionTrends, getAdminMe } from '@/services/admin-service'
 
 export const useRevenueTrends = (months: number = 6) => {
   return useQuery({

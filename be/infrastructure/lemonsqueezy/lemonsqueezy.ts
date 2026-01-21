@@ -1,7 +1,7 @@
-import { lemonSqueezySetup } from "@lemonsqueezy/lemonsqueezy.js";
-import { env } from "@/config/env";
+import { lemonSqueezySetup } from "@lemonsqueezy/lemonsqueezy.js"
+import { env } from "@/config/env"
 
-let isInitialized = false;
+let isInitialized = false
 
 /**
  * Initialize the LemonSqueezy SDK with API key.
@@ -9,31 +9,31 @@ let isInitialized = false;
  */
 export const initializeLemonSqueezy = (): void => {
   if (isInitialized) {
-    return;
+    return
   }
 
   if (!env.lemonSqueezy.isEnabled) {
-    return;
+    return
   }
 
   lemonSqueezySetup({
     apiKey: env.lemonSqueezy.apiKey!,
     onError: (error) => console.error("LemonSqueezy Error:", error),
-  });
+  })
 
-  isInitialized = true;
-};
+  isInitialized = true
+}
 
 /**
  * Check if LemonSqueezy is available/configured
  */
-export const isLemonSqueezyEnabled = (): boolean => env.lemonSqueezy.isEnabled;
+export const isLemonSqueezyEnabled = (): boolean => env.lemonSqueezy.isEnabled
 
 /**
  * Get LemonSqueezy store ID for API calls
  */
 export const getLemonSqueezyStoreId = (): string | undefined =>
-  env.lemonSqueezy.storeId;
+  env.lemonSqueezy.storeId
 
 export const LEMONSQUEEZY_CONFIG = {
   TRIAL_DAYS: 14,
@@ -66,45 +66,45 @@ export const LEMONSQUEEZY_CONFIG = {
     "subscription_payment_failed",
     "subscription_payment_recovered",
   ] as const,
-} as const;
+} as const
 
 export type LemonSqueezyWebhookEvent =
-  (typeof LEMONSQUEEZY_CONFIG.WEBHOOK_EVENTS)[number];
+  (typeof LEMONSQUEEZY_CONFIG.WEBHOOK_EVENTS)[number]
 
 export type CreateCheckoutParams = {
-  userId: string;
-  userEmail: string;
-  userName?: string;
-  planSlug: "starter" | "pro" | "executive";
-  interval: "monthly" | "yearly";
-  successUrl?: string;
-  cancelUrl?: string;
-};
+  userId: string
+  userEmail: string
+  userName?: string
+  planSlug: "starter" | "pro" | "executive"
+  interval: "monthly" | "yearly"
+  successUrl?: string
+  cancelUrl?: string
+}
 
 export type CreateCreditPackCheckoutParams = {
-  userId: string;
-  userEmail: string;
-  credits: number;
-  planSlug: "starter" | "pro" | "executive";
-  successUrl?: string;
-  cancelUrl?: string;
-};
+  userId: string
+  userEmail: string
+  credits: number
+  planSlug: "starter" | "pro" | "executive"
+  successUrl?: string
+  cancelUrl?: string
+}
 
 export type SubscriptionInfo = {
-  id: string;
-  status: string;
-  planName: string;
-  planSlug: string;
-  interval: string;
-  currentPeriodStart: Date;
-  currentPeriodEnd: Date;
-  trialStart: Date | null;
-  trialEnd: Date | null;
-  cancelAtPeriodEnd: boolean;
-  canceledAt: Date | null;
-};
+  id: string
+  status: string
+  planName: string
+  planSlug: string
+  interval: string
+  currentPeriodStart: Date
+  currentPeriodEnd: Date
+  trialStart: Date | null
+  trialEnd: Date | null
+  cancelAtPeriodEnd: boolean
+  canceledAt: Date | null
+}
 
 export type BillingPortalParams = {
-  customerId: string;
-  returnUrl?: string;
-};
+  customerId: string
+  returnUrl?: string
+}

@@ -1,31 +1,31 @@
-import type { Database } from "@/database.types";
-import { SUPABASE } from "@/infrastructure/supabase/supabase";
-import { isToday } from "@/lib/date/date-helpers";
-import { logger } from "@/lib/logger";
-import type { userAndAiMessageProps } from "@/types";
+import type { Database } from "@/database.types"
+import { SUPABASE } from "@/infrastructure/supabase/supabase"
+import { isToday } from "@/lib/date/date-helpers"
+import { logger } from "@/lib/logger"
+import type { userAndAiMessageProps } from "@/types"
 
-const MAX_CONTEXT_LENGTH = 1000;
+const MAX_CONTEXT_LENGTH = 1000
 
-type MessageRole = Database["public"]["Enums"]["message_role"];
+type MessageRole = Database["public"]["Enums"]["message_role"]
 
 type ConversationContext = {
-  messages: userAndAiMessageProps[];
-  summary?: string;
-  title?: string;
-  lastUpdated: string;
-};
+  messages: userAndAiMessageProps[]
+  summary?: string
+  title?: string
+  lastUpdated: string
+}
 
 type WebConversationRow = {
-  id: string;
-  user_id: string;
-  message_count: number | null;
-  summary: string | null;
-  title: string | null;
-  is_active: boolean | null;
-  created_at: string;
-  updated_at: string;
-  last_message_at: string | null;
-};
+  id: string
+  user_id: string
+  message_count: number | null
+  summary: string | null
+  title: string | null
+  is_active: boolean | null
+  created_at: string
+  updated_at: string
+  last_message_at: string | null
+}
 
 /**
  * @description Calculates the total character length of all messages in a conversation.
@@ -37,7 +37,7 @@ type WebConversationRow = {
  * const length = calculateContextLength(messages); // Returns 8
  */
 const calculateContextLength = (messages: userAndAiMessageProps[]): number =>
-  messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
+  messages.reduce((total, msg) => total + (msg.content?.length || 0), 0)
 
 /**
  * @description Maps a message role string to the database enum type.
@@ -48,7 +48,7 @@ const calculateContextLength = (messages: userAndAiMessageProps[]): number =>
  * const dbRole = mapRoleToDb("assistant"); // Returns MessageRole enum value
  */
 const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole =>
-  role as MessageRole;
+  role as MessageRole
 
 /**
  * @description Retrieves all user and assistant messages for a specific conversation.
@@ -66,10 +66,10 @@ const getConversationMessages = async (
   const { data, error } = await SUPABASE.from("conversation_messages")
     .select("role, content, sequence_number")
     .eq("conversation_id", conversationId)
-    .order("sequence_number", { ascending: true });
+    .order("sequence_number", { ascending: true })
 
   if (error || !data) {
-    return [];
+    return []
   }
 
   // Filter to only user/assistant roles (skip system/tool messages)
@@ -78,8 +78,8 @@ const getConversationMessages = async (
     .map((msg) => ({
       role: msg.role as "user" | "assistant",
       content: msg.content,
-    }));
-};
+    }))
+}
 
 /**
  * @description Fetches the active conversation from today for a web user.
@@ -103,27 +103,27 @@ export const getWebTodayConversationState = async (
     .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(1)
-    .maybeSingle();
+    .maybeSingle()
 
   if (error) {
     logger.error(
       `Failed to fetch conversation state for user ${userId}: ${error.message}`
-    );
-    return null;
+    )
+    return null
   }
 
   if (!data) {
-    return null;
+    return null
   }
 
   // Check if the conversation is from today
-  const updatedAt = data.updated_at || data.created_at;
+  const updatedAt = data.updated_at || data.created_at
   if (!isToday(updatedAt)) {
-    return null;
+    return null
   }
 
-  return data as WebConversationRow;
-};
+  return data as WebConversationRow
+}
 
 /**
  * @description Creates a new conversation state for a web user.
@@ -154,13 +154,13 @@ export const createWebConversationState = async (
       message_count: initialMessage ? 1 : 0,
     })
     .select()
-    .single();
+    .single()
 
   if (convError || !conversation) {
     logger.error(
       `Failed to create conversation state for user ${userId}: ${convError?.message}`
-    );
-    return null;
+    )
+    return null
   }
 
   // Add initial message if provided
@@ -170,7 +170,7 @@ export const createWebConversationState = async (
       role: mapRoleToDb(initialMessage.role),
       content: initialMessage.content,
       sequence_number: 1,
-    });
+    })
   }
 
   return {
@@ -179,8 +179,8 @@ export const createWebConversationState = async (
       messages: initialMessage ? [initialMessage] : [],
       lastUpdated: new Date().toISOString(),
     },
-  };
-};
+  }
+}
 
 /**
  * @description Updates an existing conversation's state with new metadata.
@@ -209,17 +209,17 @@ export const updateWebConversationState = async (
       updated_at: new Date().toISOString(),
       last_message_at: new Date().toISOString(),
     })
-    .eq("id", conversationId);
+    .eq("id", conversationId)
 
   if (error) {
     logger.error(
       `Failed to update conversation state ${conversationId}: ${error.message}`
-    );
-    return false;
+    )
+    return false
   }
 
-  return true;
-};
+  return true
+}
 
 /**
  * @description Updates the title of a conversation.
@@ -239,17 +239,17 @@ export const updateWebConversationTitle = async (
       title,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", conversationId);
+    .eq("id", conversationId)
 
   if (error) {
     logger.error(
       `Failed to update conversation title ${conversationId}: ${error.message}`
-    );
-    return false;
+    )
+    return false
   }
 
-  return true;
-};
+  return true
+}
 
 /**
  * @description Stores a conversation summary in the database.
@@ -278,17 +278,17 @@ export const storeWebSummary = async (
       summary: summaryText,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", conversationId);
+    .eq("id", conversationId)
 
   if (error) {
     logger.error(
       `Failed to store summary for conversation ${conversationId}: ${error.message}`
-    );
-    return false;
+    )
+    return false
   }
 
-  return true;
-};
+  return true
+}
 
 /**
  * @description Marks a conversation as having been summarized with the given summary.
@@ -308,17 +308,17 @@ export const markWebAsSummarized = async (
       summary,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", conversationId);
+    .eq("id", conversationId)
 
   if (error) {
     logger.error(
       `Failed to mark conversation ${conversationId} as summarized: ${error.message}`
-    );
-    return false;
+    )
+    return false
   }
 
-  return true;
-};
+  return true
+}
 
 /**
  * @description Retrieves today's conversation context or creates a new one if none exists.
@@ -333,37 +333,37 @@ export const markWebAsSummarized = async (
 export const getOrCreateWebTodayContext = async (
   userId: string
 ): Promise<{ stateId: string; context: ConversationContext }> => {
-  const existingConversation = await getWebTodayConversationState(userId);
+  const existingConversation = await getWebTodayConversationState(userId)
 
   if (existingConversation) {
-    const messages = await getConversationMessages(existingConversation.id);
+    const messages = await getConversationMessages(existingConversation.id)
     const context: ConversationContext = {
       messages,
       summary: existingConversation.summary || undefined,
       title: existingConversation.title || undefined,
       lastUpdated:
         existingConversation.updated_at || existingConversation.created_at,
-    };
-    return { stateId: existingConversation.id, context };
+    }
+    return { stateId: existingConversation.id, context }
   }
 
-  const newState = await createWebConversationState(userId);
+  const newState = await createWebConversationState(userId)
 
   if (!newState) {
     logger.warn(
       `Failed to create conversation state for user ${userId}, using fallback`
-    );
+    )
     return {
       stateId: "",
       context: { messages: [], lastUpdated: new Date().toISOString() },
-    };
+    }
   }
 
   return {
     stateId: newState.id,
     context: newState.context,
-  };
-};
+  }
+}
 
 /**
  * @description Adds a new message to the user's conversation and handles automatic summarization.
@@ -385,13 +385,13 @@ export const addWebMessageToContext = async (
   message: userAndAiMessageProps,
   summarizeFn: (messages: userAndAiMessageProps[]) => Promise<string>
 ): Promise<ConversationContext> => {
-  const { stateId, context } = await getOrCreateWebTodayContext(userId);
+  const { stateId, context } = await getOrCreateWebTodayContext(userId)
 
   if (!stateId) {
     // Fallback: just return context with new message
-    context.messages.push(message);
-    context.lastUpdated = new Date().toISOString();
-    return context;
+    context.messages.push(message)
+    context.lastUpdated = new Date().toISOString()
+    return context
   }
 
   // Get current sequence number
@@ -400,9 +400,9 @@ export const addWebMessageToContext = async (
     .eq("conversation_id", stateId)
     .order("sequence_number", { ascending: false })
     .limit(1)
-    .maybeSingle();
+    .maybeSingle()
 
-  const nextSequence = (lastMsg?.sequence_number || 0) + 1;
+  const nextSequence = (lastMsg?.sequence_number || 0) + 1
 
   // Insert the new message (only if content is defined)
   if (message.content) {
@@ -411,25 +411,25 @@ export const addWebMessageToContext = async (
       role: mapRoleToDb(message.role),
       content: message.content,
       sequence_number: nextSequence,
-    });
+    })
   }
 
-  context.messages.push(message);
-  context.lastUpdated = new Date().toISOString();
+  context.messages.push(message)
+  context.lastUpdated = new Date().toISOString()
 
   // Check if we need to summarize
-  const totalLength = calculateContextLength(context.messages);
+  const totalLength = calculateContextLength(context.messages)
 
   if (totalLength > MAX_CONTEXT_LENGTH && context.messages.length > 2) {
-    const messagesToSummarize = context.messages.slice(0, -2);
-    const recentMessages = context.messages.slice(-2);
+    const messagesToSummarize = context.messages.slice(0, -2)
+    const recentMessages = context.messages.slice(-2)
 
     try {
-      const summary = await summarizeFn(messagesToSummarize);
+      const summary = await summarizeFn(messagesToSummarize)
 
       // Store summary with sequence range
-      const firstSeq = nextSequence - context.messages.length + 1;
-      const lastSeq = nextSequence - 2;
+      const firstSeq = nextSequence - context.messages.length + 1
+      const lastSeq = nextSequence - 2
       await storeWebSummary(
         stateId,
         userId,
@@ -437,26 +437,26 @@ export const addWebMessageToContext = async (
         messagesToSummarize.length,
         firstSeq,
         lastSeq
-      );
+      )
 
       context.summary = context.summary
         ? `${context.summary}\n\n${summary}`
-        : summary;
-      context.messages = recentMessages;
+        : summary
+      context.messages = recentMessages
 
-      await markWebAsSummarized(stateId, context.summary);
+      await markWebAsSummarized(stateId, context.summary)
     } catch (error) {
       logger.error(
         `Failed to summarize conversation for user ${userId}: ${error}`
-      );
+      )
       // Continue without summarization if it fails
     }
   }
 
-  await updateWebConversationState(stateId, context, context.messages.length);
+  await updateWebConversationState(stateId, context, context.messages.length)
 
-  return context;
-};
+  return context
+}
 
 /**
  * @description Builds a formatted prompt string from conversation context.
@@ -472,10 +472,10 @@ export const addWebMessageToContext = async (
  * // Returns: "Previous conversation summary:\n...\n\nRecent messages:\n..."
  */
 export const buildWebContextPrompt = (context: ConversationContext): string => {
-  const parts: string[] = [];
+  const parts: string[] = []
 
   if (context.summary) {
-    parts.push(`Previous conversation summary:\n${context.summary}`);
+    parts.push(`Previous conversation summary:\n${context.summary}`)
   }
 
   if (context.messages.length > 0) {
@@ -483,12 +483,12 @@ export const buildWebContextPrompt = (context: ConversationContext): string => {
       .map(
         (msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
       )
-      .join("\n");
-    parts.push(`Recent messages:\n${messageHistory}`);
+      .join("\n")
+    parts.push(`Recent messages:\n${messageHistory}`)
   }
 
-  return parts.join("\n\n");
-};
+  return parts.join("\n\n")
+}
 
 /**
  * @description Retrieves the full conversation context for a web user.
@@ -503,32 +503,32 @@ export const buildWebContextPrompt = (context: ConversationContext): string => {
 export const getWebConversationContext = async (
   userId: string
 ): Promise<ConversationContext> => {
-  const { context } = await getOrCreateWebTodayContext(userId);
-  return context;
-};
+  const { context } = await getOrCreateWebTodayContext(userId)
+  return context
+}
 
 // ============================================
 // Conversation List & Retrieval Functions
 // ============================================
 
 export type ConversationListItem = {
-  id: string;
-  title: string;
-  messageCount: number;
-  lastUpdated: string;
-  createdAt: string;
-  pinned: boolean;
-};
+  id: string
+  title: string
+  messageCount: number
+  lastUpdated: string
+  createdAt: string
+  pinned: boolean
+}
 
 export type FullConversation = {
-  id: string;
-  userId: string;
-  messages: userAndAiMessageProps[];
-  summary?: string;
-  messageCount: number;
-  lastUpdated: string;
-  createdAt: string;
-};
+  id: string
+  userId: string
+  messages: userAndAiMessageProps[]
+  summary?: string
+  messageCount: number
+  lastUpdated: string
+  createdAt: string
+}
 
 /**
  * @description Generates or retrieves a title for a conversation.
@@ -546,24 +546,24 @@ const _getConversationTitle = (
   messages: userAndAiMessageProps[]
 ): string => {
   if (conversation.title) {
-    return conversation.title;
+    return conversation.title
   }
 
   if (conversation.summary) {
     const firstLine = conversation.summary
       .split("\n")[0]
-      .replace(/^[-•*]\s*/, "");
-    return firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine;
+      .replace(/^[-•*]\s*/, "")
+    return firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine
   }
 
-  const firstUserMessage = messages.find((m) => m.role === "user");
+  const firstUserMessage = messages.find((m) => m.role === "user")
   if (firstUserMessage?.content) {
-    const content = firstUserMessage.content;
-    return content.length > 50 ? `${content.slice(0, 47)}...` : content;
+    const content = firstUserMessage.content
+    return content.length > 50 ? `${content.slice(0, 47)}...` : content
   }
 
-  return "New Conversation";
-};
+  return "New Conversation"
+}
 
 /**
  * @description Retrieves a paginated list of conversations for a user.
@@ -586,41 +586,40 @@ export const getWebConversationList = async (
   userId: string,
   options?: { limit?: number; offset?: number; search?: string }
 ): Promise<ConversationListItem[]> => {
-  const limit = options?.limit || 20;
-  const offset = options?.offset || 0;
-  const search = options?.search;
+  const limit = options?.limit || 20
+  const offset = options?.offset || 0
+  const search = options?.search
 
   let query = SUPABASE.from("conversations")
     .select(
       "id, message_count, title, summary, created_at, updated_at, last_message_at, pinned"
     )
     .eq("user_id", userId)
-    .eq("source", "web");
+    .eq("source", "web")
 
   // Add title search filter (case-insensitive) if search is provided and has 2+ characters
   if (search && search.length >= 2) {
-    query = query.ilike("title", `%${search}%`);
+    query = query.ilike("title", `%${search}%`)
   }
 
   const { data, error } = await query
     .order("pinned", { ascending: false, nullsFirst: false })
     .order("updated_at", { ascending: false, nullsFirst: false })
-    .range(offset, offset + limit - 1);
+    .range(offset, offset + limit - 1)
 
   if (error) {
     logger.error(
       `Failed to fetch conversation list for user ${userId}: ${error.message}`
-    );
-    return [];
+    )
+    return []
   }
 
   return data.map((row) => {
     // Generate title from available data
-    let title = row.title || "New Conversation";
+    let title = row.title || "New Conversation"
     if (!row.title && row.summary) {
-      const firstLine = row.summary.split("\n")[0].replace(/^[-•*]\s*/, "");
-      title =
-        firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine;
+      const firstLine = row.summary.split("\n")[0].replace(/^[-•*]\s*/, "")
+      title = firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine
     }
 
     return {
@@ -630,9 +629,9 @@ export const getWebConversationList = async (
       lastUpdated: row.last_message_at || row.updated_at || row.created_at,
       createdAt: row.created_at,
       pinned: row.pinned || false,
-    };
-  });
-};
+    }
+  })
+}
 
 /**
  * @description Retrieves a complete conversation by its ID.
@@ -656,16 +655,16 @@ export const getWebConversationById = async (
     .eq("id", conversationId)
     .eq("user_id", userId)
     .eq("source", "web")
-    .single();
+    .single()
 
   if (error || !data) {
     logger.error(
       `Failed to fetch conversation ${conversationId}: ${error?.message}`
-    );
-    return null;
+    )
+    return null
   }
 
-  const messages = await getConversationMessages(conversationId);
+  const messages = await getConversationMessages(conversationId)
 
   return {
     id: data.id,
@@ -675,8 +674,8 @@ export const getWebConversationById = async (
     messageCount: data.message_count || 0,
     lastUpdated: data.last_message_at || data.updated_at || data.created_at,
     createdAt: data.created_at,
-  };
-};
+  }
+}
 
 /**
  * @description Loads an existing conversation into the context format for continuation.
@@ -696,10 +695,10 @@ export const loadWebConversationIntoContext = async (
   conversationId: string,
   userId: string
 ): Promise<{ stateId: string; context: ConversationContext } | null> => {
-  const conversation = await getWebConversationById(conversationId, userId);
+  const conversation = await getWebConversationById(conversationId, userId)
 
   if (!conversation) {
-    return null;
+    return null
   }
 
   return {
@@ -709,8 +708,8 @@ export const loadWebConversationIntoContext = async (
       summary: conversation.summary,
       lastUpdated: conversation.lastUpdated,
     },
-  };
-};
+  }
+}
 
 /**
  * @description Permanently deletes a conversation and all its messages.
@@ -732,13 +731,13 @@ export const deleteWebConversation = async (
   // First delete all messages in the conversation
   const { error: msgError } = await SUPABASE.from("conversation_messages")
     .delete()
-    .eq("conversation_id", conversationId);
+    .eq("conversation_id", conversationId)
 
   if (msgError) {
     logger.error(
       `Failed to delete messages for conversation ${conversationId}: ${msgError.message}`
-    );
-    return false;
+    )
+    return false
   }
 
   // Then delete the conversation itself
@@ -746,14 +745,14 @@ export const deleteWebConversation = async (
     .delete()
     .eq("id", conversationId)
     .eq("user_id", userId)
-    .eq("source", "web");
+    .eq("source", "web")
 
   if (error) {
     logger.error(
       `Failed to delete conversation ${conversationId}: ${error.message}`
-    );
-    return false;
+    )
+    return false
   }
 
-  return true;
-};
+  return true
+}

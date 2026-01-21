@@ -1,9 +1,9 @@
-import { SUPABASE } from "@/config";
+import { SUPABASE } from "@/config"
 import {
   getSubscriptionByEmail,
   type LSSubscriptionInfo,
   type PlanSlug,
-} from "@/domains/payments/services/lemonsqueezy-service";
+} from "@/domains/payments/services/lemonsqueezy-service"
 import type {
   AdminAuditLogEntry,
   AdminDashboardStats,
@@ -14,13 +14,13 @@ import type {
   SubscriptionDistribution,
   UserRole,
   UserStatus,
-} from "@/types";
-import { invalidateUserProfileCache } from "@/lib/cache/user-cache";
-import { logger } from "@/lib/logger";
+} from "@/types"
+import { invalidateUserProfileCache } from "@/lib/cache/user-cache"
+import { logger } from "@/lib/logger"
 
-const MILLISECONDS_PER_DAY = 86_400_000;
-const DAYS_IN_WEEK = 7;
-const DAYS_IN_MONTH = 30;
+const MILLISECONDS_PER_DAY = 86_400_000
+const DAYS_IN_WEEK = 7
+const DAYS_IN_MONTH = 30
 
 /**
  * Retrieves comprehensive dashboard KPI statistics for admin overview.
@@ -30,18 +30,18 @@ const DAYS_IN_MONTH = 30;
  * @returns Promise resolving to dashboard statistics including user counts, revenue, and activity metrics
  */
 export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
-  const now = new Date();
+  const now = new Date()
   const todayStart = new Date(
     now.getFullYear(),
     now.getMonth(),
     now.getDate()
-  ).toISOString();
+  ).toISOString()
   const weekAgo = new Date(
     now.getTime() - DAYS_IN_WEEK * MILLISECONDS_PER_DAY
-  ).toISOString();
+  ).toISOString()
   const monthAgo = new Date(
     now.getTime() - DAYS_IN_MONTH * MILLISECONDS_PER_DAY
-  ).toISOString();
+  ).toISOString()
 
   try {
     // Run all queries in parallel
@@ -65,7 +65,7 @@ export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
       SUPABASE.from("users")
         .select("id", { count: "exact", head: true })
         .gte("created_at", monthAgo),
-    ]);
+    ])
 
     return {
       totalUsers: totalUsers || 0,
@@ -76,12 +76,12 @@ export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
       activeSubscriptions: 0, // Now tracked via LemonSqueezy dashboard
       totalRevenueCents: 0, // Revenue tracking via LemonSqueezy dashboard
       mrrCents: 0, // MRR tracking via LemonSqueezy dashboard
-    };
+    }
   } catch (error) {
-    console.error("[Admin Service] Failed to fetch dashboard stats:", error);
-    throw new Error(`Failed to fetch dashboard stats: ${error}`);
+    console.error("[Admin Service] Failed to fetch dashboard stats:", error)
+    throw new Error(`Failed to fetch dashboard stats: ${error}`)
   }
-};
+}
 
 /**
  * Get subscription distribution - returns static plan metadata
@@ -95,34 +95,34 @@ export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
  * @returns Array of subscription distribution objects with plan details and zeroed counts
  */
 export const getSubscriptionDistribution = (): SubscriptionDistribution[] => {
-  const planSlugs: PlanSlug[] = ["starter", "pro", "executive"];
+  const planSlugs: PlanSlug[] = ["starter", "pro", "executive"]
 
   return planSlugs.map((slug) => ({
     planSlug: slug,
     planName: slug.charAt(0).toUpperCase() + slug.slice(1),
     subscriberCount: 0,
     percentage: 0,
-  }));
-};
+  }))
+}
 
 type UserRow = {
-  id: string;
-  email: string;
-  first_name?: string | null;
-  last_name?: string | null;
-  display_name?: string | null;
-  avatar_url?: string | null;
-  status?: string | null;
-  role?: string | null;
-  timezone?: string | null;
-  locale?: string | null;
-  email_verified?: boolean | null;
-  created_at?: string | null;
-  updated_at?: string | null;
-  last_login_at?: string | null;
-  ai_interactions_used?: number | null;
-  credits_remaining?: number | null;
-};
+  id: string
+  email: string
+  first_name?: string | null
+  last_name?: string | null
+  display_name?: string | null
+  avatar_url?: string | null
+  status?: string | null
+  role?: string | null
+  timezone?: string | null
+  locale?: string | null
+  email_verified?: boolean | null
+  created_at?: string | null
+  updated_at?: string | null
+  last_login_at?: string | null
+  ai_interactions_used?: number | null
+  credits_remaining?: number | null
+}
 
 const mapUserToAdminUser = (
   user: UserRow,
@@ -158,9 +158,9 @@ const mapUserToAdminUser = (
       }
     : null,
   oauth_connected: oauthConnected,
-});
+})
 
-const DEFAULT_PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 20
 
 export const getUserList = async (
   params: AdminUserListParams
@@ -173,65 +173,65 @@ export const getUserList = async (
     role,
     sortBy = "created_at",
     sortOrder = "desc",
-  } = params;
+  } = params
 
-  const offset = (page - 1) * limit;
+  const offset = (page - 1) * limit
 
   try {
-    let query = SUPABASE.from("users").select("*", { count: "exact" });
+    let query = SUPABASE.from("users").select("*", { count: "exact" })
 
     if (search) {
       query = query.or(
         `email.ilike.%${search}%,first_name.ilike.%${search}%,last_name.ilike.%${search}%`
-      );
+      )
     }
     if (status) {
-      query = query.eq("status", status);
+      query = query.eq("status", status)
     }
     if (role) {
-      query = query.eq("role", role);
+      query = query.eq("role", role)
     }
 
     query = query
       .order(sortBy, { ascending: sortOrder === "asc" })
-      .range(offset, offset + limit - 1);
+      .range(offset, offset + limit - 1)
 
-    const { data, error, count } = await query;
+    const { data, error, count } = await query
 
     if (error) {
-      throw error;
+      throw error
     }
 
-    const userRows = (data || []) as UserRow[];
-    const userIds = userRows.map((u) => u.id);
+    const userRows = (data || []) as UserRow[]
+    const userIds = userRows.map((u) => u.id)
 
     const { data: oauthTokens } =
       userIds.length > 0
         ? await SUPABASE.from("oauth_tokens")
             .select("user_id")
             .in("user_id", userIds)
-        : { data: [] };
+        : { data: [] }
 
-    const oauthByUser = new Set<string>();
+    const oauthByUser = new Set<string>()
     for (const token of oauthTokens || []) {
-      oauthByUser.add(token.user_id);
+      oauthByUser.add(token.user_id)
     }
 
     const users: AdminUser[] = userRows.map((user) =>
       mapUserToAdminUser(user, null, oauthByUser.has(user.id))
-    );
+    )
 
     return {
       users,
       total: count || 0,
       page,
       totalPages: Math.ceil((count || 0) / limit),
-    };
+    }
   } catch (error) {
-    console.error("[Admin Service] Failed to fetch users:", error);
-    throw new Error(`Failed to fetch users: ${error}`);
+    console.error("[Admin Service] Failed to fetch users:", error)
+    throw new Error(`Failed to fetch users: ${error}`)
   }
-};
+}
 
 export const getUserById = async (
   userId: string
@@ -240,20 +240,20 @@ export const getUserById = async (
     const { data: user, error } = await SUPABASE.from("users")
       .select("*")
       .eq("id", userId)
-      .single();
+      .single()
 
     if (error) {
       if (error.code === "PGRST116") {
-        return null;
+        return null
       }
-      throw error;
+      throw error
     }
 
     if (!user) {
-      return null;
+      return null
     }
 
-    const userRow = user as UserRow;
+    const userRow = user as UserRow
 
     const [subscription, oauthResult] = await Promise.all([
       getSubscriptionByEmail(userRow.email),
@@ -261,14 +261,14 @@ export const getUserById = async (
         .select("id")
         .eq("user_id", userId)
         .maybeSingle(),
-    ]);
+    ])
 
-    return mapUserToAdminUser(userRow, subscription, !!oauthResult.data);
+    return mapUserToAdminUser(userRow, subscription, !!oauthResult.data)
   } catch (error) {
-    console.error("[Admin Service] Failed to fetch user:", error);
-    throw new Error(`Failed to fetch user: ${error}`);
+    console.error("[Admin Service] Failed to fetch user:", error)
+    throw new Error(`Failed to fetch user: ${error}`)
   }
-};
+}
 
 /**
  * Update user status
@@ -283,15 +283,15 @@ export const updateUserStatus = async (
   const { data: currentUser } = await SUPABASE.from("users")
     .select("status, email")
     .eq("id", userId)
-    .single();
+    .single()
 
   const { error } = await SUPABASE.from("users")
     .update({ status: newStatus, updated_at: new Date().toISOString() })
-    .eq("id", userId);
+    .eq("id", userId)
 
   if (error) {
-    console.error("[Admin Service] Failed to update user status:", error);
-    throw new Error(`Failed to update user status: ${error.message}`);
+    console.error("[Admin Service] Failed to update user status:", error)
+    throw new Error(`Failed to update user status: ${error.message}`)
   }
 
   // Log admin action
@@ -302,8 +302,8 @@ export const updateUserStatus = async (
     resourceId: userId,
     oldValues: { status: currentUser?.status },
     newValues: { status: newStatus, reason },
-  });
-};
+  })
+}
 
 /**
  * Update user role
@@ -316,26 +316,26 @@ export const updateUserRole = async (
 ): Promise<void> => {
   // Prevent self-modification
   if (userId === adminUserId) {
-    throw new Error("Cannot modify your own role");
+    throw new Error("Cannot modify your own role")
   }
 
   // Get current role for audit log
   const { data: currentUser } = await SUPABASE.from("users")
     .select("role, email")
     .eq("id", userId)
-    .single();
+    .single()
 
   const { error } = await SUPABASE.from("users")
     .update({ role: newRole, updated_at: new Date().toISOString() })
-    .eq("id", userId);
+    .eq("id", userId)
 
   if (error) {
-    console.error("[Admin Service] Failed to update user role:", error);
-    throw new Error(`Failed to update user role: ${error.message}`);
+    console.error("[Admin Service] Failed to update user role:", error)
+    throw new Error(`Failed to update user role: ${error.message}`)
   }
 
   // Invalidate user profile cache so new role takes effect immediately
-  await invalidateUserProfileCache(userId);
+  await invalidateUserProfileCache(userId)
 
   // Log admin action
   await logAdminAction({
@@ -345,8 +345,8 @@ export const updateUserRole = async (
     resourceId: userId,
     oldValues: { role: currentUser?.role },
     newValues: { role: newRole, reason },
-  });
-};
+  })
+}
 
 export const grantCredits = async (
   userId: string,
@@ -357,25 +357,25 @@ export const grantCredits = async (
   const { data: user, error: fetchError } = await SUPABASE.from("users")
     .select("id, credits_remaining")
     .eq("id", userId)
-    .single();
+    .single()
 
   if (fetchError || !user) {
-    throw new Error("User not found");
+    throw new Error("User not found")
   }
 
-  const currentCredits = user.credits_remaining || 0;
-  const newCredits = currentCredits + credits;
+  const currentCredits = user.credits_remaining || 0
+  const newCredits = currentCredits + credits
 
   const { error } = await SUPABASE.from("users")
     .update({
       credits_remaining: newCredits,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", userId);
+    .eq("id", userId)
 
   if (error) {
-    console.error("[Admin Service] Failed to grant credits:", error);
-    throw new Error(`Failed to grant credits: ${error.message}`);
+    console.error("[Admin Service] Failed to grant credits:", error)
+    throw new Error(`Failed to grant credits: ${error.message}`)
   }
 
   await logAdminAction({
@@ -389,43 +389,43 @@ export const grantCredits = async (
       new_total: newCredits,
       reason,
     },
-  });
-};
+  })
+}
 
 /**
  * Payment history now managed via LemonSqueezy dashboard
  */
 export const getPaymentHistory = (_params: {
-  page?: number;
-  limit?: number;
-  userId?: string;
-  status?: string;
-}): { payments: AdminPayment[]; total: number } => ({ payments: [], total: 0 });
+  page?: number
+  limit?: number
+  userId?: string
+  status?: string
+}): { payments: AdminPayment[]; total: number } => ({ payments: [], total: 0 })
 
 /**
  * Audit logs feature removed for simpler architecture
  */
 export const getAuditLogs = (_params: {
-  page?: number;
-  limit?: number;
-  adminUserId?: string;
-  actionType?: string;
-}): { logs: AdminAuditLogEntry[]; total: number } => ({ logs: [], total: 0 });
+  page?: number
+  limit?: number
+  adminUserId?: string
+  actionType?: string
+}): { logs: AdminAuditLogEntry[]; total: number } => ({ logs: [], total: 0 })
 
 export const logAdminAction = (_params: {
-  adminUserId: string;
-  action: string;
-  resourceType: string;
-  resourceId: string;
-  oldValues?: Record<string, unknown>;
-  newValues?: Record<string, unknown>;
-  ipAddress?: string;
-  userAgent?: string;
+  adminUserId: string
+  action: string
+  resourceType: string
+  resourceId: string
+  oldValues?: Record<string, unknown>
+  newValues?: Record<string, unknown>
+  ipAddress?: string
+  userAgent?: string
 }): void => {
   logger.debug(
     `[Admin Action] ${_params.action} on ${_params.resourceType}/${_params.resourceId}`
-  );
-};
+  )
+}
 
 /**
  * Send password reset email (via Supabase Auth)
@@ -436,11 +436,11 @@ export const sendPasswordResetEmail = async (
 ): Promise<void> => {
   const { error } = await SUPABASE.auth.resetPasswordForEmail(userEmail, {
     redirectTo: `${process.env.FRONTEND_URL || "http://localhost:3000"}/reset-password`,
-  });
+  })
 
   if (error) {
-    console.error("[Admin Service] Failed to send password reset:", error);
-    throw new Error(`Failed to send password reset: ${error.message}`);
+    console.error("[Admin Service] Failed to send password reset:", error)
+    throw new Error(`Failed to send password reset: ${error.message}`)
   }
 
   // Log admin action
@@ -450,30 +450,30 @@ export const sendPasswordResetEmail = async (
     resourceType: "user",
     resourceId: userEmail,
     newValues: { email: userEmail },
-  });
-};
+  })
+}
 
 /**
  * Revenue trends data point
  */
 export type RevenueTrendPoint = {
-  month: string;
-  revenue: number;
-  subscriptions: number;
-};
+  month: string
+  revenue: number
+  subscriptions: number
+}
 
 /**
  * Subscription trend data point
  */
 export type SubscriptionTrendPoint = {
-  date: string;
-  newSubscriptions: number;
-  cancelledSubscriptions: number;
-  totalActive: number;
-};
+  date: string
+  newSubscriptions: number
+  cancelledSubscriptions: number
+  totalActive: number
+}
 
-const DEFAULT_REVENUE_MONTHS = 6;
-const DEFAULT_TREND_DAYS = 7;
+const DEFAULT_REVENUE_MONTHS = 6
+const DEFAULT_TREND_DAYS = 7
 
 /**
  * Revenue and subscription trends are now tracked via LemonSqueezy dashboard.
@@ -482,65 +482,65 @@ const DEFAULT_TREND_DAYS = 7;
 export const getRevenueTrends = (
   months = DEFAULT_REVENUE_MONTHS
 ): RevenueTrendPoint[] => {
-  const trends: RevenueTrendPoint[] = [];
-  const now = new Date();
+  const trends: RevenueTrendPoint[] = []
+  const now = new Date()
 
   for (let i = months - 1; i >= 0; i--) {
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth() - i, 1)
     const monthName = startOfMonth.toLocaleDateString("en-US", {
       month: "short",
-    });
+    })
 
     trends.push({
       month: monthName,
       revenue: 0,
       subscriptions: 0,
-    });
+    })
   }
 
-  return trends;
-};
+  return trends
+}
 
 export const getSubscriptionTrends = (
   days = DEFAULT_TREND_DAYS
 ): SubscriptionTrendPoint[] => {
-  const trends: SubscriptionTrendPoint[] = [];
-  const now = new Date();
+  const trends: SubscriptionTrendPoint[] = []
+  const now = new Date()
 
   for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+    const date = new Date(now)
+    date.setDate(date.getDate() - i)
+    const dayName = date.toLocaleDateString("en-US", { weekday: "short" })
 
     trends.push({
       date: dayName,
       newSubscriptions: 0,
       cancelledSubscriptions: 0,
       totalActive: 0,
-    });
+    })
   }
 
-  return trends;
-};
+  return trends
+}
 
 export const getAdminUserInfo = async (
   userId: string
-): Promise<AdminUser | null> => getUserById(userId);
+): Promise<AdminUser | null> => getUserById(userId)
 
 export const createImpersonationSession = async (
   targetUserId: string,
   adminUserId: string
 ): Promise<{
-  targetUser: AdminUser;
-  impersonationToken: string;
+  targetUser: AdminUser
+  impersonationToken: string
 }> => {
   if (targetUserId === adminUserId) {
-    throw new Error("Cannot impersonate yourself");
+    throw new Error("Cannot impersonate yourself")
   }
 
-  const targetUser = await getUserById(targetUserId);
+  const targetUser = await getUserById(targetUserId)
   if (!targetUser) {
-    throw new Error("Target user not found");
+    throw new Error("Target user not found")
   }
 
   const { data: sessionData, error } = await SUPABASE.auth.admin.generateLink({
@@ -549,14 +549,11 @@ export const createImpersonationSession = async (
     options: {
       redirectTo: `${process.env.FRONTEND_URL || "http://localhost:4000"}/dashboard`,
     },
-  });
+  })
 
   if (error || !sessionData) {
-    console.error(
-      "[Admin Service] Failed to create impersonation link:",
-      error
-    );
-    throw new Error("Failed to create impersonation session");
+    console.error("[Admin Service] Failed to create impersonation link:", error)
+    throw new Error("Failed to create impersonation session")
   }
 
   await logAdminAction({
@@ -565,39 +562,39 @@ export const createImpersonationSession = async (
     resourceType: "user",
     resourceId: targetUserId,
     newValues: { targetEmail: targetUser.email },
-  });
+  })
 
-  const token = sessionData.properties?.hashed_token || "";
+  const token = sessionData.properties?.hashed_token || ""
 
   return {
     targetUser,
     impersonationToken: token,
-  };
-};
+  }
+}
 
 export const revokeUserSessions = async (
   targetUserId: string,
   adminUserId: string
 ): Promise<void> => {
   if (targetUserId === adminUserId) {
-    throw new Error("Cannot revoke your own sessions");
+    throw new Error("Cannot revoke your own sessions")
   }
 
-  const targetUser = await getUserById(targetUserId);
+  const targetUser = await getUserById(targetUserId)
   if (!targetUser) {
-    throw new Error("Target user not found");
+    throw new Error("Target user not found")
   }
 
-  const { error } = await SUPABASE.auth.admin.signOut(targetUserId, "global");
+  const { error } = await SUPABASE.auth.admin.signOut(targetUserId, "global")
 
   if (error) {
-    console.error("[Admin Service] Failed to revoke sessions:", error);
-    throw new Error(`Failed to revoke sessions: ${error.message}`);
+    console.error("[Admin Service] Failed to revoke sessions:", error)
+    throw new Error(`Failed to revoke sessions: ${error.message}`)
   }
 
   await SUPABASE.from("users")
     .update({ updated_at: new Date().toISOString() })
-    .eq("id", targetUserId);
+    .eq("id", targetUserId)
 
   await logAdminAction({
     adminUserId,
@@ -608,26 +605,26 @@ export const revokeUserSessions = async (
       targetEmail: targetUser.email,
       revokedAt: new Date().toISOString(),
     },
-  });
-};
+  })
+}
 
 export type BroadcastPayload = {
-  type: "info" | "warning" | "critical";
-  title: string;
-  message: string;
-  targetUserIds?: string[];
+  type: "info" | "warning" | "critical"
+  title: string
+  message: string
+  targetUserIds?: string[]
   filters?: {
-    planSlug?: string;
-    status?: UserStatus;
-    lastActiveWithinDays?: number;
-  };
-};
+    planSlug?: string
+    status?: UserStatus
+    lastActiveWithinDays?: number
+  }
+}
 
 export const broadcastToUsers = async (
   adminUserId: string,
   payload: BroadcastPayload
 ): Promise<{ sentTo: number }> => {
-  const userIds = await resolveTargetUserIds(payload);
+  const userIds = await resolveTargetUserIds(payload)
 
   await logAdminAction({
     adminUserId,
@@ -639,10 +636,10 @@ export const broadcastToUsers = async (
       title: payload.title,
       sentToCount: userIds.length,
     },
-  });
+  })
 
-  return { sentTo: userIds.length };
-};
+  return { sentTo: userIds.length }
+}
 
 /**
  * Resolves target user IDs for broadcast notifications based on payload configuration.
@@ -656,18 +653,18 @@ async function resolveTargetUserIds(
   payload: BroadcastPayload
 ): Promise<string[]> {
   if (payload.targetUserIds && payload.targetUserIds.length > 0) {
-    return payload.targetUserIds;
+    return payload.targetUserIds
   }
 
   if (payload.filters) {
-    return resolveFilteredUserIds(payload.filters);
+    return resolveFilteredUserIds(payload.filters)
   }
 
   const { data: users } = await SUPABASE.from("users")
     .select("id")
-    .eq("status", "active");
+    .eq("status", "active")
 
-  return (users || []).map((u) => u.id);
+  return (users || []).map((u) => u.id)
 }
 
 /**
@@ -681,30 +678,30 @@ async function resolveTargetUserIds(
 async function resolveFilteredUserIds(
   filters: NonNullable<BroadcastPayload["filters"]>
 ): Promise<string[]> {
-  let query = SUPABASE.from("users").select("id");
+  let query = SUPABASE.from("users").select("id")
 
   if (filters.status) {
-    query = query.eq("status", filters.status);
+    query = query.eq("status", filters.status)
   }
 
   if (filters.lastActiveWithinDays) {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - filters.lastActiveWithinDays);
-    query = query.gte("last_login_at", cutoff.toISOString());
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - filters.lastActiveWithinDays)
+    query = query.gte("last_login_at", cutoff.toISOString())
   }
 
-  const { data: users, error } = await query;
+  const { data: users, error } = await query
   if (error) {
-    throw new Error(`Failed to fetch users for broadcast: ${error.message}`);
+    throw new Error(`Failed to fetch users for broadcast: ${error.message}`)
   }
 
-  const userIds = (users || []).map((u) => u.id);
+  const userIds = (users || []).map((u) => u.id)
 
   if (filters.planSlug) {
     logger.warn(
       "[Admin Service] planSlug filter not supported - subscriptions now managed via LemonSqueezy"
-    );
+    )
   }
 
-  return userIds;
+  return userIds
 }

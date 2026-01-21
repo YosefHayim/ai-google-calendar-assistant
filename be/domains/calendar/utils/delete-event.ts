@@ -1,15 +1,15 @@
-import type { calendar_v3 } from "googleapis";
-import { REQUEST_CONFIG_BASE } from "@/config";
+import type { calendar_v3 } from "googleapis"
+import { REQUEST_CONFIG_BASE } from "@/config"
 
 type DeleteEventParams = {
-  calendarEvents: calendar_v3.Resource$Events;
-  eventData?: calendar_v3.Schema$Event | Record<string, string>;
-  extra?: Record<string, unknown>;
+  calendarEvents: calendar_v3.Resource$Events
+  eventData?: calendar_v3.Schema$Event | Record<string, string>
+  extra?: Record<string, unknown>
   req?: {
-    body?: Record<string, unknown>;
-    query?: Record<string, unknown>;
-  } | null;
-};
+    body?: Record<string, unknown>
+    query?: Record<string, unknown>
+  } | null
+}
 
 /**
  * @description Validates and normalizes a calendar ID string for use with Google Calendar API.
@@ -24,14 +24,14 @@ type DeleteEventParams = {
  */
 function normalizeCalendarId(id: unknown): string | null {
   if (!id || typeof id !== "string") {
-    return null;
+    return null
   }
-  const trimmed = id.trim();
+  const trimmed = id.trim()
   // Reject obviously invalid values
   if (trimmed === "" || trimmed === "/") {
-    return null;
+    return null
   }
-  return trimmed;
+  return trimmed
 }
 
 export async function deleteEvent({
@@ -44,12 +44,12 @@ export async function deleteEvent({
     normalizeCalendarId(extra?.calendarId) ||
     normalizeCalendarId(req?.body?.calendarId) ||
     normalizeCalendarId(req?.query?.calendarId) ||
-    "primary";
+    "primary"
 
   const resp = await calendarEvents.delete({
     ...REQUEST_CONFIG_BASE,
     calendarId,
     eventId: (eventData?.id as string) || "",
-  });
-  return resp.data;
+  })
+  return resp.data
 }

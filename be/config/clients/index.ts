@@ -14,7 +14,11 @@ export {
   isPostHogEnabled,
   shutdownPostHog,
 } from "@/infrastructure/posthog/posthog"
-export { disconnectRedis, isRedisConnected, redisClient } from "@/infrastructure/redis/redis"
+export {
+  disconnectRedis,
+  isRedisConnected,
+  redisClient,
+} from "@/infrastructure/redis/redis"
 export {
   emitToUser,
   getActiveConnectionCount,

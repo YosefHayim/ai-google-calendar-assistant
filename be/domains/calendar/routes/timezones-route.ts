@@ -1,8 +1,8 @@
-import { Router } from "express";
-import { timezonesController } from "@/domains/calendar/controllers/timezones-controller";
+import { Router } from "express"
+import { timezonesController } from "@/domains/calendar/controllers/timezones-controller"
 
-const router = Router();
+const router = Router()
 
-router.get("/", timezonesController.getList);
+router.get("/", timezonesController.getList)
 
-export default router;
+export default router

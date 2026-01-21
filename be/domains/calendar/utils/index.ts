@@ -1,22 +1,22 @@
 export {
   checkEventConflicts,
   checkEventConflictsAllCalendars,
-} from "./check-conflicts";
-export { getEventDurationString } from "./duration";
-export { eventsHandler } from "./events";
+} from "./check-conflicts"
+export { getEventDurationString } from "./duration"
+export { eventsHandler } from "./events"
 export {
   analyzeGaps,
   analyzeGapsForUser,
   DEFAULT_GAP_RECOVERY_SETTINGS,
   fillGap,
   formatGapsForDisplay,
-} from "./gap-recovery";
+} from "./gap-recovery"
 export {
   createCalendarClient,
   createCalendarFromValidatedTokens,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
   refreshAccessToken,
-} from "./init";
+} from "./init"
 export {
   type EventReminder,
   type EventReminders,
@@ -28,4 +28,4 @@ export {
   saveUserReminderPreferences,
   updateCalendarDefaultReminders,
   updateEventReminders,
-} from "./reminders";
+} from "./reminders"

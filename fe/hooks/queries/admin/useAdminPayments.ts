@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getPayments } from '@/services/admin.service'
+import { getPayments } from '@/services/admin-service'
 
 export const useAdminPayments = (params: {
   page?: number

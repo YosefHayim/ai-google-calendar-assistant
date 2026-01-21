@@ -29,7 +29,9 @@ describe("New User Onboarding Journey", () => {
       }
 
       expect(oauthRequest.provider).toBe("google")
-      expect(oauthRequest.options.scopes).toContain("https://www.googleapis.com/auth/calendar")
+      expect(oauthRequest.options.scopes).toContain(
+        "https://www.googleapis.com/auth/calendar"
+      )
       expect(oauthRequest.options.redirectTo).toContain("oauth/callback")
     })
 
@@ -83,7 +85,7 @@ describe("New User Onboarding Journey", () => {
     it("should validate existing user login flow", () => {
       const existingUser = createMockUser({
         id: "existing-user-456",
-        email: "existing@example.com"
+        email: "existing@example.com",
       })
 
       expect(existingUser.email).toBe("existing@example.com")
@@ -100,8 +102,12 @@ describe("New User Onboarding Journey", () => {
         "https://www.googleapis.com/auth/userinfo.profile",
       ]
 
-      const hasCalendarScope = requiredScopes.includes("https://www.googleapis.com/auth/calendar")
-      const hasEventsScope = requiredScopes.includes("https://www.googleapis.com/auth/calendar.events")
+      const hasCalendarScope = requiredScopes.includes(
+        "https://www.googleapis.com/auth/calendar"
+      )
+      const hasEventsScope = requiredScopes.includes(
+        "https://www.googleapis.com/auth/calendar.events"
+      )
 
       expect(hasCalendarScope).toBe(true)
       expect(hasEventsScope).toBe(true)
@@ -131,7 +137,8 @@ describe("New User Onboarding Journey", () => {
         access_token: "ya29.google-access-token",
         refresh_token: "google-refresh-token",
         expiry_date: Date.now() + 3600000, // 1 hour from now
-        scope: "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events",
+        scope:
+          "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events",
         token_type: "Bearer",
       }
 
@@ -215,11 +222,13 @@ describe("New User Onboarding Journey", () => {
         description: "Your AI assistant is ready to help manage your schedule.",
         start: {
           dateTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          timeZone: "America/New_York"
+          timeZone: "America/New_York",
         },
         end: {
-          dateTime: new Date(Date.now() + 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
-          timeZone: "America/New_York"
+          dateTime: new Date(
+            Date.now() + 24 * 60 * 60 * 1000 + 30 * 60 * 1000
+          ).toISOString(),
+          timeZone: "America/New_York",
         },
         reminders: { useDefault: true },
       }
@@ -271,7 +280,8 @@ describe("New User Onboarding Journey", () => {
 
     it("should validate AI welcome message structure", () => {
       const aiResponse = {
-        response: "Hello! I'm your AI calendar assistant. I can help you schedule meetings, check your availability, and manage your calendar. What would you like to do?",
+        response:
+          "Hello! I'm your AI calendar assistant. I can help you schedule meetings, check your availability, and manage your calendar. What would you like to do?",
         toolCalls: [],
         usage: { tokens: 150 },
       }
@@ -305,7 +315,8 @@ describe("New User Onboarding Journey", () => {
         intent: "check_schedule",
         timeRange: "today",
         calendarId: "primary",
-        response: "Looking at your calendar, you have a 'Welcome Meeting' from 10:00 AM to 11:00 AM EST, and your welcome event at 2:00 PM EST.",
+        response:
+          "Looking at your calendar, you have a 'Welcome Meeting' from 10:00 AM to 11:00 AM EST, and your welcome event at 2:00 PM EST.",
         confidence: 0.95,
       }
 
@@ -322,11 +333,7 @@ describe("New User Onboarding Journey", () => {
         user_id: "user-123",
         onboarding_completed: true,
         completed_at: new Date().toISOString(),
-        completed_steps: [
-          "google_oauth",
-          "calendar_sync",
-          "ai_interaction",
-        ],
+        completed_steps: ["google_oauth", "calendar_sync", "ai_interaction"],
         skipped_steps: [],
       }
 
@@ -363,7 +370,8 @@ describe("New User Onboarding Journey", () => {
         user_id: "user-123",
         type: "onboarding_complete",
         title: "Welcome aboard! 🎉",
-        message: "You've successfully set up AI Calendar Assistant. Start chatting with your AI assistant to manage your schedule.",
+        message:
+          "You've successfully set up AI Calendar Assistant. Start chatting with your AI assistant to manage your schedule.",
         actions: [
           {
             label: "Start Chatting",
@@ -389,19 +397,23 @@ describe("New User Onboarding Journey", () => {
         prompts: [
           {
             trigger: "ai_interactions_used > 40",
-            message: "You're running low on free AI interactions. Upgrade to Pro for unlimited AI assistance!",
+            message:
+              "You're running low on free AI interactions. Upgrade to Pro for unlimited AI assistance!",
             action: "upgrade_prompt",
           },
           {
             trigger: "first_payment_eligible",
-            message: "Love using AI Calendar Assistant? Consider upgrading to support ongoing development.",
+            message:
+              "Love using AI Calendar Assistant? Consider upgrading to support ongoing development.",
             action: "upgrade_suggestion",
           },
         ],
       }
 
       expect(upgradePrompts.prompts).toHaveLength(2)
-      expect(upgradePrompts.prompts[0].trigger).toContain("ai_interactions_used > 40")
+      expect(upgradePrompts.prompts[0].trigger).toContain(
+        "ai_interactions_used > 40"
+      )
       expect(upgradePrompts.prompts[0].action).toBe("upgrade_prompt")
       expect(upgradePrompts.prompts[1].action).toBe("upgrade_suggestion")
     })
@@ -414,7 +426,8 @@ describe("New User Onboarding Journey", () => {
         error_description: "User denied access to Google Calendar",
       }
 
-      const userFriendlyMessage = "It looks like you cancelled the Google Calendar connection. No worries! You can connect your calendar anytime from the settings page to unlock AI-powered scheduling."
+      const userFriendlyMessage =
+        "It looks like you cancelled the Google Calendar connection. No worries! You can connect your calendar anytime from the settings page to unlock AI-powered scheduling."
 
       expect(oauthError.error).toBe("access_denied")
       expect(userFriendlyMessage).toContain("cancelled")

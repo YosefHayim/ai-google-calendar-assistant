@@ -1,17 +1,17 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { mockFn, testData } from "../test-utils";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { mockFn, testData } from "../test-utils"
 
 // Google Calendar API Error types
 interface GoogleApiError extends Error {
-  code?: number;
+  code?: number
   errors?: Array<{
-    reason: string;
-    message?: string;
-  }>;
+    reason: string
+    message?: string
+  }>
 }
 
 interface ServiceError extends Error {
-  code?: string | number;
+  code?: string | number
 }
 
 /**
@@ -33,7 +33,7 @@ const mockGoogleCalendarAPI = {
   calendarList: {
     list: mockFn(),
   },
-};
+}
 
 const mockOpenAI = {
   chat: {
@@ -41,7 +41,7 @@ const mockOpenAI = {
       create: mockFn(),
     },
   },
-};
+}
 
 const mockSupabase = {
   from: mockFn().mockReturnValue({
@@ -67,102 +67,106 @@ const mockSupabase = {
   auth: {
     refreshSession: mockFn(),
   },
-};
+}
 
 const mockRedis = {
   get: mockFn(),
   set: mockFn(),
   del: mockFn(),
   expire: mockFn(),
-};
+}
 
-const mockAgentRun = mockFn();
+const mockAgentRun = mockFn()
 
 jest.mock("@/domains/calendar/utils/init", () => ({
   createCalendarFromValidatedTokens: () => mockGoogleCalendarAPI,
-}));
+}))
 
 jest.mock("openai", () => ({
   default: jest.fn().mockImplementation(() => mockOpenAI),
-}));
+}))
 
 jest.mock("@/config", () => ({
   SUPABASE: mockSupabase,
   REDIS: mockRedis,
-}));
+}))
 
 jest.mock("@openai/agents", () => ({
   run: mockAgentRun,
-}));
+}))
 
 describe("Error Recovery and Resilience", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks()
 
     // Setup default success behaviors that we'll override for error testing
     mockGoogleCalendarAPI.events.list.mockResolvedValue({
       data: { items: [] },
-    });
+    })
 
     mockOpenAI.chat.completions.create.mockResolvedValue({
       choices: [{ message: { content: "Success response" } }],
-    });
+    })
 
     mockAgentRun.mockResolvedValue({
       response: "AI response",
       toolCalls: [],
-    });
-  });
+    })
+  })
 
   describe("Scenario 1: Google Calendar API Failures", () => {
     it("should handle Google API rate limiting with exponential backoff", async () => {
       // Simulate rate limit errors
-      let callCount = 0;
+      let callCount = 0
       mockGoogleCalendarAPI.events.list.mockImplementation(() => {
-        callCount++;
+        callCount++
         if (callCount <= 2) {
-          const error: GoogleApiError = new Error("Rate limit exceeded");
-          error.code = 403;
-          error.errors = [{ reason: "rateLimitExceeded" }];
-          throw error;
+          const error: GoogleApiError = new Error("Rate limit exceeded")
+          error.code = 403
+          error.errors = [{ reason: "rateLimitExceeded" }]
+          throw error
         }
-        return Promise.resolve({ data: { items: [] } });
-      });
+        return Promise.resolve({ data: { items: [] } })
+      })
 
       const retryConfig = {
         maxRetries: 3,
         baseDelay: 1000,
         maxDelay: 10000,
         backoffMultiplier: 2,
-      };
+      }
 
-      let attempts = 0;
+      let attempts = 0
       const executeWithRetry = async () => {
-        attempts++;
+        attempts++
         try {
-          return await mockGoogleCalendarAPI.events.list();
+          return await mockGoogleCalendarAPI.events.list()
         } catch (error: any) {
           if (error.code === 403 && attempts < retryConfig.maxRetries) {
-            const delay = Math.min(retryConfig.baseDelay * Math.pow(retryConfig.backoffMultiplier, attempts - 1), retryConfig.maxDelay);
-            await new Promise((resolve) => setTimeout(resolve, delay));
-            return executeWithRetry();
+            const delay = Math.min(
+              retryConfig.baseDelay *
+                Math.pow(retryConfig.backoffMultiplier, attempts - 1),
+              retryConfig.maxDelay
+            )
+            await new Promise((resolve) => setTimeout(resolve, delay))
+            return executeWithRetry()
           }
-          throw error;
+          throw error
         }
-      };
+      }
 
-      const result = await executeWithRetry();
+      const result = await executeWithRetry()
 
-      expect(attempts).toBe(3); // Failed twice, succeeded on third try
-      expect(result.data.items).toEqual([]);
-    });
+      expect(attempts).toBe(3) // Failed twice, succeeded on third try
+      expect(result.data.items).toEqual([])
+    })
 
     it("should handle Google API authentication token expiry", async () => {
-      const tokenExpiryError: GoogleApiError = new Error("Invalid Credentials");
-      tokenExpiryError.code = 401;
-      tokenExpiryError.errors = [{ reason: "authError" }];
+      const tokenExpiryError: GoogleApiError = new Error("Invalid Credentials")
+      tokenExpiryError.code = 401
+      tokenExpiryError.errors = [{ reason: "authError" }]
 
-      mockGoogleCalendarAPI.events.list.mockRejectedValueOnce(tokenExpiryError);
+      mockGoogleCalendarAPI.events.list.mockRejectedValueOnce(tokenExpiryError)
 
       // Mock successful token refresh
       mockSupabase.auth.refreshSession.mockResolvedValueOnce({
@@ -173,50 +177,55 @@ describe("Error Recovery and Resilience", () => {
           },
         },
         error: null,
-      });
+      })
 
       // Should retry with refreshed token
       mockGoogleCalendarAPI.events.list.mockResolvedValueOnce({
         data: { items: [] },
-      });
+      })
 
-      const result = await mockGoogleCalendarAPI.events.list();
+      const result = await mockGoogleCalendarAPI.events.list()
 
-      expect(mockSupabase.auth.refreshSession).toHaveBeenCalled();
-      expect(result.data.items).toEqual([]);
-    });
+      expect(mockSupabase.auth.refreshSession).toHaveBeenCalled()
+      expect(result.data.items).toEqual([])
+    })
 
     it("should handle Google API quota exhaustion gracefully", () => {
-      const quotaError = new Error("Quota exceeded");
-      (quotaError as any).code = 403;
-      (quotaError as any).errors = [{ reason: "quotaExceeded" }];
+      const quotaError = new Error("Quota exceeded")
+      ;(quotaError as any).code = 403
+      ;(quotaError as any).errors = [{ reason: "quotaExceeded" }]
 
-      mockGoogleCalendarAPI.events.insert.mockRejectedValue(quotaError);
+      mockGoogleCalendarAPI.events.insert.mockRejectedValue(quotaError)
 
       const userFriendlyError = {
         type: "QUOTA_EXCEEDED",
-        message: "You've reached your Google Calendar API limit for today. Please try again tomorrow.",
-        suggestedActions: ["Wait until tomorrow for quota reset", "Check Google Cloud Console for quota usage", "Consider upgrading your Google Cloud plan"],
+        message:
+          "You've reached your Google Calendar API limit for today. Please try again tomorrow.",
+        suggestedActions: [
+          "Wait until tomorrow for quota reset",
+          "Check Google Cloud Console for quota usage",
+          "Consider upgrading your Google Cloud plan",
+        ],
         retryAfter: "2026-01-21T00:00:00Z", // Tomorrow
-      };
+      }
 
-      expect(userFriendlyError.type).toBe("QUOTA_EXCEEDED");
-      expect(userFriendlyError.suggestedActions).toHaveLength(3);
-      expect(userFriendlyError.retryAfter).toContain("2026-01-21");
-    });
+      expect(userFriendlyError.type).toBe("QUOTA_EXCEEDED")
+      expect(userFriendlyError.suggestedActions).toHaveLength(3)
+      expect(userFriendlyError.retryAfter).toContain("2026-01-21")
+    })
 
     it("should handle temporary Google API server errors", async () => {
-      const serverError = new Error("Internal Server Error");
-      (serverError as any).code = 500;
+      const serverError = new Error("Internal Server Error")
+      ;(serverError as any).code = 500
 
-      let callCount = 0;
+      let callCount = 0
       mockGoogleCalendarAPI.events.list.mockImplementation(() => {
-        callCount++;
+        callCount++
         if (callCount <= 2) {
-          throw serverError;
+          throw serverError
         }
-        return Promise.resolve({ data: { items: [] } });
-      });
+        return Promise.resolve({ data: { items: [] } })
+      })
 
       const circuitBreaker = {
         failures: 0,
@@ -224,47 +233,53 @@ describe("Error Recovery and Resilience", () => {
         state: "closed", // closed, open, half-open
         failureThreshold: 3,
         recoveryTimeout: 60000, // 1 minute
-      };
+      }
 
       const executeWithCircuitBreaker = async () => {
         if (circuitBreaker.state === "open") {
-          if (Date.now() - (circuitBreaker.lastFailureTime || 0) > circuitBreaker.recoveryTimeout) {
-            circuitBreaker.state = "half-open";
+          if (
+            Date.now() - (circuitBreaker.lastFailureTime || 0) >
+            circuitBreaker.recoveryTimeout
+          ) {
+            circuitBreaker.state = "half-open"
           } else {
-            throw new Error("Circuit breaker is open");
+            throw new Error("Circuit breaker is open")
           }
         }
 
         try {
-          const result = await mockGoogleCalendarAPI.events.list();
+          const result = await mockGoogleCalendarAPI.events.list()
           if (circuitBreaker.state === "half-open") {
-            circuitBreaker.state = "closed";
-            circuitBreaker.failures = 0;
+            circuitBreaker.state = "closed"
+            circuitBreaker.failures = 0
           }
-          return result;
+          return result
         } catch (error) {
-          circuitBreaker.failures++;
-          circuitBreaker.lastFailureTime = Date.now();
+          circuitBreaker.failures++
+          circuitBreaker.lastFailureTime = Date.now()
           if (circuitBreaker.failures >= circuitBreaker.failureThreshold) {
-            circuitBreaker.state = "open";
+            circuitBreaker.state = "open"
           }
-          throw error;
+          throw error
         }
-      };
+      }
 
-      await expect(executeWithCircuitBreaker()).rejects.toThrow("Circuit breaker is open");
-    });
+      await expect(executeWithCircuitBreaker()).rejects.toThrow(
+        "Circuit breaker is open"
+      )
+    })
 
     it("should handle Google Calendar permission errors", () => {
-      const permissionError = new Error("Insufficient Permission");
-      (permissionError as any).code = 403;
-      (permissionError as any).errors = [{ reason: "insufficientPermissions" }];
+      const permissionError = new Error("Insufficient Permission")
+      ;(permissionError as any).code = 403
+      ;(permissionError as any).errors = [{ reason: "insufficientPermissions" }]
 
-      mockGoogleCalendarAPI.events.list.mockRejectedValue(permissionError);
+      mockGoogleCalendarAPI.events.list.mockRejectedValue(permissionError)
 
       const permissionGuidance = {
         error: "CALENDAR_PERMISSION_DENIED",
-        message: "I don't have permission to access this calendar. Please check your sharing settings.",
+        message:
+          "I don't have permission to access this calendar. Please check your sharing settings.",
         troubleshooting: [
           "Ensure the calendar is shared with your Google account",
           "Check that you have 'Make changes to events' permission",
@@ -272,72 +287,84 @@ describe("Error Recovery and Resilience", () => {
           "Verify you're using the correct Google account",
         ],
         recoveryAction: "RECONNECT_CALENDAR",
-      };
+      }
 
-      expect(permissionGuidance.troubleshooting).toHaveLength(4);
-      expect(permissionGuidance.recoveryAction).toBe("RECONNECT_CALENDAR");
-    });
-  });
+      expect(permissionGuidance.troubleshooting).toHaveLength(4)
+      expect(permissionGuidance.recoveryAction).toBe("RECONNECT_CALENDAR")
+    })
+  })
 
   describe("Scenario 2: AI Service Failures", () => {
     it("should fallback to cached responses when AI is unavailable", async () => {
-      const aiUnavailableError = new Error("AI service temporarily unavailable");
-      (aiUnavailableError as any).code = "SERVICE_UNAVAILABLE";
+      const aiUnavailableError = new Error("AI service temporarily unavailable")
+      ;(aiUnavailableError as any).code = "SERVICE_UNAVAILABLE"
 
-      mockAgentRun.mockRejectedValue(aiUnavailableError);
+      mockAgentRun.mockRejectedValue(aiUnavailableError)
 
       // Mock cache with previous successful response
       mockRedis.get.mockResolvedValueOnce(
         JSON.stringify({
           query: "schedule meeting",
-          response: "I can help you schedule a meeting. What time works for you?",
+          response:
+            "I can help you schedule a meeting. What time works for you?",
           cachedAt: "2026-01-20T09:00:00Z",
           ttl: 3600,
-        }),
-      );
+        })
+      )
 
       const fallbackResponse = {
         source: "cache",
         response: "I can help you schedule a meeting. What time works for you?",
         confidence: "high",
-        disclaimer: "Note: This is a cached response. The AI service is temporarily unavailable.",
+        disclaimer:
+          "Note: This is a cached response. The AI service is temporarily unavailable.",
         retryAfter: "2026-01-20T10:00:00Z",
-      };
+      }
 
-      expect(fallbackResponse.source).toBe("cache");
-      expect(fallbackResponse.disclaimer).toContain("cached response");
-    });
+      expect(fallbackResponse.source).toBe("cache")
+      expect(fallbackResponse.disclaimer).toContain("cached response")
+    })
 
     it("should degrade gracefully with simplified responses", async () => {
-      mockAgentRun.mockRejectedValue(new Error("AI model overloaded"));
+      mockAgentRun.mockRejectedValue(new Error("AI model overloaded"))
 
       const degradedResponse = {
         type: "degraded",
-        response: "I'm currently experiencing high demand. For basic calendar operations, you can:",
-        suggestions: ["Use /schedule command for meetings", "Check /calendar for your events", "Try /help for available commands"],
+        response:
+          "I'm currently experiencing high demand. For basic calendar operations, you can:",
+        suggestions: [
+          "Use /schedule command for meetings",
+          "Check /calendar for your events",
+          "Try /help for available commands",
+        ],
         estimatedRecovery: "5-10 minutes",
-      };
+      }
 
-      expect(degradedResponse.type).toBe("degraded");
-      expect(degradedResponse.suggestions).toHaveLength(3);
-    });
+      expect(degradedResponse.type).toBe("degraded")
+      expect(degradedResponse.suggestions).toHaveLength(3)
+    })
 
     it("should handle AI content policy violations", () => {
-      const contentPolicyError = new Error("Content policy violation");
-      (contentPolicyError as any).code = "CONTENT_POLICY_VIOLATION";
+      const contentPolicyError = new Error("Content policy violation")
+      ;(contentPolicyError as any).code = "CONTENT_POLICY_VIOLATION"
 
-      mockAgentRun.mockRejectedValue(contentPolicyError);
+      mockAgentRun.mockRejectedValue(contentPolicyError)
 
       const policyResponse = {
         error: "CONTENT_POLICY_VIOLATION",
-        message: "I cannot assist with that request as it violates our content guidelines.",
-        suggestions: ["Try rephrasing your request", "Focus on calendar and scheduling tasks", "Contact support if you believe this is an error"],
+        message:
+          "I cannot assist with that request as it violates our content guidelines.",
+        suggestions: [
+          "Try rephrasing your request",
+          "Focus on calendar and scheduling tasks",
+          "Contact support if you believe this is an error",
+        ],
         reportOption: true,
-      };
+      }
 
-      expect(policyResponse.error).toBe("CONTENT_POLICY_VIOLATION");
-      expect(policyResponse.suggestions).toHaveLength(3);
-    });
+      expect(policyResponse.error).toBe("CONTENT_POLICY_VIOLATION")
+      expect(policyResponse.suggestions).toHaveLength(3)
+    })
 
     it("should implement AI request queuing during high load", () => {
       const requestQueue = {
@@ -350,7 +377,7 @@ describe("Error Recovery and Resilience", () => {
           pro: "normal",
           enterprise: "high",
         },
-      };
+      }
 
       const queuePosition = {
         userId: "user-123",
@@ -358,34 +385,35 @@ describe("Error Recovery and Resilience", () => {
         estimatedWait: "90 seconds",
         tier: "pro",
         canSkip: false,
-      };
+      }
 
-      expect(requestQueue.pending).toBe(15);
-      expect(queuePosition.position).toBe(8);
-      expect(queuePosition.tier).toBe("pro");
-    });
-  });
+      expect(requestQueue.pending).toBe(15)
+      expect(queuePosition.position).toBe(8)
+      expect(queuePosition.tier).toBe("pro")
+    })
+  })
 
   describe("Scenario 3: Database and Persistence Failures", () => {
     it("should handle database connection failures", async () => {
-      const dbConnectionError = new Error("Database connection lost");
-      (dbConnectionError as any).code = "CONNECTION_LOST";
+      const dbConnectionError = new Error("Database connection lost")
+      ;(dbConnectionError as any).code = "CONNECTION_LOST"
 
       mockSupabase.from.mockImplementationOnce(() => {
-        throw dbConnectionError;
-      });
+        throw dbConnectionError
+      })
 
       const connectionRecovery = {
         strategy: "reconnect",
         maxRetries: 3,
         backoffStrategy: "exponential",
         fallbackToCache: true,
-        userNotification: "Experiencing connection issues. Some features may be limited.",
-      };
+        userNotification:
+          "Experiencing connection issues. Some features may be limited.",
+      }
 
-      expect(connectionRecovery.fallbackToCache).toBe(true);
-      expect(connectionRecovery.maxRetries).toBe(3);
-    });
+      expect(connectionRecovery.fallbackToCache).toBe(true)
+      expect(connectionRecovery.maxRetries).toBe(3)
+    })
 
     it("should implement database transaction rollbacks", async () => {
       // Simulate a multi-step operation that fails midway
@@ -394,7 +422,7 @@ describe("Error Recovery and Resilience", () => {
         { step: "create_event", status: "success" },
         { step: "send_notifications", status: "failed", error: "SMTP timeout" },
         { step: "rollback", status: "executed" },
-      ];
+      ]
 
       const transactionResult = {
         success: false,
@@ -402,15 +430,15 @@ describe("Error Recovery and Resilience", () => {
         partialResults: ["user_validated", "event_created"],
         cleanup: ["event_deleted", "notifications_cancelled"],
         error: "Transaction rolled back due to notification failure",
-      };
+      }
 
-      expect(transactionResult.rolledBack).toBe(true);
-      expect(transactionResult.cleanup).toHaveLength(2);
-    });
+      expect(transactionResult.rolledBack).toBe(true)
+      expect(transactionResult.cleanup).toHaveLength(2)
+    })
 
     it("should handle database constraint violations", () => {
-      const constraintError = new Error("Unique constraint violation");
-      (constraintError as any).code = "23505"; // PostgreSQL unique violation
+      const constraintError = new Error("Unique constraint violation")
+      ;(constraintError as any).code = "23505" // PostgreSQL unique violation
 
       const constraintHandling = {
         error: "DUPLICATE_ENTRY",
@@ -421,11 +449,11 @@ describe("Error Recovery and Resilience", () => {
           message: "Would you like to update the existing event instead?",
           alternatives: ["Create with new ID", "Cancel operation"],
         },
-      };
+      }
 
-      expect(constraintHandling.field).toBe("event_id");
-      expect(constraintHandling.resolution.alternatives).toHaveLength(2);
-    });
+      expect(constraintHandling.field).toBe("event_id")
+      expect(constraintHandling.resolution.alternatives).toHaveLength(2)
+    })
 
     it("should implement data consistency checks", () => {
       const consistencyCheck = {
@@ -448,14 +476,16 @@ describe("Error Recovery and Resilience", () => {
         ],
         autoFix: true,
         requiresManualReview: false,
-      };
+      }
 
-      const inconsistentChecks = consistencyCheck.checks.filter((check) => check.status === "inconsistent");
+      const inconsistentChecks = consistencyCheck.checks.filter(
+        (check) => check.status === "inconsistent"
+      )
 
-      expect(inconsistentChecks).toHaveLength(2);
-      expect(consistencyCheck.autoFix).toBe(true);
-    });
-  });
+      expect(inconsistentChecks).toHaveLength(2)
+      expect(consistencyCheck.autoFix).toBe(true)
+    })
+  })
 
   describe("Scenario 4: Network and Connectivity Issues", () => {
     it("should handle intermittent network connectivity", () => {
@@ -471,13 +501,16 @@ describe("Error Recovery and Resilience", () => {
           retryStrategy: "exponential_backoff",
           timeoutExtension: 2, // Double normal timeout
           circuitBreaker: "enabled",
-          userNotification: "Experiencing network issues. Retrying automatically...",
+          userNotification:
+            "Experiencing network issues. Retrying automatically...",
         },
-      };
+      }
 
-      expect(networkIssues.detection.failureRate).toBeGreaterThan(networkIssues.detection.threshold);
-      expect(networkIssues.mitigation.retryStrategy).toBe("exponential_backoff");
-    });
+      expect(networkIssues.detection.failureRate).toBeGreaterThan(
+        networkIssues.detection.threshold
+      )
+      expect(networkIssues.mitigation.retryStrategy).toBe("exponential_backoff")
+    })
 
     it("should implement request deduplication", () => {
       const duplicateRequests = [
@@ -495,7 +528,7 @@ describe("Error Recovery and Resilience", () => {
           body: { summary: "Meeting", start: "2026-01-20T10:00:00Z" },
           timestamp: "2026-01-20T09:59:59Z", // 1 second later
         },
-      ];
+      ]
 
       const deduplication = {
         detected: true,
@@ -504,11 +537,11 @@ describe("Error Recovery and Resilience", () => {
         similarity: 0.98,
         action: "return_original_response",
         cacheKey: "event:create:meeting:2026-01-20T10:00:00Z",
-      };
+      }
 
-      expect(deduplication.detected).toBe(true);
-      expect(deduplication.similarity).toBeGreaterThan(0.95);
-    });
+      expect(deduplication.detected).toBe(true)
+      expect(deduplication.similarity).toBeGreaterThan(0.95)
+    })
 
     it("should handle DNS resolution failures", () => {
       const dnsFailure = {
@@ -518,17 +551,18 @@ describe("Error Recovery and Resilience", () => {
         fallback: {
           strategy: "cached_data",
           cacheAge: "1 hour",
-          userMessage: "Using cached calendar data. Sync will resume when connection is restored.",
+          userMessage:
+            "Using cached calendar data. Sync will resume when connection is restored.",
         },
         retry: {
           strategy: "dns_cache_refresh",
           interval: 300000, // 5 minutes
         },
-      };
+      }
 
-      expect(dnsFailure.error).toBe("ENOTFOUND");
-      expect(dnsFailure.fallback.strategy).toBe("cached_data");
-    });
+      expect(dnsFailure.error).toBe("ENOTFOUND")
+      expect(dnsFailure.fallback.strategy).toBe("cached_data")
+    })
 
     it("should implement connection pooling for reliability", () => {
       const connectionPool = {
@@ -545,12 +579,12 @@ describe("Error Recovery and Resilience", () => {
           stickySessions: false,
           failover: true,
         },
-      };
+      }
 
-      expect(connectionPool.healthy).toBeGreaterThan(connectionPool.unhealthy);
-      expect(connectionPool.healthChecks.interval).toBe(30000);
-    });
-  });
+      expect(connectionPool.healthy).toBeGreaterThan(connectionPool.unhealthy)
+      expect(connectionPool.healthChecks.interval).toBe(30000)
+    })
+  })
 
   describe("Scenario 5: Business Logic Edge Cases", () => {
     it("should handle calendar timezone complexities", () => {
@@ -558,18 +592,22 @@ describe("Error Recovery and Resilience", () => {
         userTimezone: "America/New_York",
         calendarTimezone: "Europe/London",
         eventTimezone: "Asia/Tokyo",
-        displayIssues: ["DST transitions", "timezone offset calculations", "daylight saving boundary events"],
+        displayIssues: [
+          "DST transitions",
+          "timezone offset calculations",
+          "daylight saving boundary events",
+        ],
         conversion: {
           utcTime: "2026-01-20T14:00:00Z",
           userDisplay: "2026-01-20T10:00:00-04:00", // EDT
           calendarDisplay: "2026-01-20T14:00:00Z", // UTC
           eventDisplay: "2026-01-20T23:00:00+09:00", // JST
         },
-      };
+      }
 
-      expect(timezoneIssues.displayIssues).toHaveLength(3);
-      expect(timezoneIssues.conversion.userDisplay).toContain("-04:00");
-    });
+      expect(timezoneIssues.displayIssues).toHaveLength(3)
+      expect(timezoneIssues.conversion.userDisplay).toContain("-04:00")
+    })
 
     it("should handle recurring event complexities", () => {
       const recurringComplexities = {
@@ -596,11 +634,11 @@ describe("Error Recovery and Resilience", () => {
           preventInfinite: true,
           validatePattern: true,
         },
-      };
+      }
 
-      expect(recurringComplexities.edgeCases).toHaveLength(3);
-      expect(recurringComplexities.validation.maxInstances).toBe(365);
-    });
+      expect(recurringComplexities.edgeCases).toHaveLength(3)
+      expect(recurringComplexities.validation.maxInstances).toBe(365)
+    })
 
     it("should handle overlapping event conflicts", () => {
       const conflictResolution = {
@@ -626,11 +664,11 @@ describe("Error Recovery and Resilience", () => {
             { start: "2026-01-20T13:00:00Z", end: "2026-01-20T14:00:00Z" },
           ],
         },
-      };
+      }
 
-      expect(conflictResolution.conflict.overlapMinutes).toBe(30);
-      expect(conflictResolution.conflict.suggestions).toHaveLength(2);
-    });
+      expect(conflictResolution.conflict.overlapMinutes).toBe(30)
+      expect(conflictResolution.conflict.suggestions).toHaveLength(2)
+    })
 
     it("should handle subscription and billing edge cases", () => {
       const billingEdgeCases = {
@@ -656,13 +694,13 @@ describe("Error Recovery and Resilience", () => {
           eligible: true,
           refundAmount: 19.99,
         },
-      };
+      }
 
-      expect(billingEdgeCases.proration.prorationAmount).toBe(12.5);
-      expect(billingEdgeCases.failedPayment.attempts).toBe(3);
-      expect(billingEdgeCases.refund.eligible).toBe(true);
-    });
-  });
+      expect(billingEdgeCases.proration.prorationAmount).toBe(12.5)
+      expect(billingEdgeCases.failedPayment.attempts).toBe(3)
+      expect(billingEdgeCases.refund.eligible).toBe(true)
+    })
+  })
 
   describe("Scenario 6: User Data Protection and Privacy", () => {
     it("should handle GDPR data deletion requests", () => {
@@ -671,7 +709,13 @@ describe("Error Recovery and Resilience", () => {
         requestType: "right_to_be_forgotten",
         requestedAt: "2026-01-20T10:00:00Z",
         complianceDeadline: "2026-01-27T10:00:00Z", // 7 days
-        dataToDelete: ["user_profile", "conversation_history", "calendar_events", "payment_history", "analytics_data"],
+        dataToDelete: [
+          "user_profile",
+          "conversation_history",
+          "calendar_events",
+          "payment_history",
+          "analytics_data",
+        ],
         retention: {
           legalHold: false,
           backupRetention: "90_days",
@@ -682,11 +726,11 @@ describe("Error Recovery and Resilience", () => {
           identityVerified: true,
           consentWithdrawn: true,
         },
-      };
+      }
 
-      expect(gdprDeletion.dataToDelete).toHaveLength(5);
-      expect(gdprDeletion.verification.emailConfirmed).toBe(true);
-    });
+      expect(gdprDeletion.dataToDelete).toHaveLength(5)
+      expect(gdprDeletion.verification.emailConfirmed).toBe(true)
+    })
 
     it("should implement data anonymization", () => {
       const dataAnonymization = {
@@ -713,12 +757,16 @@ describe("Error Recovery and Resilience", () => {
           /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Emails
           /\b\d{4} \d{4} \d{4} \d{4}\b/g, // Credit cards
         ],
-      };
+      }
 
-      expect(dataAnonymization.anonymized.email).not.toBe(dataAnonymization.original.email);
-      expect(dataAnonymization.anonymized.conversations[0].content).toContain("[REDACTED]");
-      expect(dataAnonymization.piiPatterns).toHaveLength(3);
-    });
+      expect(dataAnonymization.anonymized.email).not.toBe(
+        dataAnonymization.original.email
+      )
+      expect(dataAnonymization.anonymized.conversations[0].content).toContain(
+        "[REDACTED]"
+      )
+      expect(dataAnonymization.piiPatterns).toHaveLength(3)
+    })
 
     it("should handle data export requests", () => {
       const dataExport = {
@@ -749,11 +797,11 @@ describe("Error Recovery and Resilience", () => {
           url: "https://exports.example.com/download/123",
           expires: "2026-01-27T10:00:00Z",
         },
-      };
+      }
 
-      expect(dataExport.dataCategories).toHaveLength(3);
-      expect(dataExport.delivery.method).toBe("email");
-    });
+      expect(dataExport.dataCategories).toHaveLength(3)
+      expect(dataExport.delivery.method).toBe("email")
+    })
 
     it("should implement data breach response", () => {
       const breachResponse = {
@@ -782,10 +830,10 @@ describe("Error Recovery and Resilience", () => {
             deadline: "2026-01-21T08:00:00Z", // 24 hours
           },
         },
-      };
+      }
 
-      expect(breachResponse.incident.affectedUsers).toBe(1500);
-      expect(breachResponse.communication.affectedUsers.sent).toBe(false);
-    });
-  });
-});
+      expect(breachResponse.incident.affectedUsers).toBe(1500)
+      expect(breachResponse.communication.affectedUsers.sent).toBe(false)
+    })
+  })
+})

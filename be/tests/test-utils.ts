@@ -1,11 +1,11 @@
-import { jest } from "@jest/globals";
-import type { User } from "@supabase/supabase-js";
-import type { Request, Response } from "express";
+import { jest } from "@jest/globals"
+import type { User } from "@supabase/supabase-js"
+import type { Request, Response } from "express"
 
 // Type helper for flexible mock functions
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyFn = (...args: any[]) => any;
-const mockFn = () => jest.fn<AnyFn>();
+type AnyFn = (...args: any[]) => any
+const mockFn = () => jest.fn<AnyFn>()
 
 /**
  * Creates a mock Express Request object
@@ -20,39 +20,39 @@ export const createMockRequest = (
   query: {},
   user: undefined,
   ...overrides,
-});
+})
 
 /**
  * Creates a mock Express Response object with chainable methods
  */
 export const createMockResponse = (): {
-  res: Partial<Response>;
-  statusMock: jest.Mock<AnyFn>;
-  jsonMock: jest.Mock<AnyFn>;
-  setHeaderMock: jest.Mock<AnyFn>;
-  cookieMock: jest.Mock<AnyFn>;
+  res: Partial<Response>
+  statusMock: jest.Mock<AnyFn>
+  jsonMock: jest.Mock<AnyFn>
+  setHeaderMock: jest.Mock<AnyFn>
+  cookieMock: jest.Mock<AnyFn>
 } => {
-  const jsonMock = mockFn();
-  const setHeaderMock = mockFn();
-  const cookieMock = mockFn();
+  const jsonMock = mockFn()
+  const setHeaderMock = mockFn()
+  const cookieMock = mockFn()
   const statusMock = mockFn().mockReturnValue({
     json: jsonMock,
-  });
+  })
 
   const res: Partial<Response> = {
     status: statusMock as unknown as Response["status"],
     json: jsonMock as unknown as Response["json"],
     setHeader: setHeaderMock as unknown as Response["setHeader"],
     cookie: cookieMock as unknown as Response["cookie"],
-  };
+  }
 
-  return { res, statusMock, jsonMock, setHeaderMock, cookieMock };
-};
+  return { res, statusMock, jsonMock, setHeaderMock, cookieMock }
+}
 
 /**
  * Creates a mock NextFunction
  */
-export const createMockNext = (): jest.Mock<AnyFn> => mockFn();
+export const createMockNext = (): jest.Mock<AnyFn> => mockFn()
 
 /**
  * Creates a mock Supabase user
@@ -69,7 +69,7 @@ export const createMockUser = (overrides: Partial<User> = {}): User =>
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     ...overrides,
-  }) as User;
+  }) as User
 
 /**
  * Creates a mock admin user
@@ -79,17 +79,17 @@ export const createMockAdminUser = (overrides: Partial<User> = {}): User =>
     id: "admin-user-id",
     email: "admin@example.com",
     ...overrides,
-  });
+  })
 
 /**
  * Mock Supabase client factory
  */
 export const createMockSupabase = () => {
-  const mockSingle = mockFn().mockResolvedValue({ data: null, error: null });
+  const mockSingle = mockFn().mockResolvedValue({ data: null, error: null })
   const mockMaybeSingle = mockFn().mockResolvedValue({
     data: null,
     error: null,
-  });
+  })
   const mockSelect = mockFn().mockReturnValue({
     eq: mockFn().mockReturnValue({
       single: mockSingle,
@@ -126,13 +126,13 @@ export const createMockSupabase = () => {
     order: mockFn().mockReturnValue({
       ascending: true,
     }),
-  });
+  })
 
   const mockInsert = mockFn().mockReturnValue({
     select: mockFn().mockReturnValue({
       single: mockSingle,
     }),
-  });
+  })
 
   const mockUpdate = mockFn().mockReturnValue({
     eq: mockFn().mockReturnValue({
@@ -141,16 +141,16 @@ export const createMockSupabase = () => {
         maybeSingle: mockMaybeSingle,
       }),
     }),
-  });
+  })
 
-  const mockUpsert = mockFn().mockResolvedValue({ error: null });
+  const mockUpsert = mockFn().mockResolvedValue({ error: null })
 
   const mockFrom = mockFn().mockReturnValue({
     select: mockSelect,
     insert: mockInsert,
     update: mockUpdate,
     upsert: mockUpsert,
-  });
+  })
 
   const mockAuth = {
     getUser: mockFn().mockResolvedValue({ data: { user: null }, error: null }),
@@ -167,7 +167,7 @@ export const createMockSupabase = () => {
       data: { url: "https://accounts.google.com/oauth", provider: "google" },
       error: null,
     }),
-  };
+  }
 
   return {
     from: mockFrom,
@@ -181,8 +181,8 @@ export const createMockSupabase = () => {
       mockMaybeSingle,
       mockUpsert,
     },
-  };
-};
+  }
+}
 
 /**
  * Mock LemonSqueezy functions
@@ -225,13 +225,13 @@ export const createMockLemonSqueezy = () => ({
     data: { data: [] },
     error: null,
   }),
-});
+})
 
 /**
  * Helper to wait for async operations
  */
 export const flushPromises = () =>
-  new Promise((resolve) => setImmediate(resolve));
+  new Promise((resolve) => setImmediate(resolve))
 
 /**
  * Creates test data helpers
@@ -311,7 +311,9 @@ export const testData = {
       first_name: "Enterprise",
       last_name: "User",
       timezone: "Asia/Tokyo",
-      created_at: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
+      created_at: new Date(
+        Date.now() - 365 * 24 * 60 * 60 * 1000
+      ).toISOString(),
       onboarding_completed: true,
       subscription_status: "active",
       plan_id: "enterprise-plan",
@@ -322,10 +324,20 @@ export const testData = {
     simpleMeeting: {
       id: "event-simple-123",
       summary: "Team Standup",
-      start: { dateTime: "2026-01-20T09:00:00-05:00", timeZone: "America/New_York" },
-      end: { dateTime: "2026-01-20T09:30:00-05:00", timeZone: "America/New_York" },
+      start: {
+        dateTime: "2026-01-20T09:00:00-05:00",
+        timeZone: "America/New_York",
+      },
+      end: {
+        dateTime: "2026-01-20T09:30:00-05:00",
+        timeZone: "America/New_York",
+      },
       attendees: [
-        { email: "organizer@example.com", displayName: "Organizer", organizer: true },
+        {
+          email: "organizer@example.com",
+          displayName: "Organizer",
+          organizer: true,
+        },
         { email: "attendee1@example.com", displayName: "Attendee 1" },
       ],
       location: "Conference Room A",
@@ -338,9 +350,7 @@ export const testData = {
       start: { dateTime: "2026-01-20T14:00:00Z", timeZone: "UTC" },
       end: { dateTime: "2026-01-20T15:00:00Z", timeZone: "UTC" },
       recurrence: ["RRULE:FREQ=WEEKLY;BYDAY=MO;COUNT=10"],
-      attendees: [
-        { email: "team@example.com", displayName: "Team" },
-      ],
+      attendees: [{ email: "team@example.com", displayName: "Team" }],
       status: "confirmed",
     },
     allDayEvent: {
@@ -366,7 +376,8 @@ export const testData = {
         },
         {
           role: "assistant",
-          content: "Hello! I'm your AI calendar assistant. I can help you schedule meetings, check your availability, and manage your calendar. What would you like to do?",
+          content:
+            "Hello! I'm your AI calendar assistant. I can help you schedule meetings, check your availability, and manage your calendar. What would you like to do?",
           timestamp: "2026-01-20T10:00:01Z",
         },
       ],
@@ -391,7 +402,8 @@ export const testData = {
         },
         {
           role: "assistant",
-          content: "I'd be happy to help you schedule a presentation. What day next week works best?",
+          content:
+            "I'd be happy to help you schedule a presentation. What day next week works best?",
           timestamp: "2026-01-20T14:00:01Z",
         },
         {
@@ -401,7 +413,8 @@ export const testData = {
         },
         {
           role: "assistant",
-          content: "Great! I've scheduled the presentation for Wednesday at 2:00 PM. Would you like me to send calendar invites to the client?",
+          content:
+            "Great! I've scheduled the presentation for Wednesday at 2:00 PM. Would you like me to send calendar invites to the client?",
           timestamp: "2026-01-20T14:00:06Z",
         },
       ],
@@ -464,18 +477,20 @@ export const testData = {
     userErrors: {
       invalidEmail: "Please enter a valid email address",
       weakPassword: "Password must be at least 8 characters long",
-      calendarPermissionDenied: "Calendar access denied. Please check permissions.",
+      calendarPermissionDenied:
+        "Calendar access denied. Please check permissions.",
       eventNotFound: "The requested event could not be found",
     },
     businessLogicErrors: {
       doubleBooking: "This time slot conflicts with an existing event",
-      subscriptionExpired: "Your subscription has expired. Please renew to continue.",
+      subscriptionExpired:
+        "Your subscription has expired. Please renew to continue.",
       rateLimitExceeded: "Too many requests. Please wait before trying again.",
     },
   },
-};
+}
 
 /**
  * Export mockFn helper for use in other test files
  */
-export { mockFn, type AnyFn };
+export { mockFn, type AnyFn }

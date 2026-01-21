@@ -17,7 +17,7 @@ import {
   redirectToCreditPackCheckout,
   type PlanSlug,
   type PlanInterval,
-} from '@/services/payment.service'
+} from '@/services/payment-service'
 
 export interface PricingTier {
   id: string

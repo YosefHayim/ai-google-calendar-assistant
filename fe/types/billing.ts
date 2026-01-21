@@ -1,4 +1,4 @@
-// Billing types are now defined in @/services/payment.service
+// Billing types are now defined in @/services/payment-service
 // This file is kept for backward compatibility
 export type {
   TransactionStatus,
@@ -6,4 +6,4 @@ export type {
   PaymentMethod,
   Transaction,
   BillingOverview,
-} from '@/services/payment.service'
+} from '@/services/payment-service'

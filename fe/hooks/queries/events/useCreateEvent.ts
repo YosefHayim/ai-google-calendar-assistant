@@ -4,7 +4,7 @@ import type { ApiResponse, CalendarEvent, CreateEventRequest } from '@/types/api
 import { MutationHookOptions, useMutationWrapper } from '../useMutationWrapper'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { eventsService } from '@/services/events.service'
+import { eventsService } from '@/services/events-service'
 import { queryKeys } from '@/lib/query/keys'
 
 /**

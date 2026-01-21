@@ -43,7 +43,7 @@ const CONSTANTS = {
   PROD_PORT: 8080,
   DEFAULT_HOST: "localhost",
   WHATSAPP_API_VERSION: "v24.0",
-} as const;
+} as const
 
 // ============================================================================
 // REQUIRED SECRETS (Must be in .env file)
@@ -53,29 +53,29 @@ const REQUIRED_SECRETS = [
   "SUPABASE_SERVICE_ROLE_KEY",
   "OPEN_API_KEY",
   "GOOGLE_CLIENT_SECRET",
-] as const;
+] as const
 
 // ============================================================================
 // ENVIRONMENT SETUP
 // ============================================================================
 
-import * as path from "node:path";
-import * as dotenv from "dotenv";
+import * as path from "node:path"
+import * as dotenv from "dotenv"
 
 // Load .env file only in development - production uses injected env vars
 if (process.env.NODE_ENV !== "production") {
-  dotenv.config({ path: path.resolve(__dirname, "../.env") });
+  dotenv.config({ path: path.resolve(__dirname, "../.env") })
 }
 
 // ============================================================================
 // VALIDATION (Check for required secrets)
 // ============================================================================
 
-const missingSecrets = REQUIRED_SECRETS.filter((key) => !process.env[key]);
+const missingSecrets = REQUIRED_SECRETS.filter((key) => !process.env[key])
 if (missingSecrets.length > 0) {
   throw new Error(
     `Missing required secret environment variables: ${missingSecrets.join(", ")}`
-  );
+  )
 }
 
 // ============================================================================
@@ -90,7 +90,7 @@ if (missingSecrets.length > 0) {
  * @returns The environment variable value or undefined if not set
  */
 const getOptional = (key: string): string | undefined =>
-  process.env[key] || undefined;
+  process.env[key] || undefined
 
 /**
  * Retrieves a required environment variable value.
@@ -101,12 +101,12 @@ const getOptional = (key: string): string | undefined =>
  * @throws Error if the required environment variable is not set
  */
 const getRequired = (key: string): string => {
-  const value = process.env[key];
+  const value = process.env[key]
   if (!value) {
-    throw new Error(`Required environment variable "${key}" is not set`);
+    throw new Error(`Required environment variable "${key}" is not set`)
   }
-  return value;
-};
+  return value
+}
 
 // ============================================================================
 // ENVIRONMENT DETECTION (Based on NODE_ENV and PORT)
@@ -118,15 +118,15 @@ const getRequired = (key: string): string => {
  * - This is more reliable than NODE_ENV which may not be set
  * - Falls back to NODE_ENV if PORT matches neither
  */
-const port = Number(process.env.PORT) || CONSTANTS.DEV_PORT;
-const nodeEnv = process.env.NODE_ENV || "development";
+const port = Number(process.env.PORT) || CONSTANTS.DEV_PORT
+const nodeEnv = process.env.NODE_ENV || "development"
 
 // Port-based detection: 3000 = dev, 8080 = prod
-const isDevPort = port === CONSTANTS.DEV_PORT;
-const isProdPort = port === CONSTANTS.PROD_PORT;
+const isDevPort = port === CONSTANTS.DEV_PORT
+const isProdPort = port === CONSTANTS.PROD_PORT
 
-export const isDev = isDevPort && !isProdPort && nodeEnv !== "production";
-export const isProd = isProdPort || nodeEnv === "production" || !isDevPort;
+export const isDev = isDevPort && !isProdPort && nodeEnv !== "production"
+export const isProd = isProdPort || nodeEnv === "production" || !isDevPort
 
 // ============================================================================
 // SERVER CONFIGURATION
@@ -138,12 +138,12 @@ const server = {
   host: process.env.HOST ?? CONSTANTS.DEFAULT_HOST,
   get baseUrl(): string {
     if (isProd) {
-      return CONSTANTS.PROD_BACKEND_URL.replace(/\/+$/, "");
+      return CONSTANTS.PROD_BACKEND_URL.replace(/\/+$/, "")
     }
-    const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
-    return url.replace(/\/+$/, "");
+    const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`
+    return url.replace(/\/+$/, "")
   },
-} as const;
+} as const
 
 // ============================================================================
 // URL CONFIGURATIONS
@@ -151,19 +151,19 @@ const server = {
 
 const urls = {
   get api(): string {
-    return server.baseUrl;
+    return server.baseUrl
   },
   get authCallback(): string {
-    return `${server.baseUrl}/api/users/callback`;
+    return `${server.baseUrl}/api/users/callback`
   },
   get frontend(): string {
     if (isProd) {
-      return CONSTANTS.PROD_FRONTEND_URL;
+      return CONSTANTS.PROD_FRONTEND_URL
     }
-    const url = process.env.FRONTEND_URL ?? "http://localhost:4000";
-    return url.replace(/\/+$/, "");
+    const url = process.env.FRONTEND_URL ?? "http://localhost:4000"
+    return url.replace(/\/+$/, "")
   },
-} as const;
+} as const
 
 // ============================================================================
 // SERVICE CONFIGURATIONS
@@ -172,18 +172,18 @@ const urls = {
 const supabase = {
   url: CONSTANTS.SUPABASE_URL,
   serviceRoleKey: getRequired("SUPABASE_SERVICE_ROLE_KEY"),
-} as const;
+} as const
 
 const google = {
   clientId: CONSTANTS.GOOGLE_CLIENT_ID,
   clientSecret: getRequired("GOOGLE_CLIENT_SECRET"),
   apiKey: getOptional("GOOGLE_API_KEY"),
   aiApiKey: getOptional("GOOGLE_AI_API_KEY"),
-} as const;
+} as const
 
 const openai = {
   apiKey: getRequired("OPEN_API_KEY"),
-} as const;
+} as const
 
 const lemonSqueezy = {
   apiKey: getOptional("LEMONSQUEEZY_API_KEY"),
@@ -191,17 +191,17 @@ const lemonSqueezy = {
   webhookSecret: getOptional("LEMONSQUEEZY_WEBHOOK_SECRET"),
   variants: CONSTANTS.LEMONSQUEEZY_VARIANTS,
   get isEnabled(): boolean {
-    return !!this.apiKey;
+    return !!this.apiKey
   },
-} as const;
+} as const
 
 const posthog = {
   apiKey: CONSTANTS.POSTHOG_API_KEY,
   host: CONSTANTS.POSTHOG_HOST,
   get isEnabled(): boolean {
-    return !!this.apiKey;
+    return !!this.apiKey
   },
-} as const;
+} as const
 
 const resend = {
   apiKey: getOptional("RESEND_API_KEY"),
@@ -210,9 +210,9 @@ const resend = {
   supportEmail: CONSTANTS.SUPPORT_EMAIL,
   storeInboundAttachments: process.env.STORE_INBOUND_ATTACHMENTS === "true",
   get isEnabled(): boolean {
-    return !!this.apiKey;
+    return !!this.apiKey
   },
-} as const;
+} as const
 
 // ============================================================================
 // INTEGRATION CONFIGURATIONS
@@ -224,10 +224,10 @@ const integrations = {
     // Always use webhook mode in production for reliability with App Runner
     // Long-polling fails with auto-scaling (duplicate bots) and idle timeouts
     get useWebhook(): boolean {
-      return isProd;
+      return isProd
     },
     get isEnabled(): boolean {
-      return !!this.accessToken;
+      return !!this.accessToken
     },
   },
   whatsapp: {
@@ -238,10 +238,10 @@ const integrations = {
     appSecret: getOptional("WHATSAPP_APP_SECRET"),
     apiVersion: CONSTANTS.WHATSAPP_API_VERSION,
     get isEnabled(): boolean {
-      return !!(this.phoneNumberId && this.accessToken && this.verifyToken);
+      return !!(this.phoneNumberId && this.accessToken && this.verifyToken)
     },
     get baseUrl(): string {
-      return `https://graph.facebook.com/${this.apiVersion}`;
+      return `https://graph.facebook.com/${this.apiVersion}`
     },
     get isFullyConfigured(): boolean {
       return !!(
@@ -250,7 +250,7 @@ const integrations = {
         this.accessToken &&
         this.verifyToken &&
         this.appSecret
-      );
+      )
     },
   },
   slack: {
@@ -260,10 +260,10 @@ const integrations = {
     signingSecret: getOptional("SLACK_SIGNING_SECRET"),
     botToken: getOptional("SLACK_BOT_TOKEN"),
     get isEnabled(): boolean {
-      return !!(this.botToken && this.signingSecret);
+      return !!(this.botToken && this.signingSecret)
     },
   },
-} as const;
+} as const
 
 // ============================================================================
 // ATLASSIAN CONFIGURATIONS (Jira/Confluence - Optional)
@@ -278,7 +278,7 @@ const atlassian = {
       ?.split(",")
       .map((s) => s.trim()),
     get isEnabled(): boolean {
-      return !!(this.url && this.username && this.apiToken);
+      return !!(this.url && this.username && this.apiToken)
     },
   },
   confluence: {
@@ -286,10 +286,10 @@ const atlassian = {
     username: getOptional("CONFLUENCE_USERNAME"),
     apiToken: getOptional("CONFLUENCE_API_TOKEN"),
     get isEnabled(): boolean {
-      return !!(this.url && this.username && this.apiToken);
+      return !!(this.url && this.username && this.apiToken)
     },
   },
-} as const;
+} as const
 
 // ============================================================================
 // TESTING CONFIGURATION
@@ -337,10 +337,10 @@ export const env = {
   googleAiApiKey: google.aiApiKey,
   openAiApiKey: openai.apiKey,
   telegramAccessToken: integrations.telegram.accessToken,
-};
+}
 
 // ============================================================================
 // BACKWARDS COMPATIBILITY EXPORTS
 // ============================================================================
 
-export const REDIRECT_URI = urls.authCallback;
+export const REDIRECT_URI = urls.authCallback

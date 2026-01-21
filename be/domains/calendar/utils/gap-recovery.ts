@@ -1,5 +1,5 @@
-import { randomUUID } from "node:crypto";
-import type { calendar_v3 } from "googleapis";
+import { randomUUID } from "node:crypto"
+import type { calendar_v3 } from "googleapis"
 import type {
   DayOfWeek,
   FillGapRequest,
@@ -9,24 +9,24 @@ import type {
   GapCandidateDTO,
   GapRecoverySettings,
   InferredContext,
-} from "@/types";
-import { fetchCredentialsByEmail } from "@/domains/auth/utils/get-user-calendar-tokens";
-import { asyncHandler } from "@/lib/http/async-handlers";
-import { fetchCalendarEvents } from "./get-events";
-import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
+} from "@/types"
+import { fetchCredentialsByEmail } from "@/domains/auth/utils/get-user-calendar-tokens"
+import { asyncHandler } from "@/lib/http/async-handlers"
+import { fetchCalendarEvents } from "./get-events"
+import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init"
 import {
   getCombinedPatternsForLanguages,
   isWorkRelatedEvent,
   matchTravelPatternMultilingual,
   type TravelPatternSet,
-} from "./travel-patterns-i18n";
+} from "./travel-patterns-i18n"
 
 // =============================================================================
 // Constants
 // =============================================================================
 
-const MS_PER_MINUTE = 60 * 1000;
-const MS_PER_HOUR = 60 * MS_PER_MINUTE;
+const MS_PER_MINUTE = 60 * 1000
+const MS_PER_HOUR = 60 * MS_PER_MINUTE
 
 export const DEFAULT_GAP_RECOVERY_SETTINGS: GapRecoverySettings = {
   autoGapAnalysis: true,
@@ -39,9 +39,9 @@ export const DEFAULT_GAP_RECOVERY_SETTINGS: GapRecoverySettings = {
   excludedCalendars: [],
   eventLanguages: ["en"],
   languageSetupComplete: false,
-};
+}
 
-const DEFAULT_PATTERNS = getCombinedPatternsForLanguages(["en"]);
+const DEFAULT_PATTERNS = getCombinedPatternsForLanguages(["en"])
 
 // =============================================================================
 // Helper Functions
@@ -68,16 +68,16 @@ const DEFAULT_PATTERNS = getCombinedPatternsForLanguages(["en"]);
  * @returns Formatted duration string (e.g., "2h 30m", "45m")
  */
 function formatDuration(durationMs: number): string {
-  const hours = Math.floor(durationMs / MS_PER_HOUR);
-  const minutes = Math.floor((durationMs % MS_PER_HOUR) / MS_PER_MINUTE);
+  const hours = Math.floor(durationMs / MS_PER_HOUR)
+  const minutes = Math.floor((durationMs % MS_PER_HOUR) / MS_PER_MINUTE)
 
   if (hours > 0 && minutes > 0) {
-    return `${hours}h ${minutes}m`;
+    return `${hours}h ${minutes}m`
   }
   if (hours > 0) {
-    return `${hours}h`;
+    return `${hours}h`
   }
-  return `${minutes}m`;
+  return `${minutes}m`
 }
 
 /**
@@ -97,8 +97,8 @@ function getDayOfWeek(date: Date): DayOfWeek {
     "thursday",
     "friday",
     "saturday",
-  ];
-  return days[date.getDay()];
+  ]
+  return days[date.getDay()]
 }
 
 /**
@@ -117,7 +117,7 @@ function matchTravelPattern(
   type: "arrival" | "departure",
   patterns: TravelPatternSet = DEFAULT_PATTERNS
 ): { matched: boolean; location: string | null } {
-  return matchTravelPatternMultilingual(summary, type, patterns);
+  return matchTravelPatternMultilingual(summary, type, patterns)
 }
 
 /**
@@ -143,11 +143,11 @@ function calculateTravelSandwichConfidence(
       departureLocation === null ||
       departureLocation.toLowerCase() === "home"
     ) {
-      return 0.9;
+      return 0.9
     }
-    return 0.85;
+    return 0.85
   }
-  return 0.7;
+  return 0.7
 }
 
 /**
@@ -170,18 +170,18 @@ function detectTravelSandwich(
   followingEvent: calendar_v3.Schema$Event,
   patterns: TravelPatternSet = DEFAULT_PATTERNS
 ): InferredContext | null {
-  const precedingSummary = precedingEvent.summary || "";
-  const followingSummary = followingEvent.summary || "";
+  const precedingSummary = precedingEvent.summary || ""
+  const followingSummary = followingEvent.summary || ""
 
-  const arrival = matchTravelPattern(precedingSummary, "arrival", patterns);
-  const departure = matchTravelPattern(followingSummary, "departure", patterns);
+  const arrival = matchTravelPattern(precedingSummary, "arrival", patterns)
+  const departure = matchTravelPattern(followingSummary, "departure", patterns)
 
   if (arrival.matched && departure.matched) {
     const confidence = calculateTravelSandwichConfidence(
       arrival.location,
       departure.location
-    );
-    const location = arrival.location || precedingEvent.location || null;
+    )
+    const location = arrival.location || precedingEvent.location || null
 
     return {
       type: "travel_sandwich",
@@ -190,12 +190,12 @@ function detectTravelSandwich(
       suggestion: location
         ? `Activity at ${location}`
         : "Activity at destination",
-    };
+    }
   }
 
   // Check if arrival matches but departure doesn't (still useful context)
   if (arrival.matched) {
-    const location = arrival.location || precedingEvent.location || null;
+    const location = arrival.location || precedingEvent.location || null
     return {
       type: "travel_sandwich",
       location,
@@ -203,19 +203,19 @@ function detectTravelSandwich(
       suggestion: location
         ? `Time spent at ${location}`
         : "Time at destination",
-    };
+    }
   }
 
-  return null;
+  return null
 }
 
 type DetectWorkSessionParams = {
-  gapStart: Date;
-  gapEnd: Date;
-  precedingEvent: calendar_v3.Schema$Event;
-  followingEvent: calendar_v3.Schema$Event;
-  patterns?: TravelPatternSet;
-};
+  gapStart: Date
+  gapEnd: Date
+  precedingEvent: calendar_v3.Schema$Event
+  followingEvent: calendar_v3.Schema$Event
+  patterns?: TravelPatternSet
+}
 
 /**
  * @description Detects if a gap likely represents an untracked work session.
@@ -243,17 +243,17 @@ function detectWorkSession({
   followingEvent,
   patterns = DEFAULT_PATTERNS,
 }: DetectWorkSessionParams): InferredContext | null {
-  const startHour = gapStart.getHours();
-  const endHour = gapEnd.getHours();
+  const startHour = gapStart.getHours()
+  const endHour = gapEnd.getHours()
 
   // Work hours: 8 AM to 6 PM
-  const isWorkHours = startHour >= 8 && endHour <= 18;
+  const isWorkHours = startHour >= 8 && endHour <= 18
 
-  const precedingSummary = precedingEvent.summary || "";
-  const followingSummary = followingEvent.summary || "";
+  const precedingSummary = precedingEvent.summary || ""
+  const followingSummary = followingEvent.summary || ""
 
-  const precedingIsWork = isWorkRelatedEvent(precedingSummary, patterns);
-  const followingIsWork = isWorkRelatedEvent(followingSummary, patterns);
+  const precedingIsWork = isWorkRelatedEvent(precedingSummary, patterns)
+  const followingIsWork = isWorkRelatedEvent(followingSummary, patterns)
 
   if (isWorkHours && (precedingIsWork || followingIsWork)) {
     return {
@@ -261,10 +261,10 @@ function detectWorkSession({
       location: null,
       confidence: precedingIsWork && followingIsWork ? 0.75 : 0.55,
       suggestion: "Work session",
-    };
+    }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -281,8 +281,8 @@ function detectMealBreak(
   gapStart: Date,
   gapDurationMs: number
 ): InferredContext | null {
-  const startHour = gapStart.getHours();
-  const durationMinutes = gapDurationMs / MS_PER_MINUTE;
+  const startHour = gapStart.getHours()
+  const durationMinutes = gapDurationMs / MS_PER_MINUTE
 
   // Breakfast: 7-9 AM, 30-90 min
   // Lunch: 11 AM - 2 PM, 30-120 min
@@ -300,16 +300,16 @@ function detectMealBreak(
     (startHour >= 17 &&
       startHour <= 20 &&
       durationMinutes >= 45 &&
-      durationMinutes <= 150);
+      durationMinutes <= 150)
 
   if (isMealTime) {
-    let mealType = "Meal";
+    let mealType = "Meal"
     if (startHour >= 7 && startHour <= 9) {
-      mealType = "Breakfast";
+      mealType = "Breakfast"
     } else if (startHour >= 11 && startHour <= 14) {
-      mealType = "Lunch";
+      mealType = "Lunch"
     } else if (startHour >= 17 && startHour <= 20) {
-      mealType = "Dinner";
+      mealType = "Dinner"
     }
 
     return {
@@ -317,10 +317,10 @@ function detectMealBreak(
       location: null,
       confidence: 0.5,
       suggestion: `${mealType} break`,
-    };
+    }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -339,26 +339,26 @@ function createStandardGapContext(
   followingEvent: calendar_v3.Schema$Event,
   durationMs: number
 ): InferredContext {
-  const formattedDuration = formatDuration(durationMs);
-  const precedingSummary = precedingEvent.summary || "previous event";
-  const followingSummary = followingEvent.summary || "next event";
+  const formattedDuration = formatDuration(durationMs)
+  const precedingSummary = precedingEvent.summary || "previous event"
+  const followingSummary = followingEvent.summary || "next event"
 
   return {
     type: "standard_gap",
     location: null,
     confidence: 0.5,
     suggestion: `${formattedDuration} untracked between "${precedingSummary}" and "${followingSummary}"`,
-  };
+  }
 }
 
 type InferGapContextParams = {
-  gapStart: Date;
-  gapEnd: Date;
-  precedingEvent: calendar_v3.Schema$Event;
-  followingEvent: calendar_v3.Schema$Event;
-  durationMs: number;
-  patterns?: TravelPatternSet;
-};
+  gapStart: Date
+  gapEnd: Date
+  precedingEvent: calendar_v3.Schema$Event
+  followingEvent: calendar_v3.Schema$Event
+  durationMs: number
+  patterns?: TravelPatternSet
+}
 
 /**
  * @description Infers the most likely context for a calendar gap using multiple detection strategies.
@@ -393,9 +393,9 @@ function inferGapContext({
     precedingEvent,
     followingEvent,
     patterns
-  );
+  )
   if (travelContext && travelContext.confidence >= 0.6) {
-    return travelContext;
+    return travelContext
   }
 
   const workContext = detectWorkSession({
@@ -404,21 +404,21 @@ function inferGapContext({
     precedingEvent,
     followingEvent,
     patterns,
-  });
+  })
   if (workContext && workContext.confidence >= 0.55) {
-    return workContext;
+    return workContext
   }
 
-  const mealContext = detectMealBreak(gapStart, durationMs);
+  const mealContext = detectMealBreak(gapStart, durationMs)
   if (mealContext) {
-    return mealContext;
+    return mealContext
   }
 
   if (travelContext) {
-    return travelContext;
+    return travelContext
   }
 
-  return createStandardGapContext(precedingEvent, followingEvent, durationMs);
+  return createStandardGapContext(precedingEvent, followingEvent, durationMs)
 }
 
 /**
@@ -444,7 +444,7 @@ function createGapBoundaryEvent(
     location: event.location || null,
     calendarId,
     htmlLink: event.htmlLink || null,
-  };
+  }
 }
 
 /**
@@ -459,11 +459,11 @@ function createGapBoundaryEvent(
  * }
  */
 function getEventEndTime(event: calendar_v3.Schema$Event): Date | null {
-  const endStr = event.end?.dateTime || event.end?.date;
+  const endStr = event.end?.dateTime || event.end?.date
   if (!endStr) {
-    return null;
+    return null
   }
-  return new Date(endStr);
+  return new Date(endStr)
 }
 
 /**
@@ -478,11 +478,11 @@ function getEventEndTime(event: calendar_v3.Schema$Event): Date | null {
  * }
  */
 function getEventStartTime(event: calendar_v3.Schema$Event): Date | null {
-  const startStr = event.start?.dateTime || event.start?.date;
+  const startStr = event.start?.dateTime || event.start?.date
   if (!startStr) {
-    return null;
+    return null
   }
-  return new Date(startStr);
+  return new Date(startStr)
 }
 
 /**
@@ -507,7 +507,7 @@ function gapCandidateToDTO(gap: GapCandidate): GapCandidateDTO {
     followingEventLink: gap.followingEvent.htmlLink,
     suggestion: gap.inferredContext?.suggestion || null,
     confidence: gap.inferredContext?.confidence || 0,
-  };
+  }
 }
 
 // =============================================================================
@@ -515,13 +515,13 @@ function gapCandidateToDTO(gap: GapCandidate): GapCandidateDTO {
 // =============================================================================
 
 type AnalyzeGapsParams = {
-  email: string;
-  startDate: Date;
-  endDate: Date;
-  calendarId?: string;
-  settings?: Partial<GapRecoverySettings>;
-  options?: GapAnalysisOptions;
-};
+  email: string
+  startDate: Date
+  endDate: Date
+  calendarId?: string
+  settings?: Partial<GapRecoverySettings>
+  options?: GapAnalysisOptions
+}
 
 /**
  * @description Analyzes a user's calendar to find gaps between events that may represent untracked time.
@@ -556,18 +556,18 @@ export const analyzeGaps = asyncHandler(
       ...DEFAULT_GAP_RECOVERY_SETTINGS,
       ...settingsOverride,
       ...options?.settingsOverride,
-    };
+    }
 
-    const minGapMs = settings.minGapThreshold * MS_PER_MINUTE;
-    const maxGapMs = settings.maxGapThreshold * MS_PER_MINUTE;
+    const minGapMs = settings.minGapThreshold * MS_PER_MINUTE
+    const maxGapMs = settings.maxGapThreshold * MS_PER_MINUTE
     const patterns = getCombinedPatternsForLanguages(
       settings.eventLanguages || ["en"]
-    );
+    )
 
     // Initialize calendar client
-    const credentials = await fetchCredentialsByEmail(email);
+    const credentials = await fetchCredentialsByEmail(email)
     const calendar =
-      await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials)
 
     const listParams: calendar_v3.Params$Resource$Events$List = {
       calendarId,
@@ -576,49 +576,49 @@ export const analyzeGaps = asyncHandler(
       singleEvents: true,
       orderBy: "startTime",
       maxResults: 500,
-    };
+    }
 
-    const eventsData = await fetchCalendarEvents(calendar.events, listParams);
-    const events = eventsData.items || [];
+    const eventsData = await fetchCalendarEvents(calendar.events, listParams)
+    const events = eventsData.items || []
 
     // Filter out all-day events and sort by start time
     const timedEvents = events
       .filter((event) => event.start?.dateTime && event.end?.dateTime)
       .sort((a, b) => {
-        const aStart = getEventStartTime(a)?.getTime() || 0;
-        const bStart = getEventStartTime(b)?.getTime() || 0;
-        return aStart - bStart;
-      });
+        const aStart = getEventStartTime(a)?.getTime() || 0
+        const bStart = getEventStartTime(b)?.getTime() || 0
+        return aStart - bStart
+      })
 
     if (timedEvents.length < 2) {
-      return [];
+      return []
     }
 
-    const gaps: GapCandidate[] = [];
+    const gaps: GapCandidate[] = []
 
     // Find gaps between consecutive events
     for (let i = 0; i < timedEvents.length - 1; i++) {
-      const currentEvent = timedEvents[i];
-      const nextEvent = timedEvents[i + 1];
+      const currentEvent = timedEvents[i]
+      const nextEvent = timedEvents[i + 1]
 
-      const currentEnd = getEventEndTime(currentEvent);
-      const nextStart = getEventStartTime(nextEvent);
+      const currentEnd = getEventEndTime(currentEvent)
+      const nextStart = getEventStartTime(nextEvent)
 
       if (!(currentEnd && nextStart)) {
-        continue;
+        continue
       }
 
-      const gapDurationMs = nextStart.getTime() - currentEnd.getTime();
+      const gapDurationMs = nextStart.getTime() - currentEnd.getTime()
 
       // Skip if gap doesn't meet duration constraints
       if (gapDurationMs < minGapMs || gapDurationMs >= maxGapMs) {
-        continue;
+        continue
       }
 
       // Skip if gap is on an ignored day
-      const gapDay = getDayOfWeek(currentEnd);
+      const gapDay = getDayOfWeek(currentEnd)
       if (settings.ignoredDays.includes(gapDay)) {
-        continue;
+        continue
       }
 
       const inferredContext = inferGapContext({
@@ -628,14 +628,14 @@ export const analyzeGaps = asyncHandler(
         followingEvent: nextEvent,
         durationMs: gapDurationMs,
         patterns,
-      });
+      })
 
       // Skip if confidence is below threshold
       if (
         inferredContext &&
         inferredContext.confidence < settings.minConfidenceThreshold
       ) {
-        continue;
+        continue
       }
 
       const gap: GapCandidate = {
@@ -659,21 +659,21 @@ export const analyzeGaps = asyncHandler(
         resolution: { status: "pending" },
         detectedAt: new Date(),
         resolvedAt: null,
-      };
+      }
 
-      gaps.push(gap);
+      gaps.push(gap)
     }
 
-    return gaps;
+    return gaps
   }
-);
+)
 
 type AnalyzeGapsForUserParams = {
-  email: string;
-  lookbackDays?: number;
-  calendarId?: string;
-  settings?: Partial<GapRecoverySettings>;
-};
+  email: string
+  lookbackDays?: number
+  calendarId?: string
+  settings?: Partial<GapRecoverySettings>
+}
 
 /**
  * @description High-level function to analyze gaps for a user over a specified lookback period.
@@ -697,9 +697,9 @@ export const analyzeGapsForUser = asyncHandler(
     calendarId = "primary",
     settings,
   }: AnalyzeGapsForUserParams): Promise<GapCandidateDTO[]> => {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - lookbackDays);
+    const endDate = new Date()
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - lookbackDays)
 
     const gaps = await analyzeGaps({
       email,
@@ -707,20 +707,20 @@ export const analyzeGapsForUser = asyncHandler(
       endDate,
       calendarId,
       settings,
-    });
+    })
 
-    return gaps.map(gapCandidateToDTO);
+    return gaps.map(gapCandidateToDTO)
   }
-);
+)
 
 type FillGapParams = {
-  email: string;
-  gapId: string;
-  gapStart: Date;
-  gapEnd: Date;
-  calendarId: string;
-  eventDetails: FillGapRequest;
-};
+  email: string
+  gapId: string
+  gapStart: Date
+  gapEnd: Date
+  calendarId: string
+  eventDetails: FillGapRequest
+}
 
 /**
  * @description Creates a new calendar event to fill a detected gap with user-specified activity.
@@ -751,9 +751,9 @@ export const fillGap = asyncHandler(
     calendarId,
     eventDetails,
   }: FillGapParams): Promise<{ success: boolean; eventId?: string }> => {
-    const credentials = await fetchCredentialsByEmail(email);
+    const credentials = await fetchCredentialsByEmail(email)
     const calendar =
-      await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials)
 
     const event: calendar_v3.Schema$Event = {
       summary: eventDetails.summary,
@@ -765,19 +765,19 @@ export const fillGap = asyncHandler(
       end: {
         dateTime: gapEnd.toISOString(),
       },
-    };
+    }
 
     const response = await calendar.events.insert({
       calendarId: eventDetails.calendarId || calendarId,
       requestBody: event,
-    });
+    })
 
     return {
       success: true,
       eventId: response.data.id || undefined,
-    };
+    }
   }
-);
+)
 
 /**
  * @description Formats an array of gap candidates into a human-readable string for display.
@@ -796,50 +796,50 @@ export const fillGap = asyncHandler(
  */
 export const formatGapsForDisplay = (gaps: GapCandidateDTO[]): string => {
   if (gaps.length === 0) {
-    return "No gaps found in your calendar for the specified period.";
+    return "No gaps found in your calendar for the specified period."
   }
 
-  const lines = ["I noticed some gaps in your calendar:\n"];
+  const lines = ["I noticed some gaps in your calendar:\n"]
 
   gaps.forEach((gap, index) => {
-    const date = new Date(gap.start);
+    const date = new Date(gap.start)
     const dateStr = date.toLocaleDateString("en-US", {
       weekday: "long",
       month: "short",
       day: "numeric",
-    });
+    })
     const startTime = date.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
-    });
+    })
     const endTime = new Date(gap.end).toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
-    });
+    })
 
     lines.push(
       `${index + 1}. **${dateStr}** | ${startTime} - ${endTime} (${gap.durationFormatted})`
-    );
+    )
     lines.push(
       `   Between: "${gap.precedingEventSummary}" -> "${gap.followingEventSummary}"`
-    );
+    )
 
     if (gap.suggestion && gap.confidence >= 0.5) {
-      lines.push(`   Suggested: ${gap.suggestion}`);
+      lines.push(`   Suggested: ${gap.suggestion}`)
     }
 
-    lines.push("");
-  });
+    lines.push("")
+  })
 
-  lines.push("What would you like to do?");
+  lines.push("What would you like to do?")
   lines.push(
     '- Reply with a number + description to fill (e.g., "1 Working on project")'
-  );
-  lines.push('- Reply "skip [number]" to ignore a specific gap');
-  lines.push('- Reply "skip all" to dismiss all gaps');
+  )
+  lines.push('- Reply "skip [number]" to ignore a specific gap')
+  lines.push('- Reply "skip all" to dismiss all gaps')
 
-  return lines.join("\n");
-};
+  return lines.join("\n")
+}
 
 // Export types for use elsewhere
-export type { AnalyzeGapsParams, AnalyzeGapsForUserParams, FillGapParams };
+export type { AnalyzeGapsParams, AnalyzeGapsForUserParams, FillGapParams }

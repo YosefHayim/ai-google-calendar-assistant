@@ -1,8 +1,8 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { featureFlagsService } from '@/services/feature-flags.service'
-import type { FeatureFlag, CreateFeatureFlagInput, UpdateFeatureFlagInput } from '@/services/feature-flags.service'
+import { featureFlagsService } from '@/services/feature-flags-service'
+import type { FeatureFlag, CreateFeatureFlagInput, UpdateFeatureFlagInput } from '@/services/feature-flags-service'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
 export const featureFlagKeys = {

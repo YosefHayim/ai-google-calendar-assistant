@@ -1,18 +1,18 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const calendarIdSchema = z.object({
   calendarId: z
     .string()
     .min(1, "Calendar ID is required")
     .max(500, "Calendar ID must be less than 500 characters"),
-});
+})
 
 export const eventIdParamSchema = z.object({
   id: z
     .string()
     .min(1, "Event ID is required")
     .max(500, "Event ID must be less than 500 characters"),
-});
+})
 
 export const createEventSchema = z.object({
   summary: z
@@ -69,4 +69,4 @@ export const createEventSchema = z.object({
     })
     .optional(),
   calendarId: z.string().max(500).optional(),
-});
+})

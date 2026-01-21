@@ -90,11 +90,17 @@ export const initializeRoutes = (app: Express) => {
           activeConnections: getActiveConnectionCount(),
         },
         telegram: {
-          status: getServiceStatus(getBot(), env.integrations.telegram.isEnabled),
+          status: getServiceStatus(
+            getBot(),
+            env.integrations.telegram.isEnabled
+          ),
           mode: env.integrations.telegram.useWebhook ? "webhook" : "polling",
         },
         slack: {
-          status: getServiceStatus(getSlackReceiver(), env.integrations.slack.isEnabled),
+          status: getServiceStatus(
+            getSlackReceiver(),
+            env.integrations.slack.isEnabled
+          ),
           mode: "http",
         },
       },

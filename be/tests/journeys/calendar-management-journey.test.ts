@@ -105,7 +105,7 @@ describe("Calendar Management Journey", () => {
 
   describe("Scenario 1: Viewing Calendar Events", () => {
     it("should display today's events in chronological order", async () => {
-      const today = new Date().toISOString().split('T')[0]
+      const today = new Date().toISOString().split("T")[0]
       const events = await mockCalendarApi.events.list({
         calendarId: "primary",
         timeMin: `${today}T00:00:00Z`,
@@ -238,7 +238,11 @@ describe("Calendar Management Journey", () => {
       const invalidEvents = [
         { summary: "", start: {}, end: {} }, // Missing required fields
         { summary: "Test", start: { dateTime: "invalid" }, end: {} }, // Invalid datetime
-        { summary: "Test", start: {}, end: { dateTime: "2026-01-20T10:00:00Z" } }, // End before start
+        {
+          summary: "Test",
+          start: {},
+          end: { dateTime: "2026-01-20T10:00:00Z" },
+        }, // End before start
       ]
 
       invalidEvents.forEach((event) => {
@@ -518,12 +522,15 @@ describe("Calendar Management Journey", () => {
         eventId: "event-123",
         eventTitle: "Important Client Meeting",
         requiresConfirmation: true,
-        confirmationMessage: "Are you sure you want to delete 'Important Client Meeting'? This action cannot be undone.",
+        confirmationMessage:
+          "Are you sure you want to delete 'Important Client Meeting'? This action cannot be undone.",
         alternatives: ["Edit event instead", "Move to different time"],
       }
 
       expect(deleteConfirmation.requiresConfirmation).toBe(true)
-      expect(deleteConfirmation.confirmationMessage).toContain("cannot be undone")
+      expect(deleteConfirmation.confirmationMessage).toContain(
+        "cannot be undone"
+      )
     })
 
     it("should delete single event instance", async () => {

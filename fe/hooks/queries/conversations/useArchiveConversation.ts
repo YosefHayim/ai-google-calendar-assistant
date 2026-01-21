@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import type { MutationHookOptions } from '../useMutationWrapper'
-import { archiveConversation } from '@/services/chatService'
+import { archiveConversation } from '@/services/chat-service'
 import { queryKeys } from '@/lib/query'
 
 /**

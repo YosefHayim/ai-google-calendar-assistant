@@ -81,7 +81,11 @@ describe("Gap Analysis Journey", () => {
           duration: 120,
           calendarIds: ["primary", "work@group.calendar.google.com"],
           score: 95,
-          reasons: ["End of day", "Both calendars free", "Within working hours"],
+          reasons: [
+            "End of day",
+            "Both calendars free",
+            "Within working hours",
+          ],
         },
       ]
 
@@ -231,7 +235,9 @@ describe("Gap Analysis Journey", () => {
         ],
       }
 
-      expect(patternBasedSuggestions.patterns.preferredMeetingDays).toHaveLength(3)
+      expect(
+        patternBasedSuggestions.patterns.preferredMeetingDays
+      ).toHaveLength(3)
       expect(patternBasedSuggestions.suggestions[0].score).toBe(95)
       expect(patternBasedSuggestions.suggestions[1].reasons).toHaveLength(4)
     })
@@ -245,19 +251,31 @@ describe("Gap Analysis Journey", () => {
           {
             email: "organizer@example.com",
             availability: "high",
-            workingHours: { start: "09:00", end: "17:00", timezone: "America/New_York" },
+            workingHours: {
+              start: "09:00",
+              end: "17:00",
+              timezone: "America/New_York",
+            },
             preferredTimes: ["10:00", "14:00"],
           },
           {
             email: "participant1@example.com",
             availability: "medium",
-            workingHours: { start: "08:00", end: "16:00", timezone: "America/Los_Angeles" },
+            workingHours: {
+              start: "08:00",
+              end: "16:00",
+              timezone: "America/Los_Angeles",
+            },
             preferredTimes: ["13:00", "15:00"],
           },
           {
             email: "participant2@example.com",
             availability: "low",
-            workingHours: { start: "10:00", end: "18:00", timezone: "Europe/London" },
+            workingHours: {
+              start: "10:00",
+              end: "18:00",
+              timezone: "Europe/London",
+            },
             preferredTimes: ["14:00"],
           },
         ],
@@ -283,7 +301,9 @@ describe("Gap Analysis Journey", () => {
 
       expect(participantAnalysis.participants).toHaveLength(3)
       expect(participantAnalysis.optimalTimeSlots[0].score).toBe(88)
-      expect(participantAnalysis.optimalTimeSlots[0].participantCoverage).toBe(100)
+      expect(participantAnalysis.optimalTimeSlots[0].participantCoverage).toBe(
+        100
+      )
     })
 
     it("should validate meeting duration optimization", () => {
@@ -334,13 +354,16 @@ describe("Gap Analysis Journey", () => {
       }
 
       expect(durationOptimization.suggestedDurations[0].score).toBe(92)
-      expect(durationOptimization.contextAnalysis.historicalDurations.average).toBe(55)
+      expect(
+        durationOptimization.contextAnalysis.historicalDurations.average
+      ).toBe(55)
     })
 
     it("should validate AI-powered scheduling recommendations", () => {
       const aiSchedulingRecommendation = {
         userId: "user-123",
-        meetingRequest: "Schedule a 1-hour strategy meeting with the team next week",
+        meetingRequest:
+          "Schedule a 1-hour strategy meeting with the team next week",
         analysis: {
           intent: "schedule_meeting",
           meetingType: "strategy_discussion",
@@ -383,7 +406,9 @@ describe("Gap Analysis Journey", () => {
 
       expect(aiSchedulingRecommendation.recommendations[0].rank).toBe(1)
       expect(aiSchedulingRecommendation.recommendations[0].score).toBe(96)
-      expect(aiSchedulingRecommendation.recommendations[0].reasons).toHaveLength(5)
+      expect(
+        aiSchedulingRecommendation.recommendations[0].reasons
+      ).toHaveLength(5)
       expect(aiSchedulingRecommendation.metadata.calendarsAnalyzed).toBe(3)
     })
   })
@@ -397,30 +422,35 @@ describe("Gap Analysis Journey", () => {
           {
             type: "productivity_pattern",
             title: "Peak Productivity Hours",
-            description: "You have the most available time between 10:00 AM and 12:00 PM",
+            description:
+              "You have the most available time between 10:00 AM and 12:00 PM",
             data: {
               peakHours: ["10:00-12:00"],
               utilizationRate: 35, // percentage
               optimalMeetingTime: "10:30",
             },
-            recommendation: "Schedule important meetings during your peak availability hours",
+            recommendation:
+              "Schedule important meetings during your peak availability hours",
           },
           {
             type: "calendar_health",
             title: "Calendar Fragmentation",
-            description: "Your calendar shows moderate fragmentation with 12 gaps over 30 days",
+            description:
+              "Your calendar shows moderate fragmentation with 12 gaps over 30 days",
             data: {
               totalGaps: 12,
               averageGapDuration: 95, // minutes
               fragmentationScore: 72, // out of 100
               healthStatus: "moderate",
             },
-            recommendation: "Consider batching similar meetings to reduce context switching",
+            recommendation:
+              "Consider batching similar meetings to reduce context switching",
           },
           {
             type: "meeting_pattern",
             title: "Meeting Duration Trends",
-            description: "Your meetings average 67 minutes, with most falling between 60-90 minutes",
+            description:
+              "Your meetings average 67 minutes, with most falling between 60-90 minutes",
             data: {
               averageDuration: 67,
               commonDurations: [30, 60, 90],
@@ -431,7 +461,8 @@ describe("Gap Analysis Journey", () => {
                 "90min+": 15,
               },
             },
-            recommendation: "Consider standardizing meeting durations for better planning",
+            recommendation:
+              "Consider standardizing meeting durations for better planning",
           },
         ],
         trends: {
@@ -535,7 +566,8 @@ describe("Gap Analysis Journey", () => {
           recommendations: [
             {
               priority: "high",
-              recommendation: "Schedule team meetings during peak availability hours",
+              recommendation:
+                "Schedule team meetings during peak availability hours",
               expectedBenefit: "25% better attendance",
               implementationEffort: "low",
             },
@@ -595,8 +627,12 @@ describe("Gap Analysis Journey", () => {
 
       expect(multiCalendarAnalysis.calendars).toHaveLength(3)
       expect(multiCalendarAnalysis.crossCalendarGaps).toHaveLength(2)
-      expect(multiCalendarAnalysis.crossCalendarGaps[0].calendars).toHaveLength(2)
-      expect(multiCalendarAnalysis.calendarPreferences.crossCalendarScheduling).toBe(true)
+      expect(multiCalendarAnalysis.crossCalendarGaps[0].calendars).toHaveLength(
+        2
+      )
+      expect(
+        multiCalendarAnalysis.calendarPreferences.crossCalendarScheduling
+      ).toBe(true)
     })
 
     it("should validate gap analysis with meeting preferences", () => {
@@ -643,7 +679,9 @@ describe("Gap Analysis Journey", () => {
         ],
       }
 
-      expect(preferenceBasedAnalysis.meetingPreferences.preferredDurations).toHaveLength(3)
+      expect(
+        preferenceBasedAnalysis.meetingPreferences.preferredDurations
+      ).toHaveLength(3)
       expect(preferenceBasedAnalysis.gapScoring[0].finalScore).toBe(106)
       expect(preferenceBasedAnalysis.gapScoring[1].meetingType).toBe("client")
     })
@@ -686,10 +724,18 @@ describe("Gap Analysis Journey", () => {
         },
       }
 
-      expect(historicalGapAnalysis.patterns.weeklyRhythm.monday.utilization).toBe(85)
-      expect(historicalGapAnalysis.patterns.meetingTypeDistribution["1:1"].count).toBe(45)
-      expect(historicalGapAnalysis.predictions.optimalMeetingDays).toHaveLength(2)
-      expect(historicalGapAnalysis.predictions.suggestedMeetingLimits.monday).toBe(4)
+      expect(
+        historicalGapAnalysis.patterns.weeklyRhythm.monday.utilization
+      ).toBe(85)
+      expect(
+        historicalGapAnalysis.patterns.meetingTypeDistribution["1:1"].count
+      ).toBe(45)
+      expect(historicalGapAnalysis.predictions.optimalMeetingDays).toHaveLength(
+        2
+      )
+      expect(
+        historicalGapAnalysis.predictions.suggestedMeetingLimits.monday
+      ).toBe(4)
     })
   })
 })

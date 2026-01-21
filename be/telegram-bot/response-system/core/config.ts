@@ -3,7 +3,7 @@
  * Default settings for the response rendering system
  */
 
-import type { ResponseConfig } from "./types";
+import type { ResponseConfig } from "./types"
 
 /**
  * Default configuration for the response system.
@@ -21,7 +21,7 @@ export const defaultConfig: ResponseConfig = {
 
   /** Always auto-escape HTML in user content */
   autoEscapeHtml: true,
-};
+}
 
 /**
  * Merge partial config with defaults
@@ -31,13 +31,13 @@ export const defaultConfig: ResponseConfig = {
  */
 export function mergeConfig(partial?: Partial<ResponseConfig>): ResponseConfig {
   if (!partial) {
-    return { ...defaultConfig };
+    return { ...defaultConfig }
   }
 
   return {
     ...defaultConfig,
     ...partial,
-  };
+  }
 }
 
 /**
@@ -53,7 +53,7 @@ export const TYPE_EMOJIS = {
   notification: "🔔",
   confirmation: "❓",
   help: "🤖",
-} as const;
+} as const
 
 /**
  * Emoji mappings for minimal style
@@ -68,4 +68,4 @@ export const MINIMAL_EMOJIS = {
   notification: "•",
   confirmation: "?",
   help: "?",
-} as const;
+} as const

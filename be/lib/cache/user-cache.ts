@@ -1,51 +1,51 @@
-import { isRedisConnected, redisClient } from "@/config";
-import { logger } from "@/lib/logger";
+import { isRedisConnected, redisClient } from "@/config"
+import { logger } from "@/lib/logger"
 
 // Cache prefixes
-const USER_PROFILE_PREFIX = "user:profile";
-const USER_CONVERSATIONS_PREFIX = "user:conversations";
+const USER_PROFILE_PREFIX = "user:profile"
+const USER_CONVERSATIONS_PREFIX = "user:conversations"
 
 // TTLs
-const USER_PROFILE_TTL_SECONDS = 10 * 60; // 10 minutes - profile data changes infrequently
-const CONVERSATIONS_TTL_SECONDS = 60; // 1 minute - sidebar can tolerate slight staleness
+const USER_PROFILE_TTL_SECONDS = 10 * 60 // 10 minutes - profile data changes infrequently
+const CONVERSATIONS_TTL_SECONDS = 60 // 1 minute - sidebar can tolerate slight staleness
 
 // Types
 export type CachedUserProfile = {
-  id: string;
-  email: string;
-  phone?: string | null;
-  first_name?: string | null;
-  last_name?: string | null;
-  avatar_url?: string | null;
-  role?: string | null;
-  created_at?: string;
-  updated_at?: string;
-  cachedAt: string;
-};
+  id: string
+  email: string
+  phone?: string | null
+  first_name?: string | null
+  last_name?: string | null
+  avatar_url?: string | null
+  role?: string | null
+  created_at?: string
+  updated_at?: string
+  cachedAt: string
+}
 
 export type ConversationListItem = {
-  id: string;
-  title: string;
-  messageCount: number;
-  lastUpdated: string;
-  createdAt: string;
-  pinned: boolean;
-  source?: string;
-};
+  id: string
+  title: string
+  messageCount: number
+  lastUpdated: string
+  createdAt: string
+  pinned: boolean
+  source?: string
+}
 
 export type CachedConversations = {
-  conversations: ConversationListItem[];
-  cachedAt: string;
+  conversations: ConversationListItem[]
+  cachedAt: string
   pagination: {
-    limit: number;
-    offset: number;
-    search?: string;
-  };
-};
+    limit: number
+    offset: number
+    search?: string
+  }
+}
 
 // Key generators
 function getUserProfileKey(userId: string): string {
-  return `${USER_PROFILE_PREFIX}:${userId}`;
+  return `${USER_PROFILE_PREFIX}:${userId}`
 }
 
 function getConversationsKey(
@@ -54,8 +54,8 @@ function getConversationsKey(
   offset: number,
   search?: string
 ): string {
-  const searchPart = search ? `:search:${search}` : "";
-  return `${USER_CONVERSATIONS_PREFIX}:${userId}:${limit}:${offset}${searchPart}`;
+  const searchPart = search ? `:search:${search}` : ""
+  return `${USER_CONVERSATIONS_PREFIX}:${userId}:${limit}:${offset}${searchPart}`
 }
 
 // ============================================================================
@@ -71,23 +71,23 @@ export async function getCachedUserProfile(
   userId: string
 ): Promise<CachedUserProfile | null> {
   if (!isRedisConnected()) {
-    return null;
+    return null
   }
 
   try {
-    const key = getUserProfileKey(userId);
-    const cached = await redisClient.get(key);
+    const key = getUserProfileKey(userId)
+    const cached = await redisClient.get(key)
 
     if (cached) {
-      logger.debug(`User profile cache hit for ${userId}`);
-      return JSON.parse(cached) as CachedUserProfile;
+      logger.debug(`User profile cache hit for ${userId}`)
+      return JSON.parse(cached) as CachedUserProfile
     }
 
-    logger.debug(`User profile cache miss for ${userId}`);
-    return null;
+    logger.debug(`User profile cache miss for ${userId}`)
+    return null
   } catch (error) {
-    logger.error(`User profile cache: Error reading from Redis: ${error}`);
-    return null;
+    logger.error(`User profile cache: Error reading from Redis: ${error}`)
+    return null
   }
 }
 
@@ -102,25 +102,21 @@ export async function setCachedUserProfile(
   profile: Omit<CachedUserProfile, "cachedAt">
 ): Promise<void> {
   if (!isRedisConnected()) {
-    return;
+    return
   }
 
   try {
-    const key = getUserProfileKey(userId);
+    const key = getUserProfileKey(userId)
     const data: CachedUserProfile = {
       ...profile,
       cachedAt: new Date().toISOString(),
-    };
-    await redisClient.setex(
-      key,
-      USER_PROFILE_TTL_SECONDS,
-      JSON.stringify(data)
-    );
+    }
+    await redisClient.setex(key, USER_PROFILE_TTL_SECONDS, JSON.stringify(data))
     logger.debug(
       `User profile cached for ${userId} (TTL: ${USER_PROFILE_TTL_SECONDS}s)`
-    );
+    )
   } catch (error) {
-    logger.error(`User profile cache: Error writing to Redis: ${error}`);
+    logger.error(`User profile cache: Error writing to Redis: ${error}`)
   }
 }
 
@@ -133,15 +129,15 @@ export async function invalidateUserProfileCache(
   userId: string
 ): Promise<void> {
   if (!isRedisConnected()) {
-    return;
+    return
   }
 
   try {
-    const key = getUserProfileKey(userId);
-    await redisClient.del(key);
-    logger.debug(`User profile cache invalidated for ${userId}`);
+    const key = getUserProfileKey(userId)
+    await redisClient.del(key)
+    logger.debug(`User profile cache invalidated for ${userId}`)
   } catch (error) {
-    logger.error(`User profile cache: Error invalidating: ${error}`);
+    logger.error(`User profile cache: Error invalidating: ${error}`)
   }
 }
 
@@ -164,23 +160,23 @@ export async function getCachedConversations(
   search?: string
 ): Promise<CachedConversations | null> {
   if (!isRedisConnected()) {
-    return null;
+    return null
   }
 
   try {
-    const key = getConversationsKey(userId, limit, offset, search);
-    const cached = await redisClient.get(key);
+    const key = getConversationsKey(userId, limit, offset, search)
+    const cached = await redisClient.get(key)
 
     if (cached) {
-      logger.debug(`Conversations cache hit for ${userId}`);
-      return JSON.parse(cached) as CachedConversations;
+      logger.debug(`Conversations cache hit for ${userId}`)
+      return JSON.parse(cached) as CachedConversations
     }
 
-    logger.debug(`Conversations cache miss for ${userId}`);
-    return null;
+    logger.debug(`Conversations cache miss for ${userId}`)
+    return null
   } catch (error) {
-    logger.error(`Conversations cache: Error reading from Redis: ${error}`);
-    return null;
+    logger.error(`Conversations cache: Error reading from Redis: ${error}`)
+    return null
   }
 }
 
@@ -201,26 +197,26 @@ export async function setCachedConversations(
   search?: string
 ): Promise<void> {
   if (!isRedisConnected()) {
-    return;
+    return
   }
 
   try {
-    const key = getConversationsKey(userId, limit, offset, search);
+    const key = getConversationsKey(userId, limit, offset, search)
     const data: CachedConversations = {
       conversations,
       cachedAt: new Date().toISOString(),
       pagination: { limit, offset, search },
-    };
+    }
     await redisClient.setex(
       key,
       CONVERSATIONS_TTL_SECONDS,
       JSON.stringify(data)
-    );
+    )
     logger.debug(
       `Conversations cached for ${userId} (TTL: ${CONVERSATIONS_TTL_SECONDS}s)`
-    );
+    )
   } catch (error) {
-    logger.error(`Conversations cache: Error writing to Redis: ${error}`);
+    logger.error(`Conversations cache: Error writing to Redis: ${error}`)
   }
 }
 
@@ -235,14 +231,14 @@ export async function invalidateConversationsCache(
   userId: string
 ): Promise<void> {
   if (!isRedisConnected()) {
-    return;
+    return
   }
 
   try {
     // Use SCAN to find all matching keys (safer than KEYS in production)
-    const pattern = `${USER_CONVERSATIONS_PREFIX}:${userId}:*`;
-    let cursor = "0";
-    const keysToDelete: string[] = [];
+    const pattern = `${USER_CONVERSATIONS_PREFIX}:${userId}:*`
+    let cursor = "0"
+    const keysToDelete: string[] = []
 
     do {
       const [newCursor, keys] = await redisClient.scan(
@@ -251,19 +247,19 @@ export async function invalidateConversationsCache(
         pattern,
         "COUNT",
         100
-      );
-      cursor = newCursor;
-      keysToDelete.push(...keys);
-    } while (cursor !== "0");
+      )
+      cursor = newCursor
+      keysToDelete.push(...keys)
+    } while (cursor !== "0")
 
     if (keysToDelete.length > 0) {
-      await redisClient.del(...keysToDelete);
+      await redisClient.del(...keysToDelete)
       logger.debug(
         `Conversations cache invalidated for ${userId} (${keysToDelete.length} keys)`
-      );
+      )
     }
   } catch (error) {
-    logger.error(`Conversations cache: Error invalidating: ${error}`);
+    logger.error(`Conversations cache: Error invalidating: ${error}`)
   }
 }
 
@@ -277,5 +273,5 @@ export async function invalidateAllUserCache(userId: string): Promise<void> {
   await Promise.all([
     invalidateUserProfileCache(userId),
     invalidateConversationsCache(userId),
-  ]);
+  ])
 }

@@ -3,7 +3,7 @@
 import type { ApiResponse, AuthData } from '@/types/api'
 import { MutationHookOptions, useMutationWrapper } from '../useMutationWrapper'
 
-import { authService } from '@/services/auth.service'
+import { authService } from '@/services/auth-service'
 import { useMutation } from '@tanstack/react-query'
 
 interface SignUpVariables {

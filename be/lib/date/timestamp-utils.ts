@@ -1,4 +1,4 @@
-import { formatISO, parseISO } from "date-fns";
+import { formatISO, parseISO } from "date-fns"
 
 /**
  * @description Converts an ISO 8601 date string to Unix timestamp in milliseconds.
@@ -19,10 +19,10 @@ export const isoToMs = (
   isoString: string | null | undefined
 ): number | null => {
   if (!isoString) {
-    return null;
+    return null
   }
-  return parseISO(isoString).getTime();
-};
+  return parseISO(isoString).getTime()
+}
 
 /**
  * @description Converts a Unix timestamp in milliseconds to an ISO 8601 formatted string.
@@ -33,7 +33,7 @@ export const isoToMs = (
  * const iso = msToIso(1768245000000)
  * // Returns: "2026-01-12T14:30:00+00:00"
  */
-export const msToIso = (ms: number): string => formatISO(new Date(ms));
+export const msToIso = (ms: number): string => formatISO(new Date(ms))
 
 /**
  * @description Returns the current date and time as an ISO 8601 formatted string.
@@ -43,7 +43,7 @@ export const msToIso = (ms: number): string => formatISO(new Date(ms));
  * const currentIso = nowIso()
  * // Returns: "2026-01-12T10:15:30+00:00" (example output)
  */
-export const nowIso = (): string => formatISO(new Date());
+export const nowIso = (): string => formatISO(new Date())
 
 /**
  * @description Returns the current Unix timestamp in milliseconds.
@@ -54,4 +54,4 @@ export const nowIso = (): string => formatISO(new Date());
  * const currentMs = nowMs()
  * // Returns: 1736676930000 (example output)
  */
-export const nowMs = (): number => Date.now();
+export const nowMs = (): number => Date.now()

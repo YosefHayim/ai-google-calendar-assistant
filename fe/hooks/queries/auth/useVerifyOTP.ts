@@ -4,7 +4,7 @@ import type { ApiResponse, AuthData } from '@/types/api'
 import { MutationHookOptions, useMutationWrapper } from '../useMutationWrapper'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { authService } from '@/services/auth.service'
+import { authService } from '@/services/auth-service'
 import { queryKeys } from '@/lib/query/keys'
 
 interface VerifyOTPVariables {

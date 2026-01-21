@@ -24,5 +24,11 @@
     "strictNullChecks": true
   },
   "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": ["node_modules", "dist", "tests/**/*", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }

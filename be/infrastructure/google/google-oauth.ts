@@ -1,5 +1,5 @@
-import { google } from "googleapis";
-import { env, REDIRECT_URI } from "@/config/env";
+import { google } from "googleapis"
+import { env, REDIRECT_URI } from "@/config/env"
 
 /**
  * Google OAuth client
@@ -10,7 +10,7 @@ export const OAUTH2CLIENT = new google.auth.OAuth2(
   env.googleClientId,
   env.googleClientSecret,
   REDIRECT_URI
-);
+)
 
 /**
  * Google Calendar client
@@ -20,4 +20,4 @@ export const OAUTH2CLIENT = new google.auth.OAuth2(
 export const CALENDAR = google.calendar({
   version: "v3",
   auth: OAUTH2CLIENT,
-});
+})

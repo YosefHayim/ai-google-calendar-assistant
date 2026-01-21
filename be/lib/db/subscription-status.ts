@@ -15,10 +15,10 @@ export const SUBSCRIPTION_STATUSES = {
   PAUSED: "paused",
   CANCELLED: "cancelled",
   EXPIRED: "expired",
-} as const;
+} as const
 
 export type SubscriptionStatus =
-  (typeof SUBSCRIPTION_STATUSES)[keyof typeof SUBSCRIPTION_STATUSES];
+  (typeof SUBSCRIPTION_STATUSES)[keyof typeof SUBSCRIPTION_STATUSES]
 
 /**
  * Statuses that indicate an active/valid subscription
@@ -28,7 +28,7 @@ export const ACTIVE_SUBSCRIPTION_STATUSES = [
   SUBSCRIPTION_STATUSES.ACTIVE,
   SUBSCRIPTION_STATUSES.TRIALING,
   SUBSCRIPTION_STATUSES.PAST_DUE,
-] as const;
+] as const
 
 /**
  * Statuses that indicate a subscription that can be modified
@@ -38,7 +38,7 @@ export const MODIFIABLE_SUBSCRIPTION_STATUSES = [
   SUBSCRIPTION_STATUSES.ACTIVE,
   SUBSCRIPTION_STATUSES.TRIALING,
   SUBSCRIPTION_STATUSES.PAST_DUE,
-] as const;
+] as const
 
 /**
  * Statuses that include paused subscriptions
@@ -49,7 +49,7 @@ export const VALID_SUBSCRIPTION_STATUSES = [
   SUBSCRIPTION_STATUSES.TRIALING,
   SUBSCRIPTION_STATUSES.PAST_DUE,
   SUBSCRIPTION_STATUSES.PAUSED,
-] as const;
+] as const
 
 /**
  * Statuses that indicate a subscription is no longer active
@@ -57,7 +57,7 @@ export const VALID_SUBSCRIPTION_STATUSES = [
 export const INACTIVE_SUBSCRIPTION_STATUSES = [
   SUBSCRIPTION_STATUSES.CANCELLED,
   SUBSCRIPTION_STATUSES.EXPIRED,
-] as const;
+] as const
 
 /**
  * @description Checks if a subscription status is considered "active" for granting access
@@ -81,7 +81,7 @@ export const INACTIVE_SUBSCRIPTION_STATUSES = [
  * isActiveSubscription('cancelled') // false
  */
 export const isActiveSubscription = (status: string): boolean =>
-  (ACTIVE_SUBSCRIPTION_STATUSES as readonly string[]).includes(status);
+  (ACTIVE_SUBSCRIPTION_STATUSES as readonly string[]).includes(status)
 
 /**
  * @description Checks if a subscription status allows modifications such as
@@ -104,7 +104,7 @@ export const isActiveSubscription = (status: string): boolean =>
  * isModifiableSubscription('cancelled') // false
  */
 export const isModifiableSubscription = (status: string): boolean =>
-  (MODIFIABLE_SUBSCRIPTION_STATUSES as readonly string[]).includes(status);
+  (MODIFIABLE_SUBSCRIPTION_STATUSES as readonly string[]).includes(status)
 
 /**
  * @description Checks if a subscription is valid, which includes paused subscriptions
@@ -130,4 +130,4 @@ export const isModifiableSubscription = (status: string): boolean =>
  * isValidSubscription('expired')   // false
  */
 export const isValidSubscription = (status: string): boolean =>
-  (VALID_SUBSCRIPTION_STATUSES as readonly string[]).includes(status);
+  (VALID_SUBSCRIPTION_STATUSES as readonly string[]).includes(status)

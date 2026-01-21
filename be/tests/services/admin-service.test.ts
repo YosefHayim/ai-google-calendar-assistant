@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { mockFn } from "../test-utils";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { mockFn } from "../test-utils"
 
 // Mock dependencies before imports
 const mockSupabase = {
@@ -7,11 +7,11 @@ const mockSupabase = {
   auth: {
     resetPasswordForEmail: mockFn(),
   },
-};
+}
 
 jest.mock("@/config", () => ({
   SUPABASE: mockSupabase,
-}));
+}))
 
 // Import after mocks
 import {
@@ -26,12 +26,12 @@ import {
   sendPasswordResetEmail,
   updateUserRole,
   updateUserStatus,
-} from "@/domains/admin/services/admin-service";
+} from "@/domains/admin/services/admin-service"
 
 describe("Admin Service", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
   describe("getDashboardStats", () => {
     it("should return dashboard statistics", async () => {
@@ -44,15 +44,15 @@ describe("Admin Service", () => {
         active_subscriptions: 800,
         total_revenue_cents: 50_000_000,
         mrr_cents: 4_500_000,
-      };
+      }
 
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockReturnValue({
           single: mockFn().mockResolvedValue({ data: mockStats, error: null }),
         }),
-      });
+      })
 
-      const stats = await getDashboardStats();
+      const stats = await getDashboardStats()
 
       expect(stats).toEqual({
         totalUsers: 1500,
@@ -63,9 +63,9 @@ describe("Admin Service", () => {
         activeSubscriptions: 800,
         totalRevenueCents: 50_000_000,
         mrrCents: 4_500_000,
-      });
-      expect(mockSupabase.from).toHaveBeenCalledWith("v_admin_dashboard_stats");
-    });
+      })
+      expect(mockSupabase.from).toHaveBeenCalledWith("v_admin_dashboard_stats")
+    })
 
     it("should handle null values with defaults", async () => {
       mockSupabase.from.mockReturnValue({
@@ -84,14 +84,14 @@ describe("Admin Service", () => {
             error: null,
           }),
         }),
-      });
+      })
 
-      const stats = await getDashboardStats();
+      const stats = await getDashboardStats()
 
-      expect(stats.totalUsers).toBe(0);
-      expect(stats.activeUsers).toBe(0);
-      expect(stats.mrrCents).toBe(0);
-    });
+      expect(stats.totalUsers).toBe(0)
+      expect(stats.activeUsers).toBe(0)
+      expect(stats.mrrCents).toBe(0)
+    })
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
@@ -101,13 +101,13 @@ describe("Admin Service", () => {
             error: { message: "Database error" },
           }),
         }),
-      });
+      })
 
       await expect(getDashboardStats()).rejects.toThrow(
         "Failed to fetch dashboard stats"
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe("getSubscriptionDistribution", () => {
     it("should return subscription distribution data", async () => {
@@ -130,25 +130,25 @@ describe("Admin Service", () => {
           subscriber_count: 200,
           percentage: 20,
         },
-      ];
+      ]
 
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockResolvedValue({ data: mockData, error: null }),
-      });
+      })
 
-      const distribution = await getSubscriptionDistribution();
+      const distribution = await getSubscriptionDistribution()
 
-      expect(distribution).toHaveLength(3);
+      expect(distribution).toHaveLength(3)
       expect(distribution[0]).toEqual({
         planSlug: "starter",
         planName: "Starter",
         subscriberCount: 500,
         percentage: 50,
-      });
+      })
       expect(mockSupabase.from).toHaveBeenCalledWith(
         "v_subscription_distribution"
-      );
-    });
+      )
+    })
 
     it("should handle null values with defaults", async () => {
       mockSupabase.from.mockReturnValue({
@@ -163,26 +163,26 @@ describe("Admin Service", () => {
           ],
           error: null,
         }),
-      });
+      })
 
-      const distribution = await getSubscriptionDistribution();
+      const distribution = await getSubscriptionDistribution()
 
       expect(distribution[0]).toEqual({
         planSlug: "unknown",
         planName: "Unknown",
         subscriberCount: 0,
         percentage: 0,
-      });
-    });
+      })
+    })
 
     it("should return empty array when no data", async () => {
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockResolvedValue({ data: null, error: null }),
-      });
+      })
 
-      const distribution = await getSubscriptionDistribution();
-      expect(distribution).toEqual([]);
-    });
+      const distribution = await getSubscriptionDistribution()
+      expect(distribution).toEqual([])
+    })
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
@@ -190,13 +190,13 @@ describe("Admin Service", () => {
           data: null,
           error: { message: "Database error" },
         }),
-      });
+      })
 
       await expect(getSubscriptionDistribution()).rejects.toThrow(
         "Failed to fetch subscription distribution"
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe("getUserList", () => {
     it("should return paginated user list", async () => {
@@ -215,7 +215,7 @@ describe("Admin Service", () => {
           subscription_status: "active",
           subscription_interval: "monthly",
         },
-      ];
+      ]
 
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockReturnValue({
@@ -251,16 +251,16 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
-      const result = await getUserList({ page: 1, limit: 20 });
+      const result = await getUserList({ page: 1, limit: 20 })
 
-      expect(result.users).toHaveLength(1);
-      expect(result.total).toBe(1);
-      expect(result.page).toBe(1);
-      expect(result.users[0].email).toBe("user1@example.com");
-      expect(result.users[0].subscription?.plan_name).toBe("Pro");
-    });
+      expect(result.users).toHaveLength(1)
+      expect(result.total).toBe(1)
+      expect(result.page).toBe(1)
+      expect(result.users[0].email).toBe("user1@example.com")
+      expect(result.users[0].subscription?.plan_name).toBe("Pro")
+    })
 
     it("should apply search filter", async () => {
       const mockQuery = {
@@ -268,18 +268,18 @@ describe("Admin Service", () => {
         eq: mockFn().mockReturnThis(),
         order: mockFn().mockReturnThis(),
         range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
-      };
+      }
 
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnValue(mockQuery),
-      });
+      })
 
-      await getUserList({ search: "test@example.com" });
+      await getUserList({ search: "test@example.com" })
 
       expect(mockQuery.or).toHaveBeenCalledWith(
         expect.stringContaining("test@example.com")
-      );
-    });
+      )
+    })
 
     it("should apply status and role filters", async () => {
       const mockQuery = {
@@ -287,17 +287,17 @@ describe("Admin Service", () => {
         eq: mockFn().mockReturnThis(),
         order: mockFn().mockReturnThis(),
         range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
-      };
+      }
 
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnValue(mockQuery),
-      });
+      })
 
-      await getUserList({ status: "active", role: "admin" });
+      await getUserList({ status: "active", role: "admin" })
 
-      expect(mockQuery.eq).toHaveBeenCalledWith("status", "active");
-      expect(mockQuery.eq).toHaveBeenCalledWith("role", "admin");
-    });
+      expect(mockQuery.eq).toHaveBeenCalledWith("status", "active")
+      expect(mockQuery.eq).toHaveBeenCalledWith("role", "admin")
+    })
 
     it("should calculate totalPages correctly", async () => {
       mockSupabase.from.mockReturnValue({
@@ -310,12 +310,12 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
-      const result = await getUserList({ page: 1, limit: 20 });
+      const result = await getUserList({ page: 1, limit: 20 })
 
-      expect(result.totalPages).toBe(5); // ceil(95/20) = 5
-    });
+      expect(result.totalPages).toBe(5) // ceil(95/20) = 5
+    })
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
@@ -327,11 +327,11 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
-      await expect(getUserList({})).rejects.toThrow("Failed to fetch users");
-    });
-  });
+      await expect(getUserList({})).rejects.toThrow("Failed to fetch users")
+    })
+  })
 
   describe("getUserById", () => {
     it("should return user by ID", async () => {
@@ -342,7 +342,7 @@ describe("Admin Service", () => {
         status: "active",
         role: "user",
         subscription_id: "sub-123",
-      };
+      }
 
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockReturnValue({
@@ -350,13 +350,13 @@ describe("Admin Service", () => {
             single: mockFn().mockResolvedValue({ data: mockUser, error: null }),
           }),
         }),
-      });
+      })
 
-      const user = await getUserById("user-123");
+      const user = await getUserById("user-123")
 
-      expect(user?.id).toBe("user-123");
-      expect(user?.email).toBe("test@example.com");
-    });
+      expect(user?.id).toBe("user-123")
+      expect(user?.email).toBe("test@example.com")
+    })
 
     it("should return null when user not found (PGRST116)", async () => {
       mockSupabase.from.mockReturnValue({
@@ -368,11 +368,11 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
-      const user = await getUserById("nonexistent");
-      expect(user).toBeNull();
-    });
+      const user = await getUserById("nonexistent")
+      expect(user).toBeNull()
+    })
 
     it("should return null when data is null", async () => {
       mockSupabase.from.mockReturnValue({
@@ -381,11 +381,11 @@ describe("Admin Service", () => {
             single: mockFn().mockResolvedValue({ data: null, error: null }),
           }),
         }),
-      });
+      })
 
-      const user = await getUserById("user-123");
-      expect(user).toBeNull();
-    });
+      const user = await getUserById("user-123")
+      expect(user).toBeNull()
+    })
 
     it("should throw error for other database errors", async () => {
       mockSupabase.from.mockReturnValue({
@@ -397,13 +397,13 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       await expect(getUserById("user-123")).rejects.toThrow(
         "Failed to fetch user"
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe("updateUserStatus", () => {
     it("should update user status and log action", async () => {
@@ -417,30 +417,30 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       // Mock update
       mockSupabase.from.mockReturnValueOnce({
         update: mockFn().mockReturnValue({
           eq: mockFn().mockResolvedValue({ error: null }),
         }),
-      });
+      })
 
       // Mock audit log
       mockSupabase.from.mockReturnValueOnce({
         insert: mockFn().mockResolvedValue({ error: null }),
-      });
+      })
 
       await updateUserStatus(
         "user-123",
         "suspended",
         "admin-123",
         "Violation of terms"
-      );
+      )
 
-      expect(mockSupabase.from).toHaveBeenCalledWith("users");
-      expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs");
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith("users")
+      expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs")
+    })
 
     it("should throw error when update fails", async () => {
       mockSupabase.from.mockReturnValueOnce({
@@ -452,7 +452,7 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       mockSupabase.from.mockReturnValueOnce({
         update: mockFn().mockReturnValue({
@@ -460,13 +460,13 @@ describe("Admin Service", () => {
             error: { message: "Update failed" },
           }),
         }),
-      });
+      })
 
       await expect(
         updateUserStatus("user-123", "suspended", "admin-123")
-      ).rejects.toThrow("Failed to update user status");
-    });
-  });
+      ).rejects.toThrow("Failed to update user status")
+    })
+  })
 
   describe("updateUserRole", () => {
     it("should update user role and log action", async () => {
@@ -480,30 +480,30 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       // Mock update
       mockSupabase.from.mockReturnValueOnce({
         update: mockFn().mockReturnValue({
           eq: mockFn().mockResolvedValue({ error: null }),
         }),
-      });
+      })
 
       // Mock audit log
       mockSupabase.from.mockReturnValueOnce({
         insert: mockFn().mockResolvedValue({ error: null }),
-      });
+      })
 
-      await updateUserRole("user-123", "admin", "admin-456");
+      await updateUserRole("user-123", "admin", "admin-456")
 
-      expect(mockSupabase.from).toHaveBeenCalledWith("users");
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith("users")
+    })
 
     it("should prevent self-modification", async () => {
       await expect(
         updateUserRole("admin-123", "user", "admin-123")
-      ).rejects.toThrow("Cannot modify your own role");
-    });
+      ).rejects.toThrow("Cannot modify your own role")
+    })
 
     it("should throw error when update fails", async () => {
       mockSupabase.from.mockReturnValueOnce({
@@ -515,7 +515,7 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       mockSupabase.from.mockReturnValueOnce({
         update: mockFn().mockReturnValue({
@@ -523,13 +523,13 @@ describe("Admin Service", () => {
             error: { message: "Update failed" },
           }),
         }),
-      });
+      })
 
       await expect(
         updateUserRole("user-123", "admin", "admin-456")
-      ).rejects.toThrow("Failed to update user role");
-    });
-  });
+      ).rejects.toThrow("Failed to update user role")
+    })
+  })
 
   describe("grantCredits", () => {
     it("should grant credits to user with active subscription", async () => {
@@ -545,30 +545,30 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       // Mock update credits
       mockSupabase.from.mockReturnValueOnce({
         update: mockFn().mockReturnValue({
           eq: mockFn().mockResolvedValue({ error: null }),
         }),
-      });
+      })
 
       // Mock audit log
       mockSupabase.from.mockReturnValueOnce({
         insert: mockFn().mockResolvedValue({ error: null }),
-      });
+      })
 
       await grantCredits(
         "user-123",
         500,
         "admin-123",
         "Customer service gesture"
-      );
+      )
 
-      expect(mockSupabase.from).toHaveBeenCalledWith("subscriptions");
-      expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs");
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith("subscriptions")
+      expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs")
+    })
 
     it("should throw error when user has no active subscription", async () => {
       mockSupabase.from.mockReturnValueOnce({
@@ -579,12 +579,12 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       await expect(
         grantCredits("user-123", 500, "admin-123", "test")
-      ).rejects.toThrow("User has no active subscription");
-    });
+      ).rejects.toThrow("User has no active subscription")
+    })
 
     it("should throw error when credit update fails", async () => {
       mockSupabase.from.mockReturnValueOnce({
@@ -598,7 +598,7 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       mockSupabase.from.mockReturnValueOnce({
         update: mockFn().mockReturnValue({
@@ -606,13 +606,13 @@ describe("Admin Service", () => {
             error: { message: "Update failed" },
           }),
         }),
-      });
+      })
 
       await expect(
         grantCredits("user-123", 500, "admin-123", "test")
-      ).rejects.toThrow("Failed to grant credits");
-    });
-  });
+      ).rejects.toThrow("Failed to grant credits")
+    })
+  })
 
   describe("getPaymentHistory", () => {
     it("should return payment history with user info", async () => {
@@ -631,7 +631,7 @@ describe("Admin Service", () => {
             last_name: "Doe",
           },
         },
-      ];
+      ]
 
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockReturnValue({
@@ -654,30 +654,30 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
-      const result = await getPaymentHistory({});
+      const result = await getPaymentHistory({})
 
-      expect(result.payments).toHaveLength(1);
-      expect(result.payments[0].user_email).toBe("test@example.com");
-      expect(result.payments[0].user_name).toBe("John Doe");
-    });
+      expect(result.payments).toHaveLength(1)
+      expect(result.payments[0].user_email).toBe("test@example.com")
+      expect(result.payments[0].user_name).toBe("John Doe")
+    })
 
     it("should apply userId filter", async () => {
       const mockQuery = {
         eq: mockFn().mockReturnThis(),
         order: mockFn().mockReturnThis(),
         range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
-      };
+      }
 
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnValue(mockQuery),
-      });
+      })
 
-      await getPaymentHistory({ userId: "user-123" });
+      await getPaymentHistory({ userId: "user-123" })
 
-      expect(mockQuery.eq).toHaveBeenCalledWith("user_id", "user-123");
-    });
+      expect(mockQuery.eq).toHaveBeenCalledWith("user_id", "user-123")
+    })
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
@@ -689,13 +689,13 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       await expect(getPaymentHistory({})).rejects.toThrow(
         "Failed to fetch payment history"
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe("getAuditLogs", () => {
     it("should return audit logs with admin emails", async () => {
@@ -712,7 +712,7 @@ describe("Admin Service", () => {
           user_agent: "Mozilla/5.0",
           created_at: "2024-01-15",
         },
-      ];
+      ]
 
       mockSupabase.from
         .mockReturnValueOnce({
@@ -746,14 +746,14 @@ describe("Admin Service", () => {
               error: null,
             }),
           }),
-        });
+        })
 
-      const result = await getAuditLogs({});
+      const result = await getAuditLogs({})
 
-      expect(result.logs).toHaveLength(1);
-      expect(result.logs[0].admin_email).toBe("admin@example.com");
-      expect(result.logs[0].action).toBe("user_status_change");
-    });
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0].admin_email).toBe("admin@example.com")
+      expect(result.logs[0].action).toBe("user_status_change")
+    })
 
     it("should apply adminUserId filter", async () => {
       const mockQuery = {
@@ -761,22 +761,22 @@ describe("Admin Service", () => {
         eq: mockFn().mockReturnThis(),
         order: mockFn().mockReturnThis(),
         range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
-      };
+      }
 
       mockSupabase.from.mockReturnValueOnce({
         select: jest.fn().mockReturnValue(mockQuery),
-      });
+      })
 
       mockSupabase.from.mockReturnValueOnce({
         select: mockFn().mockReturnValue({
           in: mockFn().mockResolvedValue({ data: [], error: null }),
         }),
-      });
+      })
 
-      await getAuditLogs({ adminUserId: "admin-123" });
+      await getAuditLogs({ adminUserId: "admin-123" })
 
-      expect(mockQuery.eq).toHaveBeenCalledWith("admin_user_id", "admin-123");
-    });
+      expect(mockQuery.eq).toHaveBeenCalledWith("admin_user_id", "admin-123")
+    })
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
@@ -790,19 +790,19 @@ describe("Admin Service", () => {
             }),
           }),
         }),
-      });
+      })
 
       await expect(getAuditLogs({})).rejects.toThrow(
         "Failed to fetch audit logs"
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe("logAdminAction", () => {
     it("should log admin action successfully", async () => {
       mockSupabase.from.mockReturnValue({
         insert: mockFn().mockResolvedValue({ error: null }),
-      });
+      })
 
       await logAdminAction({
         adminUserId: "admin-123",
@@ -811,21 +811,21 @@ describe("Admin Service", () => {
         resourceId: "user-456",
         oldValues: { status: "active" },
         newValues: { status: "suspended" },
-      });
+      })
 
-      expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs");
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs")
+    })
 
     it("should handle logging errors gracefully without throwing", async () => {
       const consoleSpy = jest
         .spyOn(console, "error")
-        .mockImplementation(() => {});
+        .mockImplementation(() => {})
 
       mockSupabase.from.mockReturnValue({
         insert: mockFn().mockResolvedValue({
           error: { message: "Insert failed" },
         }),
-      });
+      })
 
       // Should not throw
       await logAdminAction({
@@ -833,41 +833,41 @@ describe("Admin Service", () => {
         action: "test_action",
         resourceType: "user",
         resourceId: "user-456",
-      });
+      })
 
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
-    });
-  });
+      expect(consoleSpy).toHaveBeenCalled()
+      consoleSpy.mockRestore()
+    })
+  })
 
   describe("sendPasswordResetEmail", () => {
     it("should send password reset email and log action", async () => {
       mockSupabase.auth.resetPasswordForEmail.mockResolvedValue({
         error: null,
-      });
+      })
 
       // Mock audit log
       mockSupabase.from.mockReturnValue({
         insert: mockFn().mockResolvedValue({ error: null }),
-      });
+      })
 
-      await sendPasswordResetEmail("user@example.com", "admin-123");
+      await sendPasswordResetEmail("user@example.com", "admin-123")
 
       expect(mockSupabase.auth.resetPasswordForEmail).toHaveBeenCalledWith(
         "user@example.com",
         expect.objectContaining({ redirectTo: expect.any(String) })
-      );
-      expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs");
-    });
+      )
+      expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs")
+    })
 
     it("should throw error when reset fails", async () => {
       mockSupabase.auth.resetPasswordForEmail.mockResolvedValue({
         error: { message: "Email not found" },
-      });
+      })
 
       await expect(
         sendPasswordResetEmail("invalid@example.com", "admin-123")
-      ).rejects.toThrow("Failed to send password reset");
-    });
-  });
-});
+      ).rejects.toThrow("Failed to send password reset")
+    })
+  })
+})

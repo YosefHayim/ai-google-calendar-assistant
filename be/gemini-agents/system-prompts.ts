@@ -1,31 +1,31 @@
 export type SystemPromptContext = {
-  currentDate: string;
-  currentTime: string;
-  userTimezone: string;
-  dayOfWeek: string;
-};
+  currentDate: string
+  currentTime: string
+  userTimezone: string
+  dayOfWeek: string
+}
 
 import {
   formatDateInTimezone,
   formatTimeInTimezone,
-  getDayOfWeekInTimezone
-} from "@/lib/date";
+  getDayOfWeekInTimezone,
+} from "@/lib/date"
 
 export function buildSystemPromptContext(
   timezone: string
 ): SystemPromptContext {
-  const now = new Date();
+  const now = new Date()
 
-  const currentDate = formatDateInTimezone(now, timezone);
-  const currentTime = formatTimeInTimezone(now, timezone);
-  const dayOfWeek = getDayOfWeekInTimezone(now, timezone);
+  const currentDate = formatDateInTimezone(now, timezone)
+  const currentTime = formatTimeInTimezone(now, timezone)
+  const dayOfWeek = getDayOfWeekInTimezone(now, timezone)
 
   return {
     currentDate,
     currentTime,
     userTimezone: timezone,
     dayOfWeek,
-  };
+  }
 }
 
 export function buildCalendarAgentSystemPrompt(
@@ -88,7 +88,7 @@ AVAILABLE TOOLS:
 - delete_event: Remove events
 - pre_create_validation: Fast combined check before event creation
 
-Remember: You are the user's trusted calendar assistant. Be proactive about conflicts, precise about times, and efficient in your responses.`;
+Remember: You are the user's trusted calendar assistant. Be proactive about conflicts, precise about times, and efficient in your responses.`
 }
 
 const DAYS_OF_WEEK = [
@@ -99,11 +99,11 @@ const DAYS_OF_WEEK = [
   "Thursday",
   "Friday",
   "Saturday",
-];
-const DAYS_IN_WEEK = 7;
+]
+const DAYS_IN_WEEK = 7
 
 function getNextDayFromContext(ctx: SystemPromptContext): string {
-  const todayIndex = DAYS_OF_WEEK.indexOf(ctx.dayOfWeek);
-  const tomorrowIndex = (todayIndex + 1) % DAYS_IN_WEEK;
-  return DAYS_OF_WEEK[tomorrowIndex];
+  const todayIndex = DAYS_OF_WEEK.indexOf(ctx.dayOfWeek)
+  const tomorrowIndex = (todayIndex + 1) % DAYS_IN_WEEK
+  return DAYS_OF_WEEK[tomorrowIndex]
 }

@@ -1,11 +1,11 @@
-import type { calendar_v3 } from "googleapis";
-import { REQUEST_CONFIG_BASE } from "@/config";
+import type { calendar_v3 } from "googleapis"
+import { REQUEST_CONFIG_BASE } from "@/config"
 
 type InsertEventParams = {
-  calendarEvents: calendar_v3.Resource$Events;
-  eventData?: calendar_v3.Schema$Event | Record<string, string>;
-  extra?: Record<string, unknown>;
-};
+  calendarEvents: calendar_v3.Resource$Events
+  eventData?: calendar_v3.Schema$Event | Record<string, string>
+  extra?: Record<string, unknown>
+}
 
 /**
  * Generate conference data for Google Meet
@@ -18,7 +18,7 @@ function generateMeetConferenceData(): calendar_v3.Schema$ConferenceData {
         type: "hangoutsMeet",
       },
     },
-  };
+  }
 }
 
 /**
@@ -38,18 +38,18 @@ export async function insertEvent({
 }: InsertEventParams) {
   const body =
     (eventData as calendar_v3.Schema$Event & {
-      calendarId?: string;
-      email?: string;
-    }) || {};
+      calendarId?: string
+      email?: string
+    }) || {}
   const calendarId =
-    (extra?.calendarId as string) || body.calendarId || "primary";
-  const addMeetLink = extra?.addMeetLink === true;
+    (extra?.calendarId as string) || body.calendarId || "primary"
+  const addMeetLink = extra?.addMeetLink === true
 
-  const { calendarId: _cid, email: _email, ...requestBody } = body;
+  const { calendarId: _cid, email: _email, ...requestBody } = body
 
   // Add Google Meet conference data if requested
   if (addMeetLink) {
-    requestBody.conferenceData = generateMeetConferenceData();
+    requestBody.conferenceData = generateMeetConferenceData()
   }
 
   const createdEvent = await calendarEvents.insert({
@@ -58,6 +58,6 @@ export async function insertEvent({
     requestBody,
     // conferenceDataVersion is required when adding conference data
     conferenceDataVersion: addMeetLink ? 1 : undefined,
-  });
-  return createdEvent.data;
+  })
+  return createdEvent.data
 }

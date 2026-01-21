@@ -1,46 +1,46 @@
-import type { calendar_v3 } from "googleapis";
-import { REQUEST_CONFIG_BASE } from "@/config";
-import { getEventDurationString } from "@/domains/calendar/utils/duration";
-import formatDate from "@/lib/date/format-date";
+import type { calendar_v3 } from "googleapis"
+import { REQUEST_CONFIG_BASE } from "@/config"
+import { getEventDurationString } from "@/domains/calendar/utils/duration"
+import formatDate from "@/lib/date/format-date"
 
 type ListExtra = Partial<calendar_v3.Params$Resource$Events$List> & {
-  includeCalendarName?: boolean;
-  email?: string;
-  customEvents?: boolean;
-};
+  includeCalendarName?: boolean
+  email?: string
+  customEvents?: boolean
+}
 
 type GetEventsParams = {
-  calendarEvents: calendar_v3.Resource$Events;
+  calendarEvents: calendar_v3.Resource$Events
   req?: {
-    body?: Record<string, unknown>;
-    query?: Record<string, unknown>;
-  } | null;
-  extra?: Record<string, unknown>;
-};
+    body?: Record<string, unknown>
+    query?: Record<string, unknown>
+  } | null
+  extra?: Record<string, unknown>
+}
 
 export type FormattedEvent = {
-  eventId: string;
-  summary: string;
-  description: string | null;
-  location: string | null;
-  durationOfEvent: string | null;
-  start: string | null;
-  end: string | null;
-};
+  eventId: string
+  summary: string
+  description: string | null
+  location: string | null
+  durationOfEvent: string | null
+  start: string | null
+  end: string | null
+}
 
 export type CustomEventsResponse = {
-  type: "custom";
-  calendarId: string | undefined;
-  totalNumberOfEventsFound: number;
-  totalEventsFound: FormattedEvent[];
-};
+  type: "custom"
+  calendarId: string | undefined
+  totalNumberOfEventsFound: number
+  totalEventsFound: FormattedEvent[]
+}
 
 export type StandardEventsResponse = {
-  type: "standard";
-  data: calendar_v3.Schema$Events;
-};
+  type: "standard"
+  data: calendar_v3.Schema$Events
+}
 
-export type GetEventsResponse = CustomEventsResponse | StandardEventsResponse;
+export type GetEventsResponse = CustomEventsResponse | StandardEventsResponse
 
 /**
  * @description Builds and normalizes list parameters for the Google Calendar events.list API.
@@ -56,8 +56,8 @@ export type GetEventsResponse = CustomEventsResponse | StandardEventsResponse;
  * });
  */
 function buildListParams(rawExtra: ListExtra): {
-  listParams: calendar_v3.Params$Resource$Events$List;
-  calendarId: string | undefined;
+  listParams: calendar_v3.Params$Resource$Events$List
+  calendarId: string | undefined
 } {
   const {
     email: _omitEmail,
@@ -65,20 +65,20 @@ function buildListParams(rawExtra: ListExtra): {
     calendarId,
     includeCalendarName: _omitIncludeCalendarName = false,
     ...listExtraRaw
-  } = rawExtra;
+  } = rawExtra
 
   const listParams: calendar_v3.Params$Resource$Events$List = {
     ...REQUEST_CONFIG_BASE,
     prettyPrint: true,
     calendarId,
     ...listExtraRaw,
-  };
-
-  if (!listParams.q) {
-    (listParams as Record<string, unknown>).q = undefined;
   }
 
-  return { listParams, calendarId };
+  if (!listParams.q) {
+    ;(listParams as Record<string, unknown>).q = undefined
+  }
+
+  return { listParams, calendarId }
 }
 
 /**
@@ -98,12 +98,12 @@ export async function fetchCalendarEvents(
   calendarEvents: calendar_v3.Resource$Events,
   params: calendar_v3.Params$Resource$Events$List
 ): Promise<calendar_v3.Schema$Events> {
-  const { data } = await calendarEvents.list(params);
-  return data;
+  const { data } = await calendarEvents.list(params)
+  return data
 }
 
-const GOOGLE_CALENDAR_MAX_RESULTS = 2500;
-const DEFAULT_MAX_PAGINATION_PAGES = 50;
+const GOOGLE_CALENDAR_MAX_RESULTS = 2500
+const DEFAULT_MAX_PAGINATION_PAGES = 50
 
 /**
  * @description Fetches all events from Google Calendar with automatic pagination handling.
@@ -124,41 +124,41 @@ export async function fetchAllCalendarEvents(
   params: calendar_v3.Params$Resource$Events$List,
   maxPages = DEFAULT_MAX_PAGINATION_PAGES
 ): Promise<calendar_v3.Schema$Events> {
-  const allItems: calendar_v3.Schema$Event[] = [];
-  let pageToken: string | undefined;
-  let pageCount = 0;
-  let lastResponse: calendar_v3.Schema$Events | null = null;
+  const allItems: calendar_v3.Schema$Event[] = []
+  let pageToken: string | undefined
+  let pageCount = 0
+  let lastResponse: calendar_v3.Schema$Events | null = null
 
   const paginatedParams: calendar_v3.Params$Resource$Events$List = {
     ...params,
     maxResults: params.maxResults ?? GOOGLE_CALENDAR_MAX_RESULTS,
-  };
+  }
 
   do {
     const { data } = await calendarEvents.list({
       ...paginatedParams,
       pageToken,
-    });
+    })
 
-    lastResponse = data;
+    lastResponse = data
 
     if (data.items) {
-      allItems.push(...data.items);
+      allItems.push(...data.items)
     }
 
-    pageToken = data.nextPageToken ?? undefined;
-    pageCount++;
+    pageToken = data.nextPageToken ?? undefined
+    pageCount++
 
     if (pageCount >= maxPages) {
-      break;
+      break
     }
-  } while (pageToken);
+  } while (pageToken)
 
   return {
     ...lastResponse,
     items: allItems,
     nextPageToken: undefined,
-  };
+  }
 }
 
 /**
@@ -173,8 +173,8 @@ export async function fetchAllCalendarEvents(
 export function formatSingleEvent(
   event: calendar_v3.Schema$Event
 ): FormattedEvent {
-  const startDate = event.start?.date || event.start?.dateTime || null;
-  const endDate = event.end?.date || event.end?.dateTime || null;
+  const startDate = event.start?.date || event.start?.dateTime || null
+  const endDate = event.end?.date || event.end?.dateTime || null
 
   return {
     eventId: event.id || "No ID",
@@ -185,7 +185,7 @@ export function formatSingleEvent(
       startDate && endDate ? getEventDurationString(startDate, endDate) : null,
     start: formatDate(startDate, true) || null,
     end: formatDate(endDate, true) || null,
-  };
+  }
 }
 
 /**
@@ -202,15 +202,15 @@ export function formatCustomEventsResponse(
   events: calendar_v3.Schema$Event[],
   calendarId: string | undefined
 ): CustomEventsResponse {
-  const items = events.slice().reverse();
-  const totalEventsFound = items.map(formatSingleEvent);
+  const items = events.slice().reverse()
+  const totalEventsFound = items.map(formatSingleEvent)
 
   return {
     type: "custom",
     calendarId,
     totalNumberOfEventsFound: totalEventsFound.length,
     totalEventsFound,
-  };
+  }
 }
 
 /**
@@ -244,15 +244,15 @@ export async function getEvents({
     ...(extra as ListExtra),
     ...(req?.body ?? {}),
     ...(req?.query ?? {}),
-  };
-  const customFlag = Boolean(rawExtra.customEvents);
-  const { listParams, calendarId } = buildListParams(rawExtra);
+  }
+  const customFlag = Boolean(rawExtra.customEvents)
+  const { listParams, calendarId } = buildListParams(rawExtra)
 
-  const eventsData = await fetchAllCalendarEvents(calendarEvents, listParams);
+  const eventsData = await fetchAllCalendarEvents(calendarEvents, listParams)
 
   if (customFlag) {
-    return formatCustomEventsResponse(eventsData.items ?? [], calendarId);
+    return formatCustomEventsResponse(eventsData.items ?? [], calendarId)
   }
 
-  return { type: "standard", data: eventsData };
+  return { type: "standard", data: eventsData }
 }

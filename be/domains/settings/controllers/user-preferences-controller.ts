@@ -1,9 +1,9 @@
-import type { Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
-import type { PreferenceKey } from "@/domains/settings/services/user-preferences-service";
-import * as preferencesService from "@/domains/settings/services/user-preferences-service";
-import { requireUserId } from "@/domains/auth/utils/require-user";
-import { reqResAsyncHandler, sendR } from "@/lib/http";
+import type { Request, Response } from "express"
+import { STATUS_RESPONSE } from "@/config"
+import type { PreferenceKey } from "@/domains/settings/services/user-preferences-service"
+import * as preferencesService from "@/domains/settings/services/user-preferences-service"
+import { requireUserId } from "@/domains/auth/utils/require-user"
+import { reqResAsyncHandler, sendR } from "@/lib/http"
 
 /**
  * Get a user preference by key
@@ -11,25 +11,25 @@ import { reqResAsyncHandler, sendR } from "@/lib/http";
  */
 const getPreference = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userResult = requireUserId(req, res);
+    const userResult = requireUserId(req, res)
     if (!userResult.success) {
-      return;
+      return
     }
-    const { userId } = userResult;
+    const { userId } = userResult
 
     const key = Array.isArray(req.params.key)
       ? req.params.key[0]
-      : req.params.key;
+      : req.params.key
 
     if (!(key && preferencesService.isValidPreferenceKey(key))) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key")
     }
 
     try {
       const result = await preferencesService.getPreferenceWithMeta(
         userId,
         key as PreferenceKey
-      );
+      )
 
       return sendR(
         res,
@@ -43,17 +43,17 @@ const getPreference = reqResAsyncHandler(
           updatedAt: result.updatedAt,
           isDefault: result.isDefault,
         }
-      );
+      )
     } catch (error) {
-      console.error("Error getting preference:", error);
+      console.error("Error getting preference:", error)
       return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error retrieving preference"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Update a user preference
@@ -61,17 +61,17 @@ const getPreference = reqResAsyncHandler(
  */
 const updatePreference = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userResult = requireUserId(req, res);
+    const userResult = requireUserId(req, res)
     if (!userResult.success) {
-      return;
+      return
     }
-    const { userId } = userResult;
+    const { userId } = userResult
 
-    const key = req.path.split("/").at(-1);
-    const value = req.body;
+    const key = req.path.split("/").at(-1)
+    const value = req.body
 
     if (!(key && preferencesService.isValidPreferenceKey(key))) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key")
     }
 
     try {
@@ -79,7 +79,7 @@ const updatePreference = reqResAsyncHandler(
         userId,
         key as PreferenceKey,
         value
-      );
+      )
 
       return sendR(
         res,
@@ -90,17 +90,17 @@ const updatePreference = reqResAsyncHandler(
           value: result.value,
           updatedAt: result.updatedAt,
         }
-      );
+      )
     } catch (error) {
-      console.error("Error updating preference:", error);
+      console.error("Error updating preference:", error)
       return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error saving preference"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Get all assistant-related preferences for a user
@@ -108,34 +108,34 @@ const updatePreference = reqResAsyncHandler(
  */
 const getAllPreferences = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userResult = requireUserId(req, res);
+    const userResult = requireUserId(req, res)
     if (!userResult.success) {
-      return;
+      return
     }
-    const { userId } = userResult;
+    const { userId } = userResult
 
     try {
-      const preferences = await preferencesService.getAllPreferences(userId);
+      const preferences = await preferencesService.getAllPreferences(userId)
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Preferences retrieved successfully",
         { preferences }
-      );
+      )
     } catch (error) {
-      console.error("Error getting preferences:", error);
+      console.error("Error getting preferences:", error)
       return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error retrieving preferences"
-      );
+      )
     }
   }
-);
+)
 
 export const userPreferencesController = {
   getPreference,
   updatePreference,
   getAllPreferences,
-};
+}

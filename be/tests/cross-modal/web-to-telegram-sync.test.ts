@@ -41,10 +41,26 @@ const webConversation = {
   platform: "web",
   title: "Meeting Planning",
   messages: [
-    { role: "user", content: "I need to schedule a team meeting", timestamp: "2026-01-20T10:00:00Z" },
-    { role: "assistant", content: "What time works best for you?", timestamp: "2026-01-20T10:00:01Z" },
-    { role: "user", content: "Tomorrow at 2pm", timestamp: "2026-01-20T10:00:05Z" },
-    { role: "assistant", content: "How long should it be?", timestamp: "2026-01-20T10:00:06Z" },
+    {
+      role: "user",
+      content: "I need to schedule a team meeting",
+      timestamp: "2026-01-20T10:00:00Z",
+    },
+    {
+      role: "assistant",
+      content: "What time works best for you?",
+      timestamp: "2026-01-20T10:00:01Z",
+    },
+    {
+      role: "user",
+      content: "Tomorrow at 2pm",
+      timestamp: "2026-01-20T10:00:05Z",
+    },
+    {
+      role: "assistant",
+      content: "How long should it be?",
+      timestamp: "2026-01-20T10:00:06Z",
+    },
   ],
   context: {
     pendingEvent: {
@@ -100,7 +116,8 @@ describe("Web to Telegram Context Synchronization", () => {
     mockTelegramBot.sendInlineKeyboard.mockResolvedValue({ message_id: 457 })
 
     mockAgentRun.mockResolvedValue({
-      response: "Continuing our conversation from the web... How long should the meeting be?",
+      response:
+        "Continuing our conversation from the web... How long should the meeting be?",
       toolCalls: [],
     })
   })
@@ -114,7 +131,9 @@ describe("Web to Telegram Context Synchronization", () => {
         message: "/continue",
       }
 
-      const context = await mockUnifiedContextStore.getConversation(webConversation.id)
+      const context = await mockUnifiedContextStore.getConversation(
+        webConversation.id
+      )
 
       expect(context.platform).toBe("web")
       expect(context.context.pendingEvent.time).toBe("2pm")
@@ -205,9 +224,13 @@ describe("Web to Telegram Context Synchronization", () => {
         emit: mockWebSocket.emit,
       })
 
-      await mockWebSocket.to(`user-${webConversation.user_id}`).emit("cross-platform-update", webNotification)
+      await mockWebSocket
+        .to(`user-${webConversation.user_id}`)
+        .emit("cross-platform-update", webNotification)
 
-      expect(mockWebSocket.to).toHaveBeenCalledWith(`user-${webConversation.user_id}`)
+      expect(mockWebSocket.to).toHaveBeenCalledWith(
+        `user-${webConversation.user_id}`
+      )
       expect(webNotification.activity.type).toBe("message_sent")
     })
 
@@ -243,8 +266,9 @@ describe("Web to Telegram Context Synchronization", () => {
       ]
 
       // Should handle race conditions and maintain consistency
-      const resolvedActions = concurrentActions.sort((a, b) =>
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      const resolvedActions = concurrentActions.sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       )
 
       expect(resolvedActions[0].platform).toBe("web")
@@ -265,7 +289,9 @@ describe("Web to Telegram Context Synchronization", () => {
       }
 
       // Broadcast to web via WebSocket
-      mockWebSocket.to(`user-${webConversation.user_id}`).emit("event-created", eventCreated.event)
+      mockWebSocket
+        .to(`user-${webConversation.user_id}`)
+        .emit("event-created", eventCreated.event)
 
       // Send to Telegram via bot
       await mockTelegramBot.sendMessage(
@@ -322,7 +348,9 @@ describe("Web to Telegram Context Synchronization", () => {
         },
       ]
 
-      const continueCommand = telegramCommands.find(cmd => cmd.command === "/continue")
+      const continueCommand = telegramCommands.find(
+        (cmd) => cmd.command === "/continue"
+      )
 
       expect(continueCommand?.action).toBe("sync_context")
       expect(continueCommand?.platform).toBe("telegram")
@@ -351,8 +379,12 @@ describe("Web to Telegram Context Synchronization", () => {
         ],
       }
 
-      expect(telegramContent.inline_keyboard[0][0].url).toBe(webContent.links[0].url)
-      expect(telegramContent.inline_keyboard[0][0].text).toBe(webContent.links[0].text)
+      expect(telegramContent.inline_keyboard[0][0].url).toBe(
+        webContent.links[0].url
+      )
+      expect(telegramContent.inline_keyboard[0][0].text).toBe(
+        webContent.links[0].text
+      )
     })
 
     it("should handle file attachments across platforms", () => {
@@ -376,8 +408,12 @@ describe("Web to Telegram Context Synchronization", () => {
         },
       }
 
-      expect(fileAttachment.original.file.name).toBe(fileAttachment.telegram.document.file_name)
-      expect(fileAttachment.original.file.size).toBe(fileAttachment.telegram.document.file_size)
+      expect(fileAttachment.original.file.name).toBe(
+        fileAttachment.telegram.document.file_name
+      )
+      expect(fileAttachment.original.file.size).toBe(
+        fileAttachment.telegram.document.file_size
+      )
     })
   })
 
@@ -391,7 +427,8 @@ describe("Web to Telegram Context Synchronization", () => {
         success: false,
         error: "Synchronization failed",
         fallback: {
-          message: "I couldn't sync your conversation right now, but you can continue here.",
+          message:
+            "I couldn't sync your conversation right now, but you can continue here.",
           platform: "telegram",
           maintainLocalContext: true,
         },
@@ -515,7 +552,9 @@ describe("Web to Telegram Context Synchronization", () => {
       }
 
       expect(privacySettings.platforms.web.shareConversationHistory).toBe(true)
-      expect(privacySettings.platforms.telegram.shareConversationHistory).toBe(false)
+      expect(privacySettings.platforms.telegram.shareConversationHistory).toBe(
+        false
+      )
       expect(privacySettings.global.encryptPersonalData).toBe(true)
     })
 
@@ -577,7 +616,11 @@ describe("Web to Telegram Context Synchronization", () => {
           {
             path: "messages[-1]",
             operation: "add",
-            value: { role: "user", content: "1 hour", timestamp: "2026-01-20T10:01:05Z" },
+            value: {
+              role: "user",
+              content: "1 hour",
+              timestamp: "2026-01-20T10:01:05Z",
+            },
           },
           {
             path: "context.pendingEvent.duration",

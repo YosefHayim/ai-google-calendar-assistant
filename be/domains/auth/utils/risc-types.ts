@@ -8,23 +8,23 @@
  */
 export type RiscSecurityEventToken = {
   /** Issuer - must be "https://accounts.google.com/" */
-  iss: string;
+  iss: string
   /** Audience - must match your OAuth Client ID */
-  aud: string;
+  aud: string
   /** Issued at timestamp */
-  iat: number;
+  iat: number
   /** JWT ID - unique identifier for this token */
-  jti: string;
+  jti: string
   /** Events map containing the security event(s) */
-  events: RiscEvents;
-};
+  events: RiscEvents
+}
 
 /**
  * RISC Events container - maps event URIs to event data
  */
 export type RiscEvents = {
-  [eventType: string]: RiscEventData;
-};
+  [eventType: string]: RiscEventData
+}
 
 /**
  * Base event data structure
@@ -32,19 +32,19 @@ export type RiscEvents = {
 export type RiscEventData = {
   /** Google subject ID of the affected user */
   subject?: {
-    subject_type: "iss-sub";
-    iss: string;
-    sub: string;
-  };
+    subject_type: "iss-sub"
+    iss: string
+    sub: string
+  }
   /** Reason for the event (optional) */
-  reason?: string;
+  reason?: string
   /** For token-revoked events: algorithm used to hash the token */
-  token_identifier_alg?: string;
+  token_identifier_alg?: string
   /** For token-revoked events: hash of the revoked token */
-  token_identifier?: string;
+  token_identifier?: string
   /** Timestamp when the event occurred */
-  event_timestamp?: number;
-};
+  event_timestamp?: number
+}
 
 /**
  * Known RISC event types
@@ -74,46 +74,46 @@ export const RISC_EVENT_TYPES = {
   /** Verification event for testing the endpoint */
   VERIFICATION:
     "https://schemas.openid.net/secevent/risc/event-type/verification",
-} as const;
+} as const
 
 export type RiscEventType =
-  (typeof RISC_EVENT_TYPES)[keyof typeof RISC_EVENT_TYPES];
+  (typeof RISC_EVENT_TYPES)[keyof typeof RISC_EVENT_TYPES]
 
 /**
  * Result of processing a RISC event
  */
 export type RiscEventResult = {
-  success: boolean;
-  eventType: string;
-  googleSubjectId?: string;
-  action: string;
-  error?: string;
-};
+  success: boolean
+  eventType: string
+  googleSubjectId?: string
+  action: string
+  error?: string
+}
 
 /**
  * Google's JWKS (JSON Web Key Set) response
  */
 export type GoogleJwks = {
-  keys: GoogleJwk[];
-};
+  keys: GoogleJwk[]
+}
 
 /**
  * Individual Google JSON Web Key
  */
 export type GoogleJwk = {
-  kty: string;
-  alg: string;
-  use: string;
-  kid: string;
-  n: string;
-  e: string;
-};
+  kty: string
+  alg: string
+  use: string
+  kid: string
+  n: string
+  e: string
+}
 
 /**
  * Decoded JWT header
  */
 export type JwtHeader = {
-  alg: string;
-  typ: string;
-  kid: string;
-};
+  alg: string
+  typ: string
+  kid: string
+}

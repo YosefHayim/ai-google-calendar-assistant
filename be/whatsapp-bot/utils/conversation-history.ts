@@ -4,53 +4,53 @@
  * Similar to Telegram's conversation-history.ts but adapted for WhatsApp
  */
 
-import { SUPABASE } from "@/infrastructure/supabase/supabase";
-import type { Database } from "@/database.types";
-import type { userAndAiMessageProps } from "@/types";
-import { isToday } from "@/lib/date/date-helpers";
-import { logger } from "@/lib/logger";
+import { SUPABASE } from "@/infrastructure/supabase/supabase"
+import type { Database } from "@/database.types"
+import type { userAndAiMessageProps } from "@/types"
+import { isToday } from "@/lib/date/date-helpers"
+import { logger } from "@/lib/logger"
 
-const MAX_CONTEXT_LENGTH = 1500;
-const MAX_SUMMARY_LENGTH = 1000;
-const MAX_MESSAGES_BEFORE_SUMMARIZE = 6;
+const MAX_CONTEXT_LENGTH = 1500
+const MAX_SUMMARY_LENGTH = 1000
+const MAX_MESSAGES_BEFORE_SUMMARIZE = 6
 
-type MessageRole = Database["public"]["Enums"]["message_role"];
+type MessageRole = Database["public"]["Enums"]["message_role"]
 
 type ConversationContext = {
-  messages: userAndAiMessageProps[];
-  summary?: string;
-  lastUpdated: string;
-};
+  messages: userAndAiMessageProps[]
+  summary?: string
+  lastUpdated: string
+}
 
 type ConversationRow = {
-  id: string;
-  user_id: string;
-  external_chat_id: number | null;
-  message_count: number | null;
-  summary: string | null;
-  is_active: boolean | null;
-  created_at: string;
-  updated_at: string;
-  last_message_at: string | null;
-};
+  id: string
+  user_id: string
+  external_chat_id: number | null
+  message_count: number | null
+  summary: string | null
+  is_active: boolean | null
+  created_at: string
+  updated_at: string
+  last_message_at: string | null
+}
 
-type WhatsAppUserRow = Database["public"]["Tables"]["whatsapp_users"]["Row"];
+type WhatsAppUserRow = Database["public"]["Tables"]["whatsapp_users"]["Row"]
 
 const calculateContextLength = (messages: userAndAiMessageProps[]): number =>
-  messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
+  messages.reduce((total, msg) => total + (msg.content?.length || 0), 0)
 
 const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole =>
-  role as MessageRole;
+  role as MessageRole
 
 const condenseSummary = async (
   existingSummary: string,
   newSummary: string,
   summarizeFn: (messages: userAndAiMessageProps[]) => Promise<string>
 ): Promise<string> => {
-  const combined = `${existingSummary}\n\n${newSummary}`;
+  const combined = `${existingSummary}\n\n${newSummary}`
 
   if (combined.length <= MAX_SUMMARY_LENGTH) {
-    return combined;
+    return combined
   }
 
   try {
@@ -59,12 +59,12 @@ const condenseSummary = async (
         role: "user",
         content: `Please condense this conversation summary:\n${combined}`,
       },
-    ]);
-    return condensedSummary.slice(0, MAX_SUMMARY_LENGTH);
+    ])
+    return condensedSummary.slice(0, MAX_SUMMARY_LENGTH)
   } catch {
-    return combined.slice(-MAX_SUMMARY_LENGTH);
+    return combined.slice(-MAX_SUMMARY_LENGTH)
   }
-};
+}
 
 /**
  * Gets the user ID from a WhatsApp phone number
@@ -75,14 +75,14 @@ export const getUserIdFromWhatsApp = async (
   const { data, error } = await SUPABASE.from("whatsapp_users")
     .select("user_id")
     .eq("whatsapp_phone", phoneNumber)
-    .single();
+    .single()
 
   if (error || !data?.user_id) {
-    return null;
+    return null
   }
 
-  return data.user_id as string;
-};
+  return data.user_id as string
+}
 
 /**
  * Gets or creates a WhatsApp user record
@@ -95,22 +95,22 @@ export const getOrCreateWhatsAppUser = async (
   const { data: existingUser } = await SUPABASE.from("whatsapp_users")
     .select("*")
     .eq("whatsapp_phone", phoneNumber)
-    .single();
+    .single()
 
   if (existingUser) {
     // Update last activity and name if provided
     const updates: Partial<WhatsAppUserRow> = {
       last_activity_at: new Date().toISOString(),
-    };
+    }
     if (displayName && displayName !== existingUser.whatsapp_name) {
-      updates.whatsapp_name = displayName;
+      updates.whatsapp_name = displayName
     }
 
     await SUPABASE.from("whatsapp_users")
       .update(updates)
-      .eq("whatsapp_phone", phoneNumber);
+      .eq("whatsapp_phone", phoneNumber)
 
-    return existingUser as WhatsAppUserRow;
+    return existingUser as WhatsAppUserRow
   }
 
   // Create new user
@@ -124,27 +124,27 @@ export const getOrCreateWhatsAppUser = async (
       language_code: "en",
     })
     .select()
-    .single();
+    .single()
 
   if (insertError) {
     logger.error(
       `WhatsApp: Failed to create user for ${phoneNumber}: ${insertError.message}`
-    );
-    return null;
+    )
+    return null
   }
 
-  return newUser as WhatsAppUserRow;
-};
+  return newUser as WhatsAppUserRow
+}
 
 /**
  * Converts phone number to a numeric chat ID for database storage
  */
 const phoneToNumericId = (phone: string): number => {
   // Remove any non-numeric characters and convert to number
-  const numericPhone = phone.replace(/\D/g, "");
+  const numericPhone = phone.replace(/\D/g, "")
   // Use last 15 digits to avoid overflow (JavaScript safe integer limit)
-  return Number.parseInt(numericPhone.slice(-15), 10);
-};
+  return Number.parseInt(numericPhone.slice(-15), 10)
+}
 
 /**
  * Gets today's conversation for a WhatsApp user
@@ -152,7 +152,7 @@ const phoneToNumericId = (phone: string): number => {
 export const getTodayConversationState = async (
   phoneNumber: string
 ): Promise<ConversationRow | null> => {
-  const chatId = phoneToNumericId(phoneNumber);
+  const chatId = phoneToNumericId(phoneNumber)
 
   const { data, error } = await SUPABASE.from("conversations")
     .select("*")
@@ -161,26 +161,26 @@ export const getTodayConversationState = async (
     .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(1)
-    .maybeSingle();
+    .maybeSingle()
 
   if (error) {
     logger.error(
       `WhatsApp: Failed to fetch conversation for ${phoneNumber}: ${error.message}`
-    );
-    return null;
+    )
+    return null
   }
 
   if (!data) {
-    return null;
+    return null
   }
 
-  const updatedAt = data.updated_at || data.created_at;
+  const updatedAt = data.updated_at || data.created_at
   if (!isToday(updatedAt)) {
-    return null;
+    return null
   }
 
-  return data as ConversationRow;
-};
+  return data as ConversationRow
+}
 
 /**
  * Gets messages for a conversation
@@ -191,10 +191,10 @@ const getConversationMessages = async (
   const { data, error } = await SUPABASE.from("conversation_messages")
     .select("role, content, sequence_number")
     .eq("conversation_id", conversationId)
-    .order("sequence_number", { ascending: true });
+    .order("sequence_number", { ascending: true })
 
   if (error || !data) {
-    return [];
+    return []
   }
 
   return data
@@ -202,8 +202,8 @@ const getConversationMessages = async (
     .map((msg) => ({
       role: msg.role as "user" | "assistant",
       content: msg.content,
-    }));
-};
+    }))
+}
 
 /**
  * Creates a new conversation state for a WhatsApp user
@@ -213,19 +213,19 @@ export const createConversationState = async (
   displayName?: string,
   initialMessage?: userAndAiMessageProps
 ): Promise<{ id: string; context: ConversationContext } | null> => {
-  const whatsAppUser = await getOrCreateWhatsAppUser(phoneNumber, displayName);
-  const chatId = phoneToNumericId(phoneNumber);
+  const whatsAppUser = await getOrCreateWhatsAppUser(phoneNumber, displayName)
+  const chatId = phoneToNumericId(phoneNumber)
 
   // Get the user_id if linked
-  const userId = whatsAppUser?.user_id;
+  const userId = whatsAppUser?.user_id
 
   if (!userId) {
     // For unlinked users, we can't create conversations in the DB
     // They can still chat but without persistence until they link their account
     logger.debug(
       `WhatsApp: User ${phoneNumber} is not linked, conversation will not be persisted`
-    );
-    return null;
+    )
+    return null
   }
 
   const { data: conversation, error: convError } = await SUPABASE.from(
@@ -239,13 +239,13 @@ export const createConversationState = async (
       message_count: initialMessage ? 1 : 0,
     })
     .select()
-    .single();
+    .single()
 
   if (convError || !conversation) {
     logger.error(
       `WhatsApp: Failed to create conversation for ${phoneNumber}: ${convError?.message}`
-    );
-    return null;
+    )
+    return null
   }
 
   if (initialMessage?.content) {
@@ -254,7 +254,7 @@ export const createConversationState = async (
       role: mapRoleToDb(initialMessage.role),
       content: initialMessage.content,
       sequence_number: 1,
-    });
+    })
   }
 
   return {
@@ -263,8 +263,8 @@ export const createConversationState = async (
       messages: initialMessage ? [initialMessage] : [],
       lastUpdated: new Date().toISOString(),
     },
-  };
-};
+  }
+}
 
 /**
  * Updates conversation state
@@ -281,17 +281,17 @@ export const updateConversationState = async (
       updated_at: new Date().toISOString(),
       last_message_at: new Date().toISOString(),
     })
-    .eq("id", conversationId);
+    .eq("id", conversationId)
 
   if (error) {
     logger.error(
       `WhatsApp: Failed to update conversation ${conversationId}: ${error.message}`
-    );
-    return false;
+    )
+    return false
   }
 
-  return true;
-};
+  return true
+}
 
 /**
  * Stores a summary for a conversation
@@ -310,17 +310,17 @@ export const storeSummary = async (
       summary: summaryText,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", conversationId);
+    .eq("id", conversationId)
 
   if (error) {
     logger.error(
       `WhatsApp: Failed to store summary for conversation ${conversationId}: ${error.message}`
-    );
-    return false;
+    )
+    return false
   }
 
-  return true;
-};
+  return true
+}
 
 /**
  * Marks a conversation as summarized
@@ -334,17 +334,17 @@ export const markAsSummarized = async (
       summary,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", conversationId);
+    .eq("id", conversationId)
 
   if (error) {
     logger.error(
       `WhatsApp: Failed to update summary for conversation ${conversationId}: ${error.message}`
-    );
-    return false;
+    )
+    return false
   }
 
-  return true;
-};
+  return true
+}
 
 /**
  * Gets or creates today's conversation context
@@ -353,44 +353,44 @@ export const getOrCreateTodayContext = async (
   phoneNumber: string,
   displayName?: string
 ): Promise<{
-  stateId: string;
-  context: ConversationContext;
-  userId?: string;
+  stateId: string
+  context: ConversationContext
+  userId?: string
 }> => {
-  const existingConversation = await getTodayConversationState(phoneNumber);
+  const existingConversation = await getTodayConversationState(phoneNumber)
 
   if (existingConversation) {
-    const messages = await getConversationMessages(existingConversation.id);
+    const messages = await getConversationMessages(existingConversation.id)
     const context: ConversationContext = {
       messages,
       summary: existingConversation.summary || undefined,
       lastUpdated:
         existingConversation.updated_at || existingConversation.created_at,
-    };
+    }
     return {
       stateId: existingConversation.id,
       context,
       userId: existingConversation.user_id,
-    };
+    }
   }
 
-  const newState = await createConversationState(phoneNumber, displayName);
+  const newState = await createConversationState(phoneNumber, displayName)
 
   if (!newState) {
     logger.warn(
       `WhatsApp: Failed to create conversation for ${phoneNumber}, using fallback`
-    );
+    )
     return {
       stateId: "",
       context: { messages: [], lastUpdated: new Date().toISOString() },
-    };
+    }
   }
 
   return {
     stateId: newState.id,
     context: newState.context,
-  };
-};
+  }
+}
 
 /**
  * Adds a message to the conversation context
@@ -404,12 +404,12 @@ export const addMessageToContext = async (
   const { stateId, context, userId } = await getOrCreateTodayContext(
     phoneNumber,
     displayName
-  );
+  )
 
   if (!stateId) {
-    context.messages.push(message);
-    context.lastUpdated = new Date().toISOString();
-    return context;
+    context.messages.push(message)
+    context.lastUpdated = new Date().toISOString()
+    return context
   }
 
   const { data: lastMsg } = await SUPABASE.from("conversation_messages")
@@ -417,9 +417,9 @@ export const addMessageToContext = async (
     .eq("conversation_id", stateId)
     .order("sequence_number", { ascending: false })
     .limit(1)
-    .maybeSingle();
+    .maybeSingle()
 
-  const nextSequence = (lastMsg?.sequence_number || 0) + 1;
+  const nextSequence = (lastMsg?.sequence_number || 0) + 1
 
   if (message.content) {
     const { error: insertError } = await SUPABASE.from(
@@ -429,34 +429,34 @@ export const addMessageToContext = async (
       role: mapRoleToDb(message.role),
       content: message.content,
       sequence_number: nextSequence,
-    });
+    })
 
     if (insertError) {
       logger.error(
         `WhatsApp: Failed to insert message for conversation ${stateId}: ${insertError.message}`
-      );
+      )
     }
   }
 
-  context.messages.push(message);
-  context.lastUpdated = new Date().toISOString();
+  context.messages.push(message)
+  context.lastUpdated = new Date().toISOString()
 
-  const totalLength = calculateContextLength(context.messages);
+  const totalLength = calculateContextLength(context.messages)
   const shouldSummarize =
     (totalLength > MAX_CONTEXT_LENGTH ||
       context.messages.length > MAX_MESSAGES_BEFORE_SUMMARIZE) &&
     context.messages.length > 2 &&
-    userId;
+    userId
 
   if (shouldSummarize) {
-    const messagesToSummarize = context.messages.slice(0, -2);
-    const recentMessages = context.messages.slice(-2);
+    const messagesToSummarize = context.messages.slice(0, -2)
+    const recentMessages = context.messages.slice(-2)
 
     try {
-      const newSummary = await summarizeFn(messagesToSummarize);
+      const newSummary = await summarizeFn(messagesToSummarize)
 
-      const firstSeq = nextSequence - context.messages.length + 1;
-      const lastSeq = nextSequence - 2;
+      const firstSeq = nextSequence - context.messages.length + 1
+      const lastSeq = nextSequence - 2
       await storeSummary(
         stateId,
         userId,
@@ -464,49 +464,49 @@ export const addMessageToContext = async (
         messagesToSummarize.length,
         firstSeq,
         lastSeq
-      );
+      )
 
       if (context.summary) {
         context.summary = await condenseSummary(
           context.summary,
           newSummary,
           summarizeFn
-        );
+        )
       } else {
-        context.summary = newSummary.slice(0, MAX_SUMMARY_LENGTH);
+        context.summary = newSummary.slice(0, MAX_SUMMARY_LENGTH)
       }
 
-      context.messages = recentMessages;
+      context.messages = recentMessages
 
-      await markAsSummarized(stateId, context.summary);
+      await markAsSummarized(stateId, context.summary)
     } catch (error) {
       logger.error(
         `WhatsApp: Failed to summarize conversation for ${phoneNumber}: ${error}`
-      );
+      )
     }
   }
 
-  await updateConversationState(stateId, context, nextSequence);
+  await updateConversationState(stateId, context, nextSequence)
 
-  return context;
-};
+  return context
+}
 
-const MAX_CONTEXT_PROMPT_LENGTH = 2000;
-const MAX_SUMMARY_DISPLAY_LENGTH = 800;
-const MAX_MESSAGES_DISPLAY_LENGTH = 1000;
+const MAX_CONTEXT_PROMPT_LENGTH = 2000
+const MAX_SUMMARY_DISPLAY_LENGTH = 800
+const MAX_MESSAGES_DISPLAY_LENGTH = 1000
 
 /**
  * Builds a context prompt from conversation history
  */
 export const buildContextPrompt = (context: ConversationContext): string => {
-  const parts: string[] = [];
+  const parts: string[] = []
 
   if (context.summary) {
     const truncatedSummary =
       context.summary.length > MAX_SUMMARY_DISPLAY_LENGTH
         ? context.summary.slice(-MAX_SUMMARY_DISPLAY_LENGTH)
-        : context.summary;
-    parts.push(`Previous conversation summary:\n${truncatedSummary}`);
+        : context.summary
+    parts.push(`Previous conversation summary:\n${truncatedSummary}`)
   }
 
   if (context.messages.length > 0) {
@@ -514,21 +514,21 @@ export const buildContextPrompt = (context: ConversationContext): string => {
       .map(
         (msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
       )
-      .join("\n");
+      .join("\n")
     if (messageHistory.length > MAX_MESSAGES_DISPLAY_LENGTH) {
-      messageHistory = messageHistory.slice(-MAX_MESSAGES_DISPLAY_LENGTH);
+      messageHistory = messageHistory.slice(-MAX_MESSAGES_DISPLAY_LENGTH)
     }
-    parts.push(`Recent messages:\n${messageHistory}`);
+    parts.push(`Recent messages:\n${messageHistory}`)
   }
 
-  const result = parts.join("\n\n");
+  const result = parts.join("\n\n")
 
   if (result.length > MAX_CONTEXT_PROMPT_LENGTH) {
-    return result.slice(-MAX_CONTEXT_PROMPT_LENGTH);
+    return result.slice(-MAX_CONTEXT_PROMPT_LENGTH)
   }
 
-  return result;
-};
+  return result
+}
 
 /**
  * Gets the conversation context for a WhatsApp user
@@ -537,9 +537,9 @@ export const getConversationContext = async (
   phoneNumber: string,
   displayName?: string
 ): Promise<ConversationContext> => {
-  const { context } = await getOrCreateTodayContext(phoneNumber, displayName);
-  return context;
-};
+  const { context } = await getOrCreateTodayContext(phoneNumber, displayName)
+  return context
+}
 
 /**
  * Exports conversation utilities as a namespace
@@ -554,4 +554,4 @@ export const whatsAppConversation = {
   addMessageToContext,
   buildContextPrompt,
   getConversationContext,
-};
+}

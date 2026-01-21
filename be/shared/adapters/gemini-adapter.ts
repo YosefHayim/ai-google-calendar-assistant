@@ -1,5 +1,5 @@
-import type { FunctionDeclaration, Part, Type } from "@google/genai";
-import { logger } from "@/lib/logger";
+import type { FunctionDeclaration, Part, Type } from "@google/genai"
+import { logger } from "@/lib/logger"
 import {
   analyzeGapsHandler,
   checkConflictsHandler,
@@ -15,20 +15,20 @@ import {
   updateEventHandler,
   updateUserBrainHandler,
   validateUserHandler,
-} from "@/shared/tools/handlers";
+} from "@/shared/tools/handlers"
 
 export type GeminiContext = {
-  email: string;
-  userId: string;
-  timezone?: string;
-};
+  email: string
+  userId: string
+  timezone?: string
+}
 
 type ToolHandler = (
   args: Record<string, unknown>,
   ctx: HandlerContext
-) => Promise<unknown>;
+) => Promise<unknown>
 
-const DEFAULT_LOOKBACK_DAYS = 7;
+const DEFAULT_LOOKBACK_DAYS = 7
 
 function buildFreebusyParams(args: Record<string, unknown>) {
   return {
@@ -43,7 +43,7 @@ function buildFreebusyParams(args: Record<string, unknown>) {
       date: null,
       timeZone: null,
     },
-  };
+  }
 }
 
 function buildListEventsParams(args: Record<string, unknown>) {
@@ -53,7 +53,7 @@ function buildListEventsParams(args: Record<string, unknown>) {
     q: (args.q as string) || null,
     searchAllCalendars: args.searchAllCalendars !== false,
     calendarId: (args.calendarId as string) || null,
-  };
+  }
 }
 
 function buildCreateEventParams(args: Record<string, unknown>) {
@@ -73,11 +73,11 @@ function buildCreateEventParams(args: Record<string, unknown>) {
       timeZone: (args.timeZone as string) || null,
     },
     addMeetLink: Boolean(args.addMeetLink),
-  };
+  }
 }
 
 function buildUpdateEventParams(args: Record<string, unknown>) {
-  const timeZone = (args.timeZone as string) || null;
+  const timeZone = (args.timeZone as string) || null
   return {
     eventId: args.eventId as string,
     calendarId: (args.calendarId as string) || null,
@@ -91,14 +91,14 @@ function buildUpdateEventParams(args: Record<string, unknown>) {
       ? { dateTime: args.endDateTime as string, date: null, timeZone }
       : null,
     addMeetLink: Boolean(args.addMeetLink),
-  };
+  }
 }
 
 function buildDeleteEventParams(args: Record<string, unknown>) {
   return {
     eventId: args.eventId as string,
     calendarId: (args.calendarId as string) || null,
-  };
+  }
 }
 
 function buildSelectCalendarParams(args: Record<string, unknown>) {
@@ -106,7 +106,7 @@ function buildSelectCalendarParams(args: Record<string, unknown>) {
     summary: args.summary as string | undefined,
     description: args.description as string | undefined,
     location: args.location as string | undefined,
-  };
+  }
 }
 
 function buildCheckConflictsParams(args: Record<string, unknown>) {
@@ -122,11 +122,11 @@ function buildCheckConflictsParams(args: Record<string, unknown>) {
       date: null,
       timeZone: null,
     },
-  };
+  }
 }
 
 function buildPreCreateValidationParams(args: Record<string, unknown>) {
-  const timeZone = (args.timeZone as string) || null;
+  const timeZone = (args.timeZone as string) || null
   return {
     summary: (args.summary as string) || null,
     description: (args.description as string) || null,
@@ -137,14 +137,14 @@ function buildPreCreateValidationParams(args: Record<string, unknown>) {
     end: args.endDateTime
       ? { dateTime: args.endDateTime as string, date: null, timeZone }
       : null,
-  };
+  }
 }
 
 function buildAnalyzeGapsParams(args: Record<string, unknown>) {
   return {
     lookbackDays: (args.lookbackDays as number) || DEFAULT_LOOKBACK_DAYS,
     calendarId: String(args.calendarId || "primary"),
-  };
+  }
 }
 
 function buildFillGapParams(args: Record<string, unknown>) {
@@ -155,18 +155,18 @@ function buildFillGapParams(args: Record<string, unknown>) {
     description: (args.description as string) || null,
     location: (args.location as string) || null,
     calendarId: String(args.calendarId || "primary"),
-  };
+  }
 }
 
 function buildFormatGapsParams(args: Record<string, unknown>) {
   const gaps = args.gaps as Array<{
-    startTime: string;
-    endTime: string;
-    durationMinutes: number;
-  }>;
+    startTime: string
+    endTime: string
+    durationMinutes: number
+  }>
   return {
     gapsJson: JSON.stringify(gaps),
-  };
+  }
 }
 
 function buildUpdateUserBrainParams(args: Record<string, unknown>) {
@@ -174,7 +174,7 @@ function buildUpdateUserBrainParams(args: Record<string, unknown>) {
     preference: args.instruction as string,
     category: (args.category as string) || undefined,
     replacesExisting: args.action === "replace" ? "true" : undefined,
-  };
+  }
 }
 
 const TOOL_HANDLERS: Record<string, ToolHandler> = {
@@ -202,36 +202,36 @@ const TOOL_HANDLERS: Record<string, ToolHandler> = {
     Promise.resolve(formatGapsHandler(buildFormatGapsParams(args))),
   update_user_brain: (args, ctx) =>
     updateUserBrainHandler(buildUpdateUserBrainParams(args), ctx),
-};
+}
 
 export async function executeGeminiTool(
   toolName: string,
   args: Record<string, unknown>,
   ctx: GeminiContext
 ): Promise<unknown> {
-  const handler = TOOL_HANDLERS[toolName];
+  const handler = TOOL_HANDLERS[toolName]
   if (!handler) {
-    throw new Error(`Unknown tool: ${toolName}`);
+    throw new Error(`Unknown tool: ${toolName}`)
   }
 
-  const handlerContext: HandlerContext = { email: ctx.email };
+  const handlerContext: HandlerContext = { email: ctx.email }
 
-  logger.debug("[GeminiAdapter] Executing tool", { toolName, args });
+  logger.debug("[GeminiAdapter] Executing tool", { toolName, args })
 
-  const startTime = Date.now();
-  const result = await handler(args, handlerContext);
-  const duration = Date.now() - startTime;
+  const startTime = Date.now()
+  const result = await handler(args, handlerContext)
+  const duration = Date.now() - startTime
 
-  logger.debug("[GeminiAdapter] Tool completed", { toolName, duration });
+  logger.debug("[GeminiAdapter] Tool completed", { toolName, duration })
 
-  return result;
+  return result
 }
 
-const STRING_TYPE = "STRING" as Type;
-const NUMBER_TYPE = "NUMBER" as Type;
-const BOOLEAN_TYPE = "BOOLEAN" as Type;
-const OBJECT_TYPE = "OBJECT" as Type;
-const ARRAY_TYPE = "ARRAY" as Type;
+const STRING_TYPE = "STRING" as Type
+const NUMBER_TYPE = "NUMBER" as Type
+const BOOLEAN_TYPE = "BOOLEAN" as Type
+const OBJECT_TYPE = "OBJECT" as Type
+const ARRAY_TYPE = "ARRAY" as Type
 
 export const GEMINI_TOOL_DECLARATIONS: FunctionDeclaration[] = [
   {
@@ -604,7 +604,7 @@ export const GEMINI_TOOL_DECLARATIONS: FunctionDeclaration[] = [
       required: ["instruction"],
     },
   },
-];
+]
 
 export function buildFunctionResultPart(
   functionName: string,
@@ -617,11 +617,11 @@ export function buildFunctionResultPart(
         result: typeof result === "string" ? result : JSON.stringify(result),
       },
     },
-  };
+  }
 }
 
 export function getToolNames(): string[] {
   return GEMINI_TOOL_DECLARATIONS.map((t) => t.name).filter(
     (name): name is string => name !== undefined
-  );
+  )
 }

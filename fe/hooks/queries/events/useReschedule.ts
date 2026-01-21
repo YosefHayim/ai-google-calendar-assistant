@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { eventsService, RescheduleSuggestionsResponse, RescheduleEventRequest } from '@/services/events.service'
+import { eventsService, RescheduleSuggestionsResponse, RescheduleEventRequest } from '@/services/events-service'
 import { queryKeys } from '@/lib/query/keys'
 import { useMutationWrapper, MutationHookOptions } from '../useMutationWrapper'
 import type { CalendarEvent, ApiResponse } from '@/types/api'

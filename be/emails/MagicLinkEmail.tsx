@@ -9,14 +9,14 @@ import {
   Preview,
   Section,
   Text,
-} from "@react-email/components";
-import type * as React from "react";
+} from "@react-email/components"
+import type * as React from "react"
 
 export type MagicLinkEmailProps = {
-  loginCode: string;
-  verifyUrl?: string;
-  logoUrl?: string;
-};
+  loginCode: string
+  verifyUrl?: string
+  logoUrl?: string
+}
 
 const colors = {
   primary: "#f97316",
@@ -26,12 +26,12 @@ const colors = {
   textMuted: "#a3a3a3",
   border: "#e5e5e5",
   codeBg: "#fafafa",
-};
+}
 
 const fonts = {
   primary:
     "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-};
+}
 
 export const MagicLinkEmail = ({
   loginCode = "000000",
@@ -107,7 +107,7 @@ export const MagicLinkEmail = ({
       </Container>
     </Body>
   </Html>
-);
+)
 
 const styles = {
   body: {
@@ -198,6 +198,6 @@ const styles = {
     color: colors.textMuted,
     textDecoration: "underline",
   } as React.CSSProperties,
-};
+}
 
-export default MagicLinkEmail;
+export default MagicLinkEmail

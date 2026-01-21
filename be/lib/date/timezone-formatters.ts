@@ -24,8 +24,8 @@ export function formatDateInTimezone(
     year: "numeric",
     month: "long",
     day: "numeric",
-  });
-  return formatter.format(date);
+  })
+  return formatter.format(date)
 }
 
 /**
@@ -48,8 +48,8 @@ export function formatTimeInTimezone(
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-  });
-  return timeFormatter.format(date);
+  })
+  return timeFormatter.format(date)
 }
 
 /**
@@ -70,9 +70,9 @@ export function getDayOfWeekInTimezone(
   const formatter = new Intl.DateTimeFormat(locale, {
     timeZone: timezone,
     weekday: "long",
-  });
-  const parts = formatter.formatToParts(date);
-  return parts.find((p) => p.type === "weekday")?.value || "Unknown";
+  })
+  const parts = formatter.formatToParts(date)
+  return parts.find((p) => p.type === "weekday")?.value || "Unknown"
 }
 
 /**
@@ -95,6 +95,6 @@ export function formatDateISOInTimezone(
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  });
-  return formatter.format(date);
+  })
+  return formatter.format(date)
 }

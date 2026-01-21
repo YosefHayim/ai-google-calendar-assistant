@@ -1,6 +1,6 @@
 'use client'
 
-import type { CardBrand, PaymentMethod } from '@/services/payment.service'
+import type { CardBrand, PaymentMethod } from '@/services/payment-service'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'

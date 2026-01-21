@@ -112,9 +112,12 @@ export async function getAgentsRequiringOptimization(): Promise<
     .order("agent_id")
 
   if (error) {
-    logger.error(`${SERVICE_LOG_PREFIX} Failed to fetch agents requiring optimization`, {
-      error: error.message,
-    })
+    logger.error(
+      `${SERVICE_LOG_PREFIX} Failed to fetch agents requiring optimization`,
+      {
+        error: error.message,
+      }
+    )
     return []
   }
 
@@ -136,21 +139,24 @@ export async function createOptimizationHistory(
       outcome: input.outcome,
       user_intent_category: input.userIntentCategory,
       is_shadow_run: input.isShadowRun,
-      optimizer_time_ms: input.optimizerTimeMs || null,
-      judge_time_ms: input.judgeTimeMs || null,
-      total_time_ms: input.totalTimeMs || null,
+      optimizer_time_ms: input.optimizerTimeMs ?? null,
+      judge_time_ms: input.judgeTimeMs ?? null,
+      total_time_ms: input.totalTimeMs ?? null,
       metadata: (input.metadata || {}) as Json,
     })
     .select()
     .single()
 
   if (error) {
-    logger.error(`${SERVICE_LOG_PREFIX} Failed to create optimization history`, {
-      userId: input.userId,
-      agentId: input.agentId,
-      outcome: input.outcome,
-      error: error.message,
-    })
+    logger.error(
+      `${SERVICE_LOG_PREFIX} Failed to create optimization history`,
+      {
+        userId: input.userId,
+        agentId: input.agentId,
+        outcome: input.outcome,
+        error: error.message,
+      }
+    )
     return null
   }
 
@@ -168,10 +174,13 @@ export async function getUserOptimizationHistory(
     .limit(limit)
 
   if (error) {
-    logger.error(`${SERVICE_LOG_PREFIX} Failed to fetch user optimization history`, {
-      userId,
-      error: error.message,
-    })
+    logger.error(
+      `${SERVICE_LOG_PREFIX} Failed to fetch user optimization history`,
+      {
+        userId,
+        error: error.message,
+      }
+    )
     return []
   }
 
@@ -185,7 +194,9 @@ export async function getOptimizationStats(userId?: string): Promise<{
   rejected: number
   avgTotalTimeMs: number
 }> {
-  let query = SUPABASE.from("optimization_history").select("outcome, total_time_ms")
+  let query = SUPABASE.from("optimization_history").select(
+    "outcome, total_time_ms"
+  )
 
   if (userId) {
     query = query.eq("user_id", userId)

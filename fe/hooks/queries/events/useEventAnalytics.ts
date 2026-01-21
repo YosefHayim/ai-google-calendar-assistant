@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { eventsService } from '@/services/events.service'
+import { eventsService } from '@/services/events-service'
 import { queryKeys } from '@/lib/query/keys'
 import { QUERY_CONFIG } from '@/lib/constants'
 import { useQueryWrapper, QueryHookOptions } from '../useQueryWrapper'

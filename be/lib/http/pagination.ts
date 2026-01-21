@@ -5,34 +5,34 @@
  * across all controllers and services.
  */
 
-import type { Request } from "express";
+import type { Request } from "express"
 
 export type PaginationParams = {
-  page: number;
-  limit: number;
-  offset: number;
-};
+  page: number
+  limit: number
+  offset: number
+}
 
 export type PaginationResult<T> = {
-  data: T[];
-  total: number;
-  page: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-};
+  data: T[]
+  total: number
+  page: number
+  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
+}
 
 export type PaginationDefaults = {
-  page: number;
-  limit: number;
-  maxLimit: number;
-};
+  page: number
+  limit: number
+  maxLimit: number
+}
 
 const DEFAULT_PAGINATION: PaginationDefaults = {
   page: 1,
   limit: 20,
   maxLimit: 100,
-};
+}
 
 /**
  * Parse pagination parameters from request query
@@ -49,22 +49,22 @@ export function parsePaginationParams(
   query: Request["query"],
   defaults: Partial<PaginationDefaults> = {}
 ): PaginationParams {
-  const config = { ...DEFAULT_PAGINATION, ...defaults };
+  const config = { ...DEFAULT_PAGINATION, ...defaults }
 
   const page = query.page
     ? Math.max(1, Number.parseInt(query.page as string, 10))
-    : config.page;
+    : config.page
 
   let limit = query.limit
     ? Number.parseInt(query.limit as string, 10)
-    : config.limit;
+    : config.limit
 
   // Ensure limit is within bounds
-  limit = Math.max(1, Math.min(limit, config.maxLimit));
+  limit = Math.max(1, Math.min(limit, config.maxLimit))
 
-  const offset = (page - 1) * limit;
+  const offset = (page - 1) * limit
 
-  return { page, limit, offset };
+  return { page, limit, offset }
 }
 
 /**
@@ -80,7 +80,7 @@ export function calculatePaginationMeta(
   page: number,
   limit: number
 ): Omit<PaginationResult<never>, "data"> {
-  const totalPages = Math.ceil(total / limit);
+  const totalPages = Math.ceil(total / limit)
 
   return {
     total,
@@ -88,7 +88,7 @@ export function calculatePaginationMeta(
     totalPages,
     hasNext: page < totalPages,
     hasPrev: page > 1,
-  };
+  }
 }
 
 /**
@@ -107,7 +107,7 @@ export function createPaginatedResponse<T>(
   return {
     data,
     ...calculatePaginationMeta(total, params.page, params.limit),
-  };
+  }
 }
 
 /**
@@ -129,12 +129,12 @@ export function parseSortParams<T extends string>(
     query.sortBy as string
   )
     ? (query.sortBy as T)
-    : defaultField;
+    : defaultField
 
   const sortOrder =
     query.sortOrder === "asc" || query.sortOrder === "desc"
       ? query.sortOrder
-      : defaultOrder;
+      : defaultOrder
 
-  return { sortBy, sortOrder };
+  return { sortBy, sortOrder }
 }

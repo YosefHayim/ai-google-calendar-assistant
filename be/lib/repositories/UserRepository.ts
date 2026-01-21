@@ -1,36 +1,36 @@
-import { SUPABASE } from "@/infrastructure/supabase/supabase";
-import type { TokensProps } from "@/types";
-import { isoToMs, msToIso } from "@/lib/date/timestamp-utils";
-import { logger } from "@/lib/logger";
+import { SUPABASE } from "@/infrastructure/supabase/supabase"
+import type { TokensProps } from "@/types"
+import { isoToMs, msToIso } from "@/lib/date/timestamp-utils"
+import { logger } from "@/lib/logger"
 
 const USER_BASE_FIELDS =
-  "id, email, timezone, display_name, first_name, last_name, avatar_url, status";
+  "id, email, timezone, display_name, first_name, last_name, avatar_url, status"
 
 const OAUTH_FIELDS =
-  "access_token, refresh_token, token_type, id_token, scope, expires_at, refresh_token_expires_at, is_valid, provider";
+  "access_token, refresh_token, token_type, id_token, scope, expires_at, refresh_token_expires_at, is_valid, provider"
 
 type UserRow = {
-  id: string;
-  email: string;
-  timezone: string | null;
-  display_name: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  avatar_url: string | null;
-  status: string | null;
-};
+  id: string
+  email: string
+  timezone: string | null
+  display_name: string | null
+  first_name: string | null
+  last_name: string | null
+  avatar_url: string | null
+  status: string | null
+}
 
 type OAuthRow = {
-  access_token: string;
-  refresh_token: string | null;
-  token_type: string | null;
-  id_token: string | null;
-  scope: string | null;
-  expires_at: string | null;
-  refresh_token_expires_at: string | null;
-  is_valid: boolean | null;
-  provider: string;
-};
+  access_token: string
+  refresh_token: string | null
+  token_type: string | null
+  id_token: string | null
+  scope: string | null
+  expires_at: string | null
+  refresh_token_expires_at: string | null
+  is_valid: boolean | null
+  provider: string
+}
 
 /**
  * @description Normalizes an email address by converting to lowercase and trimming whitespace.
@@ -44,7 +44,7 @@ type OAuthRow = {
  *
  * @private
  */
-const normalizeEmail = (email: string): string => email.toLowerCase().trim();
+const normalizeEmail = (email: string): string => email.toLowerCase().trim()
 
 /**
  * @description Combines user record and OAuth token record into a unified TokensProps object.
@@ -86,7 +86,7 @@ const combineUserAndOAuthToTokensProps = (
   is_valid: oauthToken.is_valid,
   is_active: oauthToken.is_valid,
   provider: oauthToken.provider as TokensProps["provider"],
-});
+})
 
 /**
  * @description Repository class for user-related database operations. Provides methods for
@@ -112,14 +112,14 @@ export class UserRepository {
       .select(USER_BASE_FIELDS)
       .ilike("email", normalizeEmail(email))
       .limit(1)
-      .maybeSingle();
+      .maybeSingle()
 
     if (error) {
-      logger.error(`UserRepository: findUserByEmail error: ${error.message}`);
-      return null;
+      logger.error(`UserRepository: findUserByEmail error: ${error.message}`)
+      return null
     }
 
-    return data as UserRow | null;
+    return data as UserRow | null
   }
 
   /**
@@ -140,13 +140,13 @@ export class UserRepository {
       .select("id")
       .ilike("email", normalizeEmail(email))
       .limit(1)
-      .maybeSingle();
+      .maybeSingle()
 
     if (error || !data) {
-      return null;
+      return null
     }
 
-    return data.id;
+    return data.id
   }
 
   /**
@@ -168,16 +168,16 @@ export class UserRepository {
       .eq("user_id", userId)
       .eq("provider", "google")
       .limit(1)
-      .maybeSingle();
+      .maybeSingle()
 
     if (error) {
       logger.error(
         `UserRepository: findGoogleOAuthToken error: ${error.message}`
-      );
-      return null;
+      )
+      return null
     }
 
-    return data as OAuthRow | null;
+    return data as OAuthRow | null
   }
 
   /**
@@ -203,22 +203,22 @@ export class UserRepository {
   async findUserWithGoogleTokens(
     email: string
   ): Promise<{ data: TokensProps | null; error: string | null }> {
-    const user = await this.findUserByEmail(email);
+    const user = await this.findUserByEmail(email)
 
     if (!user) {
-      return { data: null, error: null };
+      return { data: null, error: null }
     }
 
-    const oauthToken = await this.findGoogleOAuthToken(user.id);
+    const oauthToken = await this.findGoogleOAuthToken(user.id)
 
     if (!oauthToken) {
-      return { data: null, error: null };
+      return { data: null, error: null }
     }
 
     return {
       data: combineUserAndOAuthToTokensProps(user, oauthToken),
       error: null,
-    };
+    }
   }
 
   /**
@@ -241,23 +241,23 @@ export class UserRepository {
    * }
    */
   async findUserWithGoogleTokensOrThrow(email: string): Promise<TokensProps> {
-    const user = await this.findUserByEmail(email);
+    const user = await this.findUserByEmail(email)
 
     if (!user) {
-      logger.error(`UserRepository: no user found for email: ${email}`);
-      throw new Error(`No credentials found for ${email}`);
+      logger.error(`UserRepository: no user found for email: ${email}`)
+      throw new Error(`No credentials found for ${email}`)
     }
 
-    const oauthToken = await this.findGoogleOAuthToken(user.id);
+    const oauthToken = await this.findGoogleOAuthToken(user.id)
 
     if (!oauthToken) {
       logger.error(
         `UserRepository: no Google OAuth token found for email: ${email}`
-      );
-      throw new Error(`No Google Calendar credentials found for ${email}`);
+      )
+      throw new Error(`No Google Calendar credentials found for ${email}`)
     }
 
-    return combineUserAndOAuthToTokensProps(user, oauthToken);
+    return combineUserAndOAuthToTokensProps(user, oauthToken)
   }
 
   /**
@@ -282,17 +282,17 @@ export class UserRepository {
    * // Proceed with valid user
    */
   async validateUserExists(email: string): Promise<{
-    exists: boolean;
-    user?: Record<string, unknown>;
-    error?: string;
+    exists: boolean
+    user?: Record<string, unknown>
+    error?: string
   }> {
-    const user = await this.findUserByEmail(email);
+    const user = await this.findUserByEmail(email)
 
     if (!user) {
       return {
         exists: false,
         error: "No credentials found - authorization required.",
-      };
+      }
     }
 
     const { data: tokenData, error: tokenError } = await SUPABASE.from(
@@ -301,23 +301,23 @@ export class UserRepository {
       .select("id, is_valid, provider")
       .eq("user_id", user.id)
       .eq("provider", "google")
-      .single();
+      .single()
 
     if (tokenError || !tokenData) {
       return {
         exists: false,
         error: "No credentials found - authorization required.",
-      };
+      }
     }
 
     if (!tokenData.is_valid) {
       return {
         exists: false,
         error: "Token expired - authorization required.",
-      };
+      }
     }
 
-    return { exists: true, user: user as unknown as Record<string, unknown> };
+    return { exists: true, user: user as unknown as Record<string, unknown> }
   }
 
   /**
@@ -354,13 +354,11 @@ export class UserRepository {
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", userId)
-      .eq("provider", "google");
+      .eq("provider", "google")
 
     if (error) {
-      logger.error(
-        `UserRepository: updateGoogleTokens error: ${error.message}`
-      );
-      throw new Error(`Failed to save refreshed tokens: ${error.message}`);
+      logger.error(`UserRepository: updateGoogleTokens error: ${error.message}`)
+      throw new Error(`Failed to save refreshed tokens: ${error.message}`)
     }
   }
 
@@ -386,13 +384,13 @@ export class UserRepository {
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", userId)
-      .eq("provider", "google");
+      .eq("provider", "google")
 
     if (error) {
       logger.error(
         `UserRepository: deactivateGoogleTokens error: ${error.message}`
-      );
-      throw new Error(`Failed to deactivate tokens: ${error.message}`);
+      )
+      throw new Error(`Failed to deactivate tokens: ${error.message}`)
     }
   }
 
@@ -421,12 +419,10 @@ export class UserRepository {
         timezone,
         updated_at: new Date().toISOString(),
       })
-      .ilike("email", normalizeEmail(email));
+      .ilike("email", normalizeEmail(email))
 
     if (error) {
-      logger.error(
-        `UserRepository: updateUserTimezone error: ${error.message}`
-      );
+      logger.error(`UserRepository: updateUserTimezone error: ${error.message}`)
     }
   }
 
@@ -449,29 +445,29 @@ export class UserRepository {
       .eq("provider", "google")
       .eq("provider_user_id", googleSubjectId)
       .limit(1)
-      .maybeSingle();
+      .maybeSingle()
 
     if (error) {
       logger.error(
         `UserRepository: findUserByGoogleSubjectId error: ${error.message}`
-      );
-      return null;
+      )
+      return null
     }
 
     if (!data) {
-      return null;
+      return null
     }
 
     // Type assertion for the joined data
     const userData = data as unknown as {
-      user_id: string;
-      users: { email: string };
-    };
+      user_id: string
+      users: { email: string }
+    }
 
     return {
       userId: userData.user_id,
       email: userData.users.email,
-    };
+    }
   }
 
   /**
@@ -485,13 +481,13 @@ export class UserRepository {
     googleSubjectId: string
   ): Promise<{ success: boolean; userId?: string; email?: string }> {
     // First find the user
-    const userInfo = await this.findUserByGoogleSubjectId(googleSubjectId);
+    const userInfo = await this.findUserByGoogleSubjectId(googleSubjectId)
 
     if (!userInfo) {
       logger.warn(
         `UserRepository: No user found for Google subject ID: ${googleSubjectId}`
-      );
-      return { success: false };
+      )
+      return { success: false }
     }
 
     // Revoke the tokens - set is_valid to false and clear tokens
@@ -504,24 +500,24 @@ export class UserRepository {
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", userInfo.userId)
-      .eq("provider", "google");
+      .eq("provider", "google")
 
     if (error) {
       logger.error(
         `UserRepository: revokeTokensByGoogleSubjectId error: ${error.message}`
-      );
-      return { success: false };
+      )
+      return { success: false }
     }
 
     logger.info(
       `UserRepository: Revoked Google tokens for user ${userInfo.email} (Google sub: ${googleSubjectId})`
-    );
+    )
 
     return {
       success: true,
       userId: userInfo.userId,
       email: userInfo.email,
-    };
+    }
   }
 
   /**
@@ -542,12 +538,10 @@ export class UserRepository {
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", userId)
-      .eq("provider", "google");
+      .eq("provider", "google")
 
     if (error) {
-      logger.error(
-        `UserRepository: setGoogleSubjectId error: ${error.message}`
-      );
+      logger.error(`UserRepository: setGoogleSubjectId error: ${error.message}`)
     }
   }
 
@@ -560,10 +554,10 @@ export class UserRepository {
   async suspendUserByGoogleSubjectId(
     googleSubjectId: string
   ): Promise<{ success: boolean; userId?: string; email?: string }> {
-    const userInfo = await this.findUserByGoogleSubjectId(googleSubjectId);
+    const userInfo = await this.findUserByGoogleSubjectId(googleSubjectId)
 
     if (!userInfo) {
-      return { success: false };
+      return { success: false }
     }
 
     // Update user status to suspended
@@ -572,28 +566,28 @@ export class UserRepository {
         status: "suspended",
         updated_at: new Date().toISOString(),
       })
-      .eq("id", userInfo.userId);
+      .eq("id", userInfo.userId)
 
     if (error) {
       logger.error(
         `UserRepository: suspendUserByGoogleSubjectId error: ${error.message}`
-      );
-      return { success: false };
+      )
+      return { success: false }
     }
 
     // Also revoke tokens
-    await this.revokeTokensByGoogleSubjectId(googleSubjectId);
+    await this.revokeTokensByGoogleSubjectId(googleSubjectId)
 
     logger.info(
       `UserRepository: Suspended user ${userInfo.email} (Google sub: ${googleSubjectId})`
-    );
+    )
 
     return {
       success: true,
       userId: userInfo.userId,
       email: userInfo.email,
-    };
+    }
   }
 }
 
-export const userRepository = new UserRepository();
+export const userRepository = new UserRepository()

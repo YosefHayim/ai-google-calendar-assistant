@@ -1,16 +1,16 @@
-import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from "@slack/bolt";
-import { logger } from "@/lib/logger";
-import { handleSlackAuth } from "../middleware/auth-handler";
+import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from "@slack/bolt"
+import { logger } from "@/lib/logger"
+import { handleSlackAuth } from "../middleware/auth-handler"
 
-import { checkRateLimit } from "../middleware/rate-limiter";
-import { getSession, isDuplicateMessage } from "../utils/session";
+import { checkRateLimit } from "../middleware/rate-limiter"
+import { getSession, isDuplicateMessage } from "../utils/session"
 import {
   handleAgentRequest,
   handleCancellation,
   handleConfirmation,
-} from "./agent-handler";
+} from "./agent-handler"
 
-const TYPING_EMOJI = "hourglass_flowing_sand";
+const TYPING_EMOJI = "hourglass_flowing_sand"
 
 async function addTypingIndicator(
   client: MessageArgs["client"],
@@ -22,9 +22,9 @@ async function addTypingIndicator(
       channel,
       timestamp,
       name: TYPING_EMOJI,
-    });
+    })
   } catch (error) {
-    logger.debug(`Slack Bot: Failed to add typing indicator: ${error}`);
+    logger.debug(`Slack Bot: Failed to add typing indicator: ${error}`)
   }
 }
 
@@ -38,95 +38,95 @@ async function removeTypingIndicator(
       channel,
       timestamp,
       name: TYPING_EMOJI,
-    });
+    })
   } catch (error) {
-    logger.debug(`Slack Bot: Failed to remove typing indicator: ${error}`);
+    logger.debug(`Slack Bot: Failed to remove typing indicator: ${error}`)
   }
 }
 
-type MessageArgs = SlackEventMiddlewareArgs<"message"> & AllMiddlewareArgs;
+type MessageArgs = SlackEventMiddlewareArgs<"message"> & AllMiddlewareArgs
 type AppMentionArgs = SlackEventMiddlewareArgs<"app_mention"> &
-  AllMiddlewareArgs;
+  AllMiddlewareArgs
 
 export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
-  const { event, say, client } = args;
+  const { event, say, client } = args
 
   if (!("text" in event && event.text)) {
-    return;
+    return
   }
 
   if ("bot_id" in event && event.bot_id) {
-    return;
+    return
   }
 
-  const userId = event.user;
+  const userId = event.user
   if (!userId) {
-    return;
+    return
   }
 
-  const teamId = "team" in event ? (event.team as string) : "unknown";
-  const ts = "ts" in event ? event.ts : "";
+  const teamId = "team" in event ? (event.team as string) : "unknown"
+  const ts = "ts" in event ? event.ts : ""
 
   if (isDuplicateMessage(userId, teamId, ts)) {
-    return;
+    return
   }
 
-  const text = event.text.trim();
+  const text = event.text.trim()
   if (!text) {
-    return;
+    return
   }
 
   logger.info(
     `Slack Bot: Received message from user ${userId}: "${text.substring(0, 50)}..."`
-  );
+  )
 
-  const rateCheck = checkRateLimit(userId, "message");
+  const rateCheck = checkRateLimit(userId, "message")
   if (!rateCheck.allowed) {
     await say(
       `You're sending messages too quickly. Please wait ${rateCheck.resetIn} seconds.`
-    );
-    return;
+    )
+    return
   }
 
-  const authResult = await handleSlackAuth(client, userId, teamId, text);
+  const authResult = await handleSlackAuth(client, userId, teamId, text)
 
   if (authResult.needsAuth) {
-    await say(authResult.authMessage || "Please authenticate to use Ally.");
-    return;
+    await say(authResult.authMessage || "Please authenticate to use Ally.")
+    return
   }
 
   if (!authResult.session.email) {
     await say(
       "I couldn't find your email. Please enter your email address to get started."
-    );
-    return;
+    )
+    return
   }
 
-  const session = getSession(userId, teamId);
+  const session = getSession(userId, teamId)
 
   if (session.pendingConfirmation) {
-    const lowerText = text.toLowerCase();
+    const lowerText = text.toLowerCase()
     if (lowerText === "yes" || lowerText === "confirm" || lowerText === "y") {
       const response = await handleConfirmation(
         userId,
         teamId,
         authResult.session.email
-      );
-      await say(response);
-      return;
+      )
+      await say(response)
+      return
     }
     if (lowerText === "no" || lowerText === "cancel" || lowerText === "n") {
-      const response = handleCancellation(userId, teamId);
-      await say(response);
-      return;
+      const response = handleCancellation(userId, teamId)
+      await say(response)
+      return
     }
   }
 
-  const channel = "channel" in event ? (event.channel as string) : "";
+  const channel = "channel" in event ? (event.channel as string) : ""
 
   try {
     if (channel && ts) {
-      await addTypingIndicator(client, channel, ts);
+      await addTypingIndicator(client, channel, ts)
     }
 
     const response = await handleAgentRequest({
@@ -134,68 +134,68 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
       email: authResult.session.email,
       slackUserId: userId,
       teamId,
-    });
+    })
 
-    await say(response);
+    await say(response)
   } catch (error) {
-    logger.error(`Slack Bot: Error processing message: ${error}`);
+    logger.error(`Slack Bot: Error processing message: ${error}`)
     await say(
       "Sorry, I encountered an error processing your request. Please try again."
-    );
+    )
   } finally {
     if (channel && ts) {
-      await removeTypingIndicator(client, channel, ts);
+      await removeTypingIndicator(client, channel, ts)
     }
   }
-};
+}
 
 export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
-  const { event, say, client } = args;
+  const { event, say, client } = args
 
-  const text = event.text.replace(/<@[A-Z0-9]+>/gi, "").trim();
-  const userId = event.user;
-  const teamId = event.team || "unknown";
-  const channel = event.channel;
-  const ts = event.ts;
+  const text = event.text.replace(/<@[A-Z0-9]+>/gi, "").trim()
+  const userId = event.user
+  const teamId = event.team || "unknown"
+  const channel = event.channel
+  const ts = event.ts
 
   if (!userId) {
-    return;
+    return
   }
 
   logger.info(
     `Slack Bot: Received mention from user ${userId}: "${text.substring(0, 50)}..."`
-  );
+  )
 
-  const rateCheck = checkRateLimit(userId, "message");
+  const rateCheck = checkRateLimit(userId, "message")
   if (!rateCheck.allowed) {
     await say(
       `You're sending messages too quickly. Please wait ${rateCheck.resetIn} seconds.`
-    );
-    return;
+    )
+    return
   }
 
-  const authResult = await handleSlackAuth(client, userId, teamId, text);
+  const authResult = await handleSlackAuth(client, userId, teamId, text)
 
   if (authResult.needsAuth) {
-    await say(authResult.authMessage || "Please authenticate to use Ally.");
-    return;
+    await say(authResult.authMessage || "Please authenticate to use Ally.")
+    return
   }
 
   if (!authResult.session.email) {
     await say(
       "I couldn't find your email. Please enter your email address to get started."
-    );
-    return;
+    )
+    return
   }
 
   if (!text) {
-    await say("Hi! How can I help you with your calendar today?");
-    return;
+    await say("Hi! How can I help you with your calendar today?")
+    return
   }
 
   try {
     if (channel && ts) {
-      await addTypingIndicator(client, channel, ts);
+      await addTypingIndicator(client, channel, ts)
     }
 
     const response = await handleAgentRequest({
@@ -203,17 +203,17 @@ export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
       email: authResult.session.email,
       slackUserId: userId,
       teamId,
-    });
+    })
 
-    await say(response);
+    await say(response)
   } catch (error) {
-    logger.error(`Slack Bot: Error processing mention: ${error}`);
+    logger.error(`Slack Bot: Error processing mention: ${error}`)
     await say(
       "Sorry, I encountered an error processing your request. Please try again."
-    );
+    )
   } finally {
     if (channel && ts) {
-      await removeTypingIndicator(client, channel, ts);
+      await removeTypingIndicator(client, channel, ts)
     }
   }
-};
+}

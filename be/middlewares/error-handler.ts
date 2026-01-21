@@ -1,7 +1,7 @@
-import type { NextFunction, Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
-import type { HttpError } from "@/lib/http";
-import { sendErrorResponse } from "@/lib/http";
+import type { NextFunction, Request, Response } from "express"
+import { STATUS_RESPONSE } from "@/config"
+import type { HttpError } from "@/lib/http"
+import { sendErrorResponse } from "@/lib/http"
 
 /**
  * Extract HTTP status from error
@@ -10,14 +10,14 @@ import { sendErrorResponse } from "@/lib/http";
  * @returns {number} The HTTP status code.
  */
 const getErrorStatus = (err: Error): number => {
-  const errWithStatus = err as Error & { status?: number };
-  const errWithCause = err as HttpError;
+  const errWithStatus = err as Error & { status?: number }
+  const errWithCause = err as HttpError
   return (
     errWithStatus.status ||
     errWithCause.cause?.status ||
     STATUS_RESPONSE.INTERNAL_SERVER_ERROR
-  );
-};
+  )
+}
 
 /**
  * Error handler middleware
@@ -34,9 +34,9 @@ const errorHandler = (
   res: Response,
   _next: NextFunction
 ) => {
-  const status = getErrorStatus(err);
-  const message = err.message || "Internal Server Error";
-  sendErrorResponse(res, status, message);
-};
+  const status = getErrorStatus(err)
+  const message = err.message || "Internal Server Error"
+  sendErrorResponse(res, status, message)
+}
 
-export default errorHandler;
+export default errorHandler

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
-import { voiceService } from '@/services/voice.service'
+import { voiceService } from '@/services/voice-service'
 
 interface UseVoicePreviewOptions {
   previewText: string

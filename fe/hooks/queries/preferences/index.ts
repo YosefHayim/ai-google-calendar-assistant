@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { preferencesService, type PreferenceResponse } from '@/services/preferences.service'
+import { preferencesService, type PreferenceResponse } from '@/services/preferences-service'
 import { queryKeys } from '@/lib/query/keys'
 import { QUERY_CONFIG } from '@/lib/constants'
 import type {

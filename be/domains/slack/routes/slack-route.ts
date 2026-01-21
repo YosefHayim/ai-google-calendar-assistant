@@ -7,11 +7,11 @@ import {
   handleOAuthInstall,
   handleOAuthUninstall,
   handleStatus,
-} from "../controllers/slack-controller";
+} from "../controllers/slack-controller"
 
-import express from "express";
+import express from "express"
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * POST /events - Slack Events API Endpoint
@@ -34,7 +34,7 @@ const router = express.Router();
  * to respond to user messages and mentions in Slack workspaces. Events are processed
  * to extract user intent and route to appropriate AI conversation handlers.
  */
-router.post("/events", handleEvents);
+router.post("/events", handleEvents)
 
 /**
  * POST /commands - Slack Slash Commands Endpoint
@@ -56,7 +56,7 @@ router.post("/events", handleEvents);
  * user intent and parameters, then routed to appropriate AI conversation handlers or
  * calendar management functions based on the command type.
  */
-router.post("/commands", handleCommands);
+router.post("/commands", handleCommands)
 
 /**
  * POST /interactions - Slack Interactive Components Endpoint
@@ -80,7 +80,7 @@ router.post("/commands", handleCommands);
  * or submit forms in Slack messages/modals, this endpoint processes their selections
  * and continues the AI conversation or executes requested actions.
  */
-router.post("/interactions", handleInteractions);
+router.post("/interactions", handleInteractions)
 
 /**
  * GET /oauth/install - Slack OAuth Installation Initiation
@@ -98,7 +98,7 @@ router.post("/interactions", handleInteractions);
  * of granting permissions for the AI assistant to access the Slack workspace, enabling
  * it to read messages, post responses, and interact with users.
  */
-router.get("/oauth/install", handleOAuthInstall);
+router.get("/oauth/install", handleOAuthInstall)
 
 /**
  * GET /oauth/callback - Slack OAuth Callback Handler
@@ -117,7 +117,7 @@ router.get("/oauth/install", handleOAuthInstall);
  * the AI assistant gains access to the workspace and can begin processing messages,
  * mentions, and other Slack events for that workspace.
  */
-router.get("/oauth/callback", handleOAuthCallback);
+router.get("/oauth/callback", handleOAuthCallback)
 
 /**
  * POST /oauth/uninstall - Slack OAuth Uninstallation Handler
@@ -136,7 +136,7 @@ router.get("/oauth/callback", handleOAuthCallback);
  * this endpoint ensures proper cleanup of workspace data, revokes access tokens, and
  * stops processing events for that workspace.
  */
-router.post("/oauth/uninstall", handleOAuthUninstall);
+router.post("/oauth/uninstall", handleOAuthUninstall)
 
 /**
  * GET /status - Slack Integration Status Check
@@ -156,7 +156,7 @@ router.post("/oauth/uninstall", handleOAuthUninstall);
  * connectivity issues, expired tokens, or configuration problems that might affect
  * the AI assistant's ability to interact with Slack workspaces.
  */
-router.get("/status", ...handleStatus);
+router.get("/status", ...handleStatus)
 
 /**
  * GET /health - Slack Integration Health Check
@@ -173,6 +173,6 @@ router.get("/status", ...handleStatus);
  * lightweight way to verify that the Slack integration service is running and
  * can accept requests, separate from the more detailed /status endpoint.
  */
-router.get("/health", handleHealth);
+router.get("/health", handleHealth)
 
-export default router;
+export default router

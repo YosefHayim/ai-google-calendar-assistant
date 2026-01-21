@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const chatMessageSchema = z.object({
   message: z
@@ -8,4 +8,4 @@ export const chatMessageSchema = z.object({
     .transform((msg) => msg.trim()),
   conversationId: z.number().int().positive().optional(),
   sessionId: z.string().uuid().optional(),
-});
+})

@@ -130,10 +130,7 @@ describe("Team Collaboration Journey", () => {
           calendarAccess: "read_write",
         },
         viewer: {
-          permissions: [
-            "view_team",
-            "view_calendars",
-          ],
+          permissions: ["view_team", "view_calendars"],
           canInvite: false,
           canRemove: false,
           calendarAccess: "read_only",
@@ -158,7 +155,8 @@ describe("Team Collaboration Journey", () => {
         status: "pending",
         expiresAt: "2026-01-27T10:00:00Z", // 7 days
         createdAt: "2026-01-20T10:00:00Z",
-        message: "Welcome to the Engineering Team! We'd love to have you join us.",
+        message:
+          "Welcome to the Engineering Team! We'd love to have you join us.",
         permissions: [
           "view_team",
           "create_events",
@@ -512,7 +510,8 @@ describe("Team Collaboration Journey", () => {
           {
             action: "proceed",
             confidence: 0.8,
-            message: "2 out of 3 team members available. Charlie has indicated tentative availability.",
+            message:
+              "2 out of 3 team members available. Charlie has indicated tentative availability.",
           },
           {
             action: "find_alternative",
@@ -568,8 +567,12 @@ describe("Team Collaboration Journey", () => {
       expect(teamMeetingScheduling.requiredAttendees).toHaveLength(3)
       expect(teamMeetingScheduling.optionalAttendees).toHaveLength(1)
       expect(teamMeetingScheduling.preferredTimes).toHaveLength(3)
-      expect(teamMeetingScheduling.schedulingConstraints.workingHoursOnly).toBe(true)
-      expect(teamMeetingScheduling.schedulingProcess.status).toBe("analyzing_availability")
+      expect(teamMeetingScheduling.schedulingConstraints.workingHoursOnly).toBe(
+        true
+      )
+      expect(teamMeetingScheduling.schedulingProcess.status).toBe(
+        "analyzing_availability"
+      )
     })
 
     it("should validate team scheduling conflict resolution", () => {
@@ -622,8 +625,12 @@ describe("Team Collaboration Journey", () => {
 
       expect(conflictResolution.conflicts).toHaveLength(1)
       expect(conflictResolution.conflicts[0].resolutionOptions).toHaveLength(3)
-      expect(conflictResolution.resolutionStrategy.preferredApproach).toBe("find_alternative_time")
-      expect(conflictResolution.proposedSolution.allAttendeesAvailable).toBe(true)
+      expect(conflictResolution.resolutionStrategy.preferredApproach).toBe(
+        "find_alternative_time"
+      )
+      expect(conflictResolution.proposedSolution.allAttendeesAvailable).toBe(
+        true
+      )
     })
   })
 
@@ -677,13 +684,15 @@ describe("Team Collaboration Journey", () => {
             type: "productivity",
             title: "Meeting Load Distribution",
             description: "Tuesday has the highest meeting load with 12 events",
-            recommendation: "Consider redistributing meetings to balance workload",
+            recommendation:
+              "Consider redistributing meetings to balance workload",
             impact: "medium",
           },
           {
             type: "collaboration",
             title: "Team Interaction Patterns",
-            description: "Average of 4.2 attendees per meeting indicates good cross-team collaboration",
+            description:
+              "Average of 4.2 attendees per meeting indicates good cross-team collaboration",
             recommendation: "Continue encouraging inclusive meeting practices",
             impact: "positive",
           },
@@ -743,7 +752,9 @@ describe("Team Collaboration Journey", () => {
         ],
       }
 
-      expect(schedulingEfficiency.efficiencyMetrics.firstChoiceSuccessRate).toBe(78)
+      expect(
+        schedulingEfficiency.efficiencyMetrics.firstChoiceSuccessRate
+      ).toBe(78)
       expect(schedulingEfficiency.timeToSchedule.byMeetingType["1:1"]).toBe(15)
       expect(schedulingEfficiency.optimizationOpportunities).toHaveLength(2)
     })
@@ -801,7 +812,9 @@ describe("Team Collaboration Journey", () => {
       }
 
       expect(collaborationNetwork.networkAnalysis.totalConnections).toBe(12)
-      expect(collaborationNetwork.networkAnalysis.collaborationClusters).toHaveLength(2)
+      expect(
+        collaborationNetwork.networkAnalysis.collaborationClusters
+      ).toHaveLength(2)
       expect(collaborationNetwork.recommendations).toHaveLength(2)
     })
   })
@@ -852,8 +865,12 @@ describe("Team Collaboration Journey", () => {
       }
 
       expect(teamGovernance.policies.meetingPolicies.requireAgenda).toBe(true)
-      expect(teamGovernance.policies.calendarPolicies.bufferTimeRequired).toBe(15)
-      expect(teamGovernance.policies.membershipPolicies.autoApproveDomains).toEqual(["company.com"])
+      expect(teamGovernance.policies.calendarPolicies.bufferTimeRequired).toBe(
+        15
+      )
+      expect(
+        teamGovernance.policies.membershipPolicies.autoApproveDomains
+      ).toEqual(["company.com"])
       expect(teamGovernance.enforcement.automaticEnforcement).toBe(true)
     })
 
@@ -915,7 +932,9 @@ describe("Team Collaboration Journey", () => {
       }
 
       expect(teamIntegrations.integrations.slack.enabled).toBe(true)
-      expect(teamIntegrations.integrations.email.domains).toEqual(["company.com"])
+      expect(teamIntegrations.integrations.email.domains).toEqual([
+        "company.com",
+      ])
       expect(teamIntegrations.integrations.zoom.autoCreateMeetings).toBe(true)
       expect(teamIntegrations.integrationHealth.slack.status).toBe("healthy")
     })
@@ -991,7 +1010,10 @@ describe("Team Collaboration Journey", () => {
         },
       }
 
-      expect(teamCompliance.compliance.regulatoryCompliance.gdpr.dataProcessingAgreement).toBe(true)
+      expect(
+        teamCompliance.compliance.regulatoryCompliance.gdpr
+          .dataProcessingAgreement
+      ).toBe(true)
       expect(teamCompliance.reporting.scheduledReports).toHaveLength(2)
       expect(teamCompliance.auditTrail.eventsTracked).toHaveLength(6)
     })

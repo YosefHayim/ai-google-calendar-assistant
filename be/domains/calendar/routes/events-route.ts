@@ -2,19 +2,19 @@ import express, {
   type NextFunction,
   type Request,
   type Response,
-} from "express";
+} from "express"
 
-import { STATUS_RESPONSE } from "@/config";
-import eventsController from "@/domains/calendar/controllers/events-controller";
-import { withCalendarClient } from "@/infrastructure/google/calendar-client";
-import { googleTokenRefresh } from "@/domains/auth/middleware/google-token-refresh";
-import { googleTokenValidation } from "@/domains/auth/middleware/google-token-validation";
-import { calendarAiRateLimiter } from "@/middlewares/rate-limiter";
-import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
-import { sendR } from "@/lib/http";
-import { logger } from "@/lib/logger";
+import { STATUS_RESPONSE } from "@/config"
+import eventsController from "@/domains/calendar/controllers/events-controller"
+import { withCalendarClient } from "@/infrastructure/google/calendar-client"
+import { googleTokenRefresh } from "@/domains/auth/middleware/google-token-refresh"
+import { googleTokenValidation } from "@/domains/auth/middleware/google-token-validation"
+import { calendarAiRateLimiter } from "@/middlewares/rate-limiter"
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
+import { sendR } from "@/lib/http"
+import { logger } from "@/lib/logger"
 
-const router = express.Router();
+const router = express.Router()
 
 // Supabase auth + Google token validation + auto-refresh + calendar client
 router.use(
@@ -22,22 +22,22 @@ router.use(
   googleTokenValidation,
   googleTokenRefresh(),
   withCalendarClient
-);
+)
 
 router.param(
   "id",
   (_req: Request, res: Response, next: NextFunction, id: string) => {
     if (!id) {
-      logger.error("Google Calendar: Events: id not found");
+      logger.error("Google Calendar: Events: id not found")
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
         "Event ID parameter is required."
-      );
+      )
     }
-    next();
+    next()
   }
-);
+)
 
 /**
  * GET / - Retrieve All Calendar Events
@@ -69,7 +69,7 @@ router.param(
  * @related Core endpoint for calendar data access. Provides the foundation for
  * calendar views, event listings, and calendar synchronization features.
  */
-router.get("/", eventsController.getAllEvents);
+router.get("/", eventsController.getAllEvents)
 
 /**
  * GET /analytics - Retrieve Event Analytics and Insights
@@ -98,7 +98,7 @@ router.get("/", eventsController.getAllEvents);
  * scheduling pattern analysis. Helps users understand their calendar usage and
  * optimize their time management.
  */
-router.get("/analytics", eventsController.getEventAnalytics);
+router.get("/analytics", eventsController.getEventAnalytics)
 
 /**
  * GET /insights - Generate AI-Powered Calendar Insights
@@ -127,7 +127,7 @@ router.get("/analytics", eventsController.getEventAnalytics);
  * Provides value-added analysis beyond basic calendar data to help users optimize
  * their time management and scheduling practices.
  */
-router.get("/insights", calendarAiRateLimiter, eventsController.getInsights);
+router.get("/insights", calendarAiRateLimiter, eventsController.getInsights)
 
 /**
  * POST /quick-add - Quick Add Event with Natural Language
@@ -156,7 +156,7 @@ router.get("/insights", calendarAiRateLimiter, eventsController.getInsights);
  * for voice commands, chat interfaces, or when users want to rapidly add events
  * without filling out detailed forms.
  */
-router.post("/quick-add", eventsController.quickAddEvent);
+router.post("/quick-add", eventsController.quickAddEvent)
 
 /**
  * POST /watch - Set Up Calendar Event Notifications
@@ -183,7 +183,7 @@ router.post("/quick-add", eventsController.quickAddEvent);
  * modified, or deleted, Google pushes notifications to keep the application in sync
  * without polling. Essential for maintaining data consistency across multiple clients.
  */
-router.post("/watch", eventsController.watchEvents);
+router.post("/watch", eventsController.watchEvents)
 
 /**
  * POST /move - Move Event to Different Calendar
@@ -210,7 +210,7 @@ router.post("/watch", eventsController.watchEvents);
  * users to reorganize their schedules by moving events between personal, work,
  * or shared calendars while maintaining event integrity.
  */
-router.post("/move", eventsController.moveEvent);
+router.post("/move", eventsController.moveEvent)
 
 /**
  * POST /import - Import Event as Private Copy
@@ -240,31 +240,31 @@ router.post("/move", eventsController.moveEvent);
  * calendars, public calendars, or other sources and create personal copies they
  * can modify without affecting the original event.
  */
-router.post("/import", eventsController.importEvent);
+router.post("/import", eventsController.importEvent)
 
 // GET /:id/instances - Get instances of recurring event
-router.get("/:id/instances", eventsController.getEventInstances);
+router.get("/:id/instances", eventsController.getEventInstances)
 
 // GET /:id/reschedule-suggestions - Get AI reschedule suggestions (rate limited)
 router.get(
   "/:id/reschedule-suggestions",
   calendarAiRateLimiter,
   eventsController.getRescheduleSuggestions
-);
+)
 
 // POST /:id/reschedule - Apply reschedule to event
-router.post("/:id/reschedule", eventsController.rescheduleEvent);
+router.post("/:id/reschedule", eventsController.rescheduleEvent)
 
 // GET /:id - Get specific event by ID
-router.get("/:id", eventsController.getEventById);
+router.get("/:id", eventsController.getEventById)
 
 // POST / - Create new event
-router.post("/", eventsController.createEvent);
+router.post("/", eventsController.createEvent)
 
 // PATCH /:id - Update existing event
-router.patch("/:id", eventsController.updateEvent);
+router.patch("/:id", eventsController.updateEvent)
 
 // DELETE /:id - Delete event from calendar
-router.delete("/:id", eventsController.deleteEvent);
+router.delete("/:id", eventsController.deleteEvent)
 
-export default router;
+export default router

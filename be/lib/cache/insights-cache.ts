@@ -1,16 +1,16 @@
-import type { AIInsight } from "@/ai-agents/insights-generator";
-import { isRedisConnected, redisClient } from "@/config";
-import { logger } from "@/lib/logger";
+import type { AIInsight } from "@/ai-agents/insights-generator"
+import { isRedisConnected, redisClient } from "@/config"
+import { logger } from "@/lib/logger"
 
-const CACHE_PREFIX = "insights";
-const CACHE_TTL_SECONDS = 5 * 60; // 5 minutes
+const CACHE_PREFIX = "insights"
+const CACHE_TTL_SECONDS = 5 * 60 // 5 minutes
 
 export type CachedInsights = {
-  insights: AIInsight[];
-  generatedAt: string;
-  periodStart: string;
-  periodEnd: string;
-};
+  insights: AIInsight[]
+  generatedAt: string
+  periodStart: string
+  periodEnd: string
+}
 
 /**
  * @description Generates a unique Redis cache key for storing AI-generated insights.
@@ -25,7 +25,7 @@ export type CachedInsights = {
  * // Returns: "insights:user_123:2024-01-01T00:00:00Z:2024-01-07T23:59:59Z"
  */
 function getCacheKey(userId: string, timeMin: string, timeMax: string): string {
-  return `${CACHE_PREFIX}:${userId}:${timeMin}:${timeMax}`;
+  return `${CACHE_PREFIX}:${userId}:${timeMin}:${timeMax}`
 }
 
 /**
@@ -49,24 +49,24 @@ export async function getCachedInsights(
   timeMax: string
 ): Promise<CachedInsights | null> {
   if (!isRedisConnected()) {
-    logger.warn("Insights cache: Redis unavailable, skipping cache lookup");
-    return null;
+    logger.warn("Insights cache: Redis unavailable, skipping cache lookup")
+    return null
   }
 
   try {
-    const key = getCacheKey(userId, timeMin, timeMax);
-    const cached = await redisClient.get(key);
+    const key = getCacheKey(userId, timeMin, timeMax)
+    const cached = await redisClient.get(key)
 
     if (cached) {
-      logger.debug(`Insights cache hit for user ${userId}`);
-      return JSON.parse(cached) as CachedInsights;
+      logger.debug(`Insights cache hit for user ${userId}`)
+      return JSON.parse(cached) as CachedInsights
     }
 
-    logger.debug(`Insights cache miss for user ${userId}`);
-    return null;
+    logger.debug(`Insights cache miss for user ${userId}`)
+    return null
   } catch (error) {
-    logger.error(`Insights cache: Error reading from Redis: ${error}`);
-    return null;
+    logger.error(`Insights cache: Error reading from Redis: ${error}`)
+    return null
   }
 }
 
@@ -99,18 +99,18 @@ export async function setCachedInsights(
   data: CachedInsights
 ): Promise<void> {
   if (!isRedisConnected()) {
-    logger.warn("Insights cache: Redis unavailable, skipping cache write");
-    return;
+    logger.warn("Insights cache: Redis unavailable, skipping cache write")
+    return
   }
 
   try {
-    const key = getCacheKey(userId, timeMin, timeMax);
-    await redisClient.setex(key, CACHE_TTL_SECONDS, JSON.stringify(data));
+    const key = getCacheKey(userId, timeMin, timeMax)
+    await redisClient.setex(key, CACHE_TTL_SECONDS, JSON.stringify(data))
     logger.debug(
       `Insights cached for user ${userId} (TTL: ${CACHE_TTL_SECONDS}s)`
-    );
+    )
   } catch (error) {
-    logger.error(`Insights cache: Error writing to Redis: ${error}`);
+    logger.error(`Insights cache: Error writing to Redis: ${error}`)
     // Non-fatal - continue without caching
   }
 }
@@ -133,14 +133,14 @@ export async function invalidateCachedInsights(
   timeMax: string
 ): Promise<void> {
   if (!isRedisConnected()) {
-    return;
+    return
   }
 
   try {
-    const key = getCacheKey(userId, timeMin, timeMax);
-    await redisClient.del(key);
-    logger.debug(`Insights cache invalidated for user ${userId}`);
+    const key = getCacheKey(userId, timeMin, timeMax)
+    await redisClient.del(key)
+    logger.debug(`Insights cache invalidated for user ${userId}`)
   } catch (error) {
-    logger.error(`Insights cache: Error invalidating cache: ${error}`);
+    logger.error(`Insights cache: Error invalidating cache: ${error}`)
   }
 }

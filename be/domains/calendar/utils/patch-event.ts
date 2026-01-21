@@ -1,11 +1,11 @@
-import type { calendar_v3 } from "googleapis";
-import { REQUEST_CONFIG_BASE } from "@/config";
+import type { calendar_v3 } from "googleapis"
+import { REQUEST_CONFIG_BASE } from "@/config"
 
 type PatchEventParams = {
-  calendarEvents: calendar_v3.Resource$Events;
-  eventData?: calendar_v3.Schema$Event | Record<string, string>;
-  extra?: Record<string, unknown>;
-};
+  calendarEvents: calendar_v3.Resource$Events
+  eventData?: calendar_v3.Schema$Event | Record<string, string>
+  extra?: Record<string, unknown>
+}
 
 /**
  * @description Validates and normalizes a calendar ID string for use with Google Calendar API.
@@ -21,14 +21,14 @@ type PatchEventParams = {
  */
 function normalizeCalendarId(id: unknown): string | null {
   if (!id || typeof id !== "string") {
-    return null;
+    return null
   }
-  const trimmed = id.trim();
+  const trimmed = id.trim()
   // Reject obviously invalid values
   if (trimmed === "" || trimmed === "/") {
-    return null;
+    return null
   }
-  return trimmed;
+  return trimmed
 }
 
 /**
@@ -42,7 +42,7 @@ function generateMeetConferenceData(): calendar_v3.Schema$ConferenceData {
         type: "hangoutsMeet",
       },
     },
-  };
+  }
 }
 
 /**
@@ -61,25 +61,25 @@ export async function patchEvent({
 }: PatchEventParams) {
   const body =
     (eventData as calendar_v3.Schema$Event & {
-      calendarId?: string;
-      email?: string;
-    }) || {};
+      calendarId?: string
+      email?: string
+    }) || {}
   const calendarId =
     normalizeCalendarId(extra?.calendarId) ||
     normalizeCalendarId(body.calendarId) ||
-    "primary";
-  const eventId = (extra?.eventId as string) || body.id || "";
-  const addMeetLink = extra?.addMeetLink === true;
+    "primary"
+  const eventId = (extra?.eventId as string) || body.id || ""
+  const addMeetLink = extra?.addMeetLink === true
 
   if (!eventId) {
-    throw new Error("eventId is required for patch operation");
+    throw new Error("eventId is required for patch operation")
   }
 
-  const { calendarId: _cid, email: _email, id: _id, ...requestBody } = body;
+  const { calendarId: _cid, email: _email, id: _id, ...requestBody } = body
 
   // Add Google Meet conference data if requested
   if (addMeetLink) {
-    requestBody.conferenceData = generateMeetConferenceData();
+    requestBody.conferenceData = generateMeetConferenceData()
   }
 
   const patchedEvent = await calendarEvents.patch({
@@ -89,6 +89,6 @@ export async function patchEvent({
     requestBody,
     // conferenceDataVersion is required when adding conference data
     conferenceDataVersion: addMeetLink ? 1 : undefined,
-  });
-  return patchedEvent.data;
+  })
+  return patchedEvent.data
 }

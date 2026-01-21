@@ -2,26 +2,26 @@ import {
   ACCESS_TOKEN_COOKIE,
   REFRESH_TOKEN_COOKIE,
   setAuthCookies,
-} from "@/domains/auth/utils/cookie-utils";
+} from "@/domains/auth/utils/cookie-utils"
 import {
   OAUTH2CLIENT,
   PROVIDERS,
   STATUS_RESPONSE,
   SUPABASE,
   env,
-} from "@/config";
-import type { Request, Response } from "express";
+} from "@/config"
+import type { Request, Response } from "express"
 import {
   refreshSupabaseSession,
   validateSupabaseToken,
-} from "@/domains/auth/utils/supabase-token";
-import { reqResAsyncHandler, sendR } from "@/lib/http";
+} from "@/domains/auth/utils/supabase-token"
+import { reqResAsyncHandler, sendR } from "@/lib/http"
 
-import { generateGoogleAuthUrl } from "@/domains/auth/utils";
-import { logger } from "@/lib/logger";
-import { msToIso } from "@/lib/date/timestamp-utils";
-import { sendWelcomeEmail } from "@/domains/notifications/services/notification-dispatcher";
-import { syncUserCalendarsAfterOAuth } from "@/domains/calendar/utils/sync-calendars-after-oauth";
+import { generateGoogleAuthUrl } from "@/domains/auth/utils"
+import { logger } from "@/lib/logger"
+import { msToIso } from "@/lib/date/timestamp-utils"
+import { sendWelcomeEmail } from "@/domains/notifications/services/notification-dispatcher"
+import { syncUserCalendarsAfterOAuth } from "@/domains/calendar/utils/sync-calendars-after-oauth"
 
 /**
  * Validates existing session and handles OAuth redirect flow.
@@ -40,42 +40,42 @@ async function checkExistingSessionAndRedirect(
   refreshToken: string | undefined,
   frontendUrl: string
 ): Promise<boolean> {
-  let validation = await validateSupabaseToken(accessToken).catch(() => null);
+  let validation = await validateSupabaseToken(accessToken).catch(() => null)
 
   if ((!validation?.user || validation.needsRefresh) && refreshToken) {
     try {
-      const refreshed = await refreshSupabaseSession(refreshToken);
+      const refreshed = await refreshSupabaseSession(refreshToken)
       setAuthCookies(
         res,
         refreshed.accessToken,
         refreshed.refreshToken,
         refreshed.user
-      );
+      )
       validation = {
         user: refreshed.user,
         accessToken: refreshed.accessToken,
         error: null,
         needsRefresh: false,
-      };
+      }
     } catch {
-      return false;
+      return false
     }
   }
 
   if (!validation?.user?.email) {
-    return false;
+    return false
   }
 
-  const normalizedEmail = validation.user.email.toLowerCase().trim();
+  const normalizedEmail = validation.user.email.toLowerCase().trim()
 
   const { data: user } = await SUPABASE.from("users")
     .select("id")
     .ilike("email", normalizedEmail)
     .limit(1)
-    .maybeSingle();
+    .maybeSingle()
 
   if (!user) {
-    return false;
+    return false
   }
 
   const { data: existingToken } = await SUPABASE.from("oauth_tokens")
@@ -83,23 +83,23 @@ async function checkExistingSessionAndRedirect(
     .eq("user_id", user.id)
     .eq("provider", "google")
     .limit(1)
-    .maybeSingle();
+    .maybeSingle()
 
   if (existingToken?.refresh_token && existingToken?.is_valid) {
-    res.redirect(`${frontendUrl}/loading?redirect=dashboard`);
-    return true;
+    res.redirect(`${frontendUrl}/loading?redirect=dashboard`)
+    return true
   }
 
-  return false;
+  return false
 }
 
 const generateAuthGoogleUrl = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const code = req.query.code as string | undefined;
-    const postmanHeaders = req.headers["user-agent"];
-    const frontendUrl = env.urls.frontend;
-    const accessToken = req.cookies?.[ACCESS_TOKEN_COOKIE];
-    const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE];
+    const code = req.query.code as string | undefined
+    const postmanHeaders = req.headers["user-agent"]
+    const frontendUrl = env.urls.frontend
+    const accessToken = req.cookies?.[ACCESS_TOKEN_COOKIE]
+    const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE]
 
     if (!code && accessToken) {
       const redirected = await checkExistingSessionAndRedirect(
@@ -107,44 +107,44 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         accessToken,
         refreshToken,
         frontendUrl
-      );
+      )
       if (redirected) {
-        return;
+        return
       }
     }
 
-    const url = generateGoogleAuthUrl({ forceConsent: true });
+    const url = generateGoogleAuthUrl({ forceConsent: true })
 
     if (!code) {
       if (postmanHeaders?.includes("Postman")) {
-        return sendR(res, STATUS_RESPONSE.SUCCESS, url);
+        return sendR(res, STATUS_RESPONSE.SUCCESS, url)
       }
-      return res.redirect(url);
+      return res.redirect(url)
     }
 
     try {
-      const { tokens } = await OAUTH2CLIENT.getToken(code);
+      const { tokens } = await OAUTH2CLIENT.getToken(code)
 
       if (!tokens.id_token) {
         return sendR(
           res,
           STATUS_RESPONSE.BAD_REQUEST,
           "No ID token received from Google."
-        );
+        )
       }
 
       const ticket = await OAUTH2CLIENT.verifyIdToken({
         idToken: tokens.id_token,
         audience: env.googleClientId,
-      });
+      })
 
-      const payload = ticket.getPayload();
+      const payload = ticket.getPayload()
       if (!payload?.email) {
         return sendR(
           res,
           STATUS_RESPONSE.BAD_REQUEST,
           "Failed to verify user profile from Google token."
-        );
+        )
       }
 
       const googleUser = {
@@ -152,9 +152,9 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         given_name: payload.given_name,
         family_name: payload.family_name,
         picture: payload.picture,
-      };
+      }
 
-      const normalizedEmail = googleUser.email.toLowerCase().trim();
+      const normalizedEmail = googleUser.email.toLowerCase().trim()
 
       // First, sign in with Supabase Auth to get/create the auth user
       // This must happen BEFORE creating the database user to ensure ID consistency
@@ -163,28 +163,28 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
           provider: PROVIDERS.GOOGLE,
           token: tokens.id_token!,
           access_token: tokens.access_token!,
-        });
+        })
 
       if (signInError || !signInData?.user) {
-        console.error("Supabase Auth Error:", signInError);
+        console.error("Supabase Auth Error:", signInError)
         return sendR(
           res,
           STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
           "Failed to sign in user via Supabase Auth.",
           signInError
-        );
+        )
       }
 
       // Use the Supabase Auth user ID for the database record
       // This ensures consistency between auth.users and public.users
-      const authUserId = signInData.user.id;
+      const authUserId = signInData.user.id
 
       // Check if there's an existing user with this email but different ID (orphaned after re-registration)
       const { data: existingUser } = await SUPABASE.from("users")
         .select("id")
         .ilike("email", normalizedEmail)
         .limit(1)
-        .maybeSingle();
+        .maybeSingle()
 
       // If there's an existing user with a different ID, delete the orphaned record
       // This can happen if:
@@ -195,30 +195,30 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
       if (existingUser && existingUser.id !== authUserId) {
         logger.info(
           `Cleaning up orphaned user record: old ID ${existingUser.id}, new auth ID ${authUserId}`
-        );
+        )
 
         // Delete orphaned oauth_tokens for the old user ID
         const { error: deleteTokensError } = await SUPABASE.from("oauth_tokens")
           .delete()
-          .eq("user_id", existingUser.id);
+          .eq("user_id", existingUser.id)
 
         if (deleteTokensError) {
           console.error(
             `Failed to delete orphaned oauth_tokens for user ${existingUser.id}:`,
             deleteTokensError
-          );
+          )
         }
 
         // Delete the orphaned user record
         const { error: deleteUserError } = await SUPABASE.from("users")
           .delete()
-          .eq("id", existingUser.id);
+          .eq("id", existingUser.id)
 
         if (deleteUserError) {
           console.error(
             `Failed to delete orphaned user record ${existingUser.id}:`,
             deleteUserError
-          );
+          )
         }
       }
 
@@ -235,46 +235,46 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         status: "active" as const,
         last_login_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      };
+      }
 
       const { data: userData, error: userError } = await SUPABASE.from("users")
         .upsert(userUpsertPayload, { onConflict: "id" })
         .select("id")
-        .single();
+        .single()
 
       if (userError || !userData) {
-        console.error("Supabase User Upsert Error:", userError);
+        console.error("Supabase User Upsert Error:", userError)
         return sendR(
           res,
           STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
           "Failed to store user in database.",
           userError
-        );
+        )
       }
 
       // Send welcome email for new users only (not returning users)
       // A user is "new" if there was no existing user, or the existing user was orphaned and deleted
-      const isNewUser = !existingUser || existingUser.id !== authUserId;
+      const isNewUser = !existingUser || existingUser.id !== authUserId
       if (isNewUser) {
-        const userName = googleUser.given_name || normalizedEmail.split("@")[0];
+        const userName = googleUser.given_name || normalizedEmail.split("@")[0]
         // Fire and forget - don't block signup flow
         await sendWelcomeEmail(normalizedEmail, userName).catch((err) => {
-          console.error("Failed to send welcome email:", err);
-        });
+          console.error("Failed to send welcome email:", err)
+        })
       }
 
       const tokenUpsertPayload: {
-        user_id: string;
-        provider: "google";
-        access_token: string;
-        token_type?: string | null;
-        id_token?: string | null;
-        scope?: string | null;
-        expires_at?: string | null;
-        is_valid: boolean;
-        updated_at: string;
-        refresh_token?: string;
-        provider_user_id?: string | null;
+        user_id: string
+        provider: "google"
+        access_token: string
+        token_type?: string | null
+        id_token?: string | null
+        scope?: string | null
+        expires_at?: string | null
+        is_valid: boolean
+        updated_at: string
+        refresh_token?: string
+        provider_user_id?: string | null
       } = {
         user_id: userData.id,
         provider: "google",
@@ -287,25 +287,25 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         updated_at: new Date().toISOString(),
         // Store Google subject ID for RISC (Cross-Account Protection) event matching
         provider_user_id: payload.sub ?? null,
-      };
+      }
 
       if (tokens.refresh_token) {
-        tokenUpsertPayload.refresh_token = tokens.refresh_token;
+        tokenUpsertPayload.refresh_token = tokens.refresh_token
       }
 
       const { error: tokenError } = await SUPABASE.from("oauth_tokens").upsert(
         tokenUpsertPayload,
         { onConflict: "user_id,provider" }
-      );
+      )
 
       if (tokenError) {
-        console.error("Supabase Token Save Error:", tokenError);
+        console.error("Supabase Token Save Error:", tokenError)
         return sendR(
           res,
           STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
           "Failed to store Google tokens in database.",
           tokenError
-        );
+        )
       }
 
       if (tokens.access_token) {
@@ -314,7 +314,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
           normalizedEmail,
           tokens.access_token,
           tokens.refresh_token ?? undefined
-        );
+        )
       }
 
       // signInData was already obtained earlier to ensure ID consistency
@@ -324,9 +324,9 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
           signInData.session.access_token,
           signInData.session.refresh_token,
           signInData.user
-        );
+        )
 
-        const frontendUrl = env.urls.frontend;
+        const frontendUrl = env.urls.frontend
         const safeParams = new URLSearchParams({
           auth: "success",
           access_token: signInData.session.access_token,
@@ -338,42 +338,42 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
             last_name: googleUser.family_name || "",
             avatar_url: googleUser.picture || "",
           }),
-        });
-        return res.redirect(`${frontendUrl}/callback?${safeParams.toString()}`);
+        })
+        return res.redirect(`${frontendUrl}/callback?${safeParams.toString()}`)
       }
 
       return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Session creation failed without error."
-      );
+      )
     } catch (error) {
-      console.error("OAuth Exchange Error:", error);
+      console.error("OAuth Exchange Error:", error)
       return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Failed to process OAuth token exchange.",
         error
-      );
+      )
     }
   }
-);
+)
 
 const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const email = req.user?.email;
+    const email = req.user?.email
 
     if (!email) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found.");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found.")
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = email.toLowerCase().trim()
 
     const { data: user, error: userError } = await SUPABASE.from("users")
       .select("id, created_at")
       .ilike("email", normalizedEmail)
       .limit(1)
-      .maybeSingle();
+      .maybeSingle()
 
     if (userError) {
       return sendR(
@@ -381,11 +381,11 @@ const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Failed to fetch user.",
         userError
-      );
+      )
     }
 
     if (!user) {
-      const authUrl = generateGoogleAuthUrl({ forceConsent: true });
+      const authUrl = generateGoogleAuthUrl({ forceConsent: true })
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
@@ -397,7 +397,7 @@ const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(
           syncedAt: null,
           authUrl,
         }
-      );
+      )
     }
 
     const { data: oauthToken, error: tokenError } = await SUPABASE.from(
@@ -407,7 +407,7 @@ const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(
       .eq("user_id", user.id)
       .eq("provider", "google")
       .limit(1)
-      .maybeSingle();
+      .maybeSingle()
 
     if (tokenError) {
       return sendR(
@@ -415,19 +415,19 @@ const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Failed to fetch integration status.",
         tokenError
-      );
+      )
     }
 
-    const isSynced = Boolean(oauthToken);
-    const isActive = oauthToken?.is_valid ?? false;
-    const hasRefreshToken = Boolean(oauthToken?.refresh_token);
-    const needsReauth = !(isActive && hasRefreshToken);
+    const isSynced = Boolean(oauthToken)
+    const isActive = oauthToken?.is_valid ?? false
+    const hasRefreshToken = Boolean(oauthToken?.refresh_token)
+    const needsReauth = !(isActive && hasRefreshToken)
 
-    const authUrl = generateGoogleAuthUrl({ forceConsent: needsReauth });
+    const authUrl = generateGoogleAuthUrl({ forceConsent: needsReauth })
 
-    let isExpired = false;
+    let isExpired = false
     if (oauthToken?.expires_at) {
-      isExpired = Date.now() > new Date(oauthToken.expires_at).getTime();
+      isExpired = Date.now() > new Date(oauthToken.expires_at).getTime()
     }
 
     return sendR(
@@ -441,39 +441,34 @@ const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(
         syncedAt: oauthToken?.created_at ?? user.created_at ?? null,
         authUrl,
       }
-    );
+    )
   }
-);
+)
 
 const disconnectGoogleCalendarIntegration = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const email = req.user?.email;
+    const email = req.user?.email
 
     if (!email) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found.");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found.")
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = email.toLowerCase().trim()
 
     const { data: user, error: userError } = await SUPABASE.from("users")
       .select("id")
       .ilike("email", normalizedEmail)
       .limit(1)
-      .maybeSingle();
+      .maybeSingle()
 
     if (userError || !user) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.NOT_FOUND,
-        "User not found.",
-        userError
-      );
+      return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User not found.", userError)
     }
 
     const { error } = await SUPABASE.from("oauth_tokens")
       .update({ is_valid: false, updated_at: new Date().toISOString() })
       .eq("user_id", user.id)
-      .eq("provider", "google");
+      .eq("provider", "google")
 
     if (error) {
       return sendR(
@@ -481,7 +476,7 @@ const disconnectGoogleCalendarIntegration = reqResAsyncHandler(
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Failed to disconnect Google Calendar.",
         error
-      );
+      )
     }
 
     return sendR(
@@ -489,12 +484,12 @@ const disconnectGoogleCalendarIntegration = reqResAsyncHandler(
       STATUS_RESPONSE.SUCCESS,
       "Google Calendar disconnected successfully.",
       { isActive: false }
-    );
+    )
   }
-);
+)
 
 export const googleIntegrationController = {
   generateAuthGoogleUrl,
   getGoogleCalendarIntegrationStatus,
   disconnectGoogleCalendarIntegration,
-};
+}

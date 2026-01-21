@@ -4,7 +4,7 @@ import {
   isValid,
   parseISO,
   startOfDay,
-} from "date-fns";
+} from "date-fns"
 
 /**
  * @description Returns a new Date object set to the start of the day (00:00:00.000) for the given date.
@@ -22,8 +22,7 @@ import {
  * const dayStart = getStartOfDay(specificDate)
  * // Returns: 2026-03-15T00:00:00.000Z
  */
-export const getStartOfDay = (date: Date = new Date()): Date =>
-  startOfDay(date);
+export const getStartOfDay = (date: Date = new Date()): Date => startOfDay(date)
 
 /**
  * @description Checks if the given ISO date string represents today's date.
@@ -41,10 +40,10 @@ export const getStartOfDay = (date: Date = new Date()): Date =>
  * // Returns: false
  */
 export const isToday = (dateString: string): boolean =>
-  dateFnsIsToday(parseISO(dateString));
+  dateFnsIsToday(parseISO(dateString))
 
-const MIN_VALID_YEAR = 2020;
-const MAX_VALID_YEAR = 2100;
+const MIN_VALID_YEAR = 2020
+const MAX_VALID_YEAR = 2100
 
 /**
  * @description Validates if a string represents a valid date/time within an acceptable range.
@@ -63,12 +62,12 @@ const MAX_VALID_YEAR = 2100;
  */
 export const isValidDateTime = (dt: string): boolean => {
   if (!dt || dt.trim() === "") {
-    return false;
+    return false
   }
-  const parsed = parseISO(dt);
+  const parsed = parseISO(dt)
   if (!isValid(parsed)) {
-    return false;
+    return false
   }
-  const year = getYear(parsed);
-  return year >= MIN_VALID_YEAR && year <= MAX_VALID_YEAR;
-};
+  const year = getYear(parsed)
+  return year >= MIN_VALID_YEAR && year <= MAX_VALID_YEAR
+}

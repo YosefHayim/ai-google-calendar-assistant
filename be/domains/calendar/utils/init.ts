@@ -1,10 +1,10 @@
-import type { Credentials, OAuth2Client } from "google-auth-library";
-import { type calendar_v3, google } from "googleapis";
-import { env } from "@/config/env";
-import { REDIRECT_URI } from "@/config/env";
-import type { TokensProps } from "@/types";
-import { updateUserSupabaseTokens } from "@/domains/auth/utils/update-tokens-of-user";
-import { logger } from "@/lib/logger";
+import type { Credentials, OAuth2Client } from "google-auth-library"
+import { type calendar_v3, google } from "googleapis"
+import { env } from "@/config/env"
+import { REDIRECT_URI } from "@/config/env"
+import type { TokensProps } from "@/types"
+import { updateUserSupabaseTokens } from "@/domains/auth/utils/update-tokens-of-user"
+import { logger } from "@/lib/logger"
 
 /**
  * @description Creates a fresh OAuth2Client instance configured with application credentials.
@@ -20,12 +20,12 @@ export const createOAuth2Client = (): OAuth2Client =>
     env.googleClientId,
     env.googleClientSecret,
     REDIRECT_URI
-  );
+  )
 
 type RefreshedToken = {
-  token: string | null | undefined;
-  expiry_date?: number | null;
-};
+  token: string | null | undefined
+  expiry_date?: number | null
+}
 
 /**
  * @description Refreshes OAuth tokens using the client's refresh token and returns the new access token.
@@ -44,24 +44,24 @@ export const refreshAccessToken = async (
   client: OAuth2Client
 ): Promise<RefreshedToken | null> => {
   try {
-    const result = await client.getAccessToken();
+    const result = await client.getAccessToken()
     return result?.token
       ? { token: result.token, expiry_date: result.res?.data?.expiry_date }
-      : null;
+      : null
   } catch (e: unknown) {
     const err = e as {
-      response?: { data?: { error?: string; error_description?: string } };
-      message?: string;
-    };
-    const data = err?.response?.data;
-    const msg = data?.error || err?.message;
-    const desc = data?.error_description;
+      response?: { data?: { error?: string; error_description?: string } }
+      message?: string
+    }
+    const data = err?.response?.data
+    const msg = data?.error || err?.message
+    const desc = data?.error_description
     logger.error(
       `Google Calendar: Token refresh failed: ${msg}${desc ? ` - ${desc}` : ""}`
-    );
-    throw new Error(`invalid grant: ${msg}${desc ? ` - ${desc}` : ""}`);
+    )
+    throw new Error(`invalid grant: ${msg}${desc ? ` - ${desc}` : ""}`)
   }
-};
+}
 
 /**
  * @description Creates an authenticated Google Calendar API client using the provided OAuth2Client.
@@ -76,7 +76,7 @@ export const refreshAccessToken = async (
 export const createCalendarClient = (
   auth: OAuth2Client
 ): calendar_v3.Calendar =>
-  google.calendar({ version: "v3", auth, responseType: "json" });
+  google.calendar({ version: "v3", auth, responseType: "json" })
 
 /**
  * @description Persists refreshed OAuth tokens to the database if new tokens were obtained.
@@ -96,9 +96,9 @@ const persistRefreshedTokens = async (
     await updateUserSupabaseTokens(
       oldTokens,
       newTokens as TokensProps & { token?: string | null }
-    );
+    )
   }
-};
+}
 
 /**
  * @description Converts application TokensProps format to Google's Credentials format.
@@ -116,7 +116,7 @@ const toGoogleCredentials = (tokens: TokensProps): Credentials => ({
   token_type: tokens.token_type ?? undefined,
   id_token: tokens.id_token ?? undefined,
   expiry_date: tokens.expiry_date ?? undefined,
-});
+})
 
 /**
  * @description Main entry point for initializing a Google Calendar client with user tokens.
@@ -132,14 +132,14 @@ const toGoogleCredentials = (tokens: TokensProps): Credentials => ({
 export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (
   tokens: TokensProps
 ): Promise<calendar_v3.Calendar> => {
-  const oauthClient = createOAuth2Client();
-  oauthClient.setCredentials(toGoogleCredentials(tokens));
+  const oauthClient = createOAuth2Client()
+  oauthClient.setCredentials(toGoogleCredentials(tokens))
 
-  const refreshedTokens = await refreshAccessToken(oauthClient);
-  await persistRefreshedTokens(tokens, refreshedTokens);
+  const refreshedTokens = await refreshAccessToken(oauthClient)
+  await persistRefreshedTokens(tokens, refreshedTokens)
 
-  return createCalendarClient(oauthClient);
-};
+  return createCalendarClient(oauthClient)
+}
 
 /**
  * @description Creates a Google Calendar client from pre-validated tokens.
@@ -160,7 +160,7 @@ export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (
 export const createCalendarFromValidatedTokens = (
   tokens: TokensProps
 ): calendar_v3.Calendar => {
-  const oauthClient = createOAuth2Client();
-  oauthClient.setCredentials(toGoogleCredentials(tokens));
-  return createCalendarClient(oauthClient);
-};
+  const oauthClient = createOAuth2Client()
+  oauthClient.setCredentials(toGoogleCredentials(tokens))
+  return createCalendarClient(oauthClient)
+}

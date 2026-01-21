@@ -1,14 +1,14 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 
-import OpenAI from "openai";
-import { SUPABASE } from "@/config/clients";
-import { env } from "@/config/env";
-import sendR from "@/lib/send-response";
-import { z } from "zod";
+import OpenAI from "openai"
+import { SUPABASE } from "@/config/clients"
+import { env } from "@/config/env"
+import sendR from "@/lib/send-response"
+import { z } from "zod"
 
 // Blog posts table is not yet in database.types.ts - use untyped queries
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const blogTable = () => (SUPABASE as any).from("blog_posts");
+const blogTable = () => (SUPABASE as any).from("blog_posts")
 
 const BLOG_CATEGORIES = [
   "Productivity",
@@ -17,14 +17,14 @@ const BLOG_CATEGORIES = [
   "Tips & Tricks",
   "Work-Life Balance",
   "Meeting Efficiency",
-] as const;
+] as const
 
 const listQuerySchema = z.object({
   category: z.string().optional(),
   featured: z.enum(["true", "false"]).optional(),
   limit: z.string().regex(/^\d+$/).optional(),
   offset: z.string().regex(/^\d+$/).optional(),
-});
+})
 
 const createPostSchema = z.object({
   title: z.string().min(10, "Title must be at least 10 characters"),
@@ -51,7 +51,7 @@ const createPostSchema = z.object({
     })
     .optional(),
   status: z.enum(["draft", "published"]).optional().default("published"),
-});
+})
 
 const generatePostSchema = z.object({
   topic: z
@@ -69,7 +69,7 @@ const generatePostSchema = z.object({
     .enum(["professional", "conversational", "expert", "educational"])
     .optional()
     .default("professional"),
-});
+})
 
 function generateSlug(title: string): string {
   return title
@@ -78,25 +78,25 @@ function generateSlug(title: string): string {
     .replace(/[^\w\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
-    .substring(0, 100);
+    .substring(0, 100)
 }
 
 function estimateReadTime(content: string): string {
-  const wordsPerMinute = 200;
-  const wordCount = content.trim().split(/\s+/).length;
-  const minutes = Math.ceil(wordCount / wordsPerMinute);
-  return `${minutes} min read`;
+  const wordsPerMinute = 200
+  const wordCount = content.trim().split(/\s+/).length
+  const minutes = Math.ceil(wordCount / wordsPerMinute)
+  return `${minutes} min read`
 }
 
 export const blogController = {
   async getAll(req: Request, res: Response) {
-    const validation = listQuerySchema.safeParse(req.query);
+    const validation = listQuerySchema.safeParse(req.query)
 
     if (!validation.success) {
-      return sendR(res, 400, validation.error.errors[0].message, null);
+      return sendR(res, 400, validation.error.errors[0].message, null)
     }
 
-    const { category, featured, limit = "50", offset = "0" } = validation.data;
+    const { category, featured, limit = "50", offset = "0" } = validation.data
 
     try {
       let query = blogTable()
@@ -106,37 +106,37 @@ export const blogController = {
         .range(
           Number.parseInt(offset, 10),
           Number.parseInt(offset, 10) + Number.parseInt(limit, 10) - 1
-        );
+        )
 
       if (category && category !== "All") {
-        query = query.eq("category", category);
+        query = query.eq("category", category)
       }
 
       if (featured === "true") {
-        query = query.eq("featured", true);
+        query = query.eq("featured", true)
       }
 
-      const { data, error, count } = await query;
+      const { data, error, count } = await query
 
       if (error) {
-        throw error;
+        throw error
       }
 
       return sendR(res, 200, "Blog posts retrieved successfully", {
         posts: data || [],
         total: count || data?.length || 0,
-      });
+      })
     } catch (error) {
-      console.error("Blog getAll error:", error);
-      return sendR(res, 500, "Failed to fetch blog posts", null);
+      console.error("Blog getAll error:", error)
+      return sendR(res, 500, "Failed to fetch blog posts", null)
     }
   },
 
   async getBySlug(req: Request, res: Response) {
-    const { slug } = req.params;
+    const { slug } = req.params
 
     if (!slug) {
-      return sendR(res, 400, "Slug is required", null);
+      return sendR(res, 400, "Slug is required", null)
     }
 
     try {
@@ -144,16 +144,16 @@ export const blogController = {
         .select("*")
         .eq("slug", slug)
         .eq("status", "published")
-        .single();
+        .single()
 
       if (error || !data) {
-        return sendR(res, 404, "Blog post not found", null);
+        return sendR(res, 404, "Blog post not found", null)
       }
 
-      return sendR(res, 200, "Blog post retrieved successfully", data);
+      return sendR(res, 200, "Blog post retrieved successfully", data)
     } catch (error) {
-      console.error("Blog getBySlug error:", error);
-      return sendR(res, 500, "Failed to fetch blog post", null);
+      console.error("Blog getBySlug error:", error)
+      return sendR(res, 500, "Failed to fetch blog post", null)
     }
   },
 
@@ -161,26 +161,26 @@ export const blogController = {
     try {
       const { data, error } = await blogTable()
         .select("category")
-        .eq("status", "published");
+        .eq("status", "published")
 
       if (error) {
-        throw error;
+        throw error
       }
 
       const categories = [
         ...new Set(data?.map((p: { category: string }) => p.category) || []),
-      ];
-      const categoriesWithAll = ["All", ...categories.sort()];
+      ]
+      const categoriesWithAll = ["All", ...categories.sort()]
 
       return sendR(
         res,
         200,
         "Categories retrieved successfully",
         categoriesWithAll
-      );
+      )
     } catch (error) {
-      console.error("Blog getCategories error:", error);
-      return sendR(res, 500, "Failed to fetch categories", null);
+      console.error("Blog getCategories error:", error)
+      return sendR(res, 500, "Failed to fetch categories", null)
     }
   },
 
@@ -191,10 +191,10 @@ export const blogController = {
         .eq("status", "published")
         .eq("featured", true)
         .order("published_at", { ascending: false })
-        .limit(5);
+        .limit(5)
 
       if (error) {
-        throw error;
+        throw error
       }
 
       return sendR(
@@ -202,29 +202,29 @@ export const blogController = {
         200,
         "Featured posts retrieved successfully",
         data || []
-      );
+      )
     } catch (error) {
-      console.error("Blog getFeatured error:", error);
-      return sendR(res, 500, "Failed to fetch featured posts", null);
+      console.error("Blog getFeatured error:", error)
+      return sendR(res, 500, "Failed to fetch featured posts", null)
     }
   },
 
   async getRelated(req: Request, res: Response) {
-    const { slug } = req.params;
-    const limit = Number.parseInt(req.query.limit as string, 10) || 3;
+    const { slug } = req.params
+    const limit = Number.parseInt(req.query.limit as string, 10) || 3
 
     if (!slug) {
-      return sendR(res, 400, "Slug is required", null);
+      return sendR(res, 400, "Slug is required", null)
     }
 
     try {
       const { data: currentPost } = await blogTable()
         .select("category, tags")
         .eq("slug", slug)
-        .single();
+        .single()
 
       if (!currentPost) {
-        return sendR(res, 404, "Blog post not found", null);
+        return sendR(res, 404, "Blog post not found", null)
       }
 
       const { data, error } = await blogTable()
@@ -233,40 +233,35 @@ export const blogController = {
         .eq("category", currentPost.category)
         .neq("slug", slug)
         .order("published_at", { ascending: false })
-        .limit(limit);
+        .limit(limit)
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      return sendR(
-        res,
-        200,
-        "Related posts retrieved successfully",
-        data || []
-      );
+      return sendR(res, 200, "Related posts retrieved successfully", data || [])
     } catch (error) {
-      console.error("Blog getRelated error:", error);
-      return sendR(res, 500, "Failed to fetch related posts", null);
+      console.error("Blog getRelated error:", error)
+      return sendR(res, 500, "Failed to fetch related posts", null)
     }
   },
 
   async create(req: Request, res: Response) {
-    const validation = createPostSchema.safeParse(req.body);
+    const validation = createPostSchema.safeParse(req.body)
 
     if (!validation.success) {
-      return sendR(res, 400, validation.error.errors[0].message, null);
+      return sendR(res, 400, validation.error.errors[0].message, null)
     }
 
-    const postData = validation.data;
-    const slug = generateSlug(postData.title);
-    const readTime = postData.read_time || estimateReadTime(postData.content);
+    const postData = validation.data
+    const slug = generateSlug(postData.title)
+    const readTime = postData.read_time || estimateReadTime(postData.content)
 
     try {
       const { data: existingPost } = await blogTable()
         .select("slug")
         .eq("slug", slug)
-        .single();
+        .single()
 
       if (existingPost) {
         return sendR(
@@ -274,15 +269,15 @@ export const blogController = {
           409,
           "A blog post with this title already exists",
           null
-        );
+        )
       }
 
-      const defaultAuthor = { name: "Yosef Sabag", role: "CEO & Co-Founder" };
+      const defaultAuthor = { name: "Yosef Sabag", role: "CEO & Co-Founder" }
       const defaultSeo = {
         title: postData.title,
         description: postData.excerpt,
         keywords: postData.tags || [],
-      };
+      }
 
       const { data, error } = await blogTable()
         .insert({
@@ -302,54 +297,54 @@ export const blogController = {
             postData.status === "published" ? new Date().toISOString() : null,
         })
         .select()
-        .single();
+        .single()
 
       if (error) {
-        throw error;
+        throw error
       }
 
-      return sendR(res, 201, "Blog post created successfully", data);
+      return sendR(res, 201, "Blog post created successfully", data)
     } catch (error) {
-      console.error("Blog create error:", error);
+      console.error("Blog create error:", error)
       if (error && typeof error === "object") {
         const supabaseError = error as {
-          code?: string;
-          message?: string;
-          details?: string;
-          hint?: string;
-        };
+          code?: string
+          message?: string
+          details?: string
+          hint?: string
+        }
         console.error("Supabase error details:", {
           code: supabaseError.code,
           message: supabaseError.message,
           details: supabaseError.details,
           hint: supabaseError.hint,
-        });
+        })
         return sendR(
           res,
           500,
           `Failed to create blog post: ${supabaseError.message || "Unknown error"}`,
           { code: supabaseError.code, hint: supabaseError.hint }
-        );
+        )
       }
-      return sendR(res, 500, "Failed to create blog post", null);
+      return sendR(res, 500, "Failed to create blog post", null)
     }
   },
 
   async getAvailableCategories(_req: Request, res: Response) {
-    return sendR(res, 200, "Available categories retrieved", BLOG_CATEGORIES);
+    return sendR(res, 200, "Available categories retrieved", BLOG_CATEGORIES)
   },
 
   async generateAI(req: Request, res: Response) {
-    const validation = generatePostSchema.safeParse(req.body);
+    const validation = generatePostSchema.safeParse(req.body)
 
     if (!validation.success) {
-      return sendR(res, 400, validation.error.errors[0].message, null);
+      return sendR(res, 400, validation.error.errors[0].message, null)
     }
 
-    const { topic, category, keywords, targetAudience, tone } = validation.data;
+    const { topic, category, keywords, targetAudience, tone } = validation.data
 
     try {
-      const openai = new OpenAI({ apiKey: env.openAiApiKey });
+      const openai = new OpenAI({ apiKey: env.openAiApiKey })
 
       // Create GEO-optimized prompt (Generative Engine Optimization)
       const prompt = `Write an extraordinary GEO-optimized blog post for "Ask Ally" - an AI-powered Google Calendar assistant that helps users manage their time and schedule effectively.
@@ -414,7 +409,7 @@ Return the blog post in this exact JSON format:
     "keywords": ["keyword1", "keyword2", "keyword3"]
   },
   "url": "https://askally.io/blog/[generated-slug]"
-}`;
+}`
 
       const completion = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -431,30 +426,30 @@ Return the blog post in this exact JSON format:
         ],
         temperature: 0.7,
         max_tokens: 4000,
-      });
+      })
 
-      const response = completion.choices[0]?.message?.content;
+      const response = completion.choices[0]?.message?.content
       if (!response) {
-        return sendR(res, 500, "Failed to generate blog post", null);
+        return sendR(res, 500, "Failed to generate blog post", null)
       }
 
       // Parse the JSON response
-      let generatedPost;
+      let generatedPost
       try {
         // Extract JSON from the response (in case there's extra text)
-        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        const jsonMatch = response.match(/\{[\s\S]*\}/)
         if (!jsonMatch) {
-          throw new Error("No JSON found in response");
+          throw new Error("No JSON found in response")
         }
-        generatedPost = JSON.parse(jsonMatch[0]);
+        generatedPost = JSON.parse(jsonMatch[0])
       } catch (parseError) {
-        console.error("Failed to parse AI response:", parseError);
-        return sendR(res, 500, "Failed to parse generated content", null);
+        console.error("Failed to parse AI response:", parseError)
+        return sendR(res, 500, "Failed to parse generated content", null)
       }
 
       // Generate slug and validate content
-      const slug = generateSlug(generatedPost.title);
-      const readTime = estimateReadTime(generatedPost.content);
+      const slug = generateSlug(generatedPost.title)
+      const readTime = estimateReadTime(generatedPost.content)
 
       // Create the blog post
       const postData = {
@@ -474,28 +469,28 @@ Return the blog post in this exact JSON format:
         },
         status: "published",
         published_at: new Date().toISOString(),
-      };
+      }
 
       const { data, error } = await blogTable()
         .insert(postData)
         .select()
-        .single();
+        .single()
 
       if (error) {
-        console.error("Blog creation error:", error);
-        return sendR(res, 500, "Failed to save generated blog post", null);
+        console.error("Blog creation error:", error)
+        return sendR(res, 500, "Failed to save generated blog post", null)
       }
 
       // Return the post data with the full URL
-      const fullUrl = `${env.baseUrl}/blog/${slug}`;
+      const fullUrl = `${env.baseUrl}/blog/${slug}`
 
       return sendR(res, 201, "AI-generated blog post created successfully", {
         ...data,
         url: fullUrl,
-      });
+      })
     } catch (error) {
-      console.error("AI blog generation error:", error);
-      return sendR(res, 500, "Failed to generate blog post with AI", null);
+      console.error("AI blog generation error:", error)
+      return sendR(res, 500, "Failed to generate blog post with AI", null)
     }
   },
-};
+}

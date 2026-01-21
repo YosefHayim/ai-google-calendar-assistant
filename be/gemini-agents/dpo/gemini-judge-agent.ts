@@ -1,19 +1,19 @@
-import { z } from "zod";
+import { z } from "zod"
 import {
   GEMINI_MODELS,
   getGeminiClient,
-} from "@/infrastructure/google/gemini-client";
-import { logger } from "@/lib/logger";
-import type { GeminiOptimizerOutput } from "./gemini-optimizer-agent";
+} from "@/infrastructure/google/gemini-client"
+import { logger } from "@/lib/logger"
+import type { GeminiOptimizerOutput } from "./gemini-optimizer-agent"
 
 export const GeminiJudgeOutputSchema = z.object({
   approved: z.boolean(),
   reasoning: z.string(),
   risk_level: z.enum(["low", "medium", "high"]),
   recommendation: z.enum(["use_optimized", "use_base", "reject_request"]),
-});
+})
 
-export type GeminiJudgeOutput = z.infer<typeof GeminiJudgeOutputSchema>;
+export type GeminiJudgeOutput = z.infer<typeof GeminiJudgeOutputSchema>
 
 const JUDGE_INSTRUCTIONS = `You are the Optimization Judge for Ally, an AI calendar assistant.
 
@@ -72,16 +72,16 @@ You MUST respond with valid JSON matching this exact schema:
   "reasoning": "string - Explanation of your decision",
   "risk_level": "one of: low, medium, high",
   "recommendation": "one of: use_optimized, use_base, reject_request"
-}`;
+}`
 
-const LOG_PREFIX = "[GeminiJudge]";
-const RESPONSE_PREVIEW_LENGTH = 200;
+const LOG_PREFIX = "[GeminiJudge]"
+const RESPONSE_PREVIEW_LENGTH = 200
 
 type RunGeminiJudgeParams = {
-  userQuery: string;
-  originalPrompt: string;
-  optimizerOutput: GeminiOptimizerOutput;
-};
+  userQuery: string
+  originalPrompt: string
+  optimizerOutput: GeminiOptimizerOutput
+}
 
 /**
  * Runs the Gemini judge agent to evaluate a prompt optimization proposal.
@@ -97,28 +97,28 @@ type RunGeminiJudgeParams = {
 export async function runGeminiJudge(
   params: RunGeminiJudgeParams
 ): Promise<{ output: GeminiJudgeOutput; timeMs: number }> {
-  const { userQuery, originalPrompt, optimizerOutput } = params;
-  const startTime = Date.now();
+  const { userQuery, originalPrompt, optimizerOutput } = params
+  const startTime = Date.now()
 
-  const client = getGeminiClient();
+  const client = getGeminiClient()
 
   const prompt = `<user_query>${userQuery}</user_query>
 <original_prompt>${originalPrompt}</original_prompt>
 <optimizer_output>
-  Refined Prompt: ${optimizerOutput.refined_prompt}
+  Refined Prompt: ${optimizerOutput.refinedPrompt}
   Reasoning: ${optimizerOutput.reasoning}
   Confidence: ${optimizerOutput.confidence}
-  Optimization Type: ${optimizerOutput.optimization_type}
-  Detected Intent: ${optimizerOutput.detected_intent_category}
+  Optimization Type: ${optimizerOutput.optimizationType}
+  Detected Intent: ${optimizerOutput.detectedIntentCategory}
 </optimizer_output>
 
 Evaluate this optimization proposal and determine if it should be used.
-Return your judgment as JSON matching the output format specified in the instructions.`;
+Return your judgment as JSON matching the output format specified in the instructions.`
 
   logger.debug(`${LOG_PREFIX} Running judge evaluation`, {
-    optimizationType: optimizerOutput.optimization_type,
+    optimizationType: optimizerOutput.optimizationType,
     confidence: optimizerOutput.confidence,
-  });
+  })
 
   try {
     const response = await client.models.generateContent({
@@ -128,45 +128,45 @@ Return your judgment as JSON matching the output format specified in the instruc
         systemInstruction: JUDGE_INSTRUCTIONS,
         responseMimeType: "application/json",
       },
-    });
+    })
 
-    const timeMs = Date.now() - startTime;
-    const responseText = response.text || "";
+    const timeMs = Date.now() - startTime
+    const responseText = response.text || ""
 
-    let output: GeminiJudgeOutput;
+    let output: GeminiJudgeOutput
 
     try {
-      const parsed = JSON.parse(responseText);
-      output = GeminiJudgeOutputSchema.parse(parsed);
+      const parsed = JSON.parse(responseText)
+      output = GeminiJudgeOutputSchema.parse(parsed)
 
       logger.debug(`${LOG_PREFIX} Judge evaluation complete`, {
         approved: output.approved,
         recommendation: output.recommendation,
         riskLevel: output.risk_level,
         timeMs,
-      });
+      })
     } catch (parseError) {
       logger.warn(`${LOG_PREFIX} Failed to parse judge output`, {
         error:
           parseError instanceof Error ? parseError.message : String(parseError),
         responseText: responseText.slice(0, RESPONSE_PREVIEW_LENGTH),
-      });
+      })
 
       output = {
         approved: false,
         reasoning: "Failed to parse judge output - defaulting to base prompt",
         risk_level: "low",
         recommendation: "use_base",
-      };
+      }
     }
 
-    return { output, timeMs };
+    return { output, timeMs }
   } catch (error) {
-    const timeMs = Date.now() - startTime;
+    const timeMs = Date.now() - startTime
     logger.error(`${LOG_PREFIX} Judge error`, {
       error: error instanceof Error ? error.message : String(error),
       timeMs,
-    });
+    })
 
     return {
       output: {
@@ -176,6 +176,6 @@ Return your judgment as JSON matching the output format specified in the instruc
         recommendation: "use_base",
       },
       timeMs,
-    };
+    }
   }
 }

@@ -1,22 +1,22 @@
-import type { calendar_v3 } from "googleapis";
-import { isEmpty, isNil, isPlainObject, omitBy } from "lodash-es";
-import { TIMEZONE } from "@/config";
+import type { calendar_v3 } from "googleapis"
+import { isEmpty, isNil, isPlainObject, omitBy } from "lodash-es"
+import { TIMEZONE } from "@/config"
 
 export {
   getCalendarCategoriesByEmail,
   type UserCalendar,
-} from "@/shared";
+} from "@/shared"
 
-type Event = calendar_v3.Schema$Event;
-type EDT = calendar_v3.Schema$EventDateTime;
+type Event = calendar_v3.Schema$Event
+type EDT = calendar_v3.Schema$EventDateTime
 
-let _ALLOWED_TZ: Set<string> | null = null;
+let _ALLOWED_TZ: Set<string> | null = null
 
 function getAllowedTimezones(): Set<string> {
   if (!_ALLOWED_TZ) {
-    _ALLOWED_TZ = new Set<string>(Object.values(TIMEZONE) as string[]);
+    _ALLOWED_TZ = new Set<string>(Object.values(TIMEZONE) as string[])
   }
-  return _ALLOWED_TZ;
+  return _ALLOWED_TZ
 }
 
 /**
@@ -53,13 +53,13 @@ function getAllowedTimezones(): Set<string> {
  */
 export function deepClean<T>(obj: T): T {
   if (!obj || typeof obj !== "object") {
-    return obj;
+    return obj
   }
 
   const clean = (val: unknown): unknown => {
     if (Array.isArray(val)) {
-      const arr = val.map(clean).filter((v) => !isNil(v) && v !== "");
-      return arr.length ? arr : undefined;
+      const arr = val.map(clean).filter((v) => !isNil(v) && v !== "")
+      return arr.length ? arr : undefined
     }
     if (isPlainObject(val)) {
       const cleaned = omitBy(
@@ -71,13 +71,13 @@ export function deepClean<T>(obj: T): T {
           v === "" ||
           (isPlainObject(v) && isEmpty(v)) ||
           (Array.isArray(v) && !v.length)
-      );
-      return isEmpty(cleaned) ? undefined : cleaned;
+      )
+      return isEmpty(cleaned) ? undefined : cleaned
     }
-    return val;
-  };
+    return val
+  }
 
-  return clean(obj) as T;
+  return clean(obj) as T
 }
 
 /**
@@ -99,22 +99,22 @@ export function deepClean<T>(obj: T): T {
  * // Result: { date: '2024-01-15' }
  */
 export function normalizeEventDateTime(input: Partial<EDT>): EDT {
-  const e: Partial<EDT> = { ...input };
+  const e: Partial<EDT> = { ...input }
 
   for (const k of Object.keys(e) as (keyof EDT)[]) {
     if (e[k] === "" || e[k] === undefined || e[k] === null) {
-      delete e[k];
+      delete e[k]
     }
   }
 
   if (e.dateTime) {
-    e.date = undefined;
+    e.date = undefined
   } else if (e.date) {
-    e.dateTime = undefined;
-    e.timeZone = undefined;
+    e.dateTime = undefined
+    e.timeZone = undefined
   }
 
-  return e as EDT;
+  return e as EDT
 }
 
 /**
@@ -149,13 +149,13 @@ export function validateEventRequired(
   end: EDT
 ): void {
   if (!summary) {
-    throw new Error("Event summary is required.");
+    throw new Error("Event summary is required.")
   }
   if (!(start.dateTime || start.date)) {
-    throw new Error("Event start is required.");
+    throw new Error("Event start is required.")
   }
   if (!(end.dateTime || end.date)) {
-    throw new Error("Event end is required.");
+    throw new Error("Event end is required.")
   }
 }
 
@@ -191,31 +191,31 @@ export function validateAndResolveTimezone(
   start: EDT,
   end: EDT
 ): string | undefined {
-  const tzStart = start.dateTime ? (start.timeZone ?? undefined) : undefined;
+  const tzStart = start.dateTime ? (start.timeZone ?? undefined) : undefined
   const tzEnd = end.dateTime
     ? (end.timeZone ?? tzStart ?? undefined)
-    : undefined;
+    : undefined
 
   if ((start.dateTime || end.dateTime) && !(tzStart || tzEnd)) {
-    throw new Error("Event timeZone is required for timed events.");
+    throw new Error("Event timeZone is required for timed events.")
   }
 
-  const allowedTz = getAllowedTimezones();
+  const allowedTz = getAllowedTimezones()
   if (tzStart && !allowedTz.has(tzStart)) {
     throw new Error(
       `Invalid timeZone: ${tzStart}. Allowed: ${Array.from(allowedTz).join(", ")}`
-    );
+    )
   }
   if (tzEnd && !allowedTz.has(tzEnd)) {
     throw new Error(
       `Invalid timeZone: ${tzEnd}. Allowed: ${Array.from(allowedTz).join(", ")}`
-    );
+    )
   }
   if (tzStart && tzEnd && tzStart !== tzEnd) {
-    throw new Error("Start and end time zones must match.");
+    throw new Error("Start and end time zones must match.")
   }
 
-  return tzStart ?? tzEnd;
+  return tzStart ?? tzEnd
 }
 
 /**
@@ -248,10 +248,10 @@ export function applyTimezone(
   timezone: string | undefined
 ): void {
   if (start.dateTime) {
-    start.timeZone = timezone;
+    start.timeZone = timezone
   }
   if (end.dateTime) {
-    end.timeZone = timezone;
+    end.timeZone = timezone
   }
 }
 
@@ -298,7 +298,7 @@ export function buildEvent(
     visibility: cleaned.visibility,
     start,
     end,
-  };
+  }
 }
 
 /**
@@ -328,16 +328,16 @@ export function buildEvent(
  * // Throws: Error('Event summary is required.')
  */
 export const formatEventData = (params: Partial<Event>): Event => {
-  const cleaned = deepClean(params || {});
-  const start = normalizeEventDateTime((cleaned.start ?? {}) as Partial<EDT>);
-  const end = normalizeEventDateTime((cleaned.end ?? {}) as Partial<EDT>);
+  const cleaned = deepClean(params || {})
+  const start = normalizeEventDateTime((cleaned.start ?? {}) as Partial<EDT>)
+  const end = normalizeEventDateTime((cleaned.end ?? {}) as Partial<EDT>)
 
-  validateEventRequired(cleaned.summary, start, end);
-  const timezone = validateAndResolveTimezone(start, end);
-  applyTimezone(start, end, timezone);
+  validateEventRequired(cleaned.summary, start, end)
+  const timezone = validateAndResolveTimezone(start, end)
+  applyTimezone(start, end, timezone)
 
-  return deepClean(buildEvent(cleaned, start, end));
-};
+  return deepClean(buildEvent(cleaned, start, end))
+}
 
 /**
  * @description Removes null, undefined, and empty string values from a flat object.
@@ -355,7 +355,7 @@ export const formatEventData = (params: Partial<Event>): Event => {
  * @private
  */
 const cleanObject = <T extends Record<string, unknown>>(obj: T): T =>
-  omitBy(obj, (v) => isNil(v) || v === "") as T;
+  omitBy(obj, (v) => isNil(v) || v === "") as T
 
 /**
  * @description Cleans an EventDateTime-like object by converting empty strings to null and
@@ -386,9 +386,9 @@ const cleanObject = <T extends Record<string, unknown>>(obj: T): T =>
 function cleanEventDateTime(
   dt:
     | {
-        date?: string | null;
-        dateTime?: string | null;
-        timeZone?: string | null;
+        date?: string | null
+        dateTime?: string | null
+        timeZone?: string | null
       }
     | null
     | undefined
@@ -396,17 +396,17 @@ function cleanEventDateTime(
   | { date?: string | null; dateTime?: string | null; timeZone?: string | null }
   | undefined {
   if (!dt) {
-    return;
+    return
   }
   const cleaned = {
     date: dt.date === "" ? null : dt.date,
     dateTime: dt.dateTime === "" ? null : dt.dateTime,
     timeZone: dt.timeZone === "" ? null : dt.timeZone,
-  };
-  if (!(cleaned.date || cleaned.dateTime)) {
-    return;
   }
-  return cleaned;
+  if (!(cleaned.date || cleaned.dateTime)) {
+    return
+  }
+  return cleaned
 }
 
 /**
@@ -455,25 +455,25 @@ export function parseToolArguments(raw: unknown) {
   const base =
     typeof (raw as { input?: string })?.input === "string"
       ? JSON.parse((raw as { input: string }).input)
-      : raw;
+      : raw
 
-  const outer = base?.fullEventParameters ?? base;
-  const inner = outer?.eventParameters ?? base?.eventParameters ?? base;
+  const outer = base?.fullEventParameters ?? base
+  const inner = outer?.eventParameters ?? base?.eventParameters ?? base
 
-  const email = base?.email ?? outer?.email ?? inner?.email;
+  const email = base?.email ?? outer?.email ?? inner?.email
   const rawCalendarId =
-    outer?.calendarId ?? base?.calendarId ?? inner?.calendarId;
+    outer?.calendarId ?? base?.calendarId ?? inner?.calendarId
   const calendarId =
     rawCalendarId &&
     typeof rawCalendarId === "string" &&
     rawCalendarId.trim() !== "" &&
     rawCalendarId !== "/"
       ? rawCalendarId.trim()
-      : null;
-  const eventId = base?.eventId ?? outer?.eventId ?? inner?.eventId;
+      : null
+  const eventId = base?.eventId ?? outer?.eventId ?? inner?.eventId
 
   const cleanString = (val: unknown): string | undefined =>
-    typeof val === "string" && val.trim() !== "" ? val : undefined;
+    typeof val === "string" && val.trim() !== "" ? val : undefined
 
   const eventLike: Partial<Event> = {
     id: inner?.id,
@@ -489,7 +489,7 @@ export function parseToolArguments(raw: unknown) {
     visibility: inner?.visibility,
     start: cleanEventDateTime(inner?.start),
     end: cleanEventDateTime(inner?.end),
-  };
+  }
 
-  return { email, calendarId, eventId, eventLike: cleanObject(eventLike) };
+  return { email, calendarId, eventId, eventLike: cleanObject(eventLike) }
 }

@@ -1,6 +1,6 @@
-import type { Response } from "express";
+import type { Response } from "express"
 
-export type HttpError = Error & { cause: { status: number } };
+export type HttpError = Error & { cause: { status: number } }
 
 /**
  * Create an HTTP error with status code
@@ -10,7 +10,7 @@ export type HttpError = Error & { cause: { status: number } };
  * @returns {HttpError} The error object with status in cause.
  */
 export const createHttpError = (message: string, status: number): HttpError =>
-  new Error(message, { cause: { status } }) as HttpError;
+  new Error(message, { cause: { status } }) as HttpError
 
 /**
  * Send an error response to the client
@@ -28,8 +28,8 @@ export const sendErrorResponse = (
     status: "error",
     code: status,
     message,
-  });
-};
+  })
+}
 
 /**
  * Throw an HTTP error (convenience function)
@@ -39,9 +39,9 @@ export const sendErrorResponse = (
  * @throws {HttpError} Always throws an error with status in cause.
  */
 export const throwHttpError = (message: string, status: number): never => {
-  const error = createHttpError(message, status);
-  throw error;
-};
+  const error = createHttpError(message, status)
+  throw error
+}
 
 /**
  * Error template - sends response if provided, then throws
@@ -58,10 +58,10 @@ const errorTemplate = (
   res?: Response
 ): never => {
   if (res) {
-    sendErrorResponse(res, status, message);
+    sendErrorResponse(res, status, message)
   }
-  const error = createHttpError(message, status);
-  throw error;
-};
+  const error = createHttpError(message, status)
+  throw error
+}
 
-export default errorTemplate;
+export default errorTemplate

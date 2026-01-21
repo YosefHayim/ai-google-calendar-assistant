@@ -510,6 +510,6 @@ export const fr = {
     "Aucune modification n'a été apportée à votre calendrier.",
   "commands.reschedule.keepOriginal": "Garder l'original",
   "botMenu.reschedule": "Replanification intelligente",
-} as const;
+} as const
 
-export type TranslationKey = keyof typeof fr;
+export type TranslationKey = keyof typeof fr

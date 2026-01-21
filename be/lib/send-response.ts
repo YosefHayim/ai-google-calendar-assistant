@@ -1,6 +1,6 @@
-import type { Response } from "express";
+import type { Response } from "express"
 
-const ERROR = 400;
+const ERROR = 400
 
 /**
  * Send a response
@@ -25,7 +25,7 @@ const sendR = (
     status: status >= ERROR ? "error" : "success",
     message,
     data,
-  });
-};
+  })
+}
 
-export default sendR;
+export default sendR

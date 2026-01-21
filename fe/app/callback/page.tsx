@@ -6,14 +6,14 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { usePostHog } from 'posthog-js/react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { authService } from '@/services/auth.service'
+import { authService } from '@/services/auth-service'
 import { STORAGE_KEYS } from '@/lib/constants'
 import {
   redirectToCheckout,
   redirectToCreditPackCheckout,
   type PlanSlug,
   type PlanInterval,
-} from '@/services/payment.service'
+} from '@/services/payment-service'
 
 function CallbackContent() {
   const searchParams = useSearchParams()

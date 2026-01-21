@@ -1,19 +1,19 @@
-import { InlineKeyboard, InputFile } from "grammy";
+import { InlineKeyboard, InputFile } from "grammy"
 import {
   SUPPORTED_LOCALES,
   createTranslator,
   getTranslatorFromLanguageCode,
-} from "../i18n";
+} from "../i18n"
 
-import type { GlobalContext } from "../init-bot";
-import { ResponseBuilder } from "../response-system";
-import type { SupportedLocale } from "../i18n";
-import { gatherUserKnowledge } from "./user-knowledge";
-import { generateSpeechForTelegram } from "@/domains/analytics/utils";
-import { getVoicePreferenceForTelegram } from "./ally-brain";
-import { logger } from "@/lib/logger";
-import { resetSession } from "./session";
-import { telegramConversation } from "@/domains/chat/utils/conversation/TelegramConversationAdapter";
+import type { GlobalContext } from "../init-bot"
+import { ResponseBuilder } from "../response-system"
+import type { SupportedLocale } from "../i18n"
+import { gatherUserKnowledge } from "./user-knowledge"
+import { generateSpeechForTelegram } from "@/domains/analytics/utils"
+import { getVoicePreferenceForTelegram } from "./ally-brain"
+import { logger } from "@/lib/logger"
+import { resetSession } from "./session"
+import { telegramConversation } from "@/domains/chat/utils/conversation/TelegramConversationAdapter"
 
 /**
  * Get internal user ID from Telegram user ID.
@@ -25,7 +25,7 @@ import { telegramConversation } from "@/domains/chat/utils/conversation/Telegram
  * @returns Internal user ID string
  */
 const _getUserIdFromTelegram = (telegramUserId: number) =>
-  telegramConversation.getUserIdFromTelegram(telegramUserId);
+  telegramConversation.getUserIdFromTelegram(telegramUserId)
 
 /**
  * Build response sections from translation keys for structured messaging.
@@ -46,22 +46,22 @@ const buildSectionsFromKeys = (
 ): ReturnType<typeof ResponseBuilder.telegram> => {
   for (const section of sectionKeys) {
     const items: {
-      bullet: "dot" | "none" | "emoji";
-      text: string;
-      emphasis?: boolean;
-    }[] = [];
+      bullet: "dot" | "none" | "emoji"
+      text: string
+      emphasis?: boolean
+    }[] = []
     for (let i = 0; i < section.itemCount; i++) {
-      const text = t(`${section.key}.items.${i}`);
+      const text = t(`${section.key}.items.${i}`)
       items.push({
         bullet: "dot",
         text,
         emphasis: text.includes("<b>"),
-      });
+      })
     }
-    builder.section(section.emoji, t(`${section.key}.title`), items);
+    builder.section(section.emoji, t(`${section.key}.title`), items)
   }
-  return builder;
-};
+  return builder
+}
 
 /**
  * Handle the /usage command to show bot capabilities and features.
@@ -81,7 +81,7 @@ const buildSectionsFromKeys = (
  * @param ctx - Telegram bot context with session and translation information
  */
 export const handleUsageCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     {
@@ -91,17 +91,17 @@ export const handleUsageCommand = async (ctx: GlobalContext): Promise<void> => {
     },
     { key: "commands.usage.sections.queryTime", emoji: "🔎", itemCount: 2 },
     { key: "commands.usage.sections.customize", emoji: "⚙️", itemCount: 1 },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
-    .header("✨", t("commands.usage.header"));
+    .header("✨", t("commands.usage.header"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
+  builder = buildSectionsFromKeys(builder, t, sections)
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 /**
  * Handle the /start command for bot initialization and welcome.
@@ -114,24 +114,24 @@ export const handleUsageCommand = async (ctx: GlobalContext): Promise<void> => {
  * @returns Promise that resolves when welcome message is sent
  */
 export const handleStartCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     { key: "commands.start.sections.getStarted", emoji: "🚀", itemCount: 2 },
     { key: "commands.start.sections.trySaying", emoji: "📅", itemCount: 2 },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("👋", t("commands.start.header"))
-    .text(t("commands.start.welcomeText"));
+    .text(t("commands.start.welcomeText"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
-  builder.footer(undefined, t("commands.start.footer"));
+  builder = buildSectionsFromKeys(builder, t, sections)
+  builder.footer(undefined, t("commands.start.footer"))
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 /**
  * Handle the /help command to provide assistance and guidance.
@@ -144,7 +144,7 @@ export const handleStartCommand = async (ctx: GlobalContext): Promise<void> => {
  * @returns Promise that resolves when help information is sent
  */
 export const handleHelpCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     { key: "commands.help.sections.viewSchedule", emoji: "📅", itemCount: 6 },
@@ -161,38 +161,38 @@ export const handleHelpCommand = async (ctx: GlobalContext): Promise<void> => {
       itemCount: 2,
     },
     { key: "commands.help.sections.settings", emoji: "🛠️", itemCount: 5 },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("✨", t("commands.help.header"))
-    .text(t("commands.help.description"));
+    .text(t("commands.help.description"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
+  builder = buildSectionsFromKeys(builder, t, sections)
   builder
     .text(`💬 ${t("commands.help.naturalLanguageTip")}`)
-    .footer(t("commands.help.footerTip"));
+    .footer(t("commands.help.footerTip"))
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleExitCommand = async (ctx: GlobalContext): Promise<void> => {
-  resetSession(ctx);
+  resetSession(ctx)
 
   // Note: Agent sessions are now memory-based (ephemeral) - no need to clear persistent sessions
 
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("👋", t("commands.exit.header"))
     .text(t("commands.exit.text"))
     .footer(undefined, `${t("commands.exit.footer")} ✨`)
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 /**
  * Handle the /today command to show today's calendar events.
@@ -205,67 +205,67 @@ export const handleExitCommand = async (ctx: GlobalContext): Promise<void> => {
  * @returns Promise that resolves when today's events are displayed
  */
 export const handleTodayCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("📅", t("commands.today.header"))
     .text(t("commands.today.text"))
     .footer(t("commands.today.footerTip"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleTomorrowCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("🌅", t("commands.tomorrow.header"))
     .text(t("commands.tomorrow.text"))
     .footer(t("commands.tomorrow.footerTip"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleWeekCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("📊", t("commands.week.header"))
     .text(t("commands.week.text"))
     .footer(t("commands.week.footerTip"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleMonthCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("📆", t("commands.month.header"))
     .text(t("commands.month.text"))
     .footer(t("commands.month.footerTip"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleFreeCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const suggestions = [
     t("commands.free.suggestions.0"),
     t("commands.free.suggestions.1"),
     t("commands.free.suggestions.2"),
-  ];
+  ]
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -274,32 +274,32 @@ export const handleFreeCommand = async (ctx: GlobalContext): Promise<void> => {
     .spacing()
     .text(t("commands.free.alsoAskText"))
     .bulletList(suggestions)
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleBusyCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("🔴", t("commands.busy.header"))
     .text(t("commands.busy.text"))
     .footer(t("commands.busy.footerTip"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleQuickCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const examples = [
     t("commands.quick.examples.0"),
     t("commands.quick.examples.1"),
     t("commands.quick.examples.2"),
-  ];
+  ]
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -307,10 +307,10 @@ export const handleQuickCommand = async (ctx: GlobalContext): Promise<void> => {
     .text(t("commands.quick.text"))
     .bulletList(examples)
     .footer(undefined, `${t("commands.quick.footer")} ✨`)
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 /**
  * Handle the /create command to show event creation examples and patterns.
@@ -326,7 +326,7 @@ export const handleQuickCommand = async (ctx: GlobalContext): Promise<void> => {
 export const handleCreateCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     {
@@ -345,24 +345,24 @@ export const handleCreateCommand = async (
       emoji: "🎯",
       itemCount: 1,
     },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("✨", t("commands.create.header"))
-    .text(t("commands.create.text"));
+    .text(t("commands.create.text"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
-  builder.footer(t("commands.create.footerTip"));
+  builder = buildSectionsFromKeys(builder, t, sections)
+  builder.footer(t("commands.create.footerTip"))
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleUpdateCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     { key: "commands.update.sections.reschedule", emoji: "🕐", itemCount: 3 },
@@ -372,24 +372,24 @@ export const handleUpdateCommand = async (
       emoji: "⏱️",
       itemCount: 2,
     },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("✏️", t("commands.update.header"))
-    .text(t("commands.update.text"));
+    .text(t("commands.update.text"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
-  builder.footer(t("commands.update.footerTip"));
+  builder = buildSectionsFromKeys(builder, t, sections)
+  builder.footer(t("commands.update.footerTip"))
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleDeleteCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     { key: "commands.delete.sections.cancelByName", emoji: "❌", itemCount: 3 },
@@ -403,30 +403,30 @@ export const handleDeleteCommand = async (
       emoji: "🔄",
       itemCount: 2,
     },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("🗑️", t("commands.delete.header"))
-    .text(t("commands.delete.text"));
+    .text(t("commands.delete.text"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
-  builder.footer(`${t("commands.delete.footerWarning")} ⚠️`);
+  builder = buildSectionsFromKeys(builder, t, sections)
+  builder.footer(`${t("commands.delete.footerWarning")} ⚠️`)
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleCancelCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const examples = [
     t("commands.cancel.examples.0"),
     t("commands.cancel.examples.1"),
     t("commands.cancel.examples.2"),
-  ];
+  ]
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -434,10 +434,10 @@ export const handleCancelCommand = async (
     .text(t("commands.cancel.text"))
     .bulletList(examples)
     .footer(undefined, t("commands.cancel.footer"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 /**
  * Handle the /search command to demonstrate calendar search capabilities.
@@ -452,7 +452,7 @@ export const handleCancelCommand = async (
 export const handleSearchCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     {
@@ -461,30 +461,30 @@ export const handleSearchCommand = async (
       itemCount: 4,
     },
     { key: "commands.search.sections.filterByDate", emoji: "🗓️", itemCount: 2 },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("🔍", t("commands.search.header"))
-    .text(t("commands.search.text"));
+    .text(t("commands.search.text"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
-  builder.footer(t("commands.search.footerTip"));
+  builder = buildSectionsFromKeys(builder, t, sections)
+  builder.footer(t("commands.search.footerTip"))
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleRemindCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const examples = [
     t("commands.remind.examples.0"),
     t("commands.remind.examples.1"),
     t("commands.remind.examples.2"),
-  ];
+  ]
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -492,15 +492,15 @@ export const handleRemindCommand = async (
     .text(t("commands.remind.text"))
     .bulletList(examples)
     .footer(undefined, `${t("commands.remind.footer")} 💪`)
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleAnalyticsCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     {
@@ -518,41 +518,41 @@ export const handleAnalyticsCommand = async (
       emoji: "🧠",
       itemCount: 3,
     },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("📊", t("commands.analytics.header"))
-    .text(t("commands.analytics.text"));
+    .text(t("commands.analytics.text"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
-  builder.footer(t("commands.analytics.footerTip"));
+  builder = buildSectionsFromKeys(builder, t, sections)
+  builder.footer(t("commands.analytics.footerTip"))
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleCalendarsCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("📚", t("commands.calendars.header"))
     .text(t("commands.calendars.text"))
     .footer(t("commands.calendars.footerTip"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleStatusCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
-  const checkingItems = [t("commands.status.checkingItems.0")];
+  const checkingItems = [t("commands.status.checkingItems.0")]
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -560,17 +560,17 @@ export const handleStatusCommand = async (
     .text(t("commands.status.text"))
     .bulletList(checkingItems)
     .footer(t("commands.status.footerTip"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleSettingsCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
-  const email = ctx.session.email || "Not set";
+  const email = ctx.session.email || "Not set"
 
   const keyboard = new InlineKeyboard()
     .text(
@@ -581,56 +581,56 @@ export const handleSettingsCommand = async (
     .text(
       `🔗 ${t("commands.settings.buttons.reconnectGoogle")}`,
       "settings:reconnect_google"
-    );
+    )
 
   const sections = [
     { key: "commands.settings.sections.options", emoji: "🔧", itemCount: 2 },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("⚙️", t("commands.settings.header"))
-    .text(`${t("commands.settings.connectedAsText")} <code>${email}</code>`);
+    .text(`${t("commands.settings.connectedAsText")} <code>${email}</code>`)
 
-  builder = buildSectionsFromKeys(builder, t, sections);
-  builder.footer(t("commands.settings.footerText"));
+  builder = buildSectionsFromKeys(builder, t, sections)
+  builder.footer(t("commands.settings.footerText"))
 
-  const response = builder.build();
+  const response = builder.build()
   await ctx.reply(response.content, {
     parse_mode: "HTML",
     reply_markup: keyboard,
-  });
-};
+  })
+}
 
 export const handleChangeEmailCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   if (!ctx.session.email) {
-    await ctx.reply(t("commands.changeEmail.notAuthenticatedError"));
-    return;
+    await ctx.reply(t("commands.changeEmail.notAuthenticatedError"))
+    return
   }
 
-  ctx.session.awaitingEmailChange = true;
+  ctx.session.awaitingEmailChange = true
   await ctx.reply(
     `${t("commands.changeEmail.currentEmailText")} <code>${ctx.session.email}</code>\n\n${t("commands.changeEmail.enterNewEmailPrompt")}`,
     {
       parse_mode: "HTML",
     }
-  );
-};
+  )
+}
 
 export const handleFeedbackCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const options = [
     t("commands.feedback.options.0"),
     t("commands.feedback.options.1"),
     t("commands.feedback.options.2"),
-  ];
+  ]
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -639,25 +639,25 @@ export const handleFeedbackCommand = async (
     .bulletList(options)
     .text(t("commands.feedback.instructionText"))
     .footer(undefined, `${t("commands.feedback.footer")} ✨`)
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleLanguageCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
   const { t, direction, locale } = getTranslatorFromLanguageCode(
     ctx.session.codeLang
-  );
+  )
 
-  const keyboard = new InlineKeyboard();
+  const keyboard = new InlineKeyboard()
   for (const loc of SUPPORTED_LOCALES) {
-    const isCurrentLang = loc === locale;
+    const isCurrentLang = loc === locale
     const label = isCurrentLang
       ? `✓ ${t(`commands.language.languages.${loc}`)}`
-      : t(`commands.language.languages.${loc}`);
-    keyboard.text(label, `language:${loc}`).row();
+      : t(`commands.language.languages.${loc}`)
+    keyboard.text(label, `language:${loc}`).row()
   }
 
   const response = ResponseBuilder.telegram()
@@ -668,21 +668,21 @@ export const handleLanguageCommand = async (
     )
     .spacing()
     .text(t("commands.language.selectPrompt"))
-    .build();
+    .build()
 
   await ctx.reply(response.content, {
     parse_mode: "HTML",
     reply_markup: keyboard,
-  });
-};
+  })
+}
 
 export const handleLanguageSelection = async (
   ctx: GlobalContext,
   locale: SupportedLocale
 ): Promise<void> => {
-  ctx.session.codeLang = locale;
+  ctx.session.codeLang = locale
 
-  const { t, direction } = createTranslator(locale);
+  const { t, direction } = createTranslator(locale)
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -690,188 +690,188 @@ export const handleLanguageSelection = async (
       "✓",
       `${t("commands.language.changedText")} ${t(`commands.language.languages.${locale}`)}`
     )
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 const buildProfileItems = (
   knowledge: import("./user-knowledge").UserKnowledge
 ): string[] => {
-  const items: string[] = [];
+  const items: string[] = []
   if (knowledge.profile.firstName || knowledge.profile.displayName) {
     items.push(
       `Name: ${knowledge.profile.firstName ?? knowledge.profile.displayName}`
-    );
+    )
   }
-  items.push(`Email: ${knowledge.profile.email}`);
+  items.push(`Email: ${knowledge.profile.email}`)
   if (knowledge.profile.timezone) {
-    items.push(`Timezone: ${knowledge.profile.timezone}`);
+    items.push(`Timezone: ${knowledge.profile.timezone}`)
   }
   items.push(
     `Member since: ${new Date(knowledge.profile.createdAt).toLocaleDateString()}`
-  );
+  )
   if (knowledge.telegram.username) {
-    items.push(`Telegram: @${knowledge.telegram.username}`);
+    items.push(`Telegram: @${knowledge.telegram.username}`)
   }
-  return items;
-};
+  return items
+}
 
 const buildActivityItems = (
   knowledge: import("./user-knowledge").UserKnowledge
 ): string[] => {
-  const items: string[] = [];
-  items.push(`Total conversations: ${knowledge.activity.totalConversations}`);
-  items.push(`Total messages: ${knowledge.activity.totalMessages}`);
+  const items: string[] = []
+  items.push(`Total conversations: ${knowledge.activity.totalConversations}`)
+  items.push(`Total messages: ${knowledge.activity.totalMessages}`)
   if (knowledge.activity.lastConversationAt) {
     items.push(
       `Last active: ${new Date(knowledge.activity.lastConversationAt).toLocaleDateString()}`
-    );
+    )
   }
-  return items;
-};
+  return items
+}
 
 export const handleAboutMeCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id;
-  const email = ctx.session.email;
-  const hasRequiredData = email && telegramUserId;
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const telegramUserId = ctx.from?.id
+  const email = ctx.session.email
+  const hasRequiredData = email && telegramUserId
 
   if (!hasRequiredData) {
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("👤", t("commands.aboutme.header"))
       .text(t("commands.aboutme.noData"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    return;
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    return
   }
 
   try {
-    const knowledge = await gatherUserKnowledge(email, telegramUserId);
+    const knowledge = await gatherUserKnowledge(email, telegramUserId)
 
     if (!knowledge) {
       const response = ResponseBuilder.telegram()
         .direction(direction)
         .header("👤", t("commands.aboutme.header"))
         .text(t("commands.aboutme.noData"))
-        .build();
-      await ctx.reply(response.content, { parse_mode: "HTML" });
-      return;
+        .build()
+      await ctx.reply(response.content, { parse_mode: "HTML" })
+      return
     }
 
     const builder = ResponseBuilder.telegram()
       .direction(direction)
-      .header("👤", t("commands.aboutme.header"));
+      .header("👤", t("commands.aboutme.header"))
 
-    const profileItems = buildProfileItems(knowledge);
+    const profileItems = buildProfileItems(knowledge)
     builder.section(
       "👤",
       t("commands.aboutme.sections.profile.title"),
       profileItems.map((text) => ({ bullet: "dot" as const, text }))
-    );
+    )
 
     if (knowledge.calendars.total > 0) {
       const calendarItems = knowledge.calendars.names.map((name) => {
-        const isPrimary = name === knowledge.calendars.primaryCalendar;
+        const isPrimary = name === knowledge.calendars.primaryCalendar
         return {
           bullet: "dot" as const,
           text: isPrimary ? `${name} (primary)` : name,
-        };
-      });
+        }
+      })
       builder.section(
         "📅",
         t("commands.aboutme.sections.calendars.title"),
         calendarItems
-      );
+      )
     }
 
-    const activityItems = buildActivityItems(knowledge);
+    const activityItems = buildActivityItems(knowledge)
     builder.section(
       "📊",
       t("commands.aboutme.sections.activity.title"),
       activityItems.map((text) => ({ bullet: "dot" as const, text }))
-    );
+    )
 
     if (knowledge.preferences.gapRecoveryEnabled !== null) {
-      const insightItems: string[] = [];
+      const insightItems: string[] = []
       insightItems.push(
         `Gap recovery: ${knowledge.preferences.gapRecoveryEnabled ? "Enabled" : "Disabled"}`
-      );
+      )
       if (knowledge.preferences.minGapMinutes) {
         insightItems.push(
           `Min gap: ${knowledge.preferences.minGapMinutes} minutes`
-        );
+        )
       }
       builder.section(
         "💡",
         t("commands.aboutme.sections.insights.title"),
         insightItems.map((text) => ({ bullet: "dot" as const, text }))
-      );
+      )
     }
 
-    builder.footer(t("commands.aboutme.footerTip"));
+    builder.footer(t("commands.aboutme.footerTip"))
 
-    const response = builder.build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
+    const response = builder.build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
   } catch (error) {
     logger.error(
       `Telegram Bot: Failed to gather user knowledge for ${ctx.session.email}: ${error}`
-    );
+    )
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("👤", t("commands.aboutme.header"))
       .text(t("commands.aboutme.noData"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
   }
-};
+}
 
 export const handleBrainCommand = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id;
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const telegramUserId = ctx.from?.id
 
   if (!telegramUserId) {
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("🧠", t("commands.brain.header"))
       .text(t("commands.brain.noUser"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    return;
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    return
   }
 
   try {
-    const { getAllyBrainForTelegram } = await import("./ally-brain.js");
-    const brainData = await getAllyBrainForTelegram(telegramUserId);
+    const { getAllyBrainForTelegram } = await import("./ally-brain.js")
+    const brainData = await getAllyBrainForTelegram(telegramUserId)
 
     const statusText = brainData?.enabled
       ? t("commands.brain.statusEnabled")
-      : t("commands.brain.statusDisabled");
+      : t("commands.brain.statusDisabled")
 
     const instructionsText = brainData?.instructions?.trim()
       ? brainData.instructions
-      : t("commands.brain.noInstructions");
+      : t("commands.brain.noInstructions")
 
-    const keyboard = new InlineKeyboard();
+    const keyboard = new InlineKeyboard()
 
     if (brainData?.enabled) {
       keyboard.text(
         `❌ ${t("commands.brain.buttons.disable")}`,
         "brain:disable"
-      );
+      )
     } else {
-      keyboard.text(`✅ ${t("commands.brain.buttons.enable")}`, "brain:enable");
+      keyboard.text(`✅ ${t("commands.brain.buttons.enable")}`, "brain:enable")
     }
 
-    keyboard.row();
-    keyboard.text(`✏️ ${t("commands.brain.buttons.edit")}`, "brain:edit");
+    keyboard.row()
+    keyboard.text(`✏️ ${t("commands.brain.buttons.edit")}`, "brain:edit")
 
     if (brainData?.instructions?.trim()) {
-      keyboard.row();
-      keyboard.text(`🗑️ ${t("commands.brain.buttons.clear")}`, "brain:clear");
+      keyboard.row()
+      keyboard.text(`🗑️ ${t("commands.brain.buttons.clear")}`, "brain:clear")
     }
 
     const builder = ResponseBuilder.telegram()
@@ -884,80 +884,80 @@ export const handleBrainCommand = async (ctx: GlobalContext): Promise<void> => {
       .text(`<b>${t("commands.brain.currentInstructions")}:</b>`)
       .text(`<i>${instructionsText}</i>`)
       .spacing()
-      .footer(t("commands.brain.footerTip"));
+      .footer(t("commands.brain.footerTip"))
 
-    const response = builder.build();
+    const response = builder.build()
     await ctx.reply(response.content, {
       parse_mode: "HTML",
       reply_markup: keyboard,
-    });
+    })
   } catch (error) {
-    logger.error(`Telegram Bot: Failed to get brain settings: ${error}`);
+    logger.error(`Telegram Bot: Failed to get brain settings: ${error}`)
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("🧠", t("commands.brain.header"))
       .text(t("commands.brain.error"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
   }
-};
+}
 
 export const handleBrainToggle = async (
   ctx: GlobalContext,
   enable: boolean
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id;
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const telegramUserId = ctx.from?.id
 
   if (!telegramUserId) {
-    await ctx.answerCallbackQuery(t("commands.brain.noUser"));
-    return;
+    await ctx.answerCallbackQuery(t("commands.brain.noUser"))
+    return
   }
 
   try {
-    const { toggleAllyBrainEnabled } = await import("./ally-brain.js");
-    const success = await toggleAllyBrainEnabled(telegramUserId, enable);
+    const { toggleAllyBrainEnabled } = await import("./ally-brain.js")
+    const success = await toggleAllyBrainEnabled(telegramUserId, enable)
 
     if (success) {
       await ctx.answerCallbackQuery(
         enable ? t("commands.brain.enabled") : t("commands.brain.disabled")
-      );
-      await handleBrainCommand(ctx);
+      )
+      await handleBrainCommand(ctx)
     } else {
-      await ctx.answerCallbackQuery(t("commands.brain.updateFailed"));
+      await ctx.answerCallbackQuery(t("commands.brain.updateFailed"))
     }
   } catch (error) {
-    logger.error(`Telegram Bot: Failed to toggle brain: ${error}`);
-    await ctx.answerCallbackQuery(t("commands.brain.error"));
+    logger.error(`Telegram Bot: Failed to toggle brain: ${error}`)
+    await ctx.answerCallbackQuery(t("commands.brain.error"))
   }
-};
+}
 
 export const handleBrainEditStart = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id;
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const telegramUserId = ctx.from?.id
 
-  await ctx.answerCallbackQuery();
+  await ctx.answerCallbackQuery()
 
   if (!telegramUserId) {
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("🧠", t("commands.brain.header"))
       .text(t("commands.brain.noUser"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    return;
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    return
   }
 
-  const { getAllyBrainForTelegram } = await import("./ally-brain.js");
-  const brainData = await getAllyBrainForTelegram(telegramUserId);
+  const { getAllyBrainForTelegram } = await import("./ally-brain.js")
+  const brainData = await getAllyBrainForTelegram(telegramUserId)
 
   if (brainData?.instructions?.trim()) {
     const keyboard = new InlineKeyboard()
       .text(`➕ ${t("commands.brain.buttons.append")}`, "brain:edit:append")
       .row()
-      .text(`🔄 ${t("commands.brain.buttons.replace")}`, "brain:edit:replace");
+      .text(`🔄 ${t("commands.brain.buttons.replace")}`, "brain:edit:replace")
 
     const response = ResponseBuilder.telegram()
       .direction(direction)
@@ -969,15 +969,15 @@ export const handleBrainEditStart = async (
       )
       .spacing()
       .text(t("commands.brain.chooseMode"))
-      .build();
+      .build()
 
     await ctx.reply(response.content, {
       parse_mode: "HTML",
       reply_markup: keyboard,
-    });
+    })
   } else {
-    ctx.session.awaitingBrainInstructions = true;
-    ctx.session.brainInstructionsMode = "replace";
+    ctx.session.awaitingBrainInstructions = true
+    ctx.session.brainInstructionsMode = "replace"
 
     const response = ResponseBuilder.telegram()
       .direction(direction)
@@ -987,32 +987,32 @@ export const handleBrainEditStart = async (
       .text(`<i>${t("commands.brain.editExample")}</i>`)
       .spacing()
       .footer(t("commands.brain.editCancel"))
-      .build();
+      .build()
 
-    await ctx.reply(response.content, { parse_mode: "HTML" });
+    await ctx.reply(response.content, { parse_mode: "HTML" })
   }
-};
+}
 
 export const handleBrainEditModeSelect = async (
   ctx: GlobalContext,
   mode: "append" | "replace"
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
-  ctx.session.awaitingBrainInstructions = true;
-  ctx.session.brainInstructionsMode = mode;
+  ctx.session.awaitingBrainInstructions = true
+  ctx.session.brainInstructionsMode = mode
 
-  await ctx.answerCallbackQuery();
+  await ctx.answerCallbackQuery()
 
   const headerText =
     mode === "append"
       ? t("commands.brain.appendHeader")
-      : t("commands.brain.replaceHeader");
+      : t("commands.brain.replaceHeader")
 
   const promptText =
     mode === "append"
       ? t("commands.brain.appendPrompt")
-      : t("commands.brain.editPrompt");
+      : t("commands.brain.editPrompt")
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -1022,47 +1022,47 @@ export const handleBrainEditModeSelect = async (
     .text(`<i>${t("commands.brain.editExample")}</i>`)
     .spacing()
     .footer(t("commands.brain.editCancel"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleBrainInstructionsInput = async (
   ctx: GlobalContext,
   instructions: string
 ): Promise<boolean> => {
   if (!ctx.session.awaitingBrainInstructions) {
-    return false;
+    return false
   }
 
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id;
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const telegramUserId = ctx.from?.id
 
-  ctx.session.awaitingBrainInstructions = undefined;
+  ctx.session.awaitingBrainInstructions = undefined
 
   if (!telegramUserId) {
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("🧠", t("commands.brain.header"))
       .text(t("commands.brain.noUser"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    return true;
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    return true
   }
 
   if (instructions.toLowerCase() === "/cancel") {
-    ctx.session.brainInstructionsMode = undefined;
+    ctx.session.brainInstructionsMode = undefined
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("🧠", t("commands.brain.header"))
       .text(t("commands.brain.editCancelled"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    await handleBrainCommand(ctx);
-    return true;
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    await handleBrainCommand(ctx)
+    return true
   }
 
-  const MAX_INSTRUCTIONS_LENGTH = 1000;
+  const MAX_INSTRUCTIONS_LENGTH = 1000
   if (instructions.length > MAX_INSTRUCTIONS_LENGTH) {
     const response = ResponseBuilder.telegram()
       .direction(direction)
@@ -1073,138 +1073,138 @@ export const handleBrainInstructionsInput = async (
           MAX_INSTRUCTIONS_LENGTH.toString()
         )
       )
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    return true;
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    return true
   }
 
   try {
-    const { updateAllyBrainInstructions } = await import("./ally-brain.js");
-    const mode = ctx.session.brainInstructionsMode || "replace";
+    const { updateAllyBrainInstructions } = await import("./ally-brain.js")
+    const mode = ctx.session.brainInstructionsMode || "replace"
     const success = await updateAllyBrainInstructions(
       telegramUserId,
       instructions,
       mode
-    );
+    )
 
-    ctx.session.brainInstructionsMode = undefined;
+    ctx.session.brainInstructionsMode = undefined
 
     if (success) {
       const savedText =
         mode === "append"
           ? t("commands.brain.appendedDescription")
-          : t("commands.brain.savedDescription");
+          : t("commands.brain.savedDescription")
 
       const response = ResponseBuilder.telegram()
         .direction(direction)
         .header("✅", t("commands.brain.saved"))
         .text(savedText)
-        .build();
-      await ctx.reply(response.content, { parse_mode: "HTML" });
+        .build()
+      await ctx.reply(response.content, { parse_mode: "HTML" })
 
-      await handleBrainCommand(ctx);
+      await handleBrainCommand(ctx)
     } else {
       const response = ResponseBuilder.telegram()
         .direction(direction)
         .header("❌", t("commands.brain.header"))
         .text(t("commands.brain.saveFailed"))
-        .build();
-      await ctx.reply(response.content, { parse_mode: "HTML" });
+        .build()
+      await ctx.reply(response.content, { parse_mode: "HTML" })
     }
   } catch (error) {
-    logger.error(`Telegram Bot: Failed to save brain instructions: ${error}`);
-    ctx.session.brainInstructionsMode = undefined;
+    logger.error(`Telegram Bot: Failed to save brain instructions: ${error}`)
+    ctx.session.brainInstructionsMode = undefined
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("❌", t("commands.brain.header"))
       .text(t("commands.brain.error"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
   }
 
-  return true;
-};
+  return true
+}
 
 export const handleBrainClear = async (ctx: GlobalContext): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id;
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const telegramUserId = ctx.from?.id
 
   if (!telegramUserId) {
-    await ctx.answerCallbackQuery(t("commands.brain.noUser"));
-    return;
+    await ctx.answerCallbackQuery(t("commands.brain.noUser"))
+    return
   }
 
   try {
-    const { clearAllyBrainInstructions } = await import("./ally-brain.js");
-    const success = await clearAllyBrainInstructions(telegramUserId);
+    const { clearAllyBrainInstructions } = await import("./ally-brain.js")
+    const success = await clearAllyBrainInstructions(telegramUserId)
 
     if (success) {
-      await ctx.answerCallbackQuery(t("commands.brain.cleared"));
-      await handleBrainCommand(ctx);
+      await ctx.answerCallbackQuery(t("commands.brain.cleared"))
+      await handleBrainCommand(ctx)
     } else {
-      await ctx.answerCallbackQuery(t("commands.brain.clearFailed"));
+      await ctx.answerCallbackQuery(t("commands.brain.clearFailed"))
     }
   } catch (error) {
-    logger.error(`Telegram Bot: Failed to clear brain: ${error}`);
-    await ctx.answerCallbackQuery(t("commands.brain.error"));
+    logger.error(`Telegram Bot: Failed to clear brain: ${error}`)
+    await ctx.answerCallbackQuery(t("commands.brain.error"))
   }
-};
+}
 
 export const handleAsTextCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
-  const lastResponse = ctx.session.lastAgentResponse;
+  const lastResponse = ctx.session.lastAgentResponse
 
   if (!lastResponse) {
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("📝", t("commands.astext.header"))
       .text(t("commands.astext.noLastResponse"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    return;
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    return
   }
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("📝", t("commands.astext.header"))
     .text(lastResponse.text)
-    .build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+    .build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleAsVoiceCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id ?? 0;
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const telegramUserId = ctx.from?.id ?? 0
 
-  const lastResponse = ctx.session.lastAgentResponse;
+  const lastResponse = ctx.session.lastAgentResponse
 
   if (!lastResponse) {
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("🔊", t("commands.asvoice.header"))
       .text(t("commands.asvoice.noLastResponse"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    return;
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    return
   }
 
   try {
-    const voicePref = await getVoicePreferenceForTelegram(telegramUserId);
-    const cleanText = lastResponse.text.replace(/<[^>]*>/g, "");
+    const voicePref = await getVoicePreferenceForTelegram(telegramUserId)
+    const cleanText = lastResponse.text.replace(/<[^>]*>/g, "")
     const ttsResult = await generateSpeechForTelegram(
       cleanText,
       voicePref.voice
-    );
+    )
 
     if (ttsResult.success && ttsResult.audioBuffer) {
       await ctx.replyWithVoice(
         new InputFile(ttsResult.audioBuffer, "response.ogg")
-      );
+      )
     } else {
       const response = ResponseBuilder.telegram()
         .direction(direction)
@@ -1212,30 +1212,30 @@ export const handleAsVoiceCommand = async (
         .text(t("commands.asvoice.failed"))
         .spacing()
         .text(lastResponse.text)
-        .build();
-      await ctx.reply(response.content, { parse_mode: "HTML" });
+        .build()
+      await ctx.reply(response.content, { parse_mode: "HTML" })
     }
   } catch (error) {
     logger.error(
       `Telegram Bot: Failed to generate voice for /asvoice: ${error}`
-    );
+    )
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("🔊", t("commands.asvoice.header"))
       .text(t("commands.asvoice.failed"))
       .spacing()
       .text(lastResponse.text)
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
   }
-};
+}
 
 export const handleWebsiteCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
-  const dashboardUrl = "https://askally.io/dashboard";
+  const dashboardUrl = "https://askally.io/dashboard"
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
@@ -1243,15 +1243,15 @@ export const handleWebsiteCommand = async (
     .text(t("commands.website.text"))
     .spacing()
     .text(`👉 <a href="${dashboardUrl}">${dashboardUrl}</a>`)
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleRescheduleCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   const sections = [
     {
@@ -1264,42 +1264,44 @@ export const handleRescheduleCommand = async (
       emoji: "🧠",
       itemCount: 3,
     },
-  ];
+  ]
 
   let builder = ResponseBuilder.telegram()
     .direction(direction)
     .header("🔄", t("commands.reschedule.header"))
-    .text(t("commands.reschedule.text"));
+    .text(t("commands.reschedule.text"))
 
-  builder = buildSectionsFromKeys(builder, t, sections);
-  builder.footer(t("commands.reschedule.footerTip"));
+  builder = buildSectionsFromKeys(builder, t, sections)
+  builder.footer(t("commands.reschedule.footerTip"))
 
-  const response = builder.build();
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  const response = builder.build()
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}
 
 export const handleRescheduleSelection = async (
   ctx: GlobalContext,
   suggestionIndex: number
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
-  const pendingReschedule = ctx.session.pendingReschedule;
+  const pendingReschedule = ctx.session.pendingReschedule
   if (!pendingReschedule) {
-    await ctx.answerCallbackQuery(t("commands.reschedule.noSession"));
-    return;
+    await ctx.answerCallbackQuery(t("commands.reschedule.noSession"))
+    return
   }
 
-  const suggestion = pendingReschedule.suggestions[suggestionIndex];
+  const suggestion = pendingReschedule.suggestions[suggestionIndex]
   if (!suggestion) {
-    await ctx.answerCallbackQuery(t("commands.reschedule.invalidSelection"));
-    return;
+    await ctx.answerCallbackQuery(t("commands.reschedule.invalidSelection"))
+    return
   }
 
-  await ctx.answerCallbackQuery(t("commands.reschedule.applying"));
+  await ctx.answerCallbackQuery(t("commands.reschedule.applying"))
 
   try {
-    const { applyReschedule } = await import("@/domains/calendar/utils/reschedule.js");
+    const { applyReschedule } = await import(
+      "@/domains/calendar/utils/reschedule.js"
+    )
 
     const result = await applyReschedule({
       email: ctx.session.email!,
@@ -1307,9 +1309,9 @@ export const handleRescheduleSelection = async (
       calendarId: pendingReschedule.calendarId,
       newStart: suggestion.start,
       newEnd: suggestion.end,
-    });
+    })
 
-    ctx.session.pendingReschedule = undefined;
+    ctx.session.pendingReschedule = undefined
 
     if (result.success) {
       const response = ResponseBuilder.telegram()
@@ -1320,45 +1322,45 @@ export const handleRescheduleSelection = async (
             .replace("{{event}}", pendingReschedule.eventSummary)
             .replace("{{time}}", suggestion.startFormatted)
         )
-        .build();
+        .build()
 
-      await ctx.reply(response.content, { parse_mode: "HTML" });
+      await ctx.reply(response.content, { parse_mode: "HTML" })
     } else {
       const response = ResponseBuilder.telegram()
         .direction(direction)
         .header("❌", t("commands.reschedule.failed"))
         .text(result.error ?? t("commands.reschedule.unknownError"))
-        .build();
+        .build()
 
-      await ctx.reply(response.content, { parse_mode: "HTML" });
+      await ctx.reply(response.content, { parse_mode: "HTML" })
     }
   } catch (error) {
-    logger.error(`Telegram Bot: Failed to apply reschedule: ${error}`);
-    ctx.session.pendingReschedule = undefined;
+    logger.error(`Telegram Bot: Failed to apply reschedule: ${error}`)
+    ctx.session.pendingReschedule = undefined
 
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("❌", t("commands.reschedule.failed"))
       .text(t("commands.reschedule.error"))
-      .build();
+      .build()
 
-    await ctx.reply(response.content, { parse_mode: "HTML" });
+    await ctx.reply(response.content, { parse_mode: "HTML" })
   }
-};
+}
 
 export const handleRescheduleCancellation = async (
   ctx: GlobalContext
 ): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
-  ctx.session.pendingReschedule = undefined;
-  await ctx.answerCallbackQuery(t("commands.reschedule.cancelled"));
+  ctx.session.pendingReschedule = undefined
+  await ctx.answerCallbackQuery(t("commands.reschedule.cancelled"))
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("🔄", t("commands.reschedule.cancelledHeader"))
     .text(t("commands.reschedule.cancelledText"))
-    .build();
+    .build()
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
-};
+  await ctx.reply(response.content, { parse_mode: "HTML" })
+}

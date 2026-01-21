@@ -1,10 +1,10 @@
-import type { calendar_v3 } from "googleapis";
-import { SUPABASE } from "@/infrastructure/supabase/supabase";
-import type { Database } from "@/database.types";
-import { logger } from "@/lib/logger";
+import type { calendar_v3 } from "googleapis"
+import { SUPABASE } from "@/infrastructure/supabase/supabase"
+import type { Database } from "@/database.types"
+import { logger } from "@/lib/logger"
 
 type UserCalendarInsert =
-  Database["public"]["Tables"]["user_calendars"]["Insert"];
+  Database["public"]["Tables"]["user_calendars"]["Insert"]
 
 const ensureUserExists = async (
   userId: string,
@@ -13,39 +13,39 @@ const ensureUserExists = async (
   const { data: existingUser } = await SUPABASE.from("users")
     .select("id")
     .eq("id", userId)
-    .single();
+    .single()
 
   if (existingUser) {
-    return;
+    return
   }
 
-  const { error } = await SUPABASE.from("users").insert({ id: userId, email });
+  const { error } = await SUPABASE.from("users").insert({ id: userId, email })
 
   if (error) {
     if (error.code === "23505") {
       logger.warn(
         `ensureUserExists: User ${userId} or email ${email} already exists, skipping`
-      );
-      return;
+      )
+      return
     }
-    logger.error(`ensureUserExists: Failed: ${error.message}`);
-    throw error;
+    logger.error(`ensureUserExists: Failed: ${error.message}`)
+    throw error
   }
-};
+}
 
 export const updateUserSupabaseCalendarCategories = async (
   calendar: calendar_v3.Calendar,
   email: string,
   userId: string
 ): Promise<void> => {
-  const response = await calendar.calendarList.list({ prettyPrint: true });
-  const items = response.data.items || [];
+  const response = await calendar.calendarList.list({ prettyPrint: true })
+  const items = response.data.items || []
 
   if (items.length === 0) {
-    return;
+    return
   }
 
-  await ensureUserExists(userId, email);
+  await ensureUserExists(userId, email)
 
   const calendarsToUpsert: UserCalendarInsert[] = items.map(
     (cal: calendar_v3.Schema$CalendarListEntry, index: number) => ({
@@ -61,19 +61,19 @@ export const updateUserSupabaseCalendarCategories = async (
       foreground_color: cal.foregroundColor ?? null,
       is_visible: !cal.hidden,
     })
-  );
+  )
 
   const { error } = await SUPABASE.from("user_calendars").upsert(
     calendarsToUpsert,
     {
       onConflict: "user_id,calendar_id",
     }
-  );
+  )
 
   if (error) {
     logger.error(
       `updateUserSupabaseCalendarCategories: error: ${error.message}`
-    );
-    throw error;
+    )
+    throw error
   }
-};
+}

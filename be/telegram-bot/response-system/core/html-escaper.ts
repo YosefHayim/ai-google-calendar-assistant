@@ -12,7 +12,7 @@ const HTML_ESCAPE_MAP: Record<string, string> = {
   "<": "&lt;",
   ">": "&gt;",
   '"': "&quot;",
-};
+}
 
 /**
  * Escape HTML special characters in user-provided content.
@@ -27,10 +27,10 @@ const HTML_ESCAPE_MAP: Record<string, string> = {
  */
 export function escapeHtml(text: string): string {
   if (!text) {
-    return "";
+    return ""
   }
 
-  return text.replace(/[&<>"]/g, (char) => HTML_ESCAPE_MAP[char] || char);
+  return text.replace(/[&<>"]/g, (char) => HTML_ESCAPE_MAP[char] || char)
 }
 
 /**
@@ -46,25 +46,25 @@ export function escapeHtmlPreserving(
   allowedTags: string[] = []
 ): string {
   if (!text) {
-    return "";
+    return ""
   }
 
   // First, escape everything
-  let escaped = escapeHtml(text);
+  let escaped = escapeHtml(text)
 
   // Then restore allowed tags
   for (const tag of allowedTags) {
     // Match opening tags (with or without attributes)
-    const openPattern = new RegExp(`&lt;${tag}(&gt;|\\s[^&]*&gt;)`, "gi");
-    const closePattern = new RegExp(`&lt;/${tag}&gt;`, "gi");
+    const openPattern = new RegExp(`&lt;${tag}(&gt;|\\s[^&]*&gt;)`, "gi")
+    const closePattern = new RegExp(`&lt;/${tag}&gt;`, "gi")
 
     escaped = escaped.replace(openPattern, (match) =>
       match.replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-    );
-    escaped = escaped.replace(closePattern, `</${tag}>`);
+    )
+    escaped = escaped.replace(closePattern, `</${tag}>`)
   }
 
-  return escaped;
+  return escaped
 }
 
 /**
@@ -75,15 +75,15 @@ export function escapeHtmlPreserving(
  */
 export function containsUnsafeHtml(text: string): boolean {
   if (!text) {
-    return false;
+    return false
   }
 
   // Telegram allowed tags pattern
   const allowedPattern =
-    /<\/?(b|i|u|s|code|pre|a|tg-spoiler)(\s[^>]*)?>|<a\s+href="[^"]*">/gi;
-  const stripped = text.replace(allowedPattern, "");
+    /<\/?(b|i|u|s|code|pre|a|tg-spoiler)(\s[^>]*)?>|<a\s+href="[^"]*">/gi
+  const stripped = text.replace(allowedPattern, "")
 
-  return /<|>/.test(stripped);
+  return /<|>/.test(stripped)
 }
 
 /**
@@ -95,20 +95,20 @@ export function containsUnsafeHtml(text: string): boolean {
  */
 export function sanitizeUserInput(userInput: string): string {
   if (!userInput) {
-    return "";
+    return ""
   }
 
   // Trim whitespace
-  let sanitized = userInput.trim();
+  let sanitized = userInput.trim()
 
   // Escape HTML
-  sanitized = escapeHtml(sanitized);
+  sanitized = escapeHtml(sanitized)
 
   // Normalize excessive whitespace (but preserve single newlines for readability)
-  sanitized = sanitized.replace(/[ \t]+/g, " "); // Collapse spaces/tabs
-  sanitized = sanitized.replace(/\n{3,}/g, "\n\n"); // Max 2 consecutive newlines
+  sanitized = sanitized.replace(/[ \t]+/g, " ") // Collapse spaces/tabs
+  sanitized = sanitized.replace(/\n{3,}/g, "\n\n") // Max 2 consecutive newlines
 
-  return sanitized;
+  return sanitized
 }
 
 /**
@@ -120,12 +120,12 @@ export function sanitizeUserInput(userInput: string): string {
  */
 export function unescapeHtml(text: string): string {
   if (!text) {
-    return "";
+    return ""
   }
 
   return text
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"');
+    .replace(/&quot;/g, '"')
 }

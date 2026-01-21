@@ -1,5 +1,5 @@
-import { type RunContext, tool } from "@openai/agents";
-import { z } from "zod";
+import { type RunContext, tool } from "@openai/agents"
+import { z } from "zod"
 import {
   analyzeGapsHandler,
   checkConflictsHandler,
@@ -15,9 +15,9 @@ import {
   updateEventHandler,
   updateUserBrainHandler,
   validateUserHandler,
-} from "@/shared/tools/handlers";
-import { updateUserBrainSchema } from "@/shared/tools/schemas/brain-schemas";
-import { selectCalendarSchema } from "@/shared/tools/schemas/calendar-schemas";
+} from "@/shared/tools/handlers"
+import { updateUserBrainSchema } from "@/shared/tools/schemas/brain-schemas"
+import { selectCalendarSchema } from "@/shared/tools/schemas/calendar-schemas"
 import {
   checkConflictsSchema,
   deleteEventSchema,
@@ -25,15 +25,15 @@ import {
   insertEventSchema,
   preCreateValidationSchema,
   updateEventSchema,
-} from "@/shared/tools/schemas/event-schemas";
+} from "@/shared/tools/schemas/event-schemas"
 import {
   analyzeGapsSchema,
   fillGapSchema,
   formatGapsDisplaySchema,
-} from "@/shared/tools/schemas/gap-schemas";
-import { type AgentContext, stringifyError } from "@/shared/types";
+} from "@/shared/tools/schemas/gap-schemas"
+import { type AgentContext, stringifyError } from "@/shared/types"
 
-export type { AgentContext };
+export type { AgentContext }
 
 /**
  * Extract email from run context - throws if not available
@@ -42,13 +42,13 @@ export function getEmailFromContext(
   runContext: RunContext<AgentContext> | undefined,
   toolName: string
 ): string {
-  const email = runContext?.context?.email;
+  const email = runContext?.context?.email
   if (!email) {
     throw new Error(
       `${toolName}: User email not found in context. Ensure the user is authenticated.`
-    );
+    )
   }
-  return email;
+  return email
 }
 
 /**
@@ -59,7 +59,7 @@ export function getEmailFromContext(
  * @returns Handler context object containing the user email
  */
 function createHandlerContext(email: string): HandlerContext {
-  return { email };
+  return { email }
 }
 
 export const EVENT_TOOLS = {
@@ -69,8 +69,8 @@ export const EVENT_TOOLS = {
       "Retrieve calendar events by optional keywords and/or time range. Returns events from user's calendars.",
     parameters: getEventSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "get_event");
-      return getEventHandler(params, createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "get_event")
+      return getEventHandler(params, createHandlerContext(email))
     },
     errorFunction: (_, error) => `get_event: ${stringifyError(error)}`,
   }),
@@ -81,8 +81,8 @@ export const EVENT_TOOLS = {
       "Create a new calendar event. Returns the created event from Google Calendar API.",
     parameters: insertEventSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "insert_event");
-      return insertEventHandler(params, createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "insert_event")
+      return insertEventHandler(params, createHandlerContext(email))
     },
     errorFunction: (_, error) => `insert_event: ${stringifyError(error)}`,
   }),
@@ -93,8 +93,8 @@ export const EVENT_TOOLS = {
       "Update an existing calendar event. Returns the updated event from Google Calendar API.",
     parameters: updateEventSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "update_event");
-      return updateEventHandler(params, createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "update_event")
+      return updateEventHandler(params, createHandlerContext(email))
     },
     errorFunction: (_, error) => `update_event: ${stringifyError(error)}`,
   }),
@@ -104,12 +104,12 @@ export const EVENT_TOOLS = {
     description: "Delete a calendar event by ID.",
     parameters: deleteEventSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "delete_event");
-      return deleteEventHandler(params, createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "delete_event")
+      return deleteEventHandler(params, createHandlerContext(email))
     },
     errorFunction: (_, error) => `delete_event: ${stringifyError(error)}`,
   }),
-};
+}
 
 export const VALIDATION_TOOLS = {
   validate_user: tool<z.ZodObject<Record<string, never>>, AgentContext>({
@@ -118,8 +118,8 @@ export const VALIDATION_TOOLS = {
       "Validates if user exists in database. Returns { exists: boolean, user?: object }.",
     parameters: z.object({}),
     execute: async (_params, runContext) => {
-      const email = getEmailFromContext(runContext, "validate_user");
-      return validateUserHandler(createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "validate_user")
+      return validateUserHandler(createHandlerContext(email))
     },
     errorFunction: (_, error) => `validate_user: ${stringifyError(error)}`,
   }),
@@ -130,8 +130,8 @@ export const VALIDATION_TOOLS = {
       "Gets user's default timezone. First checks DB, then falls back to Google Calendar settings.",
     parameters: z.object({}),
     execute: async (_params, runContext) => {
-      const email = getEmailFromContext(runContext, "get_timezone");
-      return getTimezoneHandler(createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "get_timezone")
+      return getTimezoneHandler(createHandlerContext(email))
     },
     errorFunction: (_, error) => `get_timezone: ${stringifyError(error)}`,
   }),
@@ -142,8 +142,8 @@ export const VALIDATION_TOOLS = {
       "Selects best calendar for event using AI-based matching. Returns { calendarId, calendarName, matchReason }.",
     parameters: selectCalendarSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "select_calendar");
-      return selectCalendarHandler(params, createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "select_calendar")
+      return selectCalendarHandler(params, createHandlerContext(email))
     },
     errorFunction: (_, error) => `select_calendar: ${stringifyError(error)}`,
   }),
@@ -154,7 +154,7 @@ export const VALIDATION_TOOLS = {
       "Checks for event conflicts in time range. Returns { hasConflicts: boolean, conflictingEvents: array }.",
     parameters: checkConflictsSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "check_conflicts");
+      const email = getEmailFromContext(runContext, "check_conflicts")
       const handlerParams = {
         calendarId: params.calendarId,
         start: {
@@ -167,8 +167,8 @@ export const VALIDATION_TOOLS = {
           dateTime: params.end.dateTime ?? null,
           timeZone: params.end.timeZone ?? null,
         },
-      };
-      return checkConflictsHandler(handlerParams, createHandlerContext(email));
+      }
+      return checkConflictsHandler(handlerParams, createHandlerContext(email))
     },
     errorFunction: (_, error) => `check_conflicts: ${stringifyError(error)}`,
   }),
@@ -179,7 +179,7 @@ export const VALIDATION_TOOLS = {
       "Combined validation: checks user, gets timezone, selects calendar, checks conflicts in PARALLEL. Returns { valid, timezone, calendarId, calendarName, conflicts }.",
     parameters: preCreateValidationSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "pre_create_validation");
+      const email = getEmailFromContext(runContext, "pre_create_validation")
       const handlerParams = {
         summary: params.summary ?? null,
         description: params.description ?? null,
@@ -198,16 +198,16 @@ export const VALIDATION_TOOLS = {
               timeZone: params.end.timeZone ?? null,
             }
           : null,
-      };
+      }
       return preCreateValidationHandler(
         handlerParams,
         createHandlerContext(email)
-      );
+      )
     },
     errorFunction: (_, error) =>
       `pre_create_validation: ${stringifyError(error)}`,
   }),
-};
+}
 
 export const GAP_TOOLS = {
   analyze_gaps: tool<typeof analyzeGapsSchema, AgentContext>({
@@ -216,8 +216,8 @@ export const GAP_TOOLS = {
       "Analyzes user's calendar to find untracked time gaps. Returns gaps with suggested activities.",
     parameters: analyzeGapsSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "analyze_gaps");
-      return analyzeGapsHandler(params, createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "analyze_gaps")
+      return analyzeGapsHandler(params, createHandlerContext(email))
     },
     errorFunction: (_, error) => `analyze_gaps: ${stringifyError(error)}`,
   }),
@@ -228,8 +228,8 @@ export const GAP_TOOLS = {
       "Fill a calendar gap with a new event. Returns the created event.",
     parameters: fillGapSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "fill_gap");
-      return fillGapHandler(params, createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "fill_gap")
+      return fillGapHandler(params, createHandlerContext(email))
     },
     errorFunction: (_, error) => `fill_gap: ${stringifyError(error)}`,
   }),
@@ -242,7 +242,7 @@ export const GAP_TOOLS = {
     errorFunction: (_, error) =>
       `format_gaps_display: ${stringifyError(error)}`,
   }),
-};
+}
 
 export const BRAIN_TOOLS = {
   update_user_brain: tool<typeof updateUserBrainSchema, AgentContext>({
@@ -251,16 +251,16 @@ export const BRAIN_TOOLS = {
       "Save a permanent user preference or rule to memory. Use ONLY for lasting preferences the user explicitly states (e.g., 'Always keep Fridays free', 'Call me Captain'). Do NOT use for temporary commands like 'cancel tomorrow's meeting'.",
     parameters: updateUserBrainSchema,
     execute: async (params, runContext) => {
-      const email = getEmailFromContext(runContext, "update_user_brain");
-      return updateUserBrainHandler(params, createHandlerContext(email));
+      const email = getEmailFromContext(runContext, "update_user_brain")
+      return updateUserBrainHandler(params, createHandlerContext(email))
     },
     errorFunction: (_, error) => `update_user_brain: ${stringifyError(error)}`,
   }),
-};
+}
 
 export const SHARED_TOOLS = {
   ...EVENT_TOOLS,
   ...VALIDATION_TOOLS,
   ...GAP_TOOLS,
   ...BRAIN_TOOLS,
-};
+}

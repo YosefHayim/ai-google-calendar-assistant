@@ -1,10 +1,10 @@
-import type { SupportedEventLanguage } from "@/types";
+import type { SupportedEventLanguage } from "@/types"
 
 export type TravelPatternSet = {
-  arrival: RegExp[];
-  departure: RegExp[];
-  workKeywords: string[];
-};
+  arrival: RegExp[]
+  departure: RegExp[]
+  workKeywords: string[]
+}
 
 export const TRAVEL_PATTERNS_BY_LANGUAGE: Record<
   SupportedEventLanguage,
@@ -253,7 +253,7 @@ export const TRAVEL_PATTERNS_BY_LANGUAGE: Record<
       "воркшоп",
     ],
   },
-};
+}
 
 /**
  * @description Combines travel patterns from multiple languages into a single pattern set.
@@ -269,16 +269,16 @@ export const TRAVEL_PATTERNS_BY_LANGUAGE: Record<
 export function getCombinedPatternsForLanguages(
   languages: SupportedEventLanguage[]
 ): TravelPatternSet {
-  const arrival: RegExp[] = [];
-  const departure: RegExp[] = [];
-  const workKeywords: string[] = [];
+  const arrival: RegExp[] = []
+  const departure: RegExp[] = []
+  const workKeywords: string[] = []
 
   for (const lang of languages) {
-    const patterns = TRAVEL_PATTERNS_BY_LANGUAGE[lang];
+    const patterns = TRAVEL_PATTERNS_BY_LANGUAGE[lang]
     if (patterns) {
-      arrival.push(...patterns.arrival);
-      departure.push(...patterns.departure);
-      workKeywords.push(...patterns.workKeywords);
+      arrival.push(...patterns.arrival)
+      departure.push(...patterns.departure)
+      workKeywords.push(...patterns.workKeywords)
     }
   }
 
@@ -286,7 +286,7 @@ export function getCombinedPatternsForLanguages(
     arrival,
     departure,
     workKeywords: [...new Set(workKeywords)],
-  };
+  }
 }
 
 /**
@@ -309,19 +309,19 @@ export function matchTravelPatternMultilingual(
   type: "arrival" | "departure",
   patterns: TravelPatternSet
 ): { matched: boolean; location: string | null } {
-  const regexList = patterns[type];
+  const regexList = patterns[type]
 
   for (const pattern of regexList) {
-    const match = summary.match(pattern);
+    const match = summary.match(pattern)
     if (match) {
       return {
         matched: true,
         location: match[1]?.trim() || null,
-      };
+      }
     }
   }
 
-  return { matched: false, location: null };
+  return { matched: false, location: null }
 }
 
 /**
@@ -340,17 +340,17 @@ export function isWorkRelatedEvent(
   summary: string,
   patterns: TravelPatternSet
 ): boolean {
-  const lowerSummary = summary.toLowerCase();
+  const lowerSummary = summary.toLowerCase()
   return patterns.workKeywords.some((keyword) =>
     lowerSummary.includes(keyword.toLowerCase())
-  );
+  )
 }
 
 export const SUPPORTED_EVENT_LANGUAGES: {
-  code: SupportedEventLanguage;
-  name: string;
-  nativeName: string;
-  flag: string;
+  code: SupportedEventLanguage
+  name: string
+  nativeName: string
+  flag: string
 }[] = [
   { code: "en", name: "English", nativeName: "English", flag: "🇬🇧" },
   { code: "de", name: "German", nativeName: "Deutsch", flag: "🇩🇪" },
@@ -358,4 +358,4 @@ export const SUPPORTED_EVENT_LANGUAGES: {
   { code: "he", name: "Hebrew", nativeName: "עברית", flag: "🇮🇱" },
   { code: "ar", name: "Arabic", nativeName: "العربية", flag: "🇸🇦" },
   { code: "ru", name: "Russian", nativeName: "Русский", flag: "🇷🇺" },
-];
+]

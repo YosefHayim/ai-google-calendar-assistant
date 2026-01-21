@@ -1,21 +1,21 @@
-import { z } from "zod";
+import { z } from "zod"
 import {
   GEMINI_MODELS,
   getGeminiClient,
-} from "@/infrastructure/google/gemini-client";
-import { logger } from "@/lib/logger";
+} from "@/infrastructure/google/gemini-client"
+import { logger } from "@/lib/logger"
 
 export const GeminiOptimizerOutputSchema = z.object({
-  refined_prompt: z.string(),
+  refinedPrompt: z.string(),
   reasoning: z.string(),
   confidence: z.number().min(0).max(1),
-  optimization_type: z.enum([
+  optimizationType: z.enum([
     "intent_clarification",
     "safety_enhancement",
     "context_injection",
     "none",
   ]),
-  detected_intent_category: z.enum([
+  detectedIntentCategory: z.enum([
     "scheduling",
     "deletion",
     "update",
@@ -24,9 +24,9 @@ export const GeminiOptimizerOutputSchema = z.object({
     "constraint_based",
     "other",
   ]),
-});
+})
 
-export type GeminiOptimizerOutput = z.infer<typeof GeminiOptimizerOutputSchema>;
+export type GeminiOptimizerOutput = z.infer<typeof GeminiOptimizerOutputSchema>
 
 const OPTIMIZER_INSTRUCTIONS = `You are the Prompt Optimizer for Ally, an AI calendar assistant.
 
@@ -69,18 +69,18 @@ You MUST respond with valid JSON matching this exact schema:
   "refined_prompt": "string - The enhanced prompt (or original if no optimization needed)",
   "reasoning": "string - WHY the base prompt was insufficient (or why it's sufficient)",
   "confidence": "number between 0.0 and 1.0",
-  "optimization_type": "one of: intent_clarification, safety_enhancement, context_injection, none",
-  "detected_intent_category": "one of: scheduling, deletion, update, search, bulk_operation, constraint_based, other"
-}`;
+  "optimizationType": "one of: intent_clarification, safety_enhancement, context_injection, none",
+  "detectedIntentCategory": "one of: scheduling, deletion, update, search, bulk_operation, constraint_based, other"
+}`
 
-const LOG_PREFIX = "[GeminiOptimizer]";
-const RESPONSE_PREVIEW_LENGTH = 200;
+const LOG_PREFIX = "[GeminiOptimizer]"
+const RESPONSE_PREVIEW_LENGTH = 200
 
 type RunGeminiOptimizerParams = {
-  userQuery: string;
-  basePrompt: string;
-  userContext?: string;
-};
+  userQuery: string
+  basePrompt: string
+  userContext?: string
+}
 
 /**
  * Runs the Gemini optimizer agent to analyze user queries and determine if prompt optimization is needed.
@@ -96,22 +96,22 @@ type RunGeminiOptimizerParams = {
 export async function runGeminiOptimizer(
   params: RunGeminiOptimizerParams
 ): Promise<{ output: GeminiOptimizerOutput; timeMs: number }> {
-  const { userQuery, basePrompt, userContext } = params;
-  const startTime = Date.now();
+  const { userQuery, basePrompt, userContext } = params
+  const startTime = Date.now()
 
-  const client = getGeminiClient();
+  const client = getGeminiClient()
 
   const prompt = `<user_query>${userQuery}</user_query>
 <base_system_prompt>${basePrompt}</base_system_prompt>
 ${userContext ? `<user_context>${userContext}</user_context>` : ""}
 
 Analyze this request and determine if the base prompt needs optimization.
-Return your analysis as JSON matching the output format specified in the instructions.`;
+Return your analysis as JSON matching the output format specified in the instructions.`
 
   logger.debug(`${LOG_PREFIX} Running optimization analysis`, {
     queryLength: userQuery.length,
     hasUserContext: Boolean(userContext),
-  });
+  })
 
   try {
     const response = await client.models.generateContent({
@@ -121,56 +121,56 @@ Return your analysis as JSON matching the output format specified in the instruc
         systemInstruction: OPTIMIZER_INSTRUCTIONS,
         responseMimeType: "application/json",
       },
-    });
+    })
 
-    const timeMs = Date.now() - startTime;
-    const responseText = response.text || "";
+    const timeMs = Date.now() - startTime
+    const responseText = response.text || ""
 
-    let output: GeminiOptimizerOutput;
+    let output: GeminiOptimizerOutput
 
     try {
-      const parsed = JSON.parse(responseText);
-      output = GeminiOptimizerOutputSchema.parse(parsed);
+      const parsed = JSON.parse(responseText)
+      output = GeminiOptimizerOutputSchema.parse(parsed)
 
       logger.debug(`${LOG_PREFIX} Optimization complete`, {
-        optimizationType: output.optimization_type,
+        optimizationType: output.optimizationType,
         confidence: output.confidence,
-        intentCategory: output.detected_intent_category,
+        intentCategory: output.detectedIntentCategory,
         timeMs,
-      });
+      })
     } catch (parseError) {
       logger.warn(`${LOG_PREFIX} Failed to parse optimizer output`, {
         error:
           parseError instanceof Error ? parseError.message : String(parseError),
         responseText: responseText.slice(0, RESPONSE_PREVIEW_LENGTH),
-      });
+      })
 
       output = {
-        refined_prompt: userQuery,
+        refinedPrompt: userQuery,
         reasoning: "Failed to parse optimizer output - using original prompt",
         confidence: 0,
-        optimization_type: "none",
-        detected_intent_category: "other",
-      };
+        optimizationType: "none",
+        detectedIntentCategory: "other",
+      }
     }
 
-    return { output, timeMs };
+    return { output, timeMs }
   } catch (error) {
-    const timeMs = Date.now() - startTime;
+    const timeMs = Date.now() - startTime
     logger.error(`${LOG_PREFIX} Optimizer error`, {
       error: error instanceof Error ? error.message : String(error),
       timeMs,
-    });
+    })
 
     return {
       output: {
-        refined_prompt: userQuery,
+        refinedPrompt: userQuery,
         reasoning: `Optimizer error: ${error instanceof Error ? error.message : String(error)}`,
         confidence: 0,
-        optimization_type: "none",
-        detected_intent_category: "other",
+        optimizationType: "none",
+        detectedIntentCategory: "other",
       },
       timeMs,
-    };
+    }
   }
 }

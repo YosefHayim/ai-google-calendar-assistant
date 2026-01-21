@@ -1,35 +1,35 @@
-import { type RunnerHandle, run } from "@grammyjs/runner";
-import type { Bot } from "grammy";
-import { env } from "@/config/env";
-import { logger } from "@/lib/logger";
+import { type RunnerHandle, run } from "@grammyjs/runner"
+import type { Bot } from "grammy"
+import { env } from "@/config/env"
+import { logger } from "@/lib/logger"
 import {
   configureMiddleware,
   configureSession,
   createBot,
   type GlobalContext,
   registerBotCommands,
-} from "./handlers/bot-config";
-import { registerCallbackHandlers } from "./handlers/callback-handlers";
-import { registerMessageHandler } from "./handlers/message-handler";
-import { staleMessageFilter } from "./middleware/stale-message-filter";
+} from "./handlers/bot-config"
+import { registerCallbackHandlers } from "./handlers/callback-handlers"
+import { registerMessageHandler } from "./handlers/message-handler"
+import { staleMessageFilter } from "./middleware/stale-message-filter"
 
-export type { GlobalContext };
+export type { GlobalContext }
 
 // Bot instance - initialized lazily
-let bot: Bot<GlobalContext> | null = null;
-let runnerHandle: RunnerHandle | null = null;
-let isInitialized = false;
+let bot: Bot<GlobalContext> | null = null
+let runnerHandle: RunnerHandle | null = null
+let isInitialized = false
 
-const MINUTES_IN_RETRY = 5;
-const SECONDS_IN_MINUTE = 60;
-const MS_IN_SECOND = 1000;
-const MAX_RETRY_TIME_MS = MINUTES_IN_RETRY * SECONDS_IN_MINUTE * MS_IN_SECOND;
+const MINUTES_IN_RETRY = 5
+const SECONDS_IN_MINUTE = 60
+const MS_IN_SECOND = 1000
+const MAX_RETRY_TIME_MS = MINUTES_IN_RETRY * SECONDS_IN_MINUTE * MS_IN_SECOND
 
 /**
  * Get the bot instance (for webhook handler)
  * Returns null if bot is not enabled or not initialized
  */
-export const getBot = (): Bot<GlobalContext> | null => bot;
+export const getBot = (): Bot<GlobalContext> | null => bot
 
 /**
  * Initialize the bot instance with all middleware and handlers
@@ -37,33 +37,33 @@ export const getBot = (): Bot<GlobalContext> | null => bot;
  */
 const initializeBot = (): Bot<GlobalContext> => {
   if (bot) {
-    return bot;
+    return bot
   }
 
-  bot = createBot();
+  bot = createBot()
 
   // Stale message filter MUST run before session middleware
   // to skip session processing for old messages accumulated during server downtime
-  bot.use(staleMessageFilter);
+  bot.use(staleMessageFilter)
 
-  configureSession(bot);
-  configureMiddleware(bot);
-  registerCallbackHandlers(bot);
-  registerMessageHandler(bot);
+  configureSession(bot)
+  configureMiddleware(bot)
+  registerCallbackHandlers(bot)
+  registerMessageHandler(bot)
 
-  return bot;
-};
+  return bot
+}
 
 /**
  * Set up webhook with Telegram API
  * This tells Telegram to send updates to our webhook URL instead of polling
  */
 const setupWebhook = async (botInstance: Bot<GlobalContext>): Promise<void> => {
-  const webhookUrl = `${env.baseUrl}/api/telegram/webhook`;
+  const webhookUrl = `${env.baseUrl}/api/telegram/webhook`
 
   try {
     // Delete any existing webhook first
-    await botInstance.api.deleteWebhook({ drop_pending_updates: false });
+    await botInstance.api.deleteWebhook({ drop_pending_updates: false })
 
     // Set the webhook
     await botInstance.api.setWebhook(webhookUrl, {
@@ -75,14 +75,14 @@ const setupWebhook = async (botInstance: Bot<GlobalContext>): Promise<void> => {
         "my_chat_member",
       ],
       drop_pending_updates: false,
-    });
+    })
 
-    logger.info(`Telegram Bot: Webhook set to ${webhookUrl}`);
+    logger.info(`Telegram Bot: Webhook set to ${webhookUrl}`)
   } catch (error) {
-    logger.error(`Telegram Bot: Failed to set webhook: ${error}`);
-    throw error;
+    logger.error(`Telegram Bot: Failed to set webhook: ${error}`)
+    throw error
   }
-};
+}
 
 /**
  * Start the bot in long-polling mode (development/fallback)
@@ -92,7 +92,7 @@ const setupWebhook = async (botInstance: Bot<GlobalContext>): Promise<void> => {
  */
 const startPolling = async (botInstance: Bot<GlobalContext>): Promise<void> => {
   // Delete any existing webhook before starting polling
-  await botInstance.api.deleteWebhook({ drop_pending_updates: false });
+  await botInstance.api.deleteWebhook({ drop_pending_updates: false })
 
   runnerHandle = run(botInstance, {
     runner: {
@@ -100,10 +100,10 @@ const startPolling = async (botInstance: Bot<GlobalContext>): Promise<void> => {
       retryInterval: "exponential",
       silent: false,
     },
-  });
+  })
 
-  logger.info("Telegram Bot: Started in polling mode");
-};
+  logger.info("Telegram Bot: Started in polling mode")
+}
 
 /**
  * Start the Telegram bot
@@ -115,59 +115,59 @@ const startPolling = async (botInstance: Bot<GlobalContext>): Promise<void> => {
 export const startTelegramBot = async (): Promise<void> => {
   // Check if Telegram is enabled
   if (!env.integrations.telegram.isEnabled) {
-    logger.info("Telegram Bot: Disabled (no access token)");
-    return;
+    logger.info("Telegram Bot: Disabled (no access token)")
+    return
   }
 
   // Prevent double initialization
   if (isInitialized) {
-    logger.warn("Telegram Bot: Already initialized");
-    return;
+    logger.warn("Telegram Bot: Already initialized")
+    return
   }
 
   try {
     // Initialize the bot
-    const botInstance = initializeBot();
+    const botInstance = initializeBot()
 
     // Register bot commands with Telegram
-    await registerBotCommands(botInstance);
+    await registerBotCommands(botInstance)
 
     // Choose mode based on environment
     if (env.integrations.telegram.useWebhook) {
       // Production: Use webhooks
-      await setupWebhook(botInstance);
-      logger.info("Telegram Bot: Running in webhook mode");
+      await setupWebhook(botInstance)
+      logger.info("Telegram Bot: Running in webhook mode")
     } else {
       // Development: Use long-polling
-      await startPolling(botInstance);
+      await startPolling(botInstance)
     }
 
-    isInitialized = true;
+    isInitialized = true
 
     // Set up graceful shutdown
     const stopBot = async (): Promise<void> => {
-      logger.info("Telegram Bot: Shutting down...");
+      logger.info("Telegram Bot: Shutting down...")
 
       if (runnerHandle) {
-        await runnerHandle.stop();
-        runnerHandle = null;
+        await runnerHandle.stop()
+        runnerHandle = null
       }
 
       // Remove webhook on shutdown (optional, but clean)
       if (bot && env.integrations.telegram.useWebhook) {
         try {
-          await bot.api.deleteWebhook();
+          await bot.api.deleteWebhook()
         } catch {
           // Ignore errors during shutdown
         }
       }
 
-      bot = null;
-      isInitialized = false;
-    };
+      bot = null
+      isInitialized = false
+    }
 
-    process.once("SIGINT", stopBot);
-    process.once("SIGTERM", stopBot);
+    process.once("SIGINT", stopBot)
+    process.once("SIGTERM", stopBot)
 
     // Handle unhandled rejections gracefully
     process.on("unhandledRejection", (reason: unknown) => {
@@ -176,15 +176,15 @@ export const startTelegramBot = async (): Promise<void> => {
         (reason.message.includes("getUpdates") ||
           reason.message.includes("Network request"))
       ) {
-        return;
+        return
       }
-      logger.error(`Telegram Bot: Unhandled rejection: ${reason}`);
-    });
+      logger.error(`Telegram Bot: Unhandled rejection: ${reason}`)
+    })
   } catch (error) {
-    logger.error(`Telegram Bot: Failed to start: ${error}`);
+    logger.error(`Telegram Bot: Failed to start: ${error}`)
     // In production, we want the container to restart if bot fails to start
     if (env.isProd) {
-      throw error;
+      throw error
     }
   }
-};
+}

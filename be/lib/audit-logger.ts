@@ -1,7 +1,7 @@
-import { env } from "@/config/env";
-import fs from "node:fs";
-import path from "node:path";
-import winston from "winston";
+import { env } from "@/config/env"
+import fs from "node:fs"
+import path from "node:path"
+import winston from "winston"
 
 // Audit event types for authentication-related events
 export const AuditEventType = {
@@ -15,42 +15,42 @@ export const AuditEventType = {
   GOOGLE_AUTH_SUCCESS: "GOOGLE_AUTH_SUCCESS",
   GOOGLE_AUTH_FAIL: "GOOGLE_AUTH_FAIL",
   GOOGLE_REAUTH_REQUIRED: "GOOGLE_REAUTH_REQUIRED",
-} as const;
+} as const
 
 export type AuditEventTypeValue =
-  (typeof AuditEventType)[keyof typeof AuditEventType];
+  (typeof AuditEventType)[keyof typeof AuditEventType]
 
 // Audit log entry structure
 export type AuditLogEntry = {
-  timestamp: string;
-  event_type: AuditEventTypeValue;
-  telegram_user_id: number;
-  metadata: Record<string, unknown>;
-};
+  timestamp: string
+  event_type: AuditEventTypeValue
+  telegram_user_id: number
+  metadata: Record<string, unknown>
+}
 
-const getDate = () => new Date().toISOString().split("T")[0];
-const logDir = "logs";
+const getDate = () => new Date().toISOString().split("T")[0]
+const logDir = "logs"
 
 const clearAuditLogOnStartup = () => {
   if (!env.isDev) {
-    return;
+    return
   }
 
   const auditLogFile = path.join(
     logDir,
     `${env.nodeEnv}-audit-${getDate()}.json`
-  );
+  )
 
   if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir, { recursive: true });
+    fs.mkdirSync(logDir, { recursive: true })
   }
 
   try {
-    fs.writeFileSync(auditLogFile, "", { flag: "w" });
+    fs.writeFileSync(auditLogFile, "", { flag: "w" })
   } catch {}
-};
+}
 
-clearAuditLogOnStartup();
+clearAuditLogOnStartup()
 
 // Custom formatter for audit logs - JSON per line
 const auditFormat = winston.format.printf((info) => {
@@ -59,9 +59,9 @@ const auditFormat = winston.format.printf((info) => {
     event_type: info.event_type as AuditEventTypeValue,
     telegram_user_id: info.telegram_user_id as number,
     metadata: (info.metadata as Record<string, unknown>) || {},
-  };
-  return `${JSON.stringify(entry)}\n`;
-});
+  }
+  return `${JSON.stringify(entry)}\n`
+})
 
 // Create dedicated audit logger with separate file transport
 const auditWinstonLogger = winston.createLogger({
@@ -74,7 +74,7 @@ const auditWinstonLogger = winston.createLogger({
       filename: path.join(logDir, `${env.nodeEnv}-audit-${getDate()}.json`),
     }),
   ],
-});
+})
 
 // Add console output in development for visibility
 if (env.isDev) {
@@ -88,7 +88,7 @@ if (env.isDev) {
         )
       ),
     })
-  );
+  )
 }
 
 // Audit logger interface with typed methods
@@ -108,7 +108,7 @@ export const auditLogger = {
       event_type: eventType,
       telegram_user_id: telegramUserId,
       metadata,
-    });
+    })
   },
 
   /**
@@ -130,7 +130,7 @@ export const auditLogger = {
       event_type: AuditEventType.AUTH_SUCCESS,
       telegram_user_id: telegramUserId,
       metadata: { email, method },
-    });
+    })
   },
 
   /**
@@ -148,7 +148,7 @@ export const auditLogger = {
       event_type: AuditEventType.AUTH_FAIL,
       telegram_user_id: telegramUserId,
       metadata: { reason, email },
-    });
+    })
   },
 
   /**
@@ -170,7 +170,7 @@ export const auditLogger = {
       event_type: AuditEventType.EMAIL_CHANGE,
       telegram_user_id: telegramUserId,
       metadata: { oldEmail, newEmail },
-    });
+    })
   },
 
   /**
@@ -192,7 +192,7 @@ export const auditLogger = {
       event_type: AuditEventType.TOKEN_REFRESH,
       telegram_user_id: telegramUserId,
       metadata: { email, expiresInMs },
-    });
+    })
   },
 
   /**
@@ -214,7 +214,7 @@ export const auditLogger = {
       event_type: AuditEventType.RATE_LIMIT_HIT,
       telegram_user_id: telegramUserId,
       metadata: { limitType, resetInSeconds },
-    });
+    })
   },
 
   /**
@@ -236,6 +236,6 @@ export const auditLogger = {
       event_type: AuditEventType.SESSION_EXPIRED,
       telegram_user_id: telegramUserId,
       metadata: { lastActivity: lastActivityIso, inactiveHours },
-    });
+    })
   },
-};
+}

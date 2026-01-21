@@ -2,7 +2,7 @@ export {
   entityTracker,
   type TrackedCalendar,
   type TrackedEvent,
-} from "./entity-tracker";
+} from "./entity-tracker"
 export {
   type CalendarReference,
   type ContextSnapshot,
@@ -11,4 +11,4 @@ export {
   type Modality,
   type UserPreferencesContext,
   unifiedContextStore,
-} from "./unified-context-store";
+} from "./unified-context-store"

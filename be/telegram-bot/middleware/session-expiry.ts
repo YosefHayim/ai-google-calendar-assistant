@@ -1,9 +1,9 @@
-import type { MiddlewareFn } from "grammy";
-import { auditLogger } from "@/lib/audit-logger";
-import type { GlobalContext } from "../init-bot";
+import type { MiddlewareFn } from "grammy"
+import { auditLogger } from "@/lib/audit-logger"
+import type { GlobalContext } from "../init-bot"
 
 // Session TTL: 24 hours in milliseconds
-const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000
 
 /**
  * Session Expiry Middleware
@@ -16,54 +16,54 @@ export const sessionExpiryMiddleware: MiddlewareFn<GlobalContext> = async (
   ctx,
   next
 ) => {
-  const session = ctx.session;
-  const userId = ctx.from?.id;
+  const session = ctx.session
+  const userId = ctx.from?.id
 
   if (!(session && userId)) {
-    return next();
+    return next()
   }
 
-  const now = Date.now();
-  const lastActivity = session.lastActivity || 0;
+  const now = Date.now()
+  const lastActivity = session.lastActivity || 0
 
   // Check if session has expired (only if lastActivity was previously set)
   if (lastActivity > 0) {
-    const inactiveTime = now - lastActivity;
+    const inactiveTime = now - lastActivity
 
     if (inactiveTime > SESSION_TTL_MS) {
-      const inactiveHours = Math.round(inactiveTime / (60 * 60 * 1000));
+      const inactiveHours = Math.round(inactiveTime / (60 * 60 * 1000))
 
       // Log session expiry
       auditLogger.sessionExpired(
         userId,
         new Date(lastActivity).toISOString(),
         inactiveHours
-      );
+      )
 
       // Clear authentication state
-      session.googleTokens = undefined;
-      session.email = undefined;
-      session.pendingEmailVerification = undefined;
-      session.pendingConfirmation = undefined;
-      session.pendingEmailChange = undefined;
-      session.awaitingEmailChange = undefined;
-      session.agentActive = false;
-      session.isProcessing = false;
+      session.googleTokens = undefined
+      session.email = undefined
+      session.pendingEmailVerification = undefined
+      session.pendingConfirmation = undefined
+      session.pendingEmailChange = undefined
+      session.awaitingEmailChange = undefined
+      session.agentActive = false
+      session.isProcessing = false
 
       await ctx.reply(
         "Your session has expired due to inactivity (24 hours).\n\nPlease authenticate again to continue."
-      );
+      )
 
       // Update lastActivity to now (session reset)
-      session.lastActivity = now;
+      session.lastActivity = now
 
       // Continue to auth handler to re-authenticate
-      return next();
+      return next()
     }
   }
 
   // Update last activity timestamp
-  session.lastActivity = now;
+  session.lastActivity = now
 
-  return next();
-};
+  return next()
+}

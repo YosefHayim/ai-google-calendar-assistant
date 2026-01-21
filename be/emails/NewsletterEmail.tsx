@@ -12,25 +12,25 @@ import {
   Row,
   Section,
   Text,
-} from "@react-email/components";
-import type * as React from "react";
+} from "@react-email/components"
+import type * as React from "react"
 
 export type NewsletterFeature = {
-  id: number;
-  title: string;
-  description: string;
-};
+  id: number
+  title: string
+  description: string
+}
 
 export type NewsletterEmailProps = {
-  features?: NewsletterFeature[];
-  tipOfTheMonth?: string;
-  dashboardUrl?: string;
-  unsubscribeUrl?: string;
-  settingsUrl?: string;
-  supportUrl?: string;
-  privacyUrl?: string;
-  logoUrl?: string;
-};
+  features?: NewsletterFeature[]
+  tipOfTheMonth?: string
+  dashboardUrl?: string
+  unsubscribeUrl?: string
+  settingsUrl?: string
+  supportUrl?: string
+  privacyUrl?: string
+  logoUrl?: string
+}
 
 const colors = {
   primary: "#f97316",
@@ -41,12 +41,12 @@ const colors = {
   textSecondary: "#737373",
   textMuted: "#a3a3a3",
   border: "#e5e5e5",
-};
+}
 
 const fonts = {
   primary:
     "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-};
+}
 
 const defaultFeatures: NewsletterFeature[] = [
   {
@@ -67,7 +67,7 @@ const defaultFeatures: NewsletterFeature[] = [
     description:
       "Get insights into how you spend your time with beautiful, interactive charts.",
   },
-];
+]
 
 export const NewsletterEmail = ({
   features = defaultFeatures,
@@ -191,7 +191,7 @@ export const NewsletterEmail = ({
       </Section>
     </Body>
   </Html>
-);
+)
 
 const styles = {
   body: {
@@ -354,6 +354,6 @@ const styles = {
     lineHeight: "1.4",
     margin: "0 0 32px",
   } as React.CSSProperties,
-};
+}
 
-export default NewsletterEmail;
+export default NewsletterEmail

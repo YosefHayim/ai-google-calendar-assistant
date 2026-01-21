@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
 /**
  * Express async middleware wrapper
@@ -20,8 +20,8 @@ export const reqResAsyncHandler =
     fn: H
   ) =>
   (req: Request, res: Response, next: NextFunction) => {
-    fn(req, res, next).catch(next);
-  };
+    fn(req, res, next).catch(next)
+  }
 
 /**
  * Promise wrapper for functions
@@ -35,4 +35,4 @@ export const reqResAsyncHandler =
 export const asyncHandler =
   <A extends unknown[], R>(fn: (...args: A) => R | Promise<R>) =>
   (...args: A): Promise<R> =>
-    Promise.resolve(fn(...args));
+    Promise.resolve(fn(...args))

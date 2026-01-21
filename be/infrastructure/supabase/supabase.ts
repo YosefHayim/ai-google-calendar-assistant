@@ -1,6 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/database.types";
-import { env } from "@/config/env";
+import { createClient } from "@supabase/supabase-js"
+import type { Database } from "@/database.types"
+import { env } from "@/config/env"
 
 /**
  * Supabase client with service role privileges
@@ -18,4 +18,4 @@ export const SUPABASE = createClient<Database>(
       persistSession: false,
     },
   }
-);
+)

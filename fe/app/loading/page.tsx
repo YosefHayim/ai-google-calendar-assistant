@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useTranslation } from 'react-i18next'
-import { authService } from '@/services/auth.service'
+import { authService } from '@/services/auth-service'
 import { STORAGE_KEYS } from '@/lib/constants'
 
 function LoadingContent() {

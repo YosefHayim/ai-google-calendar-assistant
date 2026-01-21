@@ -1,12 +1,12 @@
-import { MODELS } from "@/config/constants/ai";
-import OpenAI from "openai";
-import { env } from "@/config/env";
-import { logger } from "@/lib/logger";
-import type { userAndAiMessageProps } from "@/types";
+import { MODELS } from "@/config/constants/ai"
+import OpenAI from "openai"
+import { env } from "@/config/env"
+import { logger } from "@/lib/logger"
+import type { userAndAiMessageProps } from "@/types"
 
-const openai = new OpenAI({ apiKey: env.openAiApiKey });
+const openai = new OpenAI({ apiKey: env.openAiApiKey })
 
-const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO;
+const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO
 
 const SUMMARIZATION_PROMPT = `You are a conversation summarizer. Your task is to create a concise summary of the conversation below.
 
@@ -19,25 +19,25 @@ Focus on:
 Keep the summary brief but informative. Use bullet points for clarity.
 Do not include greetings or pleasantries. Focus on actionable information.
 
-Conversation to summarize:`;
+Conversation to summarize:`
 
 const formatMessagesForSummary = (messages: userAndAiMessageProps[]): string =>
   messages
     .map((msg) => {
-      const role = msg.role === "user" ? "User" : "Assistant";
-      return `${role}: ${msg.content || ""}`;
+      const role = msg.role === "user" ? "User" : "Assistant"
+      return `${role}: ${msg.content || ""}`
     })
-    .join("\n");
+    .join("\n")
 
 export const summarizeMessages = async (
   messages: userAndAiMessageProps[]
 ): Promise<string> => {
   if (messages.length === 0) {
-    return "";
+    return ""
   }
 
-  const formattedMessages = formatMessagesForSummary(messages);
-  const fullPrompt = `${SUMMARIZATION_PROMPT}\n\n${formattedMessages}`;
+  const formattedMessages = formatMessagesForSummary(messages)
+  const fullPrompt = `${SUMMARIZATION_PROMPT}\n\n${formattedMessages}`
 
   try {
     const response = await openai.chat.completions.create({
@@ -54,29 +54,29 @@ export const summarizeMessages = async (
         },
       ],
       temperature: 0.3,
-    });
+    })
 
-    const summary = response.choices[0]?.message?.content?.trim();
+    const summary = response.choices[0]?.message?.content?.trim()
 
     if (!summary) {
-      logger.error("Slack Bot: Summarize: No summary generated");
-      throw new Error("No summary generated");
+      logger.error("Slack Bot: Summarize: No summary generated")
+      throw new Error("No summary generated")
     }
-    return summary;
+    return summary
   } catch (error) {
-    logger.error(`Slack Bot: Summarize: Error summarizing messages: ${error}`);
-    return createFallbackSummary(messages);
+    logger.error(`Slack Bot: Summarize: Error summarizing messages: ${error}`)
+    return createFallbackSummary(messages)
   }
-};
+}
 
 const createFallbackSummary = (messages: userAndAiMessageProps[]): string => {
-  const userMessages = messages.filter((m) => m.role === "user");
+  const userMessages = messages.filter((m) => m.role === "user")
   const topics = userMessages
     .slice(0, 3)
     .map((m) => m.content?.slice(0, 50))
-    .filter(Boolean);
+    .filter(Boolean)
   if (topics.length === 0) {
-    return "Previous conversation context available.";
+    return "Previous conversation context available."
   }
-  return `Previous topics discussed: ${topics.join("; ")}...`;
-};
+  return `Previous topics discussed: ${topics.join("; ")}...`
+}

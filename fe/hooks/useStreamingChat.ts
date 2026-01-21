@@ -1,6 +1,6 @@
 'use client'
 
-import { createStreamAbortController, streamChatMessage } from '@/services/chatStreamService'
+import { createStreamAbortController, streamChatMessage } from '@/services/chat-stream-service'
 import { useCallback, useRef, useState } from 'react'
 
 import type { StreamingState } from '@/types/stream'

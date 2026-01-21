@@ -1,4 +1,4 @@
-export type { SupportedLocale, TextDirection } from "./config";
+export type { SupportedLocale, TextDirection } from "./config"
 export {
   DEFAULT_LOCALE,
   getDirection,
@@ -8,8 +8,8 @@ export {
   LANGUAGE_CODE_MAP,
   LOCALE_CONFIG,
   SUPPORTED_LOCALES,
-} from "./config";
-export type { I18nTranslator } from "./translator";
+} from "./config"
+export type { I18nTranslator } from "./translator"
 export {
   createTranslator,
   getI18nInstance,
@@ -17,4 +17,4 @@ export {
   getTranslatorFromLanguageCode,
   initI18n,
   initI18nSync,
-} from "./translator";
+} from "./translator"

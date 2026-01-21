@@ -1,5 +1,5 @@
 import { QUERY_CONFIG } from '@/lib/constants'
-import { getConversations, type ConversationListResponse } from '@/services/chatService'
+import { getConversations, type ConversationListResponse } from '@/services/chat-service'
 import { queryKeys } from '@/lib/query/keys'
 import { useQuery } from '@tanstack/react-query'
 

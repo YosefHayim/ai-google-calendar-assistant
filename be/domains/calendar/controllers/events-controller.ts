@@ -1,25 +1,25 @@
-import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
-import type { Request, Response } from "express";
+import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config"
+import type { Request, Response } from "express"
 import {
   applyReschedule,
   findRescheduleSuggestions,
-} from "@/domains/calendar/utils/reschedule";
-import { eventsHandler, formatDate } from "@/utils";
+} from "@/domains/calendar/utils/reschedule"
+import { eventsHandler, formatDate } from "@/utils"
 import {
   getCachedEvents,
   invalidateEventsCache,
   setCachedEvents,
-} from "@/lib/cache/events-cache";
+} from "@/lib/cache/events-cache"
 import {
   getCachedInsights,
   setCachedInsights,
-} from "@/lib/cache/insights-cache";
-import { reqResAsyncHandler, sendR } from "@/lib/http";
+} from "@/lib/cache/insights-cache"
+import { reqResAsyncHandler, sendR } from "@/lib/http"
 
-import { calculateInsightsMetrics } from "@/domains/analytics/utils";
-import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
-import { getEvents } from "@/domains/calendar/utils/get-events";
-import { quickAddWithOrchestrator } from "@/domains/analytics/utils";
+import { calculateInsightsMetrics } from "@/domains/analytics/utils"
+import { generateInsightsWithRetry } from "@/ai-agents/insights-generator"
+import { getEvents } from "@/domains/calendar/utils/get-events"
+import { quickAddWithOrchestrator } from "@/domains/analytics/utils"
 
 /**
  * Get event by event ID
@@ -34,22 +34,22 @@ import { quickAddWithOrchestrator } from "@/domains/analytics/utils";
  */
 const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.calendar) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
   }
 
   const r = await req.calendar.events.get({
     ...REQUEST_CONFIG_BASE,
     calendarId: (req?.query?.calendarId as string) ?? "primary",
     eventId: req.params.id as string,
-  });
+  })
 
   return sendR(
     res,
     STATUS_RESPONSE.SUCCESS,
     "Event retrieved successfully",
     r.data
-  );
-});
+  )
+})
 
 /**
  * Get all events
@@ -63,13 +63,13 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user!.id;
-  const calendarId = (req.query.calendarId as string) || "primary";
-  const timeMin = req.query.timeMin as string | undefined;
-  const timeMax = req.query.timeMax as string | undefined;
+  const userId = req.user!.id
+  const calendarId = (req.query.calendarId as string) || "primary"
+  const timeMin = req.query.timeMin as string | undefined
+  const timeMax = req.query.timeMax as string | undefined
 
   if (userId) {
-    const cached = await getCachedEvents(userId, calendarId, timeMin, timeMax);
+    const cached = await getCachedEvents(userId, calendarId, timeMin, timeMax)
     if (cached) {
       return sendR(
         res,
@@ -82,7 +82,7 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
           events: cached.events,
           cachedAt: cached.cachedAt,
         }
-      );
+      )
     }
   }
 
@@ -91,10 +91,10 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
     ACTION.GET,
     undefined,
     req.query as Record<string, string>
-  );
+  )
 
   if (userId && r && "type" in r && r.type === "standard" && r.data?.items) {
-    await setCachedEvents(userId, calendarId, r.data.items, timeMin, timeMax);
+    await setCachedEvents(userId, calendarId, r.data.items, timeMin, timeMax)
   }
 
   return sendR(
@@ -102,8 +102,8 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
     STATUS_RESPONSE.SUCCESS,
     "Successfully retrieved all events",
     r
-  );
-});
+  )
+})
 
 /**
  * Create event in calendar
@@ -117,19 +117,19 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const { addMeetLink, ...eventData } = req.body;
+  const { addMeetLink, ...eventData } = req.body
   const r = await eventsHandler(req, ACTION.INSERT, eventData, {
     calendarId: req.query.calendarId ?? "primary",
     email: req.body.email,
     addMeetLink: addMeetLink === true,
-  });
+  })
 
   if (req.user!.id) {
-    await invalidateEventsCache(req.user!.id);
+    await invalidateEventsCache(req.user!.id)
   }
 
-  return sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
-});
+  return sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r)
+})
 
 /**
  * Update event by event ID
@@ -146,14 +146,14 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.UPDATE, {
     id: req.params.id as string,
     ...req.body,
-  });
+  })
 
   if (req.user!.id) {
-    await invalidateEventsCache(req.user!.id);
+    await invalidateEventsCache(req.user!.id)
   }
 
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r);
-});
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r)
+})
 
 /**
  * Delete event from calendar by event ID
@@ -169,14 +169,14 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.DELETE, {
     id: req.params.id as string,
-  });
+  })
 
   if (req.user!.id) {
-    await invalidateEventsCache(req.user!.id);
+    await invalidateEventsCache(req.user!.id)
   }
 
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r);
-});
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r)
+})
 
 /**
  * Get events analytics by start date and end date
@@ -191,16 +191,16 @@ const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getEventAnalytics = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const calendar = req.calendar!;
+    const calendar = req.calendar!
 
-    const calendarIdsParam = req.query.calendarIds as string | undefined;
-    let allCalendarIds: string[];
+    const calendarIdsParam = req.query.calendarIds as string | undefined
+    let allCalendarIds: string[]
 
     if (calendarIdsParam) {
       allCalendarIds = calendarIdsParam
         .split(",")
         .map((id) => id.trim())
-        .filter(Boolean);
+        .filter(Boolean)
     } else {
       allCalendarIds = (await calendar.calendarList
         .list({ prettyPrint: true })
@@ -208,11 +208,11 @@ const getEventAnalytics = reqResAsyncHandler(
           r.data.items
             ?.map((cal) => cal.id)
             .filter((id): id is string => Boolean(id))
-        )) || ["primary"];
+        )) || ["primary"]
     }
 
-    let totalEventsFound = 0;
-    const totalNumberOfCalendars = allCalendarIds.length;
+    let totalEventsFound = 0
+    const totalNumberOfCalendars = allCalendarIds.length
 
     const allEvents = await Promise.all(
       allCalendarIds.map(async (calendarId) => {
@@ -220,18 +220,18 @@ const getEventAnalytics = reqResAsyncHandler(
           calendarEvents: calendar.events,
           req: undefined,
           extra: { calendarId, ...req.query },
-        });
+        })
         if (result.type === "custom") {
-          totalEventsFound = result.totalNumberOfEventsFound;
-          return { calendarId, events: result.totalEventsFound };
+          totalEventsFound = result.totalNumberOfEventsFound
+          return { calendarId, events: result.totalEventsFound }
         }
         if (result.type === "standard") {
-          totalEventsFound += result.data.items?.length ?? 0;
-          return { calendarId, events: result.data.items ?? [] };
+          totalEventsFound += result.data.items?.length ?? 0
+          return { calendarId, events: result.data.items ?? [] }
         }
-        return { calendarId, events: [] };
+        return { calendarId, events: [] }
       })
-    );
+    )
 
     sendR(
       res,
@@ -241,9 +241,9 @@ const getEventAnalytics = reqResAsyncHandler(
         `from ${formatDate(new Date(req.query.timeMin as string), true)} to ${formatDate(new Date(req.query.timeMax as string), true)}`
       }`,
       { allEvents }
-    );
+    )
   }
-);
+)
 
 /**
  * Quick add an event to specific calendar
@@ -258,24 +258,20 @@ const getEventAnalytics = reqResAsyncHandler(
  */
 const quickAddEvent = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const email = req.user?.email;
+    const email = req.user?.email
     if (!email) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.UNAUTHORIZED,
-        "User not authenticated."
-      );
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.")
     }
 
     const { text, forceCreate } = req.body as {
-      text?: string;
-      forceCreate?: boolean;
-    };
+      text?: string
+      forceCreate?: boolean
+    }
     if (!text) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event text is required.");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event text is required.")
     }
 
-    const result = await quickAddWithOrchestrator(email, text, { forceCreate });
+    const result = await quickAddWithOrchestrator(email, text, { forceCreate })
 
     if (!result.success) {
       if (result.requiresConfirmation) {
@@ -289,13 +285,13 @@ const quickAddEvent = reqResAsyncHandler(
             calendarId: result.calendarId,
             calendarName: result.calendarName,
           }
-        );
+        )
       }
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
         result.error ?? "Failed to create event."
-      );
+      )
     }
 
     return sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", {
@@ -304,9 +300,9 @@ const quickAddEvent = reqResAsyncHandler(
       calendarId: result.calendarId,
       calendarName: result.calendarName,
       eventUrl: result.eventUrl,
-    });
+    })
   }
-);
+)
 
 /**
  * Watch an events
@@ -324,9 +320,9 @@ const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
     ...req.body,
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
-  });
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event watched successfully", r);
-});
+  })
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event watched successfully", r)
+})
 
 /**
  * Move an event from one calendar to another one
@@ -344,9 +340,9 @@ const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     ...req.body,
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
-  });
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event moved successfully", r);
-});
+  })
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event moved successfully", r)
+})
 
 /**
  * Get instances of a recurring event
@@ -358,7 +354,7 @@ const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
 const getEventInstances = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (!req.calendar) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
     }
     const r = await req.calendar.events.instances({
       ...REQUEST_CONFIG_BASE,
@@ -369,16 +365,16 @@ const getEventInstances = reqResAsyncHandler(
       timeZone: req.query.timeZone as string,
       originalStart: req.query.originalStart as string,
       showDeleted: req.query.showDeleted === "true",
-    });
+    })
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Event instances retrieved successfully",
       r.data
-    );
+    )
   }
-);
+)
 
 /**
  * Import an event (creates a private copy)
@@ -389,7 +385,7 @@ const getEventInstances = reqResAsyncHandler(
  */
 const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.calendar) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
   }
   const r = await req.calendar.events.import({
     ...REQUEST_CONFIG_BASE,
@@ -413,15 +409,15 @@ const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
       organizer: req.body.organizer,
       sequence: req.body.sequence,
     },
-  });
+  })
 
   return sendR(
     res,
     STATUS_RESPONSE.CREATED,
     "Event imported successfully",
     r.data
-  );
-});
+  )
+})
 
 /**
  * Get AI-powered insights for calendar events
@@ -433,13 +429,13 @@ const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
   const { timeMin, timeMax } = req.query as {
-    timeMin?: string;
-    timeMax?: string;
-  };
-  const userEmail = req.user?.email;
+    timeMin?: string
+    timeMax?: string
+  }
+  const userEmail = req.user?.email
 
   if (!userEmail) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
   }
 
   if (!(timeMin && timeMax)) {
@@ -447,40 +443,40 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
       res,
       STATUS_RESPONSE.BAD_REQUEST,
       "timeMin and timeMax query parameters are required"
-    );
+    )
   }
 
-  const cached = await getCachedInsights(userEmail, timeMin, timeMax);
+  const cached = await getCachedInsights(userEmail, timeMin, timeMax)
   if (cached) {
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Insights retrieved from cache",
       cached
-    );
+    )
   }
 
-  const calendar = req.calendar!;
+  const calendar = req.calendar!
   const calendarListResponse = await calendar.calendarList.list({
     prettyPrint: true,
-  });
-  const calendarItems = calendarListResponse.data.items || [];
+  })
+  const calendarItems = calendarListResponse.data.items || []
 
-  const calendarMap: Record<string, { name: string; color: string }> = {};
+  const calendarMap: Record<string, { name: string; color: string }> = {}
   for (const cal of calendarItems) {
     if (cal.id) {
       calendarMap[cal.id] = {
         name: cal.summary || cal.id,
         color: cal.backgroundColor || "#6366f1",
-      };
+      }
     }
   }
 
   const allCalendarIds = calendarItems
     .map((c) => c.id)
-    .filter(Boolean) as string[];
+    .filter(Boolean) as string[]
   if (allCalendarIds.length === 0) {
-    allCalendarIds.push("primary");
+    allCalendarIds.push("primary")
   }
 
   const allEventsArrays = await Promise.all(
@@ -489,18 +485,18 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
         calendarEvents: calendar.events,
         req: undefined,
         extra: { calendarId, timeMin, timeMax, customEvents: false },
-      });
+      })
 
       if (result.type === "standard") {
-        const events = result.data.items ?? [];
-        return events.map((event) => ({ ...event, calendarId }));
+        const events = result.data.items ?? []
+        return events.map((event) => ({ ...event, calendarId }))
       }
 
-      return [];
+      return []
     })
-  );
+  )
 
-  const allEvents = allEventsArrays.flat();
+  const allEvents = allEventsArrays.flat()
 
   if (allEvents.length === 0) {
     return sendR(
@@ -513,34 +509,34 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
         periodStart: timeMin,
         periodEnd: timeMax,
       }
-    );
+    )
   }
 
-  const metrics = calculateInsightsMetrics(allEvents, calendarMap);
+  const metrics = calculateInsightsMetrics(allEvents, calendarMap)
 
   const aiResponse = await generateInsightsWithRetry(
     metrics,
     timeMin,
     timeMax,
     3
-  );
+  )
 
   const responseData = {
     insights: aiResponse.insights,
     generatedAt: new Date().toISOString(),
     periodStart: timeMin,
     periodEnd: timeMax,
-  };
+  }
 
-  await setCachedInsights(userEmail, timeMin, timeMax, responseData);
+  await setCachedInsights(userEmail, timeMin, timeMax, responseData)
 
   return sendR(
     res,
     STATUS_RESPONSE.SUCCESS,
     "Insights generated successfully",
     responseData
-  );
-});
+  )
+})
 
 /**
  * Get reschedule suggestions for an event
@@ -552,18 +548,14 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getRescheduleSuggestions = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const email = req.user?.email;
+    const email = req.user?.email
     if (!email) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.UNAUTHORIZED,
-        "User not authenticated."
-      );
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.")
     }
 
     const eventId = Array.isArray(req.params.eventId)
       ? req.params.eventId[0]
-      : req.params.eventId;
+      : req.params.eventId
 
     const {
       calendarId = "primary",
@@ -571,25 +563,23 @@ const getRescheduleSuggestions = reqResAsyncHandler(
       daysToSearch = "7",
       excludeWeekends = "false",
     } = req.query as {
-      calendarId?: string | string[];
-      preferredTimeOfDay?: string | string[];
-      daysToSearch?: string | string[];
-      excludeWeekends?: string | string[];
-    };
+      calendarId?: string | string[]
+      preferredTimeOfDay?: string | string[]
+      daysToSearch?: string | string[]
+      excludeWeekends?: string | string[]
+    }
 
     // Ensure query parameters are strings, not arrays
-    const calendarIdStr = Array.isArray(calendarId)
-      ? calendarId[0]
-      : calendarId;
+    const calendarIdStr = Array.isArray(calendarId) ? calendarId[0] : calendarId
     const preferredTimeOfDayStr = Array.isArray(preferredTimeOfDay)
       ? preferredTimeOfDay[0]
-      : preferredTimeOfDay;
+      : preferredTimeOfDay
     const daysToSearchStr = Array.isArray(daysToSearch)
       ? daysToSearch[0]
-      : daysToSearch;
+      : daysToSearch
     const excludeWeekendsStr = Array.isArray(excludeWeekends)
       ? excludeWeekends[0]
-      : excludeWeekends;
+      : excludeWeekends
 
     const result = await findRescheduleSuggestions({
       email,
@@ -602,14 +592,14 @@ const getRescheduleSuggestions = reqResAsyncHandler(
         | "any",
       daysToSearch: Number.parseInt(daysToSearchStr || "7", 10),
       excludeWeekends: excludeWeekendsStr === "true",
-    });
+    })
 
     if (!result.success) {
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
         result.error ?? "Failed to find reschedule suggestions"
-      );
+      )
     }
 
     return sendR(
@@ -617,9 +607,9 @@ const getRescheduleSuggestions = reqResAsyncHandler(
       STATUS_RESPONSE.SUCCESS,
       "Reschedule suggestions generated",
       result
-    );
+    )
   }
-);
+)
 
 /**
  * Apply a reschedule to an event
@@ -631,42 +621,36 @@ const getRescheduleSuggestions = reqResAsyncHandler(
  */
 const rescheduleEvent = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const email = req.user?.email;
+    const email = req.user?.email
     if (!email) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.UNAUTHORIZED,
-        "User not authenticated."
-      );
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.")
     }
 
     const eventId = Array.isArray(req.params.eventId)
       ? req.params.eventId[0]
-      : req.params.eventId;
+      : req.params.eventId
 
     const {
       newStart,
       newEnd,
       calendarId = "primary",
     } = req.body as {
-      newStart: string | string[];
-      newEnd: string | string[];
-      calendarId?: string | string[];
-    };
+      newStart: string | string[]
+      newEnd: string | string[]
+      calendarId?: string | string[]
+    }
 
     // Ensure body parameters are strings, not arrays
-    const newStartStr = Array.isArray(newStart) ? newStart[0] : newStart;
-    const newEndStr = Array.isArray(newEnd) ? newEnd[0] : newEnd;
-    const calendarIdStr = Array.isArray(calendarId)
-      ? calendarId[0]
-      : calendarId;
+    const newStartStr = Array.isArray(newStart) ? newStart[0] : newStart
+    const newEndStr = Array.isArray(newEnd) ? newEnd[0] : newEnd
+    const calendarIdStr = Array.isArray(calendarId) ? calendarId[0] : calendarId
 
     if (!(newStartStr && newEndStr)) {
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
         "New start and end times are required."
-      );
+      )
     }
 
     const result = await applyReschedule({
@@ -675,14 +659,14 @@ const rescheduleEvent = reqResAsyncHandler(
       calendarId: calendarIdStr,
       newStart: newStartStr,
       newEnd: newEndStr,
-    });
+    })
 
     if (!result.success) {
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
         result.error ?? "Failed to reschedule event"
-      );
+      )
     }
 
     return sendR(
@@ -690,9 +674,9 @@ const rescheduleEvent = reqResAsyncHandler(
       STATUS_RESPONSE.SUCCESS,
       "Event rescheduled successfully",
       result.event
-    );
+    )
   }
-);
+)
 
 export default {
   moveEvent,
@@ -709,4 +693,4 @@ export default {
   getInsights,
   getRescheduleSuggestions,
   rescheduleEvent,
-};
+}

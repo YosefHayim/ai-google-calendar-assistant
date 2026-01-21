@@ -1,24 +1,24 @@
-import type { NextFunction, Request, Response } from "express";
-import { STATUS_RESPONSE, SUPABASE } from "@/config";
+import type { NextFunction, Request, Response } from "express"
+import { STATUS_RESPONSE, SUPABASE } from "@/config"
 import {
   ACCESS_TOKEN_COOKIE,
   clearAuthCookies,
   REFRESH_TOKEN_COOKIE,
   setAuthCookies,
-} from "@/domains/auth/utils/cookie-utils";
+} from "@/domains/auth/utils/cookie-utils"
 import {
   refreshSupabaseSession,
   validateSupabaseToken,
-} from "@/domains/auth/utils/supabase-token";
-import { reqResAsyncHandler, sendR } from "@/lib/http";
+} from "@/domains/auth/utils/supabase-token"
+import { reqResAsyncHandler, sendR } from "@/lib/http"
 
-const REFRESH_TOKEN_HEADER = "refresh_token";
-const ACCESS_TOKEN_HEADER = "access_token";
-const _USER_KEY = "user";
+const REFRESH_TOKEN_HEADER = "refresh_token"
+const ACCESS_TOKEN_HEADER = "access_token"
+const _USER_KEY = "user"
 
 export type SupabaseAuthOptions = {
-  autoRefresh?: boolean;
-};
+  autoRefresh?: boolean
+}
 
 /**
  * Supabase Auth Middleware Factory
@@ -44,46 +44,46 @@ export type SupabaseAuthOptions = {
  * router.use(supabaseAuth({ autoRefresh: false }));
  */
 export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
-  const { autoRefresh = true } = options;
+  const { autoRefresh = true } = options
 
   return reqResAsyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
       // Token extraction priority: Cookie first, then Authorization header
-      const authHeader = req.headers.authorization;
+      const authHeader = req.headers.authorization
       const accessToken =
         req.cookies?.[ACCESS_TOKEN_COOKIE] ||
-        (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined);
+        (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined)
 
       if (!accessToken) {
         return sendR(
           res,
           STATUS_RESPONSE.UNAUTHORIZED,
           "Missing authorization header or cookie"
-        );
+        )
       }
 
       // Validate current token
-      const validation = await validateSupabaseToken(accessToken);
+      const validation = await validateSupabaseToken(accessToken)
 
       if (validation.user) {
         const { data: dbUser } = await SUPABASE.from("users")
           .select("id, status")
           .eq("id", validation.user.id)
-          .single();
+          .single()
 
         // If user exists in Supabase Auth but NOT in our database,
         // they likely deleted their account and are trying to access with stale tokens.
         // Do NOT auto-create them - require fresh OAuth registration.
         if (!dbUser) {
           // Clear stale cookies to prevent further issues
-          clearAuthCookies(res);
+          clearAuthCookies(res)
 
           return sendR(
             res,
             STATUS_RESPONSE.UNAUTHORIZED,
             "Account not found. Please sign up again to create a new account.",
             { code: "ACCOUNT_NOT_FOUND" }
-          );
+          )
         }
 
         if (dbUser.status !== "active") {
@@ -92,11 +92,11 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
             STATUS_RESPONSE.FORBIDDEN,
             "Your account has been deactivated.",
             { code: "ACCOUNT_DEACTIVATED" }
-          );
+          )
         }
 
-        req.user = validation.user;
-        return next();
+        req.user = validation.user
+        return next()
       }
 
       // Token invalid - check if we should try refresh
@@ -105,13 +105,13 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
           res,
           STATUS_RESPONSE.UNAUTHORIZED,
           "Not authorized. Please login or register to continue."
-        );
+        )
       }
 
       // Try to refresh using refresh token from cookie first, then header
       const refreshToken =
         req.cookies?.[REFRESH_TOKEN_COOKIE] ||
-        (req.headers[REFRESH_TOKEN_HEADER] as string | undefined);
+        (req.headers[REFRESH_TOKEN_HEADER] as string | undefined)
 
       if (!refreshToken) {
         return sendR(
@@ -121,10 +121,10 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
           {
             code: "SESSION_EXPIRED",
           }
-        );
+        )
       }
 
-      const userEmail = req.user?.email;
+      const userEmail = req.user?.email
 
       try {
         // Refresh the session using the refresh token
@@ -132,49 +132,49 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
           accessToken: newAccessToken,
           refreshToken: newRefreshToken,
           user,
-        } = await refreshSupabaseSession(refreshToken);
+        } = await refreshSupabaseSession(refreshToken)
 
         // Validate that user and email are present after refresh
         if (!user) {
           console.error(
             "[Supabase Auth] Refresh succeeded but no user returned"
-          );
-          throw new Error("No user returned from refresh");
+          )
+          throw new Error("No user returned from refresh")
         }
 
         if (!user.email) {
           console.error(
             `[Supabase Auth] Refresh succeeded but user has no email. User ID: ${user.id}`
-          );
-          throw new Error("User email missing after refresh");
+          )
+          throw new Error("User email missing after refresh")
         }
 
         // Log successful refresh with email for debugging
 
         // Set user on request object for downstream middleware
-        req.user = user;
+        req.user = user
 
         // Update current request for downstream use
-        req.headers.authorization = `Bearer ${newAccessToken}`;
+        req.headers.authorization = `Bearer ${newAccessToken}`
 
         // Set cookies for web browsers (this includes the new refresh token)
-        setAuthCookies(res, newAccessToken, newRefreshToken, user);
+        setAuthCookies(res, newAccessToken, newRefreshToken, user)
 
         // Also send tokens in headers for API/mobile clients
-        res.setHeader(ACCESS_TOKEN_HEADER, newAccessToken);
-        res.setHeader(REFRESH_TOKEN_HEADER, newRefreshToken);
+        res.setHeader(ACCESS_TOKEN_HEADER, newAccessToken)
+        res.setHeader(REFRESH_TOKEN_HEADER, newRefreshToken)
 
-        next();
+        next()
       } catch (error) {
-        const err = error as Error;
+        const err = error as Error
         console.error(
           `[Supabase Auth] Session refresh failed for user: ${userEmail || "unknown"}`,
           err.message
-        );
+        )
         console.error("[Supabase Auth] Refresh error details:", {
           message: err.message,
           stack: err.stack,
-        });
+        })
 
         return sendR(
           res,
@@ -183,8 +183,8 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
           {
             code: "SESSION_REFRESH_FAILED",
           }
-        );
+        )
       }
     }
-  );
-};
+  )
+}

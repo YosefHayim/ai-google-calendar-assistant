@@ -1,4 +1,4 @@
-import { RECOMMENDED_PROMPT_PREFIX } from "@openai/agents-core/extensions";
+import { RECOMMENDED_PROMPT_PREFIX } from "@openai/agents-core/extensions"
 
 export const AGENT_INSTRUCTIONS = {
   // ═══════════════════════════════════════════════════════════════════════════
@@ -528,4 +528,4 @@ ALREADY CONNECTED: "You're already connected! I can help you manage your calenda
 </response_format>
 
 <constraints>Never ask for passwords. Always use Google OAuth.</constraints>`,
-};
+}

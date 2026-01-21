@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { StreamingTitle } from '../../sidebar-components/StreamingTitle'
 import { ArchiveConfirmDialog } from '../../sidebar-components/ArchiveConfirmDialog'
-import { createShareLink, toggleConversationPinned, type ConversationListItem } from '@/services/chatService'
+import { createShareLink, toggleConversationPinned, type ConversationListItem } from '@/services/chat-service'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'

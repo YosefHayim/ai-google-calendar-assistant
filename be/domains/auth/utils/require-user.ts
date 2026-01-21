@@ -6,39 +6,39 @@
  * handling and reduce code duplication across controllers.
  */
 
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 
-import { STATUS_RESPONSE } from "@/config";
-import type { User } from "@supabase/supabase-js";
-import sendR from "@/lib/send-response";
+import { STATUS_RESPONSE } from "@/config"
+import type { User } from "@supabase/supabase-js"
+import sendR from "@/lib/send-response"
 
 /**
  * Result type for user extraction utilities
  */
 export type UserExtractionResult = {
-  success: true;
-  userId: string;
-  userEmail: string;
-  user: User;
-};
+  success: true
+  userId: string
+  userEmail: string
+  user: User
+}
 
 export type UserExtractionError = {
-  success: false;
-  handled: true;
-};
+  success: false
+  handled: true
+}
 
-export type UserResult = UserExtractionResult | UserExtractionError;
+export type UserResult = UserExtractionResult | UserExtractionError
 
 /**
  * Result type when only userId is required
  */
 export type UserIdResult = {
-  success: true;
-  userId: string;
-  user: User;
-};
+  success: true
+  userId: string
+  user: User
+}
 
-export type UserIdExtractionResult = UserIdResult | UserExtractionError;
+export type UserIdExtractionResult = UserIdResult | UserExtractionError
 
 /**
  * Extract and validate user ID from request
@@ -58,15 +58,15 @@ export function requireUserId(
   req: Request,
   res: Response
 ): UserIdExtractionResult {
-  const user = req.user;
-  const userId = user?.id;
+  const user = req.user
+  const userId = user?.id
 
   if (!userId) {
-    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    return { success: false, handled: true };
+    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+    return { success: false, handled: true }
   }
 
-  return { success: true, userId, user };
+  return { success: true, userId, user }
 }
 
 /**
@@ -84,16 +84,16 @@ export function requireUserId(
  * const { userId, userEmail } = userResult;
  */
 export function requireUser(req: Request, res: Response): UserResult {
-  const user = req.user;
-  const userId = user?.id;
-  const userEmail = user?.email;
+  const user = req.user
+  const userId = user?.id
+  const userEmail = user?.email
 
   if (!(userId && userEmail)) {
-    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    return { success: false, handled: true };
+    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+    return { success: false, handled: true }
   }
 
-  return { success: true, userId, userEmail, user };
+  return { success: true, userId, userEmail, user }
 }
 
 /**
@@ -106,7 +106,7 @@ export function requireUser(req: Request, res: Response): UserResult {
  * @returns User ID or undefined
  */
 export function getUserId(req: Request): string | undefined {
-  return req.user!.id;
+  return req.user!.id
 }
 
 /**
@@ -116,7 +116,7 @@ export function getUserId(req: Request): string | undefined {
  * @returns User email or undefined
  */
 export function getUserEmail(req: Request): string | undefined {
-  return req.user?.email;
+  return req.user?.email
 }
 
 /**
@@ -126,7 +126,7 @@ export function getUserEmail(req: Request): string | undefined {
  * @returns True if user is authenticated
  */
 export function isAuthenticated(req: Request): boolean {
-  return Boolean(req.user!.id);
+  return Boolean(req.user!.id)
 }
 
 /**
@@ -136,5 +136,5 @@ export function isAuthenticated(req: Request): boolean {
  * @returns True if user has email
  */
 export function hasUserEmail(req: Request): boolean {
-  return Boolean(req.user?.email);
+  return Boolean(req.user?.email)
 }

@@ -1,12 +1,12 @@
-import { ar } from "@/telegram-bot/i18n/locales/ar";
-import { de } from "@/telegram-bot/i18n/locales/de";
-import type { TranslationKey } from "@/telegram-bot/i18n/locales/en";
-import { en } from "@/telegram-bot/i18n/locales/en";
-import { fr } from "@/telegram-bot/i18n/locales/fr";
-import { he } from "@/telegram-bot/i18n/locales/he";
-import { ru } from "@/telegram-bot/i18n/locales/ru";
+import { ar } from "@/telegram-bot/i18n/locales/ar"
+import { de } from "@/telegram-bot/i18n/locales/de"
+import type { TranslationKey } from "@/telegram-bot/i18n/locales/en"
+import { en } from "@/telegram-bot/i18n/locales/en"
+import { fr } from "@/telegram-bot/i18n/locales/fr"
+import { he } from "@/telegram-bot/i18n/locales/he"
+import { ru } from "@/telegram-bot/i18n/locales/ru"
 
-type TranslationResource = Record<TranslationKey, string>;
+type TranslationResource = Record<TranslationKey, string>
 
 export const LOCALE_CONFIG = {
   en: {
@@ -45,27 +45,25 @@ export const LOCALE_CONFIG = {
     languageCodes: ["ru", "ru-RU"],
     displayName: "Русский",
   },
-} as const;
+} as const
 
-export type SupportedLocale = keyof typeof LOCALE_CONFIG;
-export type TextDirection = "ltr" | "rtl";
+export type SupportedLocale = keyof typeof LOCALE_CONFIG
+export type TextDirection = "ltr" | "rtl"
 
-export const SUPPORTED_LOCALES = Object.keys(
-  LOCALE_CONFIG
-) as SupportedLocale[];
+export const SUPPORTED_LOCALES = Object.keys(LOCALE_CONFIG) as SupportedLocale[]
 
-export const DEFAULT_LOCALE: SupportedLocale = "en";
+export const DEFAULT_LOCALE: SupportedLocale = "en"
 
 export const LANGUAGE_CODE_MAP: Record<string, SupportedLocale> =
   Object.entries(LOCALE_CONFIG).reduce(
     (acc, [locale, config]) => {
       for (const code of config.languageCodes) {
-        acc[code] = locale as SupportedLocale;
+        acc[code] = locale as SupportedLocale
       }
-      return acc;
+      return acc
     },
     {} as Record<string, SupportedLocale>
-  );
+  )
 
 export const I18N_RESOURCES: Record<
   SupportedLocale,
@@ -77,21 +75,21 @@ export const I18N_RESOURCES: Record<
   de: { translation: de as TranslationResource },
   ar: { translation: ar as TranslationResource },
   ru: { translation: ru as TranslationResource },
-};
+}
 
 export function getDirection(locale: SupportedLocale): TextDirection {
-  return LOCALE_CONFIG[locale]?.direction ?? "ltr";
+  return LOCALE_CONFIG[locale]?.direction ?? "ltr"
 }
 
 export function getLocaleFromLanguageCode(
   languageCode: string | undefined
 ): SupportedLocale {
   if (!languageCode) {
-    return DEFAULT_LOCALE;
+    return DEFAULT_LOCALE
   }
-  return LANGUAGE_CODE_MAP[languageCode] ?? DEFAULT_LOCALE;
+  return LANGUAGE_CODE_MAP[languageCode] ?? DEFAULT_LOCALE
 }
 
 export function getDisplayName(locale: SupportedLocale): string {
-  return LOCALE_CONFIG[locale]?.displayName ?? locale;
+  return LOCALE_CONFIG[locale]?.displayName ?? locale
 }

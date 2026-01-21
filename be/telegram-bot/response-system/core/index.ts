@@ -8,7 +8,7 @@ export {
   MINIMAL_EMOJIS,
   mergeConfig,
   TYPE_EMOJIS,
-} from "./config";
+} from "./config"
 // HTML Escaping
 export {
   containsUnsafeHtml,
@@ -16,10 +16,10 @@ export {
   escapeHtmlPreserving,
   sanitizeUserInput,
   unescapeHtml,
-} from "./html-escaper";
+} from "./html-escaper"
 
 // Response Builder
-export { ResponseBuilder } from "./response-builder";
+export { ResponseBuilder } from "./response-builder"
 // RTL Handling
 export {
   applyLineBasedDirection,
@@ -34,6 +34,6 @@ export {
   isolateDirection,
   isRtlText,
   UNICODE_MARKERS,
-} from "./rtl-handler";
+} from "./rtl-handler"
 // Types
-export * from "./types";
+export * from "./types"

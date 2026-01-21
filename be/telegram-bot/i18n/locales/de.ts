@@ -506,6 +506,6 @@ export const de = {
     "Keine Änderungen an Ihrem Kalender vorgenommen.",
   "commands.reschedule.keepOriginal": "Original behalten",
   "botMenu.reschedule": "Intelligentes Umplanen",
-} as const;
+} as const
 
-export type TranslationKey = keyof typeof de;
+export type TranslationKey = keyof typeof de

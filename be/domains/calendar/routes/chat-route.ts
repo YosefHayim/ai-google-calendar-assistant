@@ -1,43 +1,43 @@
-import type { NextFunction, Request, Response } from "express";
-import { Router } from "express";
-import { STATUS_RESPONSE } from "@/config/constants";
-import { chatController } from "@/domains/chat/controllers/chat-controller";
-import { chatStreamController } from "@/domains/chat/controllers/chat-stream-controller";
-import { geminiStreamController } from "@/domains/chat/controllers/gemini-stream-controller";
-import { googleTokenRefresh } from "@/domains/auth/middleware/google-token-refresh";
-import { googleTokenValidation } from "@/domains/auth/middleware/google-token-validation";
+import type { NextFunction, Request, Response } from "express"
+import { Router } from "express"
+import { STATUS_RESPONSE } from "@/config/constants"
+import { chatController } from "@/domains/chat/controllers/chat-controller"
+import { chatStreamController } from "@/domains/chat/controllers/chat-stream-controller"
+import { geminiStreamController } from "@/domains/chat/controllers/gemini-stream-controller"
+import { googleTokenRefresh } from "@/domains/auth/middleware/google-token-refresh"
+import { googleTokenValidation } from "@/domains/auth/middleware/google-token-validation"
 import {
   aiChatBurstLimiter,
   aiChatRateLimiter,
-} from "@/middlewares/rate-limiter";
-import { subscriptionGuard } from "@/domains/auth/middleware/subscription-guard";
-import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
-import { sendR } from "@/utils";
-import { logger } from "@/lib/logger";
+} from "@/middlewares/rate-limiter"
+import { subscriptionGuard } from "@/domains/auth/middleware/subscription-guard"
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
+import { sendR } from "@/utils"
+import { logger } from "@/lib/logger"
 
-const router = Router();
+const router = Router()
 
 const withGoogleAuth = [
   supabaseAuth(),
   subscriptionGuard(),
   googleTokenValidation,
   googleTokenRefresh(),
-];
+]
 
 router.param(
   "id",
   (_req: Request, res: Response, next: NextFunction, id: string) => {
     if (!id) {
-      logger.error("Google Calendar: Chat: id not found");
+      logger.error("Google Calendar: Chat: id not found")
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
         "ID parameter is required."
-      );
+      )
     }
-    next();
+    next()
   }
-);
+)
 
 /**
  * POST / - Send Initial Chat Message
@@ -68,7 +68,7 @@ router.post(
   aiChatBurstLimiter,
   aiChatRateLimiter,
   chatController.sendChat
-);
+)
 /**
  * POST /stream - Send Chat Message with Streaming Response
  *
@@ -98,7 +98,7 @@ router.post(
   aiChatBurstLimiter,
   aiChatRateLimiter,
   chatStreamController.streamChat
-);
+)
 
 /**
  * GET /conversations - Retrieve User Conversations List
@@ -126,7 +126,7 @@ router.post(
  * @related Provides the foundation for conversation management UI. Users can browse,
  * search, and navigate their conversation history through this endpoint.
  */
-router.get("/conversations", supabaseAuth(), chatController.getConversations);
+router.get("/conversations", supabaseAuth(), chatController.getConversations)
 /**
  * POST /conversations/new - Create New Empty Conversation
  *
@@ -154,7 +154,7 @@ router.post(
   "/conversations/new",
   supabaseAuth(),
   chatController.startNewConversation
-);
+)
 /**
  * DELETE /conversations - Delete All User Conversations
  *
@@ -180,7 +180,7 @@ router.delete(
   "/conversations",
   supabaseAuth(),
   chatController.deleteAllConversations
-);
+)
 /**
  * DELETE /memory - Reset AI Conversation Memory
  *
@@ -201,7 +201,7 @@ router.delete(
  * to forget previous interactions. Different from conversation deletion as it resets
  * the AI's understanding rather than removing message history.
  */
-router.delete("/memory", supabaseAuth(), chatController.resetMemory);
+router.delete("/memory", supabaseAuth(), chatController.resetMemory)
 /**
  * GET /conversations/archived - Retrieve Archived Conversations
  *
@@ -230,7 +230,7 @@ router.get(
   "/conversations/archived",
   supabaseAuth(),
   chatController.getArchivedConversations
-);
+)
 /**
  * POST /conversations/archived/restore-all - Restore All Archived Conversations
  *
@@ -254,7 +254,7 @@ router.post(
   "/conversations/archived/restore-all",
   supabaseAuth(),
   chatController.restoreAllArchivedConversations
-);
+)
 /**
  * GET /conversations/:id - Retrieve Specific Conversation with Messages
  *
@@ -283,11 +283,7 @@ router.post(
  * @related Core endpoint for conversation display and management. Provides the data
  * needed to render conversation threads in the UI and continue existing conversations.
  */
-router.get(
-  "/conversations/:id",
-  supabaseAuth(),
-  chatController.getConversation
-);
+router.get("/conversations/:id", supabaseAuth(), chatController.getConversation)
 /**
  * PATCH /conversations/:id - Update Conversation Title
  *
@@ -312,7 +308,7 @@ router.patch(
   "/conversations/:id",
   supabaseAuth(),
   chatController.updateConversationTitle
-);
+)
 /**
  * PATCH /conversations/:id/pin - Toggle Conversation Pin Status
  *
@@ -336,25 +332,25 @@ router.patch(
   "/conversations/:id/pin",
   supabaseAuth(),
   chatController.toggleConversationPinned
-);
+)
 // POST /conversations/:id/archive - Archive specific conversation
 router.post(
   "/conversations/:id/archive",
   supabaseAuth(),
   chatController.archiveConversation
-);
+)
 // POST /conversations/:id/restore - Restore specific conversation
 router.post(
   "/conversations/:id/restore",
   supabaseAuth(),
   chatController.restoreConversation
-);
+)
 // DELETE /conversations/:id - Delete specific conversation
 router.delete(
   "/conversations/:id",
   supabaseAuth(),
   chatController.removeConversation
-);
+)
 
 /**
  * POST /conversations/:id/messages - Continue Existing Conversation
@@ -387,7 +383,7 @@ router.post(
   aiChatBurstLimiter,
   aiChatRateLimiter,
   chatController.continueConversation
-);
+)
 /**
  * POST /conversations/:id/messages/stream - Continue Conversation with Streaming
  *
@@ -419,7 +415,7 @@ router.post(
   aiChatBurstLimiter,
   aiChatRateLimiter,
   chatStreamController.streamContinueConversation
-);
+)
 
 // ============== GEMINI ROUTES ==============
 // POST /gemini-stream - Gemini streaming chat (new conversation)
@@ -429,7 +425,7 @@ router.post(
   aiChatBurstLimiter,
   aiChatRateLimiter,
   geminiStreamController.streamGeminiChat
-);
+)
 // POST /gemini - Gemini non-streaming chat
 router.post(
   "/gemini",
@@ -437,7 +433,7 @@ router.post(
   aiChatBurstLimiter,
   aiChatRateLimiter,
   geminiStreamController.runGeminiChatNonStreaming
-);
+)
 // POST /conversations/:id/messages/gemini-stream - Continue conversation with Gemini streaming
 router.post(
   "/conversations/:id/messages/gemini-stream",
@@ -445,25 +441,25 @@ router.post(
   aiChatBurstLimiter,
   aiChatRateLimiter,
   geminiStreamController.streamGeminiContinueConversation
-);
+)
 
 // POST /conversations/:id/share - Create shareable link for conversation
 router.post(
   "/conversations/:id/share",
   supabaseAuth(),
   chatController.createShareLink
-);
+)
 // DELETE /conversations/:id/share - Revoke shareable link
 router.delete(
   "/conversations/:id/share",
   supabaseAuth(),
   chatController.revokeShareLink
-);
+)
 // GET /conversations/:id/share - Get sharing status
 router.get(
   "/conversations/:id/share",
   supabaseAuth(),
   chatController.getShareStatus
-);
+)
 
-export default router;
+export default router

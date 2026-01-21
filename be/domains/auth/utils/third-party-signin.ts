@@ -1,19 +1,19 @@
-import type { AuthError } from "@supabase/supabase-js";
-import type { Response } from "express";
+import type { AuthError } from "@supabase/supabase-js"
+import type { Response } from "express"
 import {
   type PROVIDERS,
   REDIRECT_URI,
   SCOPES_STRING,
   STATUS_RESPONSE,
   SUPABASE,
-} from "@/config";
-import sendR from "@/lib/send-response";
-import { logger } from "@/lib/logger";
+} from "@/config"
+import sendR from "@/lib/send-response"
+import { logger } from "@/lib/logger"
 
 type OAuthResult = {
-  url: string | null;
-  error: AuthError | null;
-};
+  url: string | null
+  error: AuthError | null
+}
 
 /**
  * Initiate OAuth flow with Supabase
@@ -32,17 +32,17 @@ export async function initiateOAuthFlow(
   provider: PROVIDERS,
   options: { forceConsent?: boolean } = {}
 ): Promise<OAuthResult> {
-  const { forceConsent = false } = options;
+  const { forceConsent = false } = options
   const queryParams: {
-    access_type: string;
-    prompt?: string;
+    access_type: string
+    prompt?: string
   } = {
     access_type: "offline", // CRITICAL: Required to receive refresh_token
-  };
+  }
   // Only force consent screen on first-time auth or when explicitly requested
   // This prevents redundant redirects when user already has a valid refresh token
   if (forceConsent) {
-    queryParams.prompt = "consent";
+    queryParams.prompt = "consent"
   }
   const { data, error } = await SUPABASE.auth.signInWithOAuth({
     provider,
@@ -51,8 +51,8 @@ export async function initiateOAuthFlow(
       scopes: SCOPES_STRING,
       queryParams,
     },
-  });
-  return { url: data.url, error };
+  })
+  return { url: data.url, error }
 }
 
 /**
@@ -62,7 +62,7 @@ export async function initiateOAuthFlow(
  * @param url - The OAuth URL to redirect to.
  */
 export function redirectToOAuth(res: Response, url: string): void {
-  res.redirect(url);
+  res.redirect(url)
 }
 
 /**
@@ -72,13 +72,13 @@ export function redirectToOAuth(res: Response, url: string): void {
  * @param error - The authentication error.
  */
 export function sendOAuthError(res: Response, error: AuthError): void {
-  logger.error(`Auth: sendOAuthError called: error: ${error}`);
+  logger.error(`Auth: sendOAuthError called: error: ${error}`)
   sendR(
     res,
     STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
     "Failed to sign up user.",
     error
-  );
+  )
 }
 
 /**
@@ -93,21 +93,19 @@ export async function supabaseThirdPartySignInOrSignUp(
   res: Response,
   provider: PROVIDERS
 ): Promise<void> {
-  const { url, error } = await initiateOAuthFlow(provider);
+  const { url, error } = await initiateOAuthFlow(provider)
   if (url) {
-    redirectToOAuth(res, url);
-    return;
+    redirectToOAuth(res, url)
+    return
   }
-  logger.error(
-    `Auth: supabaseThirdPartySignInOrSignUp called: error: ${error}`
-  );
+  logger.error(`Auth: supabaseThirdPartySignInOrSignUp called: error: ${error}`)
   logger.error(
     `Auth: supabaseThirdPartySignInOrSignUp called: error: ${error?.message}`
-  );
+  )
   logger.error(
     `Auth: supabaseThirdPartySignInOrSignUp called: error: ${error?.stack}`
-  );
+  )
   if (error) {
-    sendOAuthError(res, error);
+    sendOAuthError(res, error)
   }
 }

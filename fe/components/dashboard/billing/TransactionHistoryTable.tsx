@@ -3,7 +3,7 @@
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, Download, Receipt, XCircle } from 'lucide-react'
 import React, { useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { Transaction, TransactionStatus } from '@/services/payment.service'
+import type { Transaction, TransactionStatus } from '@/services/payment-service'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'

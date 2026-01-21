@@ -1,8 +1,8 @@
-import OpenAI from "openai";
-import { env } from "@/config/env";
-import { logger } from "@/lib/logger";
+import OpenAI from "openai"
+import { env } from "@/config/env"
+import { logger } from "@/lib/logger"
 
-const openai = new OpenAI({ apiKey: env.openAiApiKey });
+const openai = new OpenAI({ apiKey: env.openAiApiKey })
 
 export const TTS_VOICES = [
   "alloy",
@@ -11,18 +11,18 @@ export const TTS_VOICES = [
   "onyx",
   "nova",
   "shimmer",
-] as const;
-export type TTSVoice = (typeof TTS_VOICES)[number];
+] as const
+export type TTSVoice = (typeof TTS_VOICES)[number]
 
-export const DEFAULT_VOICE: TTSVoice = "alloy";
+export const DEFAULT_VOICE: TTSVoice = "alloy"
 
-const MAX_TTS_CHARS = 4096;
+const MAX_TTS_CHARS = 4096
 
 export type TTSResult = {
-  success: boolean;
-  audioBuffer?: Buffer;
-  error?: string;
-};
+  success: boolean
+  audioBuffer?: Buffer
+  error?: string
+}
 
 /**
  * @description Generates speech audio from text using OpenAI's Text-to-Speech API.
@@ -52,7 +52,7 @@ export async function generateSpeech(
   voice: TTSVoice = DEFAULT_VOICE
 ): Promise<TTSResult> {
   if (!text.trim()) {
-    return { success: false, error: "No text provided for speech generation" };
+    return { success: false, error: "No text provided for speech generation" }
   }
 
   const inputText =
@@ -61,7 +61,7 @@ export async function generateSpeech(
           `TTS: Truncating text from ${text.length} to ${MAX_TTS_CHARS} chars`
         ),
         text.substring(0, MAX_TTS_CHARS))
-      : text;
+      : text
 
   try {
     const response = await openai.audio.speech.create({
@@ -69,21 +69,21 @@ export async function generateSpeech(
       voice,
       input: inputText,
       response_format: "mp3",
-    });
+    })
 
-    const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = Buffer.from(arrayBuffer);
+    const arrayBuffer = await response.arrayBuffer()
+    const audioBuffer = Buffer.from(arrayBuffer)
 
-    logger.debug(`TTS: Generated ${audioBuffer.length} bytes of audio`);
+    logger.debug(`TTS: Generated ${audioBuffer.length} bytes of audio`)
 
-    return { success: true, audioBuffer };
+    return { success: true, audioBuffer }
   } catch (error) {
-    logger.error(`TTS: Speech generation failed: ${error}`);
+    logger.error(`TTS: Speech generation failed: ${error}`)
     return {
       success: false,
       error:
         error instanceof Error ? error.message : "Failed to generate speech",
-    };
+    }
   }
 }
 
@@ -108,7 +108,7 @@ export async function generateSpeechForTelegram(
   voice: TTSVoice = DEFAULT_VOICE
 ): Promise<TTSResult> {
   if (!text.trim()) {
-    return { success: false, error: "No text provided for speech generation" };
+    return { success: false, error: "No text provided for speech generation" }
   }
 
   const inputText =
@@ -117,7 +117,7 @@ export async function generateSpeechForTelegram(
           `TTS: Truncating text from ${text.length} to ${MAX_TTS_CHARS} chars`
         ),
         text.substring(0, MAX_TTS_CHARS))
-      : text;
+      : text
 
   try {
     const response = await openai.audio.speech.create({
@@ -125,25 +125,25 @@ export async function generateSpeechForTelegram(
       voice,
       input: inputText,
       response_format: "opus",
-    });
+    })
 
-    const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = Buffer.from(arrayBuffer);
+    const arrayBuffer = await response.arrayBuffer()
+    const audioBuffer = Buffer.from(arrayBuffer)
 
     logger.debug(
       `TTS: Generated ${audioBuffer.length} bytes of Opus audio for Telegram`
-    );
+    )
 
-    return { success: true, audioBuffer };
+    return { success: true, audioBuffer }
   } catch (error) {
-    logger.error(`TTS: Telegram speech generation failed: ${error}`);
+    logger.error(`TTS: Telegram speech generation failed: ${error}`)
     return {
       success: false,
       error:
         error instanceof Error
           ? error.message
           : "Failed to generate speech for Telegram",
-    };
+    }
   }
 }
 
@@ -166,5 +166,5 @@ export async function generateSpeechForTelegram(
  * }
  */
 export function isValidVoice(voice: string): voice is TTSVoice {
-  return TTS_VOICES.includes(voice as TTSVoice);
+  return TTS_VOICES.includes(voice as TTSVoice)
 }

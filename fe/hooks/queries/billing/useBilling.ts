@@ -10,7 +10,7 @@ import {
   type Plan,
   type BillingOverview,
   type LemonSqueezyProductWithVariants,
-} from '@/services/payment.service'
+} from '@/services/payment-service'
 import { QUERY_CONFIG, STORAGE_KEYS } from '@/lib/constants'
 
 const hasPreviousSession = () => typeof window !== 'undefined' && !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)

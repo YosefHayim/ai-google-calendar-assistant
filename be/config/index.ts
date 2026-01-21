@@ -16,7 +16,7 @@ export {
   OAUTH2CLIENT,
   redisClient,
   SUPABASE,
-} from "./clients";
+} from "./clients"
 export {
   ACTION,
   CURRENT_MODEL,
@@ -34,5 +34,5 @@ export {
   TOKEN_FIELDS,
   USER_FIELDS,
   USER_OAUTH_FIELDS,
-} from "./constants";
-export { env, env as CONFIG, REDIRECT_URI } from "./env";
+} from "./constants"
+export { env, env as CONFIG, REDIRECT_URI } from "./env"

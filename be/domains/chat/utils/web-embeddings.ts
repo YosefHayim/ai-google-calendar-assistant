@@ -11,18 +11,18 @@
  */
 
 type WebEmbeddingMetadata = {
-  role: "user" | "assistant";
-  userId: string;
-  timestamp: string;
-  source: "web";
-};
+  role: "user" | "assistant"
+  userId: string
+  timestamp: string
+  source: "web"
+}
 
 type SimilarConversation = {
-  content: string;
-  id: number;
-  metadata: WebEmbeddingMetadata | null;
-  similarity: number;
-};
+  content: string
+  id: number
+  metadata: WebEmbeddingMetadata | null
+  similarity: number
+}
 
 /**
  * @description Generates an embedding vector for the given text.
@@ -37,8 +37,8 @@ type SimilarConversation = {
  */
 export const generateEmbedding = async (_text: string): Promise<number[]> => {
   // Embeddings disabled - conversation_embeddings table dropped
-  return [];
-};
+  return []
+}
 
 /**
  * @description Stores an embedding for a conversation message in the database.
@@ -60,8 +60,8 @@ export const storeWebConversationEmbedding = async (
   _messageId?: number
 ): Promise<boolean> => {
   // Embeddings disabled - conversation_embeddings table dropped
-  return true;
-};
+  return true
+}
 
 /**
  * @description Searches for semantically similar conversations using vector similarity.
@@ -84,13 +84,13 @@ export const searchWebSimilarConversations = async (
   _userId: string,
   _query: string,
   _options?: {
-    threshold?: number;
-    limit?: number;
+    threshold?: number
+    limit?: number
   }
 ): Promise<SimilarConversation[]> => {
   // Embeddings disabled - conversation_embeddings table dropped
-  return [];
-};
+  return []
+}
 
 /**
  * @description Builds a formatted context string from similar conversation results.
@@ -108,19 +108,19 @@ export const buildWebSemanticContext = (
   conversations: SimilarConversation[]
 ): string => {
   if (conversations.length === 0) {
-    return "";
+    return ""
   }
 
   const contextParts = conversations
     .sort((a, b) => b.similarity - a.similarity)
     .map((conv) => {
-      const role = conv.metadata?.role === "user" ? "User" : "Assistant";
-      const similarity = Math.round(conv.similarity * 100);
-      return `[${similarity}% relevant] ${role}: ${conv.content}`;
-    });
+      const role = conv.metadata?.role === "user" ? "User" : "Assistant"
+      const similarity = Math.round(conv.similarity * 100)
+      return `[${similarity}% relevant] ${role}: ${conv.content}`
+    })
 
-  return `Relevant past conversations:\n${contextParts.join("\n")}`;
-};
+  return `Relevant past conversations:\n${contextParts.join("\n")}`
+}
 
 /**
  * @description Stores an embedding asynchronously in a non-blocking manner.
@@ -142,7 +142,7 @@ export const storeWebEmbeddingAsync = (
   _messageId?: number
 ): void => {
   // Embeddings disabled - conversation_embeddings table dropped
-};
+}
 
 /**
  * @description Retrieves relevant context for a query using semantic search.
@@ -165,13 +165,13 @@ export const getWebRelevantContext = async (
   _userId: string,
   _query: string,
   _options?: {
-    threshold?: number;
-    limit?: number;
+    threshold?: number
+    limit?: number
   }
 ): Promise<string> => {
   // Embeddings disabled - conversation_embeddings table dropped
-  return "";
-};
+  return ""
+}
 
 /**
  * @description Deletes all embedding vectors for a specific user.
@@ -187,5 +187,5 @@ export const deleteAllWebEmbeddings = async (
   _userId: string
 ): Promise<{ success: boolean; deletedCount: number }> => {
   // Embeddings disabled - conversation_embeddings table dropped
-  return { success: true, deletedCount: 0 };
-};
+  return { success: true, deletedCount: 0 }
+}

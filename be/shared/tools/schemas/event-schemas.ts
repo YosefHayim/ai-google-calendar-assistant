@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const calendarIdSchema = z.coerce
   .string({
@@ -7,14 +7,14 @@ export const calendarIdSchema = z.coerce
   })
   .transform((val) => {
     if (!val || val === "/" || val.trim() === "") {
-      return null;
+      return null
     }
-    return val.trim();
+    return val.trim()
   })
-  .nullable();
+  .nullable()
 
 export const requiredString = (description: string, message = "Required.") =>
-  z.coerce.string({ description }).trim().min(1, { message });
+  z.coerce.string({ description }).trim().min(1, { message })
 
 export const eventTimeSchema = z
   .object({
@@ -39,9 +39,9 @@ export const eventTimeSchema = z
       })
       .nullable(),
   })
-  .describe("Event start or end time, with optional timezone.");
+  .describe("Event start or end time, with optional timezone.")
 
-export const makeEventTime = () => eventTimeSchema;
+export const makeEventTime = () => eventTimeSchema
 
 export const getEventSchema = z
   .object({
@@ -78,7 +78,7 @@ export const getEventSchema = z
       .nullable()
       .optional(),
   })
-  .describe("Fetch events with optional filters. Email provided from context.");
+  .describe("Fetch events with optional filters. Email provided from context.")
 
 export const insertEventSchema = z
   .object({
@@ -101,25 +101,25 @@ export const insertEventSchema = z
       })
       .default(false),
   })
-  .describe("Create a new calendar event. Email provided from context.");
+  .describe("Create a new calendar event. Email provided from context.")
 
 const cleanEmptyToNull = (val: string | null | undefined) =>
-  val === "" ? null : val;
+  val === "" ? null : val
 
 const cleanEventTime = (val: z.infer<typeof eventTimeSchema> | null) => {
   if (!val) {
-    return null;
+    return null
   }
   const cleaned = {
     date: val.date === "" ? null : val.date,
     dateTime: val.dateTime === "" ? null : val.dateTime,
     timeZone: val.timeZone === "" ? null : val.timeZone,
-  };
-  if (!(cleaned.date || cleaned.dateTime)) {
-    return null;
   }
-  return cleaned;
-};
+  if (!(cleaned.date || cleaned.dateTime)) {
+    return null
+  }
+  return cleaned
+}
 
 export const updateEventSchema = z
   .object({
@@ -157,7 +157,7 @@ export const updateEventSchema = z
   })
   .describe(
     "Update event by ID. CRITICAL: Only pass fields you want to change."
-  );
+  )
 
 export const deleteEventSchema = z
   .object({
@@ -167,7 +167,7 @@ export const deleteEventSchema = z
     ),
     calendarId: calendarIdSchema,
   })
-  .describe("Delete event by ID. Use calendarId from the event.");
+  .describe("Delete event by ID. Use calendarId from the event.")
 
 export const checkConflictsSchema = z
   .object({
@@ -175,7 +175,7 @@ export const checkConflictsSchema = z
     start: eventTimeSchema,
     end: eventTimeSchema,
   })
-  .describe("Check for event conflicts in a time range.");
+  .describe("Check for event conflicts in a time range.")
 
 export const checkConflictsAllCalendarsSchema = z
   .object({
@@ -187,7 +187,7 @@ export const checkConflictsAllCalendarsSchema = z
       .optional()
       .describe("Event ID to exclude (the event being moved)."),
   })
-  .describe("Check conflicts across ALL calendars.");
+  .describe("Check conflicts across ALL calendars.")
 
 export const preCreateValidationSchema = z
   .object({
@@ -199,17 +199,17 @@ export const preCreateValidationSchema = z
   })
   .describe(
     "Combined validation: user, timezone, calendar selection, conflicts. Much faster than sequential calls."
-  );
+  )
 
-export type EventTime = z.infer<typeof eventTimeSchema>;
-export type GetEventParams = z.infer<typeof getEventSchema>;
-export type InsertEventParams = z.infer<typeof insertEventSchema>;
-export type UpdateEventParams = z.infer<typeof updateEventSchema>;
-export type DeleteEventParams = z.infer<typeof deleteEventSchema>;
-export type CheckConflictsParams = z.infer<typeof checkConflictsSchema>;
+export type EventTime = z.infer<typeof eventTimeSchema>
+export type GetEventParams = z.infer<typeof getEventSchema>
+export type InsertEventParams = z.infer<typeof insertEventSchema>
+export type UpdateEventParams = z.infer<typeof updateEventSchema>
+export type DeleteEventParams = z.infer<typeof deleteEventSchema>
+export type CheckConflictsParams = z.infer<typeof checkConflictsSchema>
 export type CheckConflictsAllCalendarsParams = z.infer<
   typeof checkConflictsAllCalendarsSchema
->;
+>
 export type PreCreateValidationParams = z.infer<
   typeof preCreateValidationSchema
->;
+>

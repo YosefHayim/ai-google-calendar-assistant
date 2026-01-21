@@ -26,7 +26,7 @@ import Link from 'next/link'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { formatBlogDate } from '@/lib/formatUtils'
-import { getBlogImageUrl } from '@/services/blog.service'
+import { getBlogImageUrl } from '@/services/blog-service'
 import { useState } from 'react'
 
 function ShareButtons({ title, url }: { title: string; url: string }) {

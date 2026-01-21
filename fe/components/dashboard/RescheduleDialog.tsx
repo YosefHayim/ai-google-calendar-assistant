@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useRescheduleSuggestions, useRescheduleEvent } from '@/hooks/queries/events/useReschedule'
-import type { RescheduleSuggestion } from '@/services/events.service'
+import type { RescheduleSuggestion } from '@/services/events-service'
 
 interface RescheduleDialogProps {
   open: boolean

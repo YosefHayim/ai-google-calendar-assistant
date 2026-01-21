@@ -11,21 +11,21 @@ import {
   Row,
   Section,
   Text,
-} from "@react-email/components";
-import type * as React from "react";
+} from "@react-email/components"
+import type * as React from "react"
 
 export type ReceiptEmailProps = {
-  userName: string;
-  invoiceNumber: string;
-  invoiceDate: string;
-  planName: string;
-  planPrice: string;
-  billingPeriod: string;
-  paymentMethod: string;
-  billingUrl?: string;
-  supportUrl?: string;
-  logoUrl?: string;
-};
+  userName: string
+  invoiceNumber: string
+  invoiceDate: string
+  planName: string
+  planPrice: string
+  billingPeriod: string
+  paymentMethod: string
+  billingUrl?: string
+  supportUrl?: string
+  logoUrl?: string
+}
 
 const colors = {
   primary: "#f97316",
@@ -36,12 +36,12 @@ const colors = {
   textMuted: "#a3a3a3",
   border: "#e5e5e5",
   cardBg: "#fafafa",
-};
+}
 
 const fonts = {
   primary:
     "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-};
+}
 
 export const ReceiptEmail = ({
   userName = "there",
@@ -171,7 +171,7 @@ export const ReceiptEmail = ({
       </Container>
     </Body>
   </Html>
-);
+)
 
 const styles = {
   body: {
@@ -343,6 +343,6 @@ const styles = {
     lineHeight: "1.5",
     margin: 0,
   } as React.CSSProperties,
-};
+}
 
-export default ReceiptEmail;
+export default ReceiptEmail

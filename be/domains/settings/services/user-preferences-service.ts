@@ -5,8 +5,8 @@
  * Uses the users.preferences JSONB column for storage.
  */
 
-import { SUPABASE } from "@/config";
-import type { Json } from "@/database.types";
+import { SUPABASE } from "@/config"
+import type { Json } from "@/database.types"
 
 // ============================================
 // Types
@@ -22,68 +22,68 @@ export type PreferenceKey =
   | "geo_location"
   | "notification_settings"
   | "display_preferences"
-  | "persona";
+  | "persona"
 
 export type AllyBrainPreference = {
-  enabled: boolean;
-  instructions: string;
-};
+  enabled: boolean
+  instructions: string
+}
 
 export type ContextualSchedulingPreference = {
-  enabled: boolean;
-};
+  enabled: boolean
+}
 
 export type EventReminder = {
-  method: "email" | "popup";
-  minutes: number;
-};
+  method: "email" | "popup"
+  minutes: number
+}
 
 export type ReminderDefaultsPreference = {
-  enabled: boolean;
-  defaultReminders: EventReminder[];
-  useCalendarDefaults: boolean;
-};
+  enabled: boolean
+  defaultReminders: EventReminder[]
+  useCalendarDefaults: boolean
+}
 
 export type VoicePreference = {
-  enabled: boolean;
-  voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
-};
+  enabled: boolean
+  voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer"
+}
 
-export type BriefingChannel = "email" | "telegram" | "whatsapp" | "slack";
+export type BriefingChannel = "email" | "telegram" | "whatsapp" | "slack"
 
 export type DailyBriefingPreference = {
-  enabled: boolean;
-  time: string; // HH:MM (24-hour format)
-  timezone: string; // IANA timezone (e.g., "America/New_York")
-  lastSentDate?: string; // YYYY-MM-DD for duplicate prevention
-  channel: BriefingChannel;
-};
+  enabled: boolean
+  time: string // HH:MM (24-hour format)
+  timezone: string // IANA timezone (e.g., "America/New_York")
+  lastSentDate?: string // YYYY-MM-DD for duplicate prevention
+  channel: BriefingChannel
+}
 
 export type CrossPlatformSyncPreference = {
-  enabled: boolean;
-};
+  enabled: boolean
+}
 
 export type GeoLocationPreference = {
-  enabled: boolean;
+  enabled: boolean
   lastKnownLocation?: {
-    latitude: number;
-    longitude: number;
-    timestamp: string;
-  };
-};
+    latitude: number
+    longitude: number
+    timestamp: string
+  }
+}
 
-export type NotificationChannel = "telegram" | "email" | "push";
+export type NotificationChannel = "telegram" | "email" | "push"
 
 export type NotificationSettingsPreference = {
-  eventConfirmations: NotificationChannel[];
-  conflictAlerts: NotificationChannel[];
-  featureUpdates: NotificationChannel[];
-};
+  eventConfirmations: NotificationChannel[]
+  conflictAlerts: NotificationChannel[]
+  featureUpdates: NotificationChannel[]
+}
 
 export type DisplayPreference = {
-  timezone: string;
-  timeFormat: "12h" | "24h";
-};
+  timezone: string
+  timeFormat: "12h" | "24h"
+}
 
 export type PersonaPreference = {
   persona:
@@ -92,17 +92,17 @@ export type PersonaPreference = {
     | "manager"
     | "student"
     | "freelancer"
-    | null;
+    | null
   painPoint:
     | "too_many_meetings"
     | "no_deep_work"
     | "forgetting_tasks"
     | "manual_scheduling"
-    | null;
-  notificationFrequency: "realtime" | "daily_digest" | "weekly_summary";
-  onboardingCompleted: boolean;
-  onboardingCompletedAt?: string;
-};
+    | null
+  notificationFrequency: "realtime" | "daily_digest" | "weekly_summary"
+  onboardingCompleted: boolean
+  onboardingCompletedAt?: string
+}
 
 export type PreferenceValue =
   | AllyBrainPreference
@@ -114,13 +114,13 @@ export type PreferenceValue =
   | GeoLocationPreference
   | NotificationSettingsPreference
   | DisplayPreference
-  | PersonaPreference;
+  | PersonaPreference
 
 export type PreferenceResult<T> = {
-  value: T;
-  updatedAt?: string;
-  isDefault: boolean;
-};
+  value: T
+  updatedAt?: string
+  isDefault: boolean
+}
 
 // ============================================
 // Default Values
@@ -158,7 +158,7 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
     notificationFrequency: "daily_digest",
     onboardingCompleted: false,
   },
-};
+}
 
 export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "ally_brain",
@@ -171,7 +171,7 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "notification_settings",
   "display_preferences",
   "persona",
-];
+]
 
 // ============================================
 // Validation
@@ -188,14 +188,14 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
  * @returns Type predicate indicating if the key is a valid PreferenceKey
  */
 export function isValidPreferenceKey(key: string): key is PreferenceKey {
-  return VALID_PREFERENCE_KEYS.includes(key as PreferenceKey);
+  return VALID_PREFERENCE_KEYS.includes(key as PreferenceKey)
 }
 
 // ============================================
 // Helper Functions
 // ============================================
 
-type UserPreferences = Record<string, Json>;
+type UserPreferences = Record<string, Json>
 
 /**
  * Get user preferences JSONB from users table
@@ -204,13 +204,13 @@ async function getUserPreferences(userId: string): Promise<UserPreferences> {
   const { data, error } = await SUPABASE.from("users")
     .select("preferences")
     .eq("id", userId)
-    .single();
+    .single()
 
   if (error || !data) {
-    return {};
+    return {}
   }
 
-  return (data.preferences as UserPreferences) || {};
+  return (data.preferences as UserPreferences) || {}
 }
 
 /**
@@ -222,10 +222,10 @@ async function setUserPreferences(
 ): Promise<void> {
   const { error } = await SUPABASE.from("users")
     .update({ preferences: preferences as Json })
-    .eq("id", userId);
+    .eq("id", userId)
 
   if (error) {
-    throw new Error(`Failed to update preferences: ${error.message}`);
+    throw new Error(`Failed to update preferences: ${error.message}`)
   }
 }
 
@@ -252,16 +252,16 @@ export async function getPreference<T extends PreferenceValue>(
   key: PreferenceKey
 ): Promise<T | null> {
   try {
-    const preferences = await getUserPreferences(userId);
-    const value = preferences[key];
+    const preferences = await getUserPreferences(userId)
+    const value = preferences[key]
 
     if (value === undefined) {
-      return null;
+      return null
     }
 
-    return value as unknown as T;
+    return value as unknown as T
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -273,25 +273,25 @@ export async function getPreferenceWithMeta<T extends PreferenceValue>(
   key: PreferenceKey
 ): Promise<PreferenceResult<T>> {
   try {
-    const preferences = await getUserPreferences(userId);
-    const value = preferences[key];
+    const preferences = await getUserPreferences(userId)
+    const value = preferences[key]
 
     if (value === undefined) {
       return {
         value: PREFERENCE_DEFAULTS[key] as T,
         isDefault: true,
-      };
+      }
     }
 
     return {
       value: value as unknown as T,
       isDefault: false,
-    };
+    }
   } catch {
     return {
       value: PREFERENCE_DEFAULTS[key] as T,
       isDefault: true,
-    };
+    }
   }
 }
 
@@ -303,29 +303,29 @@ export async function getAllPreferences(
   _category = "assistant"
 ): Promise<Record<string, PreferenceResult<PreferenceValue>>> {
   try {
-    const preferences = await getUserPreferences(userId);
-    const result: Record<string, PreferenceResult<PreferenceValue>> = {};
+    const preferences = await getUserPreferences(userId)
+    const result: Record<string, PreferenceResult<PreferenceValue>> = {}
 
     // Add stored preferences
     for (const key of VALID_PREFERENCE_KEYS) {
-      const value = preferences[key];
+      const value = preferences[key]
       if (value !== undefined) {
         result[key] = {
           value: value as unknown as PreferenceValue,
           isDefault: false,
-        };
+        }
       } else {
         result[key] = {
           value: PREFERENCE_DEFAULTS[key],
           isDefault: true,
-        };
+        }
       }
     }
 
-    return result;
+    return result
   } catch (error) {
-    console.error("[Preferences Service] Error getting preferences:", error);
-    throw error;
+    console.error("[Preferences Service] Error getting preferences:", error)
+    throw error
   }
 }
 
@@ -351,15 +351,15 @@ export async function updatePreference<T extends PreferenceValue>(
   value: T,
   _category = "assistant"
 ): Promise<PreferenceResult<T>> {
-  const preferences = await getUserPreferences(userId);
-  preferences[key] = value as unknown as Json;
+  const preferences = await getUserPreferences(userId)
+  preferences[key] = value as unknown as Json
 
-  await setUserPreferences(userId, preferences);
+  await setUserPreferences(userId, preferences)
 
   return {
     value,
     isDefault: false,
-  };
+  }
 }
 
 // ============================================
@@ -372,7 +372,7 @@ export async function updatePreference<T extends PreferenceValue>(
 export async function getAllyBrainPreference(
   userId: string
 ): Promise<AllyBrainPreference | null> {
-  return getPreference<AllyBrainPreference>(userId, "ally_brain");
+  return getPreference<AllyBrainPreference>(userId, "ally_brain")
 }
 
 /**
@@ -384,7 +384,7 @@ export async function getContextualSchedulingPreference(
   return getPreference<ContextualSchedulingPreference>(
     userId,
     "contextual_scheduling"
-  );
+  )
 }
 
 /**
@@ -393,7 +393,7 @@ export async function getContextualSchedulingPreference(
 export async function getReminderDefaultsPreference(
   userId: string
 ): Promise<ReminderDefaultsPreference | null> {
-  return getPreference<ReminderDefaultsPreference>(userId, "reminder_defaults");
+  return getPreference<ReminderDefaultsPreference>(userId, "reminder_defaults")
 }
 
 /**
@@ -402,7 +402,7 @@ export async function getReminderDefaultsPreference(
 export async function getVoicePreference(
   userId: string
 ): Promise<VoicePreference | null> {
-  return getPreference<VoicePreference>(userId, "voice_preference");
+  return getPreference<VoicePreference>(userId, "voice_preference")
 }
 
 /**
@@ -411,7 +411,7 @@ export async function getVoicePreference(
 export async function getDailyBriefingPreference(
   userId: string
 ): Promise<DailyBriefingPreference | null> {
-  return getPreference<DailyBriefingPreference>(userId, "daily_briefing");
+  return getPreference<DailyBriefingPreference>(userId, "daily_briefing")
 }
 
 /**
@@ -423,7 +423,7 @@ export async function getCrossPlatformSyncPreference(
   return getPreference<CrossPlatformSyncPreference>(
     userId,
     "cross_platform_sync"
-  );
+  )
 }
 
 /**
@@ -432,7 +432,7 @@ export async function getCrossPlatformSyncPreference(
 export async function getGeoLocationPreference(
   userId: string
 ): Promise<GeoLocationPreference | null> {
-  return getPreference<GeoLocationPreference>(userId, "geo_location");
+  return getPreference<GeoLocationPreference>(userId, "geo_location")
 }
 
 /**
@@ -444,7 +444,7 @@ export async function getNotificationSettingsPreference(
   return getPreference<NotificationSettingsPreference>(
     userId,
     "notification_settings"
-  );
+  )
 }
 
 /**
@@ -453,7 +453,7 @@ export async function getNotificationSettingsPreference(
 export async function getDisplayPreference(
   userId: string
 ): Promise<DisplayPreference | null> {
-  return getPreference<DisplayPreference>(userId, "display_preferences");
+  return getPreference<DisplayPreference>(userId, "display_preferences")
 }
 
 /**
@@ -462,5 +462,5 @@ export async function getDisplayPreference(
 export async function getPersonaPreference(
   userId: string
 ): Promise<PersonaPreference | null> {
-  return getPreference<PersonaPreference>(userId, "persona");
+  return getPreference<PersonaPreference>(userId, "persona")
 }

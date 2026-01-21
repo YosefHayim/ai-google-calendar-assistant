@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query'
 import { QUERY_CONFIG } from '@/lib/constants'
-import { getConversation, type FullConversation } from '@/services/chatService'
+import { getConversation, type FullConversation } from '@/services/chat-service'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
 interface UseConversationOptions extends QueryHookOptions {

@@ -1,1 +1,1 @@
-export { activateAgent } from "./activate-agent";
+export { activateAgent } from "./activate-agent"

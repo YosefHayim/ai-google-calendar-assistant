@@ -6,7 +6,7 @@ import { useUser } from '@/hooks/queries/auth/useUser'
 import { STORAGE_KEYS } from '@/lib/constants'
 import { useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
-import { authService } from '@/services/auth.service'
+import { authService } from '@/services/auth-service'
 
 interface AuthContextType {
   user: User | CustomUser | null

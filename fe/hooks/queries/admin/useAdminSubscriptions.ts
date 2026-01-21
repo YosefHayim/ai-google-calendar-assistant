@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getSubscriptions } from '@/services/admin.service'
+import { getSubscriptions } from '@/services/admin-service'
 
 export const useAdminSubscriptions = (params: {
   page?: number

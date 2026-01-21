@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getDashboardStats, getSubscriptionDistribution } from '@/services/admin.service'
+import { getDashboardStats, getSubscriptionDistribution } from '@/services/admin-service'
 
 export const useDashboardStats = () => {
   return useQuery({

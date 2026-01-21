@@ -1,32 +1,32 @@
-import { Router } from "express";
-import { referralController } from "@/domains/marketing/controllers/referral-controller";
-import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
-import { reqResAsyncHandler } from "@/lib/http";
+import { Router } from "express"
+import { referralController } from "@/domains/marketing/controllers/referral-controller"
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
+import { reqResAsyncHandler } from "@/lib/http"
 
-const router = Router();
+const router = Router()
 
 router.get(
   "/validate/:code",
   reqResAsyncHandler(referralController.validateReferralCode)
-);
+)
 
-router.post("/apply", reqResAsyncHandler(referralController.applyReferralCode));
+router.post("/apply", reqResAsyncHandler(referralController.applyReferralCode))
 
-router.use(supabaseAuth);
+router.use(supabaseAuth)
 
-router.get("/code", reqResAsyncHandler(referralController.getMyReferralCode));
+router.get("/code", reqResAsyncHandler(referralController.getMyReferralCode))
 
-router.post("/create", reqResAsyncHandler(referralController.createReferral));
+router.post("/create", reqResAsyncHandler(referralController.createReferral))
 
-router.post("/convert", reqResAsyncHandler(referralController.convertReferral));
+router.post("/convert", reqResAsyncHandler(referralController.convertReferral))
 
 router.get(
   "/my-referrals",
   reqResAsyncHandler(referralController.getMyReferrals)
-);
+)
 
-router.get("/stats", reqResAsyncHandler(referralController.getMyReferralStats));
+router.get("/stats", reqResAsyncHandler(referralController.getMyReferralStats))
 
-router.post("/claim", reqResAsyncHandler(referralController.claimReward));
+router.post("/claim", reqResAsyncHandler(referralController.claimReward))
 
-export default router;
+export default router

@@ -3,14 +3,14 @@ import {
   type RunItemStreamEvent,
   type RunRawModelStreamEvent,
   run,
-} from "@openai/agents";
-import type { Request, Response } from "express";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
-import { runDPO } from "@/ai-agents/dpo";
-import { createAgentSession } from "@/ai-agents/sessions/session-factory";
-import type { AgentContext } from "@/ai-agents/tool-registry";
-import { STATUS_RESPONSE } from "@/config";
-import { webConversation } from "@/domains/chat/utils/conversation/WebConversationAdapter";
+} from "@openai/agents"
+import type { Request, Response } from "express"
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import { runDPO } from "@/ai-agents/dpo"
+import { createAgentSession } from "@/ai-agents/sessions/session-factory"
+import type { AgentContext } from "@/ai-agents/tool-registry"
+import { STATUS_RESPONSE } from "@/config"
+import { webConversation } from "@/domains/chat/utils/conversation/WebConversationAdapter"
 import {
   endSSEStream,
   setupSSEHeaders,
@@ -22,7 +22,7 @@ import {
   writeTextDelta,
   writeToolComplete,
   writeToolStart,
-} from "@/domains/chat/utils/sse";
+} from "@/domains/chat/utils/sse"
 import {
   buildChatPromptWithContext,
   EMBEDDING_LIMIT,
@@ -31,25 +31,25 @@ import {
   type StreamChatRequest,
   type StreamingParams,
   saveConversationMessages,
-} from "@/domains/chat/utils/stream-utils";
+} from "@/domains/chat/utils/stream-utils"
 import {
   getWebRelevantContext,
   storeWebEmbeddingAsync,
-} from "@/domains/chat/utils/web-embeddings";
-import { createCreditTransaction } from "@/domains/payments/services/credit-service";
-import { sendR } from "@/lib/http";
-import { unifiedContextStore } from "@/shared/context";
+} from "@/domains/chat/utils/web-embeddings"
+import { createCreditTransaction } from "@/domains/payments/services/credit-service"
+import { sendR } from "@/lib/http"
+import { unifiedContextStore } from "@/shared/context"
 
 function parseToolOutput(
   output: unknown
 ): { success?: boolean; message?: string; newInstructions?: string } | null {
   if (!output) {
-    return null;
+    return null
   }
   try {
-    return typeof output === "string" ? JSON.parse(output) : (output as object);
+    return typeof output === "string" ? JSON.parse(output) : (output as object)
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -73,30 +73,30 @@ async function handleOpenAIStreaming(
   conversationId: string,
   fullPrompt: string
 ): Promise<string> {
-  let fullResponse = "";
-  let currentAgent = ORCHESTRATOR_AGENT.name;
+  let fullResponse = ""
+  let currentAgent = ORCHESTRATOR_AGENT.name
 
   const session = createAgentSession({
     userId,
     agentName: ORCHESTRATOR_AGENT.name,
     taskId: conversationId,
-  });
+  })
 
-  const agentContext: AgentContext = { email: userEmail };
+  const agentContext: AgentContext = { email: userEmail }
   const stream = await run(ORCHESTRATOR_AGENT, fullPrompt, {
     context: agentContext,
     session,
     stream: true,
-  });
+  })
 
   for await (const event of stream) {
     if (res.writableEnded) {
-      break;
+      break
     }
 
     if (event.type === "raw_model_stream_event") {
-      const rawEvent = event as RunRawModelStreamEvent;
-      const data = rawEvent.data;
+      const rawEvent = event as RunRawModelStreamEvent
+      const data = rawEvent.data
       if (
         "type" in data &&
         data.type === "model" &&
@@ -108,54 +108,54 @@ async function handleOpenAIStreaming(
         "delta" in data.event &&
         typeof data.event.delta === "string"
       ) {
-        fullResponse += data.event.delta;
-        writeTextDelta(res, data.event.delta, fullResponse);
+        fullResponse += data.event.delta
+        writeTextDelta(res, data.event.delta, fullResponse)
       }
     } else if (event.type === "agent_updated_stream_event") {
-      const agentEvent = event as RunAgentUpdatedStreamEvent;
-      const newAgent = agentEvent.agent?.name;
+      const agentEvent = event as RunAgentUpdatedStreamEvent
+      const newAgent = agentEvent.agent?.name
       if (newAgent && newAgent !== currentAgent) {
-        writeAgentSwitch(res, currentAgent, newAgent);
-        currentAgent = newAgent;
+        writeAgentSwitch(res, currentAgent, newAgent)
+        currentAgent = newAgent
       }
     } else if (event.type === "run_item_stream_event") {
-      const itemEvent = event as RunItemStreamEvent;
-      const item = itemEvent.item;
+      const itemEvent = event as RunItemStreamEvent
+      const item = itemEvent.item
       if (item?.type === "tool_call_item" && "name" in item) {
-        writeToolStart(res, String(item.name) || "unknown", currentAgent);
+        writeToolStart(res, String(item.name) || "unknown", currentAgent)
       } else if (item?.type === "tool_call_output_item" && "name" in item) {
-        const toolName = String(item.name) || "unknown";
-        writeToolComplete(res, toolName, "success");
+        const toolName = String(item.name) || "unknown"
+        writeToolComplete(res, toolName, "success")
 
         if (toolName === "update_user_brain" && "output" in item) {
-          const output = parseToolOutput(item.output);
+          const output = parseToolOutput(item.output)
           if (output?.success && output?.message) {
             const action = output.message.includes("updated")
               ? "replaced"
-              : "added";
-            const PREVIEW_LENGTH = 100;
+              : "added"
+            const PREVIEW_LENGTH = 100
             writeMemoryUpdated(
               res,
               output.newInstructions?.slice(0, PREVIEW_LENGTH) || "",
               action
-            );
+            )
           }
         }
       }
     }
   }
 
-  await stream.completed;
+  await stream.completed
 
   if (!fullResponse && stream.finalOutput) {
     fullResponse =
       typeof stream.finalOutput === "string"
         ? stream.finalOutput
-        : String(stream.finalOutput);
-    writeTextDelta(res, fullResponse, fullResponse);
+        : String(stream.finalOutput)
+    writeTextDelta(res, fullResponse, fullResponse)
   }
 
-  return fullResponse;
+  return fullResponse
 }
 
 async function handleStreamingResponse(params: StreamingParams): Promise<void> {
@@ -168,27 +168,27 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
     isNewConversation,
     fullPrompt,
     images,
-  } = params;
+  } = params
 
-  setupSSEHeaders(res);
-  const stopHeartbeat = startHeartbeat(res);
+  setupSSEHeaders(res)
+  const stopHeartbeat = startHeartbeat(res)
 
-  const creditTx = createCreditTransaction(userId, userEmail);
-  const creditCheck = await creditTx.begin();
+  const creditTx = createCreditTransaction(userId, userEmail)
+  const creditCheck = await creditTx.begin()
 
   if (!creditCheck.hasCredits) {
     writeError(
       res,
       "No credits remaining. Please upgrade your plan or purchase credits.",
       "NO_CREDITS"
-    );
-    stopHeartbeat();
-    endSSEStream(res);
-    return;
+    )
+    stopHeartbeat()
+    endSSEStream(res)
+    return
   }
 
-  await unifiedContextStore.setModality(userId, "chat");
-  await unifiedContextStore.touch(userId);
+  await unifiedContextStore.setModality(userId, "chat")
+  await unifiedContextStore.touch(userId)
 
   const dpoResult = await runDPO({
     userId,
@@ -197,26 +197,26 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
     basePrompt: fullPrompt,
     userContext: undefined,
     isShadowRun: false,
-  });
+  })
 
   if (dpoResult.wasRejected) {
     writeError(
       res,
       "Your request was flagged for safety review. Please rephrase your request.",
       "REQUEST_REJECTED"
-    );
-    stopHeartbeat();
-    endSSEStream(res);
-    return;
+    )
+    stopHeartbeat()
+    endSSEStream(res)
+    return
   }
 
-  const effectivePrompt = dpoResult.effectivePrompt;
+  const effectivePrompt = dpoResult.effectivePrompt
 
-  let fullResponse = "";
-  let interactionSuccessful = false;
+  let fullResponse = ""
+  let interactionSuccessful = false
 
   try {
-    const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`;
+    const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`
 
     fullResponse = await handleOpenAIStreaming(
       res,
@@ -224,12 +224,12 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
       userEmail,
       tempConversationId,
       effectivePrompt
-    );
+    )
 
     const messageImages = images?.map((img) => ({
       data: img.data,
       mimeType: img.mimeType,
-    }));
+    }))
 
     const finalConversationId = await saveConversationMessages({
       userId,
@@ -238,33 +238,33 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
       conversationId,
       isNewConversation,
       images: messageImages,
-    });
+    })
 
     if (fullResponse) {
-      storeWebEmbeddingAsync(userId, message, "user");
-      storeWebEmbeddingAsync(userId, fullResponse, "assistant");
-      interactionSuccessful = true;
+      storeWebEmbeddingAsync(userId, message, "user")
+      storeWebEmbeddingAsync(userId, fullResponse, "assistant")
+      interactionSuccessful = true
     }
 
-    writeDone(res, finalConversationId || "", fullResponse, undefined);
+    writeDone(res, finalConversationId || "", fullResponse, undefined)
 
     if (isNewConversation && finalConversationId) {
-      await generateAndSaveTitle(res, finalConversationId, message);
+      await generateAndSaveTitle(res, finalConversationId, message)
     }
   } catch (error) {
-    console.error("Stream error:", error);
+    console.error("Stream error:", error)
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    writeError(res, errorMessage, "STREAM_ERROR");
-    interactionSuccessful = false;
+      error instanceof Error ? error.message : "Unknown error"
+    writeError(res, errorMessage, "STREAM_ERROR")
+    interactionSuccessful = false
   } finally {
     if (interactionSuccessful) {
-      await creditTx.commit();
+      await creditTx.commit()
     } else {
-      creditTx.rollback();
+      creditTx.rollback()
     }
-    stopHeartbeat();
-    endSSEStream(res);
+    stopHeartbeat()
+    endSSEStream(res)
   }
 }
 
@@ -272,25 +272,25 @@ const streamChat = async (
   req: Request<unknown, unknown, StreamChatRequest>,
   res: Response
 ): Promise<void> => {
-  const { message, images } = req.body;
-  const userId = req.user?.id;
-  const userEmail = req.user?.email;
+  const { message, images } = req.body
+  const userId = req.user?.id
+  const userEmail = req.user?.email
 
   if (!message?.trim() && (!images || images.length === 0)) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required");
-    return;
+    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required")
+    return
   }
 
   if (!userId) {
-    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    return;
+    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+    return
   }
 
   try {
     const semanticContext = await getWebRelevantContext(userId, message || "", {
       threshold: EMBEDDING_THRESHOLD,
       limit: EMBEDDING_LIMIT,
-    });
+    })
 
     const fullPrompt = await buildChatPromptWithContext({
       message: message || "Please analyze the attached images.",
@@ -300,7 +300,7 @@ const streamChat = async (
       userId,
       hasImages: images && images.length > 0,
       imageCount: images?.length,
-    });
+    })
 
     await handleStreamingResponse({
       res,
@@ -311,60 +311,60 @@ const streamChat = async (
       isNewConversation: true,
       fullPrompt,
       images,
-    });
+    })
   } catch (error) {
-    console.error("Stream chat error:", error);
+    console.error("Stream chat error:", error)
     if (res.headersSent) {
-      writeError(res, "Error processing your request", "INIT_ERROR");
-      endSSEStream(res);
+      writeError(res, "Error processing your request", "INIT_ERROR")
+      endSSEStream(res)
     } else {
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error processing your request"
-      );
+      )
     }
   }
-};
+}
 
 const streamContinueConversation = async (
   req: Request<{ id: string }, unknown, StreamChatRequest>,
   res: Response
 ): Promise<void> => {
-  const userId = req.user?.id;
-  const userEmail = req.user?.email;
-  const conversationId = req.params.id as string;
-  const { message, images } = req.body;
+  const userId = req.user?.id
+  const userEmail = req.user?.email
+  const conversationId = req.params.id as string
+  const { message, images } = req.body
 
   if (!userId) {
-    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    return;
+    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+    return
   }
 
   if (!message?.trim() && (!images || images.length === 0)) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required");
-    return;
+    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required")
+    return
   }
 
   try {
     const loaded = await webConversation.loadConversationIntoContext(
       conversationId,
       userId
-    );
+    )
 
     if (!loaded) {
-      sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
-      return;
+      sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found")
+      return
     }
 
     const conversationContext = webConversation.buildContextPrompt(
       loaded.context
-    );
+    )
 
     const semanticContext = await getWebRelevantContext(userId, message || "", {
       threshold: EMBEDDING_THRESHOLD,
       limit: EMBEDDING_LIMIT,
-    });
+    })
 
     const fullPrompt = await buildChatPromptWithContext({
       message: message || "Please analyze the attached images.",
@@ -374,7 +374,7 @@ const streamContinueConversation = async (
       userId,
       hasImages: images && images.length > 0,
       imageCount: images?.length,
-    });
+    })
 
     await handleStreamingResponse({
       res,
@@ -385,23 +385,23 @@ const streamContinueConversation = async (
       isNewConversation: false,
       fullPrompt,
       images,
-    });
+    })
   } catch (error) {
-    console.error("Stream continue conversation error:", error);
+    console.error("Stream continue conversation error:", error)
     if (res.headersSent) {
-      writeError(res, "Error processing your request", "INIT_ERROR");
-      endSSEStream(res);
+      writeError(res, "Error processing your request", "INIT_ERROR")
+      endSSEStream(res)
     } else {
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error processing your request"
-      );
+      )
     }
   }
-};
+}
 
 export const chatStreamController = {
   streamChat,
   streamContinueConversation,
-};
+}

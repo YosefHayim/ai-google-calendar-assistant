@@ -5,10 +5,10 @@
  * @see https://developers.google.com/identity/protocols/risc
  */
 
-import express from "express";
-import { riscController } from "@/domains/auth/controllers/risc-controller";
+import express from "express"
+import { riscController } from "@/domains/auth/controllers/risc-controller"
 
-const router = express.Router();
+const router = express.Router()
 
 // Middleware to parse application/secevent+jwt content type
 router.use(
@@ -16,7 +16,7 @@ router.use(
     type: ["application/secevent+jwt", "application/jwt"],
     limit: "64kb",
   })
-);
+)
 
 /**
  * POST /api/google/risc
@@ -28,13 +28,13 @@ router.use(
  * - Return 202 Accepted quickly
  * - Verify JWT signature using Google's public keys
  */
-router.post("/", riscController.handleRiscEvent);
+router.post("/", riscController.handleRiscEvent)
 
 /**
  * GET /api/google/risc/health
  *
  * Health check endpoint for monitoring.
  */
-router.get("/health", riscController.healthCheck);
+router.get("/health", riscController.healthCheck)
 
-export default router;
+export default router

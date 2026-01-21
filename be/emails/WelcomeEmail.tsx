@@ -10,15 +10,15 @@ import {
   Preview,
   Section,
   Text,
-} from "@react-email/components";
+} from "@react-email/components"
 
 export type WelcomeEmailProps = {
-  userName: string;
-  dashboardUrl?: string;
-  docsUrl?: string;
-  supportUrl?: string;
-  logoUrl?: string;
-};
+  userName: string
+  dashboardUrl?: string
+  docsUrl?: string
+  supportUrl?: string
+  logoUrl?: string
+}
 
 // Mapped from your Tailwind HSL variables
 const colors = {
@@ -28,7 +28,7 @@ const colors = {
   border: "#27272a", // --border
   muted: "#a1a1aa", // --muted-foreground
   card: "#09090b", // --card
-};
+}
 
 export const WelcomeEmail = ({
   userName = "user",
@@ -139,8 +139,8 @@ export const WelcomeEmail = ({
         </Container>
       </Body>
     </Html>
-  );
-};
+  )
+}
 
 const styles = {
   body: {
@@ -235,6 +235,6 @@ const styles = {
     textAlign: "center" as const,
     marginTop: "24px",
   },
-};
+}
 
-export default WelcomeEmail;
+export default WelcomeEmail

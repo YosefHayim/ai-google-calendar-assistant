@@ -453,6 +453,6 @@ export const ar = {
   "commands.reschedule.cancelledText": "لم يتم إجراء أي تغييرات على تقويمك.",
   "commands.reschedule.keepOriginal": "إبقاء كما هو",
   "botMenu.reschedule": "إعادة جدولة ذكية",
-} as const;
+} as const
 
-export type TranslationKey = keyof typeof ar;
+export type TranslationKey = keyof typeof ar

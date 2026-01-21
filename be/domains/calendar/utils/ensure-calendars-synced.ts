@@ -1,10 +1,10 @@
-import type { calendar_v3 } from "googleapis";
-import { SUPABASE } from "@/config";
-import type { Database } from "@/database.types";
-import { logger } from "@/lib/logger";
+import type { calendar_v3 } from "googleapis"
+import { SUPABASE } from "@/config"
+import type { Database } from "@/database.types"
+import { logger } from "@/lib/logger"
 
 type UserCalendarInsert =
-  Database["public"]["Tables"]["user_calendars"]["Insert"];
+  Database["public"]["Tables"]["user_calendars"]["Insert"]
 
 export const ensureCalendarsSynced = async (
   calendar: calendar_v3.Calendar,
@@ -14,31 +14,31 @@ export const ensureCalendarsSynced = async (
   try {
     const { count } = await SUPABASE.from("user_calendars")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", userId);
+      .eq("user_id", userId)
 
     if (count && count > 0) {
-      return;
+      return
     }
 
-    const response = await calendar.calendarList.list({ prettyPrint: true });
-    const items = response.data.items || [];
+    const response = await calendar.calendarList.list({ prettyPrint: true })
+    const items = response.data.items || []
 
     if (items.length === 0) {
       logger.info(
         `ensureCalendarsSynced: No calendars found for user ${userId}`
-      );
-      return;
+      )
+      return
     }
 
     const { error: userError } = await SUPABASE.from("users").upsert(
       { id: userId, email },
       { onConflict: "id", ignoreDuplicates: true }
-    );
+    )
     if (userError) {
       logger.error(
         `ensureCalendarsSynced: Failed to ensure user exists: ${userError.message}`
-      );
-      return;
+      )
+      return
     }
 
     const calendarsToUpsert: UserCalendarInsert[] = items.map(
@@ -55,29 +55,29 @@ export const ensureCalendarsSynced = async (
         foreground_color: cal.foregroundColor ?? null,
         is_visible: !cal.hidden,
       })
-    );
+    )
 
     const { error } = await SUPABASE.from("user_calendars").upsert(
       calendarsToUpsert,
       {
         onConflict: "user_id,calendar_id",
       }
-    );
+    )
 
     if (error) {
       logger.error(
         `ensureCalendarsSynced: Failed to upsert calendars for user ${userId}: ${error.message}`
-      );
-      return;
+      )
+      return
     }
 
     logger.info(
       `ensureCalendarsSynced: Successfully synced ${items.length} calendars for user ${userId}`
-    );
+    )
   } catch (error) {
     logger.error(
       `ensureCalendarsSynced: Error syncing calendars for user ${userId}:`,
       error
-    );
+    )
   }
-};
+}

@@ -8,7 +8,7 @@ export {
   projectCalendarFull,
   projectCalendars,
   projectCalendarVoiceLite,
-} from "./calendar-projections";
+} from "./calendar-projections"
 export {
   type EventProjectionChatStandard,
   type EventProjectionFull,
@@ -21,4 +21,4 @@ export {
   projectEventFull,
   projectEvents,
   projectEventVoiceLite,
-} from "./event-projections";
+} from "./event-projections"

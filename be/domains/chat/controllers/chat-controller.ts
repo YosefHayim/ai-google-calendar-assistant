@@ -2,51 +2,51 @@ import {
   PREFERENCE_DEFAULTS,
   getAllyBrainPreference,
   getCrossPlatformSyncPreference,
-} from "@/domains/settings/services/user-preferences-service";
-import type { Request, Response } from "express";
+} from "@/domains/settings/services/user-preferences-service"
+import type { Request, Response } from "express"
 import {
   deleteAllWebEmbeddings,
   getWebRelevantContext,
   storeWebEmbeddingAsync,
-} from "@/domains/chat/utils/web-embeddings";
+} from "@/domains/chat/utils/web-embeddings"
 import {
   generateConversationTitle,
   summarizeMessages,
-} from "@/telegram-bot/utils/summarize";
+} from "@/telegram-bot/utils/summarize"
 import {
   getCachedConversations,
   invalidateConversationsCache,
   setCachedConversations,
-} from "@/lib/cache/user-cache";
-import { reqResAsyncHandler, sendR } from "@/lib/http";
+} from "@/lib/cache/user-cache"
+import { reqResAsyncHandler, sendR } from "@/lib/http"
 
-import type { AgentContext } from "@/ai-agents/tool-registry";
-import type { CrossPlatformSyncPreference } from "@/domains/settings/services/user-preferences-service";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
-import { STATUS_RESPONSE } from "@/config";
-import { createAgentSession } from "@/ai-agents/sessions/session-factory";
-import { logger } from "@/lib/logger";
-import { run } from "@openai/agents";
-import { unifiedContextStore } from "@/shared/context";
-import { webConversation } from "@/domains/chat/utils/conversation/WebConversationAdapter";
+import type { AgentContext } from "@/ai-agents/tool-registry"
+import type { CrossPlatformSyncPreference } from "@/domains/settings/services/user-preferences-service"
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import { STATUS_RESPONSE } from "@/config"
+import { createAgentSession } from "@/ai-agents/sessions/session-factory"
+import { logger } from "@/lib/logger"
+import { run } from "@openai/agents"
+import { unifiedContextStore } from "@/shared/context"
+import { webConversation } from "@/domains/chat/utils/conversation/WebConversationAdapter"
 
-const DEFAULT_LIMIT = 20;
-const DEFAULT_OFFSET = 0;
-const EMBEDDING_THRESHOLD = 0.75;
-const EMBEDDING_LIMIT = 3;
+const DEFAULT_LIMIT = 20
+const DEFAULT_OFFSET = 0
+const EMBEDDING_THRESHOLD = 0.75
+const EMBEDDING_LIMIT = 3
 
 type ChatRequest = {
-  message: string;
-  history?: Array<{ role: "user" | "assistant"; content: string }>;
-};
+  message: string
+  history?: Array<{ role: "user" | "assistant"; content: string }>
+}
 
 type PromptParams = {
-  message: string;
-  conversationContext: string;
-  semanticContext: string;
-  userEmail: string;
-  userId: string;
-};
+  message: string
+  conversationContext: string
+  semanticContext: string
+  userEmail: string
+  userId: string
+}
 
 /**
  * Build a comprehensive chat prompt with user context and conversation history.
@@ -73,36 +73,36 @@ async function buildChatPromptWithContext(
   params: PromptParams
 ): Promise<string> {
   const { message, conversationContext, semanticContext, userEmail, userId } =
-    params;
-  const parts: string[] = [];
+    params
+  const parts: string[] = []
 
-  const allyBrain = await getAllyBrainPreference(userId);
+  const allyBrain = await getAllyBrainPreference(userId)
   if (allyBrain?.enabled && allyBrain?.instructions?.trim()) {
-    parts.push("--- User's Custom Instructions (Always Remember) ---");
-    parts.push(allyBrain.instructions);
-    parts.push("--- End Custom Instructions ---\n");
+    parts.push("--- User's Custom Instructions (Always Remember) ---")
+    parts.push(allyBrain.instructions)
+    parts.push("--- End Custom Instructions ---\n")
   }
 
-  parts.push(`User Email: ${userEmail}`);
-  parts.push(`Current Time: ${new Date().toISOString()}`);
+  parts.push(`User Email: ${userEmail}`)
+  parts.push(`Current Time: ${new Date().toISOString()}`)
 
   if (conversationContext) {
-    parts.push("\n--- Today's Conversation ---");
-    parts.push(conversationContext);
-    parts.push("--- End Today's Conversation ---");
+    parts.push("\n--- Today's Conversation ---")
+    parts.push(conversationContext)
+    parts.push("--- End Today's Conversation ---")
   }
 
   if (semanticContext) {
-    parts.push("\n--- Related Past Conversations ---");
-    parts.push(semanticContext);
-    parts.push("--- End Past Conversations ---");
+    parts.push("\n--- Related Past Conversations ---")
+    parts.push(semanticContext)
+    parts.push("--- End Past Conversations ---")
   }
 
-  parts.push("\n<user_request>");
-  parts.push(message);
-  parts.push("</user_request>");
+  parts.push("\n<user_request>")
+  parts.push(message)
+  parts.push("</user_request>")
 
-  return parts.join("\n");
+  return parts.join("\n")
 }
 
 /**
@@ -129,27 +129,27 @@ async function buildChatPromptWithContext(
  */
 const sendChat = reqResAsyncHandler(
   async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
-    const { message } = req.body;
-    const userId = req.user!.id;
-    const userEmail = req.user?.email;
+    const { message } = req.body
+    const userId = req.user!.id
+    const userEmail = req.user?.email
 
     if (!message?.trim()) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required")
     }
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     try {
       const { stateId: conversationId, context } =
-        await webConversation.getOrCreateTodayContext(userId);
-      const isNewConversation = context.messages.length === 0 && !context.title;
-      const conversationContext = webConversation.buildContextPrompt(context);
+        await webConversation.getOrCreateTodayContext(userId)
+      const isNewConversation = context.messages.length === 0 && !context.title
+      const conversationContext = webConversation.buildContextPrompt(context)
       const semanticContext = await getWebRelevantContext(userId, message, {
         threshold: EMBEDDING_THRESHOLD,
         limit: EMBEDDING_LIMIT,
-      });
+      })
 
       const fullPrompt = await buildChatPromptWithContext({
         message,
@@ -157,40 +157,40 @@ const sendChat = reqResAsyncHandler(
         semanticContext,
         userEmail: userEmail || userId,
         userId,
-      });
+      })
 
       const session = createAgentSession({
         userId,
         agentName: ORCHESTRATOR_AGENT.name,
         taskId: conversationId.toString(),
-      });
+      })
 
-      const agentContext: AgentContext = { email: userEmail || "" };
+      const agentContext: AgentContext = { email: userEmail || "" }
       const result = await run(ORCHESTRATOR_AGENT, fullPrompt, {
         context: agentContext,
         session,
-      });
-      const finalOutput = result.finalOutput || "";
+      })
+      const finalOutput = result.finalOutput || ""
 
       await webConversation.addMessageToContext(
         userId,
         { role: "user", content: message },
         summarizeMessages
-      );
+      )
       await webConversation.addMessageToContext(
         userId,
         { role: "assistant", content: finalOutput },
         summarizeMessages
-      );
-      storeWebEmbeddingAsync(userId, message, "user");
-      storeWebEmbeddingAsync(userId, finalOutput, "assistant");
+      )
+      storeWebEmbeddingAsync(userId, message, "user")
+      storeWebEmbeddingAsync(userId, finalOutput, "assistant")
 
       if (isNewConversation && conversationId) {
         generateConversationTitle(message)
           .then((title) =>
             webConversation.updateConversationTitle(conversationId, title)
           )
-          .catch(console.error);
+          .catch(console.error)
       }
 
       sendR(
@@ -202,17 +202,17 @@ const sendChat = reqResAsyncHandler(
           conversationId,
           timestamp: new Date().toISOString(),
         }
-      );
+      )
     } catch (error) {
-      console.error("Chat error:", error);
+      console.error("Chat error:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error processing your request"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Retrieve paginated list of user conversations with optional search and caching.
@@ -234,25 +234,20 @@ const sendChat = reqResAsyncHandler(
  */
 const getConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
+    const userId = req.user!.id
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     try {
       const limit =
-        Number.parseInt(req.query.limit as string, 10) || DEFAULT_LIMIT;
+        Number.parseInt(req.query.limit as string, 10) || DEFAULT_LIMIT
       const offset =
-        Number.parseInt(req.query.offset as string, 10) || DEFAULT_OFFSET;
-      const search = req.query.search as string | undefined;
+        Number.parseInt(req.query.offset as string, 10) || DEFAULT_OFFSET
+      const search = req.query.search as string | undefined
 
-      const cached = await getCachedConversations(
-        userId,
-        limit,
-        offset,
-        search
-      );
+      const cached = await getCachedConversations(userId, limit, offset, search)
       if (cached) {
         return sendR(
           res,
@@ -262,29 +257,23 @@ const getConversations = reqResAsyncHandler(
             conversations: cached.conversations,
             pagination: { limit, offset, count: cached.conversations.length },
           }
-        );
+        )
       }
 
-      const syncPreference = await getCrossPlatformSyncPreference(userId);
+      const syncPreference = await getCrossPlatformSyncPreference(userId)
       const includeAllSources = (
         syncPreference ||
         (PREFERENCE_DEFAULTS.cross_platform_sync as CrossPlatformSyncPreference)
-      ).enabled;
+      ).enabled
 
       const conversations = await webConversation.getConversationList(userId, {
         limit,
         offset,
         search,
         includeAllSources,
-      });
+      })
 
-      await setCachedConversations(
-        userId,
-        conversations,
-        limit,
-        offset,
-        search
-      );
+      await setCachedConversations(userId, conversations, limit, offset, search)
 
       sendR(
         res,
@@ -294,17 +283,17 @@ const getConversations = reqResAsyncHandler(
           conversations,
           pagination: { limit, offset, count: conversations.length },
         }
-      );
+      )
     } catch (error) {
-      console.error("Error getting conversations:", error);
+      console.error("Error getting conversations:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error retrieving conversations"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Retrieve a specific conversation by ID with access control.
@@ -320,21 +309,21 @@ const getConversations = reqResAsyncHandler(
  */
 const getConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
-    const conversationId = req.params.id as string;
+    const userId = req.user!.id
+    const conversationId = req.params.id as string
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     try {
       const conversation = await webConversation.getConversationById(
         conversationId,
         userId
-      );
+      )
 
       if (!conversation) {
-        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found")
       }
 
       sendR(
@@ -344,17 +333,17 @@ const getConversation = reqResAsyncHandler(
         {
           conversation,
         }
-      );
+      )
     } catch (error) {
-      console.error("Error getting conversation:", error);
+      console.error("Error getting conversation:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error retrieving conversation"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Delete a conversation and all associated data.
@@ -370,228 +359,228 @@ const getConversation = reqResAsyncHandler(
  */
 const removeConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id as string;
+    const conversationId = req.params.id as string
 
     try {
       const deleted = await webConversation.deleteConversation(
         conversationId,
         req.user!.id
-      );
+      )
 
       if (!deleted) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
           "Conversation not found or already deleted"
-        );
+        )
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      await invalidateConversationsCache(req.user!.id)
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Conversation deleted successfully"
-      );
+      )
     } catch (error) {
-      console.error("Error deleting conversation:", error);
+      console.error("Error deleting conversation:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error deleting conversation"
-      );
+      )
     }
   }
-);
+)
 
 const archiveConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id as string;
-    const userId = req.user!.id;
+    const conversationId = req.params.id as string
+    const userId = req.user!.id
 
     logger.info(
       `Archive conversation request: conversationId=${conversationId}, userId=${userId}`
-    );
+    )
 
     // Validate UUID format
     const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
     if (!uuidRegex.test(conversationId)) {
-      logger.error(`Invalid conversation ID format: ${conversationId}`);
+      logger.error(`Invalid conversation ID format: ${conversationId}`)
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
         "Invalid conversation ID format"
-      );
+      )
     }
 
     try {
       // First check if conversation exists and belongs to user
-      logger.info(`Checking if conversation exists: ${conversationId}`);
+      logger.info(`Checking if conversation exists: ${conversationId}`)
       const existingConversation = await webConversation.getConversationById(
         conversationId,
         userId
-      );
+      )
 
       if (!existingConversation) {
         logger.warn(
           `Conversation not found: ${conversationId} for user ${userId}`
-        );
-        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+        )
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found")
       }
 
       logger.info(
         `Conversation found, attempting to archive: ${conversationId}`
-      );
+      )
       const archived = await webConversation.archiveConversation(
         conversationId,
         userId
-      );
+      )
 
       if (!archived) {
         logger.warn(
           `Failed to archive conversation (might already be archived): ${conversationId}`
-        );
+        )
         return sendR(
           res,
           STATUS_RESPONSE.BAD_REQUEST,
           "Conversation is already archived"
-        );
+        )
       }
 
       logger.info(
         `Conversation archived successfully: ${conversationId}, invalidating cache`
-      );
-      await invalidateConversationsCache(userId);
+      )
+      await invalidateConversationsCache(userId)
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Conversation archived successfully"
-      );
+      )
     } catch (error) {
-      logger.error(`Error archiving conversation ${conversationId}:`, error);
+      logger.error(`Error archiving conversation ${conversationId}:`, error)
       return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error archiving conversation"
-      );
+      )
     }
   }
-);
+)
 
 const restoreConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id as string;
+    const conversationId = req.params.id as string
 
     try {
       // First check if conversation exists and belongs to user
       const existingConversation = await webConversation.getConversationById(
         conversationId,
         req.user!.id
-      );
+      )
 
       if (!existingConversation) {
-        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found")
       }
 
       const restored = await webConversation.restoreConversation(
         conversationId,
         req.user!.id
-      );
+      )
 
       if (!restored) {
         return sendR(
           res,
           STATUS_RESPONSE.BAD_REQUEST,
           "Conversation is not archived"
-        );
+        )
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      await invalidateConversationsCache(req.user!.id)
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Conversation restored successfully"
-      );
+      )
     } catch (error) {
-      console.error("Error restoring conversation:", error);
+      console.error("Error restoring conversation:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error restoring conversation"
-      );
+      )
     }
   }
-);
+)
 
 const getArchivedConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
+    const userId = req.user!.id
 
-    logger.info(`Get archived conversations request for user: ${userId}`);
+    logger.info(`Get archived conversations request for user: ${userId}`)
 
     try {
       const archivedConversations =
-        await webConversation.getArchivedConversations(userId);
+        await webConversation.getArchivedConversations(userId)
 
       logger.info(
         `Found ${archivedConversations.length} archived conversations for user ${userId}`
-      );
+      )
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Archived conversations retrieved successfully",
         { conversations: archivedConversations }
-      );
+      )
     } catch (error) {
       logger.error(
         `Error getting archived conversations for user ${userId}:`,
         error
-      );
+      )
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error retrieving archived conversations"
-      );
+      )
     }
   }
-);
+)
 
 const restoreAllArchivedConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     try {
       const restored = await webConversation.restoreAllArchivedConversations(
         req.user!.id
-      );
+      )
 
       if (!restored) {
         return sendR(
           res,
           STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
           "Failed to restore archived conversations"
-        );
+        )
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      await invalidateConversationsCache(req.user!.id)
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "All archived conversations restored successfully"
-      );
+      )
     } catch (error) {
-      console.error("Error restoring all archived conversations:", error);
+      console.error("Error restoring all archived conversations:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error restoring archived conversations"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Update the title of an existing conversation.
@@ -609,44 +598,44 @@ const restoreAllArchivedConversations = reqResAsyncHandler(
  */
 const updateConversationTitle = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id as string;
-    const { title } = req.body;
+    const conversationId = req.params.id as string
+    const { title } = req.body
 
     if (!title?.trim()) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Title is required");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Title is required")
     }
 
     try {
       const updated = await webConversation.updateConversationTitle(
         conversationId,
         title.trim()
-      );
+      )
 
       if (!updated) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
           "Conversation not found or update failed"
-        );
+        )
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      await invalidateConversationsCache(req.user!.id)
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Conversation title updated successfully"
-      );
+      )
     } catch (error) {
-      console.error("Error updating conversation title:", error);
+      console.error("Error updating conversation title:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error updating conversation title"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Toggle the pinned status of a conversation.
@@ -663,45 +652,45 @@ const updateConversationTitle = reqResAsyncHandler(
  */
 const toggleConversationPinned = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id as string;
-    const userId = req.user!.id;
+    const conversationId = req.params.id as string
+    const userId = req.user!.id
 
     try {
       const result = await webConversation.toggleConversationPinned(
         conversationId,
         userId
-      );
+      )
 
       if (!result.success) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
           "Conversation not found or update failed"
-        );
+        )
       }
 
-      await invalidateConversationsCache(userId);
+      await invalidateConversationsCache(userId)
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         `Conversation ${result.pinned ? "pinned" : "unpinned"} successfully`,
         { pinned: result.pinned }
-      );
+      )
     } catch (error) {
-      logger.error(`Error toggling conversation pinned status: ${error}`);
+      logger.error(`Error toggling conversation pinned status: ${error}`)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error toggling conversation pinned status"
-      );
+      )
     }
   }
-);
+)
 
 type ContinueConversationRequest = {
-  message: string;
-};
+  message: string
+}
 
 /**
  * Continue an existing conversation with a new message.
@@ -722,37 +711,37 @@ type ContinueConversationRequest = {
  */
 const continueConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
-    const userEmail = req.user?.email;
-    const conversationId = req.params.id as string;
-    const { message } = req.body as ContinueConversationRequest;
+    const userId = req.user!.id
+    const userEmail = req.user?.email
+    const conversationId = req.params.id as string
+    const { message } = req.body as ContinueConversationRequest
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     if (!message?.trim()) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required")
     }
 
     try {
       const loaded = await webConversation.loadConversationIntoContext(
         conversationId,
         userId
-      );
+      )
 
       if (!loaded) {
-        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found")
       }
 
       const conversationContext = webConversation.buildContextPrompt(
         loaded.context
-      );
+      )
 
       const semanticContext = await getWebRelevantContext(userId, message, {
         threshold: EMBEDDING_THRESHOLD,
         limit: EMBEDDING_LIMIT,
-      });
+      })
 
       const fullPrompt = await buildChatPromptWithContext({
         message,
@@ -760,52 +749,52 @@ const continueConversation = reqResAsyncHandler(
         semanticContext,
         userEmail: userEmail || userId,
         userId,
-      });
+      })
 
       const session = createAgentSession({
         userId,
         agentName: ORCHESTRATOR_AGENT.name,
         taskId: conversationId.toString(),
-      });
+      })
 
-      const agentContext: AgentContext = { email: userEmail || "" };
+      const agentContext: AgentContext = { email: userEmail || "" }
       const result = await run(ORCHESTRATOR_AGENT, fullPrompt, {
         context: agentContext,
         session,
-      });
-      const finalOutput = result.finalOutput || "";
+      })
+      const finalOutput = result.finalOutput || ""
 
       await webConversation.addMessageToConversation(
         conversationId,
         userId,
         { role: "user", content: message },
         summarizeMessages
-      );
+      )
       await webConversation.addMessageToConversation(
         conversationId,
         userId,
         { role: "assistant", content: finalOutput },
         summarizeMessages
-      );
+      )
 
-      storeWebEmbeddingAsync(userId, message, "user");
-      storeWebEmbeddingAsync(userId, finalOutput, "assistant");
+      storeWebEmbeddingAsync(userId, message, "user")
+      storeWebEmbeddingAsync(userId, finalOutput, "assistant")
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "Message processed successfully", {
         content: finalOutput,
         conversationId,
         timestamp: new Date().toISOString(),
-      });
+      })
     } catch (error) {
-      console.error("Error continuing conversation:", error);
+      console.error("Error continuing conversation:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error processing your request"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Start a new conversation by closing the current active conversation.
@@ -821,28 +810,28 @@ const continueConversation = reqResAsyncHandler(
  */
 const startNewConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
+    const userId = req.user!.id
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     try {
-      await webConversation.closeActiveConversation(userId);
+      await webConversation.closeActiveConversation(userId)
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "New conversation started", {
         success: true,
-      });
+      })
     } catch (error) {
-      console.error("Error starting new conversation:", error);
+      console.error("Error starting new conversation:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error starting new conversation"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Delete all conversations for the authenticated user.
@@ -858,38 +847,38 @@ const startNewConversation = reqResAsyncHandler(
  */
 const deleteAllConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
+    const userId = req.user!.id
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     try {
-      const result = await webConversation.deleteAllConversations(userId);
+      const result = await webConversation.deleteAllConversations(userId)
 
       if (!result.success) {
         return sendR(
           res,
           STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
           "Failed to delete conversations"
-        );
+        )
       }
 
-      await invalidateConversationsCache(userId);
+      await invalidateConversationsCache(userId)
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "All conversations deleted", {
         deletedCount: result.deletedCount,
-      });
+      })
     } catch (error) {
-      console.error("Error deleting all conversations:", error);
+      console.error("Error deleting all conversations:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error deleting conversations"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Reset all AI memory and conversation data for the user.
@@ -909,41 +898,41 @@ const deleteAllConversations = reqResAsyncHandler(
  * @returns Promise resolving to deletion counts for each data type
  */
 const resetMemory = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user!.id;
+  const userId = req.user!.id
 
   if (!userId) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
   }
 
   try {
     // Clear Redis context (temporary session data)
-    await unifiedContextStore.clearAll(userId);
+    await unifiedContextStore.clearAll(userId)
 
     // Delete all conversation embeddings (semantic memory)
-    const embeddingsResult = await deleteAllWebEmbeddings(userId);
+    const embeddingsResult = await deleteAllWebEmbeddings(userId)
 
     // Delete all conversations (includes messages and summaries)
     const conversationsResult =
-      await webConversation.deleteAllConversations(userId);
+      await webConversation.deleteAllConversations(userId)
 
     const totalDeleted = {
       embeddings: embeddingsResult.deletedCount,
       conversations: conversationsResult.deletedCount,
       redisContext: true,
-    };
+    }
 
-    await invalidateConversationsCache(userId);
+    await invalidateConversationsCache(userId)
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Memory reset successfully", {
       ...totalDeleted,
       message:
         "All learned patterns and conversation history have been cleared. Ally will relearn your preferences over time.",
-    });
+    })
   } catch (error) {
-    console.error("Error resetting memory:", error);
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error resetting memory");
+    console.error("Error resetting memory:", error)
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error resetting memory")
   }
-});
+})
 
 /**
  * Create a shareable link for a conversation.
@@ -963,12 +952,12 @@ const resetMemory = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const createShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
-    const conversationId = req.params.id as string;
-    const expiresInDays = req.body.expiresInDays || 7;
+    const userId = req.user!.id
+    const conversationId = req.params.id as string
+    const expiresInDays = req.body.expiresInDays || 7
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     try {
@@ -976,30 +965,30 @@ const createShareLink = reqResAsyncHandler(
         conversationId,
         userId,
         expiresInDays
-      );
+      )
 
       if (!result) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
           "Conversation not found or access denied"
-        );
+        )
       }
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "Share link created successfully", {
         token: result.token,
         expiresAt: result.expiresAt,
-      });
+      })
     } catch (error) {
-      console.error("Error creating share link:", error);
+      console.error("Error creating share link:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error creating share link"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Revoke an existing share link for a conversation.
@@ -1017,38 +1006,38 @@ const createShareLink = reqResAsyncHandler(
  */
 const revokeShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
-    const conversationId = req.params.id as string;
+    const userId = req.user!.id
+    const conversationId = req.params.id as string
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     try {
       const revoked = await webConversation.revokeShareLink(
         conversationId,
         userId
-      );
+      )
 
       if (!revoked) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
           "Conversation not found or access denied"
-        );
+        )
       }
 
-      sendR(res, STATUS_RESPONSE.SUCCESS, "Share link revoked successfully");
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Share link revoked successfully")
     } catch (error) {
-      console.error("Error revoking share link:", error);
+      console.error("Error revoking share link:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error revoking share link"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Get the sharing status of a conversation.
@@ -1066,34 +1055,34 @@ const revokeShareLink = reqResAsyncHandler(
  */
 const getShareStatus = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
-    const conversationId = req.params.id as string;
+    const userId = req.user!.id
+    const conversationId = req.params.id as string
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     try {
       const status = await webConversation.getShareStatus(
         conversationId,
         userId
-      );
+      )
 
       if (!status) {
-        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found")
       }
 
-      sendR(res, STATUS_RESPONSE.SUCCESS, "Share status retrieved", status);
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Share status retrieved", status)
     } catch (error) {
-      console.error("Error getting share status:", error);
+      console.error("Error getting share status:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error getting share status"
-      );
+      )
     }
   }
-);
+)
 
 /**
  * Retrieve a conversation via a share token.
@@ -1109,21 +1098,21 @@ const getShareStatus = reqResAsyncHandler(
  */
 const getSharedConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const token = req.params.token as string;
+    const token = req.params.token as string
 
     if (!token) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Share token is required");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Share token is required")
     }
 
     try {
-      const conversation = await webConversation.getSharedConversation(token);
+      const conversation = await webConversation.getSharedConversation(token)
 
       if (!conversation) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
           "Shared conversation not found or link has expired"
-        );
+        )
       }
 
       sendR(
@@ -1131,17 +1120,17 @@ const getSharedConversation = reqResAsyncHandler(
         STATUS_RESPONSE.SUCCESS,
         "Shared conversation retrieved",
         conversation
-      );
+      )
     } catch (error) {
-      console.error("Error getting shared conversation:", error);
+      console.error("Error getting shared conversation:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error retrieving shared conversation"
-      );
+      )
     }
   }
-);
+)
 
 export const chatController = {
   sendChat,
@@ -1162,4 +1151,4 @@ export const chatController = {
   revokeShareLink,
   getShareStatus,
   getSharedConversation,
-};
+}

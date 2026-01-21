@@ -23,7 +23,7 @@ import { toast } from 'sonner'
 import { FileText, Loader2, Code, Copy, Check, Sparkles, Upload, FormInput } from 'lucide-react'
 import { useCreateBlogPost, useAvailableCategories } from '@/hooks/queries'
 import { useGenerateAIBlogPost, blogKeys } from '@/hooks/queries/blog'
-import { blogService } from '@/services/blog.service'
+import { blogService } from '@/services/blog-service'
 import { BLOG_CATEGORIES, type BlogCategory, type CreateBlogPostData } from '@/types/blog'
 import { useQueryClient } from '@tanstack/react-query'
 

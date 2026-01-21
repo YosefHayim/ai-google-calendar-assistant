@@ -114,13 +114,16 @@ describe("AI Assistant Journey", () => {
 
       expect(userContext.timezone).toBe("America/New_York")
       expect(userContext.recentEvents).toHaveLength(1)
-      expect(userContext.aiInteractionsUsed).toBeLessThan(userContext.aiInteractionsLimit)
+      expect(userContext.aiInteractionsUsed).toBeLessThan(
+        userContext.aiInteractionsLimit
+      )
     })
 
     it("should handle first-time user onboarding", async () => {
       const onboardingFlow = {
         step: 1,
-        message: "Welcome to AI Calendar Assistant! I can help you manage your schedule. Would you like me to show you around?",
+        message:
+          "Welcome to AI Calendar Assistant! I can help you manage your schedule. Would you like me to show you around?",
         options: [
           "Show me how to schedule a meeting",
           "Help me check my calendar",
@@ -293,7 +296,8 @@ describe("AI Assistant Journey", () => {
       const longConversation = {
         id: "conv-123",
         messageCount: 25,
-        summary: "User scheduled 3 meetings, rescheduled 1 event, and asked about availability next week",
+        summary:
+          "User scheduled 3 meetings, rescheduled 1 event, and asked about availability next week",
         keyDecisions: [
           "Team meeting moved to Friday",
           "Client call scheduled for Tuesday",
@@ -342,8 +346,16 @@ describe("AI Assistant Journey", () => {
         conversationId: "conv-123",
         transcript: [
           { speaker: "user", text: "Hello", timestamp: "2026-01-20T10:00:00Z" },
-          { speaker: "assistant", text: "Hi there! How can I help?", timestamp: "2026-01-20T10:00:01Z" },
-          { speaker: "user", text: "Schedule team meeting", timestamp: "2026-01-20T10:00:05Z" },
+          {
+            speaker: "assistant",
+            text: "Hi there! How can I help?",
+            timestamp: "2026-01-20T10:00:01Z",
+          },
+          {
+            speaker: "user",
+            text: "Schedule team meeting",
+            timestamp: "2026-01-20T10:00:05Z",
+          },
         ],
         context: {
           currentIntent: "schedule_meeting",
@@ -373,7 +385,9 @@ describe("AI Assistant Journey", () => {
 
   describe("Scenario 5: Error Handling and Recovery", () => {
     it("should handle API failures gracefully", async () => {
-      mockAgentRun.mockRejectedValueOnce(new Error("OpenAI API rate limit exceeded"))
+      mockAgentRun.mockRejectedValueOnce(
+        new Error("OpenAI API rate limit exceeded")
+      )
 
       try {
         await mockAgentRun({ message: "Hello" })
@@ -388,17 +402,20 @@ describe("AI Assistant Journey", () => {
       const errorScenarios = [
         {
           error: "CALENDAR_NOT_CONNECTED",
-          userMessage: "Please connect your Google Calendar first to manage events.",
+          userMessage:
+            "Please connect your Google Calendar first to manage events.",
           action: "Connect Calendar",
         },
         {
           error: "EVENT_NOT_FOUND",
-          userMessage: "I couldn't find that event in your calendar. Could you check the name?",
+          userMessage:
+            "I couldn't find that event in your calendar. Could you check the name?",
           action: "List Events",
         },
         {
           error: "PERMISSION_DENIED",
-          userMessage: "I don't have permission to modify this event. Please check your calendar sharing settings.",
+          userMessage:
+            "I don't have permission to modify this event. Please check your calendar sharing settings.",
           action: "Check Permissions",
         },
       ]
@@ -442,7 +459,10 @@ describe("AI Assistant Journey", () => {
           { role: "user", content: "Schedule meeting" },
           { role: "assistant", content: "What time?" },
           { role: "user", content: "2pm" },
-          { role: "assistant", content: "Sorry, there was an error. What time would you like?" },
+          {
+            role: "assistant",
+            content: "Sorry, there was an error. What time would you like?",
+          },
         ],
         errorState: {
           lastError: "API_TIMEOUT",
@@ -478,7 +498,9 @@ describe("AI Assistant Journey", () => {
         },
       }
 
-      expect(usageTracking.subscription.used).toBeLessThan(usageTracking.subscription.monthlyLimit)
+      expect(usageTracking.subscription.used).toBeLessThan(
+        usageTracking.subscription.monthlyLimit
+      )
       expect(usageTracking.currentSession.toolsUsed).toHaveLength(2)
     })
 
@@ -489,7 +511,8 @@ describe("AI Assistant Journey", () => {
         limit: 1000,
         percentage: 85,
         shouldWarn: true,
-        warningMessage: "You've used 85% of your monthly AI interactions. Consider upgrading for unlimited access.",
+        warningMessage:
+          "You've used 85% of your monthly AI interactions. Consider upgrading for unlimited access.",
         upgradeUrl: "/subscription/upgrade",
       }
 
@@ -503,7 +526,8 @@ describe("AI Assistant Journey", () => {
         used: 1000,
         limit: 1000,
         isBlocked: true,
-        blockMessage: "You've reached your monthly limit. Upgrade to continue using AI features.",
+        blockMessage:
+          "You've reached your monthly limit. Upgrade to continue using AI features.",
         nextReset: "2026-02-01T00:00:00Z",
       }
 
@@ -518,7 +542,8 @@ describe("AI Assistant Journey", () => {
         creditsAvailable: 50,
         canUseCredits: true,
         creditCost: 1, // 1 credit per interaction
-        message: "You have 50 credits remaining. Use 1 credit for this AI interaction?",
+        message:
+          "You have 50 credits remaining. Use 1 credit for this AI interaction?",
       }
 
       expect(creditUsage.canUseCredits).toBe(true)
@@ -578,7 +603,9 @@ describe("AI Assistant Journey", () => {
 
       expect(platformCapabilities.web.features).toContain("rich_text")
       expect(platformCapabilities.voice.features).toContain("speech_to_text")
-      expect(platformCapabilities.telegram.limitations).toContain("no_voice_recording")
+      expect(platformCapabilities.telegram.limitations).toContain(
+        "no_voice_recording"
+      )
     })
 
     it("should maintain conversation continuity", () => {
@@ -588,7 +615,11 @@ describe("AI Assistant Journey", () => {
         continuedOn: ["telegram", "voice"],
         messageHistory: [
           { platform: "web", content: "Schedule meeting", timestamp: "10:00" },
-          { platform: "telegram", content: "Tomorrow at 2pm", timestamp: "10:05" },
+          {
+            platform: "telegram",
+            content: "Tomorrow at 2pm",
+            timestamp: "10:05",
+          },
           { platform: "voice", content: "Yes, that works", timestamp: "10:10" },
         ],
         unifiedContext: {
@@ -602,7 +633,9 @@ describe("AI Assistant Journey", () => {
       }
 
       expect(crossPlatformConversation.continuedOn).toHaveLength(2)
-      expect(crossPlatformConversation.unifiedContext.eventDetails.confirmed).toBe(true)
+      expect(
+        crossPlatformConversation.unifiedContext.eventDetails.confirmed
+      ).toBe(true)
     })
 
     it("should handle platform-specific authentication", () => {

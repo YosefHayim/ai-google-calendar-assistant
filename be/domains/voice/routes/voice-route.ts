@@ -1,19 +1,16 @@
-import express from "express";
-import multer from "multer";
-import voiceController from "@/domains/voice/controllers/voice-controller";
-import {
-  voiceBurstLimiter,
-  voiceRateLimiter,
-} from "@/middlewares/rate-limiter";
-import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
+import express from "express"
+import multer from "multer"
+import voiceController from "@/domains/voice/controllers/voice-controller"
+import { voiceBurstLimiter, voiceRateLimiter } from "@/middlewares/rate-limiter"
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
 
-const router = express.Router();
+const router = express.Router()
 
-const BYTES_PER_KB = 1024;
-const KB_PER_MB = 1024;
-const MB_IN_BYTES = BYTES_PER_KB * KB_PER_MB;
-const MAX_FILE_SIZE_MB = 25;
-const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * MB_IN_BYTES;
+const BYTES_PER_KB = 1024
+const KB_PER_MB = 1024
+const MB_IN_BYTES = BYTES_PER_KB * KB_PER_MB
+const MAX_FILE_SIZE_MB = 25
+const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * MB_IN_BYTES
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -28,20 +25,20 @@ const upload = multer({
       "audio/wav",
       "audio/ogg",
       "audio/flac",
-    ];
+    ]
     if (allowedMimeTypes.includes(file.mimetype)) {
-      cb(null, true);
+      cb(null, true)
     } else {
       cb(
         new Error(
           "Invalid audio format. Supported: webm, mp3, mp4, m4a, wav, ogg, flac"
         )
-      );
+      )
     }
   },
-});
+})
 
-router.use(supabaseAuth());
+router.use(supabaseAuth())
 
 /**
  * POST /transcribe - Convert Audio to Text Transcription
@@ -81,7 +78,7 @@ router.post(
   voiceRateLimiter,
   upload.single("audio"),
   voiceController.transcribe
-);
+)
 /**
  * POST /synthesize - Convert Text to Speech Audio
  *
@@ -113,6 +110,6 @@ router.post(
   voiceBurstLimiter,
   voiceRateLimiter,
   voiceController.synthesize
-);
+)
 
-export default router;
+export default router

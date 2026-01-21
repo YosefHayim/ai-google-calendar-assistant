@@ -6,7 +6,7 @@ import {
   type ConversationListItem,
   type ChatMessage,
   startNewConversation as startNewConversationApi,
-} from '@/services/chatService'
+} from '@/services/chat-service'
 import { Message } from '@/types'
 import { useConversations, useConversation, useDeleteConversationById } from '@/hooks/queries'
 import { queryKeys } from '@/lib/query'

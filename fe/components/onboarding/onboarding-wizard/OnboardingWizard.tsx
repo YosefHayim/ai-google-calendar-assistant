@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronRight, ChevronLeft, Volume2, VolumeX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { voiceService } from '@/services/voice.service'
+import { voiceService } from '@/services/voice-service'
 import { ONBOARDING_STEPS } from './constants'
 import { OnboardingStyles, StepIndicator, StepContent, AudioProgressBar } from './components'
 

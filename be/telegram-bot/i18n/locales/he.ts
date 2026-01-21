@@ -438,4 +438,4 @@ export const he = {
   "commands.reschedule.cancelledText": "לא בוצעו שינויים ביומן שלך.",
   "commands.reschedule.keepOriginal": "השאר כמו שזה",
   "botMenu.reschedule": "תזמון מחדש חכם",
-} as const;
+} as const

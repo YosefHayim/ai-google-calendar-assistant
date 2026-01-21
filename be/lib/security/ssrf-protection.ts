@@ -5,11 +5,11 @@
  * unintended external endpoints. Critical for any feature that fetches URLs.
  */
 
-import { URL } from "node:url";
-import { isIP } from "node:net";
-import { logger } from "@/lib/logger";
+import { URL } from "node:url"
+import { isIP } from "node:net"
+import { logger } from "@/lib/logger"
 
-const ALLOWED_PROTOCOLS = new Set(["https:", "http:"]);
+const ALLOWED_PROTOCOLS = new Set(["https:", "http:"])
 
 const BLOCKED_HOSTNAMES = new Set([
   "localhost",
@@ -22,7 +22,7 @@ const BLOCKED_HOSTNAMES = new Set([
   "169.254.169.254",
   "metadata.aws.amazon.com",
   "instance-data",
-]);
+])
 
 const BLOCKED_HOSTNAME_PATTERNS = [
   /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/, // 10.x.x.x (private)
@@ -32,7 +32,7 @@ const BLOCKED_HOSTNAME_PATTERNS = [
   /\.local$/, // mDNS
   /\.internal$/, // internal domains
   /\.localhost$/, // localhost variations
-];
+]
 
 const ALLOWED_EXTERNAL_DOMAINS = new Set([
   "api.telegram.org",
@@ -45,13 +45,13 @@ const ALLOWED_EXTERNAL_DOMAINS = new Set([
   "oauth2.googleapis.com",
   "www.googleapis.com",
   "api.lemonsqueezy.com",
-]);
+])
 
 export type SSRFValidationResult = {
-  safe: boolean;
-  reason?: string;
-  normalizedUrl?: string;
-};
+  safe: boolean
+  reason?: string
+  normalizedUrl?: string
+}
 
 /**
  * @description Checks if an IPv4 address belongs to a private, reserved, or internal
@@ -73,37 +73,37 @@ export type SSRFValidationResult = {
  * @private
  */
 function isPrivateIPv4(ip: string): boolean {
-  const parts = ip.split(".").map(Number);
+  const parts = ip.split(".").map(Number)
   if (parts.length !== 4) {
-    return false;
+    return false
   }
 
   // 10.x.x.x
   if (parts[0] === 10) {
-    return true;
+    return true
   }
   // 172.16.x.x - 172.31.x.x
   if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) {
-    return true;
+    return true
   }
   // 192.168.x.x
   if (parts[0] === 192 && parts[1] === 168) {
-    return true;
+    return true
   }
   // 127.x.x.x (loopback)
   if (parts[0] === 127) {
-    return true;
+    return true
   }
   // 169.254.x.x (link-local)
   if (parts[0] === 169 && parts[1] === 254) {
-    return true;
+    return true
   }
   // 0.x.x.x
   if (parts[0] === 0) {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -125,22 +125,22 @@ function isPrivateIPv4(ip: string): boolean {
  * @private
  */
 function isPrivateIPv6(ip: string): boolean {
-  const normalized = ip.toLowerCase().replace(/^\[|\]$/g, "");
+  const normalized = ip.toLowerCase().replace(/^\[|\]$/g, "")
 
   if (normalized === "::1") {
-    return true;
+    return true
   }
   if (normalized.startsWith("fe80:")) {
-    return true; // link-local
+    return true // link-local
   }
   if (normalized.startsWith("fc") || normalized.startsWith("fd")) {
-    return true; // unique local
+    return true // unique local
   }
   if (normalized === "::") {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -182,77 +182,77 @@ function isPrivateIPv6(ip: string): boolean {
 export function validateUrlForSSRF(
   urlString: string,
   options?: {
-    allowPrivateIPs?: boolean;
-    allowedDomains?: Set<string>;
-    strictMode?: boolean;
+    allowPrivateIPs?: boolean
+    allowedDomains?: Set<string>
+    strictMode?: boolean
   }
 ): SSRFValidationResult {
   const {
     allowPrivateIPs = false,
     allowedDomains,
     strictMode = false,
-  } = options || {};
+  } = options || {}
 
   try {
-    const url = new URL(urlString);
+    const url = new URL(urlString)
 
     if (!ALLOWED_PROTOCOLS.has(url.protocol)) {
-      return { safe: false, reason: `Blocked protocol: ${url.protocol}` };
+      return { safe: false, reason: `Blocked protocol: ${url.protocol}` }
     }
 
-    const hostname = url.hostname.toLowerCase();
+    const hostname = url.hostname.toLowerCase()
 
     if (BLOCKED_HOSTNAMES.has(hostname)) {
-      logger.warn(`SECURITY: SSRF blocked - attempted access to ${hostname}`);
+      logger.warn(`SECURITY: SSRF blocked - attempted access to ${hostname}`)
       return {
         safe: false,
         reason: "Access to internal resources is not allowed",
-      };
+      }
     }
 
     for (const pattern of BLOCKED_HOSTNAME_PATTERNS) {
       if (pattern.test(hostname)) {
         logger.warn(
           `SECURITY: SSRF blocked - hostname matches blocked pattern: ${hostname}`
-        );
+        )
         return {
           safe: false,
           reason: "Access to internal resources is not allowed",
-        };
+        }
       }
     }
 
-    const ipVersion = isIP(hostname);
+    const ipVersion = isIP(hostname)
     if (ipVersion === 4 && !allowPrivateIPs && isPrivateIPv4(hostname)) {
-      logger.warn(`SECURITY: SSRF blocked - private IPv4: ${hostname}`);
+      logger.warn(`SECURITY: SSRF blocked - private IPv4: ${hostname}`)
       return {
         safe: false,
         reason: "Access to private IP addresses is not allowed",
-      };
+      }
     }
 
     if (ipVersion === 6 && !allowPrivateIPs && isPrivateIPv6(hostname)) {
-      logger.warn(`SECURITY: SSRF blocked - private IPv6: ${hostname}`);
+      logger.warn(`SECURITY: SSRF blocked - private IPv6: ${hostname}`)
       return {
         safe: false,
         reason: "Access to private IP addresses is not allowed",
-      };
-    }
-
-    if (strictMode) {
-      const domainsToCheck = allowedDomains || ALLOWED_EXTERNAL_DOMAINS;
-      if (!domainsToCheck.has(hostname)) {
-        logger.warn(
-          `SECURITY: SSRF blocked in strict mode - domain not in allowlist: ${hostname}`
-        );
-        return { safe: false, reason: "Domain not in allowed list" };
       }
     }
 
-    return { safe: true, normalizedUrl: url.toString() };
+    if (strictMode) {
+      const domainsToCheck = allowedDomains || ALLOWED_EXTERNAL_DOMAINS
+      if (!domainsToCheck.has(hostname)) {
+        logger.warn(
+          `SECURITY: SSRF blocked in strict mode - domain not in allowlist: ${hostname}`
+        )
+        return { safe: false, reason: "Domain not in allowed list" }
+      }
+    }
+
+    return { safe: true, normalizedUrl: url.toString() }
   } catch (_error) {
-    logger.warn(`SECURITY: SSRF validation failed - invalid URL: ${urlString}`);
-    return { safe: false, reason: "Invalid URL format" };
+    logger.warn(`SECURITY: SSRF validation failed - invalid URL: ${urlString}`)
+    return { safe: false, reason: "Invalid URL format" }
   }
 }
 
@@ -297,17 +297,17 @@ export function validateUrlForSSRF(
 export async function safeFetch(
   urlString: string,
   options?: RequestInit & {
-    ssrfOptions?: Parameters<typeof validateUrlForSSRF>[1];
+    ssrfOptions?: Parameters<typeof validateUrlForSSRF>[1]
   }
 ): Promise<Response> {
-  const { ssrfOptions, ...fetchOptions } = options || {};
+  const { ssrfOptions, ...fetchOptions } = options || {}
 
-  const validation = validateUrlForSSRF(urlString, ssrfOptions);
+  const validation = validateUrlForSSRF(urlString, ssrfOptions)
   if (!validation.safe) {
-    throw new Error(`SSRF Protection: ${validation.reason}`);
+    throw new Error(`SSRF Protection: ${validation.reason}`)
   }
 
-  return fetch(validation.normalizedUrl!, fetchOptions);
+  return fetch(validation.normalizedUrl!, fetchOptions)
 }
 
 /**
@@ -329,7 +329,7 @@ export async function safeFetch(
  * isAllowedDomain('API.TELEGRAM.ORG')   // true
  */
 export function isAllowedDomain(hostname: string): boolean {
-  return ALLOWED_EXTERNAL_DOMAINS.has(hostname.toLowerCase());
+  return ALLOWED_EXTERNAL_DOMAINS.has(hostname.toLowerCase())
 }
 
 /**
@@ -356,5 +356,5 @@ export function isAllowedDomain(hostname: string): boolean {
  * isAllowedDomain('api.example.com'); // true
  */
 export function addAllowedDomain(hostname: string): void {
-  ALLOWED_EXTERNAL_DOMAINS.add(hostname.toLowerCase());
+  ALLOWED_EXTERNAL_DOMAINS.add(hostname.toLowerCase())
 }

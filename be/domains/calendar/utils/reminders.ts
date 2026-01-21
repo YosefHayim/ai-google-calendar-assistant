@@ -1,28 +1,28 @@
-import type { calendar_v3 } from "googleapis";
-import { SUPABASE } from "@/config";
+import type { calendar_v3 } from "googleapis"
+import { SUPABASE } from "@/config"
 import {
   getPreference,
   type ReminderDefaultsPreference,
   updatePreference,
-} from "@/domains/settings/services/user-preferences-service";
-import { fetchCredentialsByEmail } from "@/domains/auth/utils";
-import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
+} from "@/domains/settings/services/user-preferences-service"
+import { fetchCredentialsByEmail } from "@/domains/auth/utils"
+import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init"
 
 export type EventReminder = {
-  method: "email" | "popup";
-  minutes: number;
-};
+  method: "email" | "popup"
+  minutes: number
+}
 
 export type EventReminders = {
-  useDefault: boolean;
-  overrides: EventReminder[];
-};
+  useDefault: boolean
+  overrides: EventReminder[]
+}
 
 export type ReminderPreferences = {
-  enabled: boolean;
-  defaultReminders: EventReminder[];
-  useCalendarDefaults: boolean;
-};
+  enabled: boolean
+  defaultReminders: EventReminder[]
+  useCalendarDefaults: boolean
+}
 
 /**
  * @description Retrieves a user's reminder preferences from the database.
@@ -38,7 +38,7 @@ export type ReminderPreferences = {
 export async function getUserReminderPreferences(
   userId: string
 ): Promise<ReminderPreferences | null> {
-  return getPreference<ReminderDefaultsPreference>(userId, "reminder_defaults");
+  return getPreference<ReminderDefaultsPreference>(userId, "reminder_defaults")
 }
 
 /**
@@ -56,13 +56,13 @@ export async function getUserIdByEmail(email: string): Promise<string | null> {
   const { data, error } = await SUPABASE.from("users")
     .select("id")
     .ilike("email", email.trim().toLowerCase())
-    .single();
+    .single()
 
   if (error || !data) {
-    return null;
+    return null
   }
 
-  return data.id;
+  return data.id
 }
 
 /**
@@ -81,20 +81,20 @@ export async function getCalendarDefaultReminders(
   email: string,
   calendarId = "primary"
 ): Promise<{ defaultReminders: EventReminder[]; calendarName: string } | null> {
-  const credentials = await fetchCredentialsByEmail(email);
+  const credentials = await fetchCredentialsByEmail(email)
   if (!credentials) {
-    return null;
+    return null
   }
 
   const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
-  const response = await calendar.calendarList.get({ calendarId });
+    await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials)
+  const response = await calendar.calendarList.get({ calendarId })
 
-  const entry = response.data;
+  const entry = response.data
   return {
     defaultReminders: (entry.defaultReminders as EventReminder[]) ?? [],
     calendarName: entry.summary ?? calendarId,
-  };
+  }
 }
 
 /**
@@ -116,19 +116,19 @@ export async function updateCalendarDefaultReminders(
   calendarId: string,
   defaultReminders: EventReminder[]
 ): Promise<calendar_v3.Schema$CalendarListEntry> {
-  const credentials = await fetchCredentialsByEmail(email);
+  const credentials = await fetchCredentialsByEmail(email)
   if (!credentials) {
-    throw new Error("User credentials not found");
+    throw new Error("User credentials not found")
   }
 
   const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+    await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials)
   const response = await calendar.calendarList.patch({
     calendarId,
     requestBody: { defaultReminders },
-  });
+  })
 
-  return response.data;
+  return response.data
 }
 
 /**
@@ -152,20 +152,20 @@ export async function updateEventReminders(
   eventId: string,
   reminders: EventReminders
 ): Promise<calendar_v3.Schema$Event> {
-  const credentials = await fetchCredentialsByEmail(email);
+  const credentials = await fetchCredentialsByEmail(email)
   if (!credentials) {
-    throw new Error("User credentials not found");
+    throw new Error("User credentials not found")
   }
 
   const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+    await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials)
   const response = await calendar.events.patch({
     calendarId,
     eventId,
     requestBody: { reminders },
-  });
+  })
 
-  return response.data;
+  return response.data
 }
 
 /**
@@ -184,25 +184,25 @@ export function resolveRemindersForEvent(
   explicitReminders?: EventReminders | null
 ): EventReminders | undefined {
   if (explicitReminders) {
-    return explicitReminders;
+    return explicitReminders
   }
 
   if (!userPreferences?.enabled) {
-    return;
+    return
   }
 
   if (userPreferences.useCalendarDefaults) {
-    return { useDefault: true, overrides: [] };
+    return { useDefault: true, overrides: [] }
   }
 
   if (userPreferences.defaultReminders.length > 0) {
     return {
       useDefault: false,
       overrides: userPreferences.defaultReminders,
-    };
+    }
   }
 
-  return { useDefault: true, overrides: [] };
+  return { useDefault: true, overrides: [] }
 }
 
 /**
@@ -222,5 +222,5 @@ export async function saveUserReminderPreferences(
   userId: string,
   preferences: ReminderPreferences
 ): Promise<void> {
-  await updatePreference(userId, "reminder_defaults", preferences);
+  await updatePreference(userId, "reminder_defaults", preferences)
 }

@@ -1,46 +1,46 @@
-import type { ProjectionMode } from "@/shared/types";
+import type { ProjectionMode } from "@/shared/types"
 
-export type { ProjectionMode };
+export type { ProjectionMode }
 
 export type CalendarProjectionVoiceLite = {
-  name: string;
-  primary: boolean;
-};
+  name: string
+  primary: boolean
+}
 
 export type CalendarProjectionChatStandard = {
-  id: string;
-  name: string;
-  primary: boolean;
-  backgroundColor?: string;
-  foregroundColor?: string;
-};
+  id: string
+  name: string
+  primary: boolean
+  backgroundColor?: string
+  foregroundColor?: string
+}
 
 export type CalendarProjectionFull = {
-  id: string;
-  name: string;
-  summary?: string;
-  description?: string;
-  primary: boolean;
-  backgroundColor?: string;
-  foregroundColor?: string;
-  accessRole?: string;
-  timeZone?: string;
-  selected?: boolean;
-  hidden?: boolean;
-};
+  id: string
+  name: string
+  summary?: string
+  description?: string
+  primary: boolean
+  backgroundColor?: string
+  foregroundColor?: string
+  accessRole?: string
+  timeZone?: string
+  selected?: boolean
+  hidden?: boolean
+}
 
 type RawCalendarEntry = {
-  id?: string | null;
-  summary?: string | null;
-  description?: string | null;
-  primary?: boolean | null;
-  backgroundColor?: string | null;
-  foregroundColor?: string | null;
-  accessRole?: string | null;
-  timeZone?: string | null;
-  selected?: boolean | null;
-  hidden?: boolean | null;
-};
+  id?: string | null
+  summary?: string | null
+  description?: string | null
+  primary?: boolean | null
+  backgroundColor?: string | null
+  foregroundColor?: string | null
+  accessRole?: string | null
+  timeZone?: string | null
+  selected?: boolean | null
+  hidden?: boolean | null
+}
 
 export function projectCalendarVoiceLite(
   calendar: RawCalendarEntry
@@ -48,7 +48,7 @@ export function projectCalendarVoiceLite(
   return {
     name: calendar.summary || "Unnamed Calendar",
     primary: calendar.primary ?? false,
-  };
+  }
 }
 
 export function projectCalendarChatStandard(
@@ -60,7 +60,7 @@ export function projectCalendarChatStandard(
     primary: calendar.primary ?? false,
     backgroundColor: calendar.backgroundColor || undefined,
     foregroundColor: calendar.foregroundColor || undefined,
-  };
+  }
 }
 
 export function projectCalendarFull(
@@ -78,7 +78,7 @@ export function projectCalendarFull(
     timeZone: calendar.timeZone || undefined,
     selected: calendar.selected ?? undefined,
     hidden: calendar.hidden ?? undefined,
-  };
+  }
 }
 
 export function projectCalendar(
@@ -90,11 +90,11 @@ export function projectCalendar(
   | CalendarProjectionFull {
   switch (mode) {
     case "VOICE_LITE":
-      return projectCalendarVoiceLite(calendar);
+      return projectCalendarVoiceLite(calendar)
     case "CHAT_STANDARD":
-      return projectCalendarChatStandard(calendar);
+      return projectCalendarChatStandard(calendar)
     case "FULL":
-      return projectCalendarFull(calendar);
+      return projectCalendarFull(calendar)
   }
 }
 
@@ -108,31 +108,31 @@ export function projectCalendars<M extends ProjectionMode>(
     : CalendarProjectionFull[] {
   return calendars.map((c) => projectCalendar(c, mode)) as ReturnType<
     typeof projectCalendars<M>
-  >;
+  >
 }
 
 export function formatCalendarsForVoice(
   calendars: CalendarProjectionVoiceLite[]
 ): string {
   if (calendars.length === 0) {
-    return "You have no calendars.";
+    return "You have no calendars."
   }
 
-  const primary = calendars.find((c) => c.primary);
-  const others = calendars.filter((c) => !c.primary);
+  const primary = calendars.find((c) => c.primary)
+  const others = calendars.filter((c) => !c.primary)
 
-  let result = "";
+  let result = ""
   if (primary) {
-    result = `Your primary calendar is "${primary.name}".`;
+    result = `Your primary calendar is "${primary.name}".`
   }
 
   if (others.length > 0) {
-    const otherNames = others.slice(0, 3).map((c) => `"${c.name}"`);
+    const otherNames = others.slice(0, 3).map((c) => `"${c.name}"`)
     result +=
       others.length <= 3
         ? ` You also have: ${otherNames.join(", ")}.`
-        : ` You also have ${others.length} other calendars including ${otherNames.join(", ")}.`;
+        : ` You also have ${others.length} other calendars including ${otherNames.join(", ")}.`
   }
 
-  return result.trim();
+  return result.trim()
 }

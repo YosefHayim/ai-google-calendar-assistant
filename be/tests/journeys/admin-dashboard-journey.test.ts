@@ -55,10 +55,10 @@ describe("Admin Dashboard Journey", () => {
             oneTimeRevenue: 200000,
             refunds: 25000,
             netRevenue: 2425000,
-            arpu: 29.50, // average revenue per user
-            arpa: 273.40, // average revenue per account
-            ltv: 156.80, // customer lifetime value
-            cac: 45.20, // customer acquisition cost
+            arpu: 29.5, // average revenue per user
+            arpa: 273.4, // average revenue per account
+            ltv: 156.8, // customer lifetime value
+            cac: 45.2, // customer acquisition cost
             ltvToCacRatio: 3.47,
           },
           engagement: {
@@ -139,7 +139,7 @@ describe("Admin Dashboard Journey", () => {
 
       expect(businessKPIs.metrics.users.total).toBe(15420)
       expect(businessKPIs.metrics.subscriptions.mrr.current).toBe(125430)
-      expect(businessKPIs.metrics.revenue.arpu).toBe(29.50)
+      expect(businessKPIs.metrics.revenue.arpu).toBe(29.5)
       expect(businessKPIs.trends.userGrowth.trend).toBe("slowing")
       expect(businessKPIs.alerts).toHaveLength(2)
     })
@@ -194,16 +194,16 @@ describe("Admin Dashboard Journey", () => {
         },
         lifetimeValue: {
           byPlan: {
-            starter: 89.50,
-            pro: 234.80,
-            executive: 892.40,
+            starter: 89.5,
+            pro: 234.8,
+            executive: 892.4,
           },
           byCohort: {
-            "2024_Q1": 145.60,
-            "2024_Q2": 156.80,
-            "2024_Q3": 167.20,
-            "2024_Q4": 178.90,
-            "2025_Q1": 189.40,
+            "2024_Q1": 145.6,
+            "2024_Q2": 156.8,
+            "2024_Q3": 167.2,
+            "2024_Q4": 178.9,
+            "2025_Q1": 189.4,
           },
           retentionCohorts: [
             {
@@ -219,9 +219,11 @@ describe("Admin Dashboard Journey", () => {
       }
 
       expect(subscriptionAnalytics.currentDistribution.free.count).toBe(4520)
-      expect(subscriptionAnalytics.conversionFunnels.trialToPaid.conversionRate).toBe(0.712)
+      expect(
+        subscriptionAnalytics.conversionFunnels.trialToPaid.conversionRate
+      ).toBe(0.712)
       expect(subscriptionAnalytics.churnAnalysis.overallChurnRate).toBe(0.021)
-      expect(subscriptionAnalytics.lifetimeValue.byPlan.pro).toBe(234.80)
+      expect(subscriptionAnalytics.lifetimeValue.byPlan.pro).toBe(234.8)
     })
 
     it("should validate geographic and demographic analytics", () => {
@@ -309,8 +311,12 @@ describe("Admin Dashboard Journey", () => {
       }
 
       expect(geographicAnalytics.userDistribution.byCountry[0].users).toBe(5840)
-      expect(geographicAnalytics.demographicData.companySize[0].count).toBe(5200)
-      expect(geographicAnalytics.growthMetrics.acquisitionChannels[0].users).toBe(4520)
+      expect(geographicAnalytics.demographicData.companySize[0].count).toBe(
+        5200
+      )
+      expect(
+        geographicAnalytics.growthMetrics.acquisitionChannels[0].users
+      ).toBe(4520)
     })
   })
 
@@ -606,10 +612,10 @@ describe("Admin Dashboard Journey", () => {
           },
         },
         unitEconomics: {
-          cac: 45.20,
-          arpu: 29.50,
-          arpa: 273.40,
-          ltv: 156.80,
+          cac: 45.2,
+          arpu: 29.5,
+          arpa: 273.4,
+          ltv: 156.8,
           ltvToCacRatio: 3.47,
           paybackPeriod: 4.2, // months
           grossMargin: 0.78, // 78%
@@ -737,10 +743,16 @@ describe("Admin Dashboard Journey", () => {
         },
       }
 
-      expect(billingOperations.paymentProcessing.successRate.overall).toBe(0.987)
+      expect(billingOperations.paymentProcessing.successRate.overall).toBe(
+        0.987
+      )
       expect(billingOperations.dunningManagement.overallRecoveryRate).toBe(0.65)
-      expect(billingOperations.subscriptionLifecycle.states.active.count).toBe(8420)
-      expect(billingOperations.revenueRecovery.writeOffs.currentMonth).toBe(8500)
+      expect(billingOperations.subscriptionLifecycle.states.active.count).toBe(
+        8420
+      )
+      expect(billingOperations.revenueRecovery.writeOffs.currentMonth).toBe(
+        8500
+      )
     })
 
     it("should validate subscription plan management", () => {
@@ -788,7 +800,11 @@ describe("Admin Dashboard Journey", () => {
             name: "Executive",
             price: 99.99,
             subscribers: 440,
-            features: ["all_features", "priority_support", "custom_integrations"],
+            features: [
+              "all_features",
+              "priority_support",
+              "custom_integrations",
+            ],
             conversion: {
               churn: 0.005,
               downgrade: 0.027,
@@ -836,9 +852,24 @@ describe("Admin Dashboard Journey", () => {
             featureCompleteness: 0.92,
             userSatisfaction: 4.3,
             competitors: [
-              { name: "Competitor A", price: 25, features: 0.78, satisfaction: 3.9 },
-              { name: "Competitor B", price: 35, features: 0.85, satisfaction: 4.1 },
-              { name: "Competitor C", price: 45, features: 0.95, satisfaction: 4.4 },
+              {
+                name: "Competitor A",
+                price: 25,
+                features: 0.78,
+                satisfaction: 3.9,
+              },
+              {
+                name: "Competitor B",
+                price: 35,
+                features: 0.85,
+                satisfaction: 4.1,
+              },
+              {
+                name: "Competitor C",
+                price: 45,
+                features: 0.95,
+                satisfaction: 4.4,
+              },
             ],
           },
         },
@@ -847,7 +878,9 @@ describe("Admin Dashboard Journey", () => {
       expect(planManagement.plans).toHaveLength(4)
       expect(planManagement.plans[0].subscribers).toBe(4520)
       expect(planManagement.planOptimization.recommendations).toHaveLength(2)
-      expect(planManagement.competitiveAnalysis.marketPosition.userSatisfaction).toBe(4.3)
+      expect(
+        planManagement.competitiveAnalysis.marketPosition.userSatisfaction
+      ).toBe(4.3)
     })
   })
 
@@ -972,7 +1005,9 @@ describe("Admin Dashboard Journey", () => {
       expect(systemHealth.services[0].uptime).toBe(99.99)
       expect(systemHealth.infrastructure.servers.healthy).toBe(11)
       expect(systemHealth.alerts).toHaveLength(2)
-      expect(systemHealth.performance.userExperience.pageLoadTime.average).toBe(1.2)
+      expect(systemHealth.performance.userExperience.pageLoadTime.average).toBe(
+        1.2
+      )
     })
 
     it("should validate security monitoring and compliance", () => {
@@ -983,7 +1018,7 @@ describe("Admin Dashboard Journey", () => {
             last24Hours: 1240,
             byMethod: {
               password: 0.75,
-              google: 0.20,
+              google: 0.2,
               sso: 0.05,
             },
           },
@@ -1076,8 +1111,12 @@ describe("Admin Dashboard Journey", () => {
         },
       }
 
-      expect(securityMonitoring.authentication.successfulLogins.total).toBe(45200)
-      expect(securityMonitoring.authorization.accessPatterns.unauthorizedAccess).toBe(2)
+      expect(securityMonitoring.authentication.successfulLogins.total).toBe(
+        45200
+      )
+      expect(
+        securityMonitoring.authorization.accessPatterns.unauthorizedAccess
+      ).toBe(2)
       expect(securityMonitoring.compliance.gdpr.dataPortabilityRequests).toBe(3)
       expect(securityMonitoring.incidents.currentQuarter).toBe(2)
     })
@@ -1206,7 +1245,8 @@ describe("Admin Dashboard Journey", () => {
           {
             id: "ai_meeting_notes",
             name: "AI-Generated Meeting Notes",
-            description: "Automatically generate meeting notes and action items",
+            description:
+              "Automatically generate meeting notes and action items",
             enabled: false,
             rollout: {
               percentage: 0,
@@ -1367,7 +1407,11 @@ describe("Admin Dashboard Journey", () => {
             },
           ],
           featureRequests: [
-            { feature: "video_call_integration", votes: 1240, priority: "high" },
+            {
+              feature: "video_call_integration",
+              votes: 1240,
+              priority: "high",
+            },
             { feature: "advanced_reporting", votes: 890, priority: "medium" },
             { feature: "mobile_app", votes: 2100, priority: "high" },
           ],
@@ -1492,7 +1536,12 @@ describe("Admin Dashboard Journey", () => {
           dashboards: [
             {
               name: "Feature Performance Dashboard",
-              metrics: ["response_time", "error_rate", "throughput", "resource_usage"],
+              metrics: [
+                "response_time",
+                "error_rate",
+                "throughput",
+                "resource_usage",
+              ],
               refreshRate: 60, // seconds
               alerts: true,
             },
@@ -1501,9 +1550,13 @@ describe("Admin Dashboard Journey", () => {
       }
 
       expect(featurePerformance.performance).toHaveLength(2)
-      expect(featurePerformance.performance[0].metrics.responseTime.average).toBe(1.2)
+      expect(
+        featurePerformance.performance[0].metrics.responseTime.average
+      ).toBe(1.2)
       expect(featurePerformance.bottlenecks).toHaveLength(2)
-      expect(featurePerformance.scalability.currentLoad.concurrentUsers).toBe(8750)
+      expect(featurePerformance.scalability.currentLoad.concurrentUsers).toBe(
+        8750
+      )
       expect(featurePerformance.monitoring.alerts).toHaveLength(2)
     })
   })

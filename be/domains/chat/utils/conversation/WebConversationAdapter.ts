@@ -1,14 +1,14 @@
-import { SUPABASE } from "@/infrastructure/supabase/supabase";
-import type { userAndAiMessageProps } from "@/types";
-import { logger } from "@/lib/logger";
-import { ConversationService } from "./ConversationService";
+import { SUPABASE } from "@/infrastructure/supabase/supabase"
+import type { userAndAiMessageProps } from "@/types"
+import { logger } from "@/lib/logger"
+import { ConversationService } from "./ConversationService"
 import type {
   ConversationContext,
   ConversationListItem,
   FullConversation,
   SharedConversation,
   SummarizeFn,
-} from "./types";
+} from "./types"
 
 const WEB_CONFIG = {
   maxContextLength: 1000,
@@ -17,7 +17,7 @@ const WEB_CONFIG = {
   maxContextPromptLength: 2000,
   maxSummaryDisplayLength: 800,
   maxMessagesDisplayLength: 1000,
-};
+}
 
 /**
  * @description Adapter class for managing web-based conversation operations.
@@ -29,7 +29,7 @@ const WEB_CONFIG = {
  * const conversations = await adapter.getConversationList(userId);
  */
 export class WebConversationAdapter {
-  private readonly service: ConversationService;
+  private readonly service: ConversationService
 
   /**
    * @description Creates a new WebConversationAdapter instance with web-optimized configuration.
@@ -38,7 +38,7 @@ export class WebConversationAdapter {
    * const adapter = new WebConversationAdapter();
    */
   constructor() {
-    this.service = new ConversationService("web", WEB_CONFIG);
+    this.service = new ConversationService("web", WEB_CONFIG)
   }
 
   /**
@@ -50,7 +50,7 @@ export class WebConversationAdapter {
    * const conversation = await adapter.getTodayConversationState("user-uuid-123");
    */
   getTodayConversationState(userId: string) {
-    return this.service.getTodayConversation(userId);
+    return this.service.getTodayConversation(userId)
   }
 
   /**
@@ -69,7 +69,7 @@ export class WebConversationAdapter {
     userId: string,
     initialMessage?: userAndAiMessageProps
   ): Promise<{ id: string; context: ConversationContext } | null> {
-    return this.service.createConversation(userId, undefined, initialMessage);
+    return this.service.createConversation(userId, undefined, initialMessage)
   }
 
   /**
@@ -91,7 +91,7 @@ export class WebConversationAdapter {
       conversationId,
       context,
       messageCount
-    );
+    )
   }
 
   /**
@@ -107,7 +107,7 @@ export class WebConversationAdapter {
     conversationId: string,
     title: string
   ): Promise<boolean> {
-    return this.service.updateTitle(conversationId, title);
+    return this.service.updateTitle(conversationId, title)
   }
 
   /**
@@ -131,28 +131,28 @@ export class WebConversationAdapter {
         .select("id, pinned")
         .eq("id", conversationId)
         .eq("user_id", userId)
-        .single();
+        .single()
 
       if (error || !conversation) {
-        return { success: false };
+        return { success: false }
       }
 
       // Toggle the pinned status
-      const newPinnedStatus = !conversation.pinned;
+      const newPinnedStatus = !conversation.pinned
 
       const { error: updateError } = await SUPABASE.from("conversations")
         .update({ pinned: newPinnedStatus })
         .eq("id", conversationId)
-        .eq("user_id", userId);
+        .eq("user_id", userId)
 
       if (updateError) {
-        return { success: false };
+        return { success: false }
       }
 
-      return { success: true, pinned: newPinnedStatus };
+      return { success: true, pinned: newPinnedStatus }
     } catch (error) {
-      logger.error(`Error toggling conversation pinned status: ${error}`);
-      return { success: false };
+      logger.error(`Error toggling conversation pinned status: ${error}`)
+      return { success: false }
     }
   }
 
@@ -178,14 +178,14 @@ export class WebConversationAdapter {
    * });
    */
   storeSummary(params: {
-    conversationId: string;
-    userId: string;
-    summaryText: string;
-    messageCount: number;
-    firstSequence: number;
-    lastSequence: number;
+    conversationId: string
+    userId: string
+    summaryText: string
+    messageCount: number
+    firstSequence: number
+    lastSequence: number
   }): Promise<boolean> {
-    return this.service.storeSummary(params);
+    return this.service.storeSummary(params)
   }
 
   /**
@@ -198,7 +198,7 @@ export class WebConversationAdapter {
    * const success = await adapter.markAsSummarized("conv-123", "Discussion summary...");
    */
   markAsSummarized(conversationId: string, summary: string): Promise<boolean> {
-    return this.service.markAsSummarized(conversationId, summary);
+    return this.service.markAsSummarized(conversationId, summary)
   }
 
   /**
@@ -214,12 +214,12 @@ export class WebConversationAdapter {
   async getOrCreateTodayContext(
     userId: string
   ): Promise<{ stateId: string; context: ConversationContext }> {
-    const existingConversation = await this.getTodayConversationState(userId);
+    const existingConversation = await this.getTodayConversationState(userId)
 
     if (existingConversation) {
       const messages = await this.service.getConversationMessages(
         existingConversation.id
-      );
+      )
       const context: ConversationContext = {
         messages,
         summary: existingConversation.summary || undefined,
@@ -228,39 +228,39 @@ export class WebConversationAdapter {
           undefined,
         lastUpdated:
           existingConversation.updated_at || existingConversation.created_at,
-      };
-      return { stateId: existingConversation.id, context };
+      }
+      return { stateId: existingConversation.id, context }
     }
 
-    const newState = await this.createConversationState(userId);
+    const newState = await this.createConversationState(userId)
 
     if (!newState) {
       logger.warn(
         `Failed to create conversation state for user ${userId}, using fallback`
-      );
+      )
       return {
         stateId: "",
         context: { messages: [], lastUpdated: new Date().toISOString() },
-      };
+      }
     }
 
     return {
       stateId: newState.id,
       context: newState.context,
-    };
+    }
   }
 
   async getTodayContextWithoutCreating(userId: string): Promise<{
-    stateId: string | null;
-    context: ConversationContext;
-    isNew: boolean;
+    stateId: string | null
+    context: ConversationContext
+    isNew: boolean
   }> {
-    const existingConversation = await this.getTodayConversationState(userId);
+    const existingConversation = await this.getTodayConversationState(userId)
 
     if (existingConversation) {
       const messages = await this.service.getConversationMessages(
         existingConversation.id
-      );
+      )
       const context: ConversationContext = {
         messages,
         summary: existingConversation.summary || undefined,
@@ -269,15 +269,15 @@ export class WebConversationAdapter {
           undefined,
         lastUpdated:
           existingConversation.updated_at || existingConversation.created_at,
-      };
-      return { stateId: existingConversation.id, context, isNew: false };
+      }
+      return { stateId: existingConversation.id, context, isNew: false }
     }
 
     return {
       stateId: null,
       context: { messages: [], lastUpdated: new Date().toISOString() },
       isNew: true,
-    };
+    }
   }
 
   async createConversationWithMessages(
@@ -286,11 +286,11 @@ export class WebConversationAdapter {
     assistantMessage: userAndAiMessageProps,
     summarizeFn: SummarizeFn
   ): Promise<{ conversationId: string; context: ConversationContext } | null> {
-    const newState = await this.createConversationState(userId);
+    const newState = await this.createConversationState(userId)
 
     if (!newState) {
-      logger.warn(`Failed to create conversation for user ${userId}`);
-      return null;
+      logger.warn(`Failed to create conversation for user ${userId}`)
+      return null
     }
 
     let context = await this.service.addMessageAndMaybeSummarize({
@@ -299,7 +299,7 @@ export class WebConversationAdapter {
       context: newState.context,
       message: userMessage,
       summarizeFn,
-    });
+    })
 
     context = await this.service.addMessageAndMaybeSummarize({
       stateId: newState.id,
@@ -307,9 +307,9 @@ export class WebConversationAdapter {
       context,
       message: assistantMessage,
       summarizeFn,
-    });
+    })
 
-    return { conversationId: newState.id, context };
+    return { conversationId: newState.id, context }
   }
 
   /**
@@ -332,12 +332,12 @@ export class WebConversationAdapter {
     message: userAndAiMessageProps,
     summarizeFn: SummarizeFn
   ): Promise<ConversationContext> {
-    const { stateId, context } = await this.getOrCreateTodayContext(userId);
+    const { stateId, context } = await this.getOrCreateTodayContext(userId)
 
     if (!stateId) {
-      context.messages.push(message);
-      context.lastUpdated = new Date().toISOString();
-      return context;
+      context.messages.push(message)
+      context.lastUpdated = new Date().toISOString()
+      return context
     }
 
     return this.service.addMessageAndMaybeSummarize({
@@ -346,7 +346,7 @@ export class WebConversationAdapter {
       context,
       message,
       summarizeFn,
-    });
+    })
   }
 
   /**
@@ -375,25 +375,25 @@ export class WebConversationAdapter {
     if (!conversationId) {
       logger.warn(
         `addMessageToConversation called with empty conversationId, falling back to today's context`
-      );
-      return this.addMessageToContext(userId, message, summarizeFn);
+      )
+      return this.addMessageToContext(userId, message, summarizeFn)
     }
 
     const loaded = await this.loadConversationIntoContext(
       conversationId,
       userId
-    );
+    )
 
     if (!loaded) {
       logger.warn(
         `Failed to load conversation ${conversationId} for user ${userId}, falling back to today's context`
-      );
-      return this.addMessageToContext(userId, message, summarizeFn);
+      )
+      return this.addMessageToContext(userId, message, summarizeFn)
     }
 
     logger.info(
       `Adding ${message.role} message to conversation ${conversationId} (content length: ${message.content?.length || 0})`
-    );
+    )
 
     return this.service.addMessageAndMaybeSummarize({
       stateId: loaded.stateId,
@@ -401,7 +401,7 @@ export class WebConversationAdapter {
       context: loaded.context,
       message,
       summarizeFn,
-    });
+    })
   }
 
   /**
@@ -414,7 +414,7 @@ export class WebConversationAdapter {
    * // Use prompt in AI request for context continuity
    */
   buildContextPrompt(context: ConversationContext): string {
-    return this.service.buildContextPrompt(context);
+    return this.service.buildContextPrompt(context)
   }
 
   /**
@@ -427,8 +427,8 @@ export class WebConversationAdapter {
    * console.log(`Current context has ${context.messages.length} messages`);
    */
   async getConversationContext(userId: string): Promise<ConversationContext> {
-    const { context } = await this.getOrCreateTodayContext(userId);
-    return context;
+    const { context } = await this.getOrCreateTodayContext(userId)
+    return context
   }
 
   /**
@@ -451,13 +451,13 @@ export class WebConversationAdapter {
   getConversationList(
     userId: string,
     options?: {
-      limit?: number;
-      offset?: number;
-      search?: string;
-      includeAllSources?: boolean;
+      limit?: number
+      offset?: number
+      search?: string
+      includeAllSources?: boolean
     }
   ): Promise<ConversationListItem[]> {
-    return this.service.getConversationList(userId, options);
+    return this.service.getConversationList(userId, options)
   }
 
   /**
@@ -477,7 +477,7 @@ export class WebConversationAdapter {
     conversationId: string,
     userId: string
   ): Promise<FullConversation | null> {
-    return this.service.getConversationById(conversationId, userId);
+    return this.service.getConversationById(conversationId, userId)
   }
 
   /**
@@ -498,7 +498,7 @@ export class WebConversationAdapter {
     conversationId: string,
     userId: string
   ): Promise<{ stateId: string; context: ConversationContext } | null> {
-    return this.service.loadConversationIntoContext(conversationId, userId);
+    return this.service.loadConversationIntoContext(conversationId, userId)
   }
 
   /**
@@ -515,7 +515,7 @@ export class WebConversationAdapter {
    * }
    */
   deleteConversation(conversationId: string, userId: string): Promise<boolean> {
-    return this.service.deleteConversation(conversationId, userId);
+    return this.service.deleteConversation(conversationId, userId)
   }
 
   /**
@@ -531,7 +531,7 @@ export class WebConversationAdapter {
   deleteAllConversations(
     userId: string
   ): Promise<{ success: boolean; deletedCount: number }> {
-    return this.service.deleteAllConversations(userId);
+    return this.service.deleteAllConversations(userId)
   }
 
   /**
@@ -545,7 +545,7 @@ export class WebConversationAdapter {
    * // User can now start a new conversation
    */
   closeActiveConversation(userId: string): Promise<boolean> {
-    return this.service.closeActiveConversation(userId);
+    return this.service.closeActiveConversation(userId)
   }
 
   createShareLink(
@@ -553,22 +553,22 @@ export class WebConversationAdapter {
     userId: string,
     expiresInDays?: number
   ): Promise<{ token: string; expiresAt: string } | null> {
-    return this.service.createShareLink(conversationId, userId, expiresInDays);
+    return this.service.createShareLink(conversationId, userId, expiresInDays)
   }
 
   revokeShareLink(conversationId: string, userId: string): Promise<boolean> {
-    return this.service.revokeShareLink(conversationId, userId);
+    return this.service.revokeShareLink(conversationId, userId)
   }
 
   getShareStatus(
     conversationId: string,
     userId: string
   ): Promise<{ isShared: boolean; token?: string; expiresAt?: string } | null> {
-    return this.service.getShareStatus(conversationId, userId);
+    return this.service.getShareStatus(conversationId, userId)
   }
 
   getSharedConversation(token: string): Promise<SharedConversation | null> {
-    return this.service.getSharedConversation(token);
+    return this.service.getSharedConversation(token)
   }
 
   /**
@@ -581,7 +581,7 @@ export class WebConversationAdapter {
     conversationId: string,
     userId: string
   ): Promise<boolean> {
-    return this.service.archiveConversation(conversationId, userId);
+    return this.service.archiveConversation(conversationId, userId)
   }
 
   /**
@@ -594,7 +594,7 @@ export class WebConversationAdapter {
     conversationId: string,
     userId: string
   ): Promise<boolean> {
-    return this.service.restoreConversation(conversationId, userId);
+    return this.service.restoreConversation(conversationId, userId)
   }
 
   /**
@@ -607,12 +607,12 @@ export class WebConversationAdapter {
   ): Promise<ConversationListItem[]> {
     logger.info(
       `WebConversationAdapter.getArchivedConversations: userId=${userId}`
-    );
-    const result = await this.service.getArchivedConversations(userId);
+    )
+    const result = await this.service.getArchivedConversations(userId)
     logger.info(
       `WebConversationAdapter.getArchivedConversations: found ${result.length} archived conversations`
-    );
-    return result;
+    )
+    return result
   }
 
   /**
@@ -621,8 +621,8 @@ export class WebConversationAdapter {
    * @returns {Promise<boolean>} True if restoration succeeded, false if it failed.
    */
   restoreAllArchivedConversations(userId: string): Promise<boolean> {
-    return this.service.restoreAllArchivedConversations(userId);
+    return this.service.restoreAllArchivedConversations(userId)
   }
 }
 
-export const webConversation = new WebConversationAdapter();
+export const webConversation = new WebConversationAdapter()

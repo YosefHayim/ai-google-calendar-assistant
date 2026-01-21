@@ -1,18 +1,18 @@
-import type { calendar_v3 } from "googleapis";
-import { isRedisConnected, redisClient } from "@/config";
-import { logger } from "@/lib/logger";
+import type { calendar_v3 } from "googleapis"
+import { isRedisConnected, redisClient } from "@/config"
+import { logger } from "@/lib/logger"
 
-const CACHE_PREFIX = "events";
-const CACHE_TTL_SECONDS = 5 * 60; // 5 minutes
+const CACHE_PREFIX = "events"
+const CACHE_TTL_SECONDS = 5 * 60 // 5 minutes
 
 export type CachedEvents = {
-  events: calendar_v3.Schema$Event[];
-  calendarId: string;
-  timeMin?: string;
-  timeMax?: string;
-  cachedAt: string;
-  totalCount: number;
-};
+  events: calendar_v3.Schema$Event[]
+  calendarId: string
+  timeMin?: string
+  timeMax?: string
+  cachedAt: string
+  totalCount: number
+}
 
 function getCacheKey(
   userId: string,
@@ -20,8 +20,8 @@ function getCacheKey(
   timeMin?: string,
   timeMax?: string
 ): string {
-  const timePart = timeMin && timeMax ? `:${timeMin}:${timeMax}` : "";
-  return `${CACHE_PREFIX}:${userId}:${calendarId}${timePart}`;
+  const timePart = timeMin && timeMax ? `:${timeMin}:${timeMax}` : ""
+  return `${CACHE_PREFIX}:${userId}:${calendarId}${timePart}`
 }
 
 export async function getCachedEvents(
@@ -31,27 +31,25 @@ export async function getCachedEvents(
   timeMax?: string
 ): Promise<CachedEvents | null> {
   if (!isRedisConnected()) {
-    return null;
+    return null
   }
 
   try {
-    const key = getCacheKey(userId, calendarId, timeMin, timeMax);
-    const cached = await redisClient.get(key);
+    const key = getCacheKey(userId, calendarId, timeMin, timeMax)
+    const cached = await redisClient.get(key)
 
     if (cached) {
       logger.debug(
         `Events cache hit for user ${userId}, calendar ${calendarId}`
-      );
-      return JSON.parse(cached) as CachedEvents;
+      )
+      return JSON.parse(cached) as CachedEvents
     }
 
-    logger.debug(
-      `Events cache miss for user ${userId}, calendar ${calendarId}`
-    );
-    return null;
+    logger.debug(`Events cache miss for user ${userId}, calendar ${calendarId}`)
+    return null
   } catch (error) {
-    logger.error(`Events cache: Error reading from Redis: ${error}`);
-    return null;
+    logger.error(`Events cache: Error reading from Redis: ${error}`)
+    return null
   }
 }
 
@@ -63,11 +61,11 @@ export async function setCachedEvents(
   timeMax?: string
 ): Promise<void> {
   if (!isRedisConnected()) {
-    return;
+    return
   }
 
   try {
-    const key = getCacheKey(userId, calendarId, timeMin, timeMax);
+    const key = getCacheKey(userId, calendarId, timeMin, timeMax)
     const data: CachedEvents = {
       events,
       calendarId,
@@ -75,13 +73,13 @@ export async function setCachedEvents(
       timeMax,
       cachedAt: new Date().toISOString(),
       totalCount: events.length,
-    };
-    await redisClient.setex(key, CACHE_TTL_SECONDS, JSON.stringify(data));
+    }
+    await redisClient.setex(key, CACHE_TTL_SECONDS, JSON.stringify(data))
     logger.debug(
       `Events cached for user ${userId}, calendar ${calendarId} (${events.length} events, TTL: ${CACHE_TTL_SECONDS}s)`
-    );
+    )
   } catch (error) {
-    logger.error(`Events cache: Error writing to Redis: ${error}`);
+    logger.error(`Events cache: Error writing to Redis: ${error}`)
   }
 }
 
@@ -90,16 +88,16 @@ export async function invalidateEventsCache(
   calendarId?: string
 ): Promise<void> {
   if (!isRedisConnected()) {
-    return;
+    return
   }
 
   try {
     const pattern = calendarId
       ? `${CACHE_PREFIX}:${userId}:${calendarId}*`
-      : `${CACHE_PREFIX}:${userId}:*`;
+      : `${CACHE_PREFIX}:${userId}:*`
 
-    let cursor = "0";
-    const keysToDelete: string[] = [];
+    let cursor = "0"
+    const keysToDelete: string[] = []
 
     do {
       const [newCursor, keys] = await redisClient.scan(
@@ -108,18 +106,18 @@ export async function invalidateEventsCache(
         pattern,
         "COUNT",
         100
-      );
-      cursor = newCursor;
-      keysToDelete.push(...keys);
-    } while (cursor !== "0");
+      )
+      cursor = newCursor
+      keysToDelete.push(...keys)
+    } while (cursor !== "0")
 
     if (keysToDelete.length > 0) {
-      await redisClient.del(...keysToDelete);
+      await redisClient.del(...keysToDelete)
       logger.debug(
         `Events cache invalidated for user ${userId} (${keysToDelete.length} keys)`
-      );
+      )
     }
   } catch (error) {
-    logger.error(`Events cache: Error invalidating: ${error}`);
+    logger.error(`Events cache: Error invalidating: ${error}`)
   }
 }

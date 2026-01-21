@@ -1,17 +1,20 @@
-import type { calendar_v3 } from "googleapis";
-import isEmail from "validator/lib/isEmail";
-import { ACTION } from "@/config";
-import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/domains/auth/utils";
+import type { calendar_v3 } from "googleapis"
+import isEmail from "validator/lib/isEmail"
+import { ACTION } from "@/config"
+import {
+  fetchCredentialsByEmail,
+  generateGoogleAuthUrl,
+} from "@/domains/auth/utils"
 import {
   eventsHandler,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
-} from "@/domains/calendar/utils";
-import { getEvents } from "@/domains/calendar/utils/get-events";
-import { isValidDateTime } from "@/lib/date/date-helpers";
-import { asyncHandler } from "@/lib/http";
-import { formatEventData, parseToolArguments } from "./utils";
+} from "@/domains/calendar/utils"
+import { getEvents } from "@/domains/calendar/utils/get-events"
+import { isValidDateTime } from "@/lib/date/date-helpers"
+import { asyncHandler } from "@/lib/http"
+import { formatEventData, parseToolArguments } from "./utils"
 
-type Event = calendar_v3.Schema$Event;
+type Event = calendar_v3.Schema$Event
 
 /**
  * Apply user's default calendar timezone to timed events without timezone.
@@ -30,25 +33,25 @@ async function applyDefaultTimezoneIfNeeded(
   event: Partial<Event>,
   email: string
 ): Promise<Partial<Event>> {
-  const hasTimedStart = !!event.start?.dateTime;
-  const hasTimedEnd = !!event.end?.dateTime;
-  const hasStartTz = !!event.start?.timeZone;
-  const hasEndTz = !!event.end?.timeZone;
+  const hasTimedStart = !!event.start?.dateTime
+  const hasTimedEnd = !!event.end?.dateTime
+  const hasStartTz = !!event.start?.timeZone
+  const hasEndTz = !!event.end?.timeZone
 
   // If not a timed event or already has timezone, return as-is
   if (!(hasTimedStart || hasTimedEnd) || hasStartTz || hasEndTz) {
-    return event;
+    return event
   }
 
   // Fetch user's default calendar timezone
-  const tokenProps = await fetchCredentialsByEmail(email);
+  const tokenProps = await fetchCredentialsByEmail(email)
   const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
-  const tzResponse = await calendar.settings.get({ setting: "timezone" });
-  const defaultTimezone = tzResponse.data.value;
+    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps)
+  const tzResponse = await calendar.settings.get({ setting: "timezone" })
+  const defaultTimezone = tzResponse.data.value
 
   if (!defaultTimezone) {
-    return event;
+    return event
   }
 
   // Apply default timezone to start and end
@@ -58,7 +61,7 @@ async function applyDefaultTimezoneIfNeeded(
       ? { ...event.start, timeZone: defaultTimezone }
       : event.start,
     end: event.end ? { ...event.end, timeZone: defaultTimezone } : event.end,
-  };
+  }
 }
 
 export const EXECUTION_TOOLS = {
@@ -77,15 +80,15 @@ export const EXECUTION_TOOLS = {
    */
   registerUser: asyncHandler((params: { email: string; name?: string }) => {
     if (!params.email) {
-      throw new Error("Email is required for registration.");
+      throw new Error("Email is required for registration.")
     }
     if (!isEmail(params.email)) {
-      throw new Error("Invalid email address.");
+      throw new Error("Invalid email address.")
     }
 
     // This app uses Google OAuth for authentication - generate OAuth URL for the user
     // Force consent screen for first-time authentication
-    const authUrl = generateGoogleAuthUrl({ forceConsent: true });
+    const authUrl = generateGoogleAuthUrl({ forceConsent: true })
     return {
       status: "needs_auth",
       email: params.email,
@@ -93,7 +96,7 @@ export const EXECUTION_TOOLS = {
       authUrl,
       message:
         "Please authorize access to your Google Calendar using the provided URL.",
-    };
+    }
   }),
 
   /**
@@ -112,28 +115,28 @@ export const EXECUTION_TOOLS = {
   insertEvent: asyncHandler(
     async (
       params: calendar_v3.Schema$Event & {
-        email: string;
-        customEvents?: boolean;
-        addMeetLink?: boolean;
+        email: string
+        customEvents?: boolean
+        addMeetLink?: boolean
       }
     ) => {
-      const { email, calendarId, eventLike } = parseToolArguments(params);
+      const { email, calendarId, eventLike } = parseToolArguments(params)
       if (!(email && isEmail(email))) {
-        throw new Error("Invalid email address.");
+        throw new Error("Invalid email address.")
       }
 
       // If timed event without timezone, fetch user's default calendar timezone
       const eventWithTimezone = await applyDefaultTimezoneIfNeeded(
         eventLike as Event,
         email
-      );
-      const eventData: Event = formatEventData(eventWithTimezone);
+      )
+      const eventData: Event = formatEventData(eventWithTimezone)
       return eventsHandler(null, ACTION.INSERT, eventData, {
         email,
         calendarId: calendarId ?? "primary",
         customEvents: params.customEvents ?? false,
         addMeetLink: params.addMeetLink ?? false,
-      });
+      })
     }
   ),
 
@@ -154,24 +157,24 @@ export const EXECUTION_TOOLS = {
       params: calendar_v3.Schema$Event & { email: string; eventId: string }
     ) => {
       const { email, calendarId, eventId, eventLike } =
-        parseToolArguments(params);
+        parseToolArguments(params)
       if (!(email && isEmail(email))) {
-        throw new Error("Invalid email address.");
+        throw new Error("Invalid email address.")
       }
       if (!eventId) {
-        throw new Error("eventId is required for update.");
+        throw new Error("eventId is required for update.")
       }
 
-      const updateData: Partial<Event> = { id: eventId };
+      const updateData: Partial<Event> = { id: eventId }
 
       if (eventLike.summary && eventLike.summary.trim() !== "") {
-        updateData.summary = eventLike.summary;
+        updateData.summary = eventLike.summary
       }
       if (eventLike.description && eventLike.description.trim() !== "") {
-        updateData.description = eventLike.description;
+        updateData.description = eventLike.description
       }
       if (eventLike.location && eventLike.location.trim() !== "") {
-        updateData.location = eventLike.location;
+        updateData.location = eventLike.location
       }
 
       if (eventLike.start?.dateTime || eventLike.start?.date) {
@@ -181,13 +184,13 @@ export const EXECUTION_TOOLS = {
         ) {
           throw new Error(
             `Invalid start dateTime format: ${eventLike.start.dateTime}`
-          );
+          )
         }
         const startWithTz = await applyDefaultTimezoneIfNeeded(
           { start: eventLike.start } as Event,
           email
-        );
-        updateData.start = startWithTz.start;
+        )
+        updateData.start = startWithTz.start
       }
       if (eventLike.end?.dateTime || eventLike.end?.date) {
         if (
@@ -196,20 +199,20 @@ export const EXECUTION_TOOLS = {
         ) {
           throw new Error(
             `Invalid end dateTime format: ${eventLike.end.dateTime}`
-          );
+          )
         }
         const endWithTz = await applyDefaultTimezoneIfNeeded(
           { end: eventLike.end } as Event,
           email
-        );
-        updateData.end = endWithTz.end;
+        )
+        updateData.end = endWithTz.end
       }
 
       return eventsHandler(null, ACTION.PATCH, updateData as Event, {
         email,
         calendarId: calendarId ?? "primary",
         eventId,
-      });
+      })
     }
   ),
 
@@ -232,40 +235,40 @@ export const EXECUTION_TOOLS = {
   getEvent: asyncHandler(
     async (
       params: calendar_v3.Schema$Event & {
-        email: string;
-        q?: string | null;
-        timeMin?: string | null;
-        timeMax?: string | null;
-        searchAllCalendars?: boolean;
-        calendarId?: string | null;
+        email: string
+        q?: string | null
+        timeMin?: string | null
+        timeMax?: string | null
+        searchAllCalendars?: boolean
+        calendarId?: string | null
       }
     ) => {
       // Default timeMin to start of today in RFC3339 format (required by Google Calendar API)
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const defaultTimeMin = today.toISOString();
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const defaultTimeMin = today.toISOString()
 
       // Default timeMax to 1 day after timeMin if not provided
       // This prevents fetching too many events when user asks for "today" or "tomorrow"
       const computeDefaultTimeMax = (timeMin: string): string => {
-        const minDate = new Date(timeMin);
-        const maxDate = new Date(minDate);
-        maxDate.setDate(maxDate.getDate() + 1);
-        maxDate.setHours(23, 59, 59, 999);
-        return maxDate.toISOString();
-      };
+        const minDate = new Date(timeMin)
+        const maxDate = new Date(minDate)
+        maxDate.setDate(maxDate.getDate() + 1)
+        maxDate.setHours(23, 59, 59, 999)
+        return maxDate.toISOString()
+      }
 
-      const effectiveTimeMin = params.timeMin ?? defaultTimeMin;
+      const effectiveTimeMin = params.timeMin ?? defaultTimeMin
       const effectiveTimeMax =
-        params.timeMax ?? computeDefaultTimeMax(effectiveTimeMin);
+        params.timeMax ?? computeDefaultTimeMax(effectiveTimeMin)
 
       // Limit events to prevent context overflow
-      const MAX_EVENTS_TOTAL = 100;
-      const MAX_EVENTS_PER_CALENDAR = 50;
+      const MAX_EVENTS_TOTAL = 100
+      const MAX_EVENTS_PER_CALENDAR = 50
 
-      const { email, calendarId } = parseToolArguments(params);
+      const { email, calendarId } = parseToolArguments(params)
       if (!(email && isEmail(email))) {
-        throw new Error("Invalid email address.");
+        throw new Error("Invalid email address.")
       }
 
       // Helper to slim down event data to essential fields only
@@ -283,20 +286,20 @@ export const EXECUTION_TOOLS = {
         location: event.location,
         status: event.status,
         htmlLink: event.htmlLink,
-      });
+      })
 
       // Default to searching all calendars (true) unless explicitly set to false
-      const searchAllCalendars = params.searchAllCalendars !== false;
+      const searchAllCalendars = params.searchAllCalendars !== false
 
       if (searchAllCalendars) {
         // Search across ALL calendars
-        const tokenData = await fetchCredentialsByEmail(email);
+        const tokenData = await fetchCredentialsByEmail(email)
         const calendar =
-          await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+          await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData)
         const allCalendarIds =
           (await calendar.calendarList
             .list({ prettyPrint: true })
-            .then((r) => r.data.items?.map((cal) => cal.id))) || [];
+            .then((r) => r.data.items?.map((cal) => cal.id))) || []
 
         const allEventsResults = await Promise.all(
           allCalendarIds.map((calId) =>
@@ -314,38 +317,38 @@ export const EXECUTION_TOOLS = {
               },
             })
           )
-        );
+        )
 
         // Aggregate all events from all calendars (with limits)
-        const aggregatedEvents: ReturnType<typeof slimEvent>[] = [];
+        const aggregatedEvents: ReturnType<typeof slimEvent>[] = []
         const calendarEventMap: { calendarId: string; eventCount: number }[] =
-          [];
-        let truncated = false;
+          []
+        let truncated = false
 
         for (let i = 0; i < allEventsResults.length; i++) {
-          const result = allEventsResults[i];
-          const calId = allCalendarIds[i];
+          const result = allEventsResults[i]
+          const calId = allCalendarIds[i]
           const events =
-            result.type === "standard" ? (result.data.items ?? []) : [];
+            result.type === "standard" ? (result.data.items ?? []) : []
 
           if (events.length > 0) {
             calendarEventMap.push({
               calendarId: calId || "unknown",
               eventCount: events.length,
-            });
+            })
 
             // Only add events if we haven't hit the total limit
-            const remainingSlots = MAX_EVENTS_TOTAL - aggregatedEvents.length;
+            const remainingSlots = MAX_EVENTS_TOTAL - aggregatedEvents.length
             if (remainingSlots > 0) {
               const eventsToAdd = events
                 .slice(0, remainingSlots)
-                .map((e) => slimEvent(e, calId));
-              aggregatedEvents.push(...eventsToAdd);
+                .map((e) => slimEvent(e, calId))
+              aggregatedEvents.push(...eventsToAdd)
               if (events.length > remainingSlots) {
-                truncated = true;
+                truncated = true
               }
             } else {
-              truncated = true;
+              truncated = true
             }
           }
         }
@@ -356,7 +359,7 @@ export const EXECUTION_TOOLS = {
           truncated,
           calendarSummary: calendarEventMap,
           allEvents: aggregatedEvents,
-        };
+        }
       }
 
       // Search single calendar (original behavior)
@@ -373,7 +376,7 @@ export const EXECUTION_TOOLS = {
           singleEvents: true,
           orderBy: "startTime",
         }
-      );
+      )
     }
   ),
 
@@ -391,23 +394,23 @@ export const EXECUTION_TOOLS = {
    */
   deleteEvent: asyncHandler(
     (params: {
-      eventId: string;
-      email: string;
-      calendarId?: string | null;
+      eventId: string
+      email: string
+      calendarId?: string | null
     }) => {
-      const { email, eventId, calendarId } = parseToolArguments(params);
+      const { email, eventId, calendarId } = parseToolArguments(params)
       if (!(email && isEmail(email))) {
-        throw new Error("Invalid email address.");
+        throw new Error("Invalid email address.")
       }
       if (!eventId) {
-        throw new Error("Event ID is required to delete event.");
+        throw new Error("Event ID is required to delete event.")
       }
       return eventsHandler(
         null,
         ACTION.DELETE,
         { id: eventId },
         { email, calendarId: calendarId ?? "primary" }
-      );
+      )
     }
   ),
-};
+}

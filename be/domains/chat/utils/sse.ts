@@ -1,4 +1,4 @@
-import type { Response } from "express";
+import type { Response } from "express"
 
 export type SSEEventType =
   | "text_delta"
@@ -9,60 +9,60 @@ export type SSEEventType =
   | "memory_updated"
   | "done"
   | "error"
-  | "heartbeat";
+  | "heartbeat"
 
 export type SSEEvent<T = unknown> = {
-  type: SSEEventType;
-  data: T;
-  timestamp: string;
-};
+  type: SSEEventType
+  data: T
+  timestamp: string
+}
 
 export type TextDeltaData = {
-  delta: string;
-  fullText?: string;
-};
+  delta: string
+  fullText?: string
+}
 
 export type ToolStartData = {
-  tool: string;
-  agent: string;
-  args?: Record<string, unknown>;
-};
+  tool: string
+  agent: string
+  args?: Record<string, unknown>
+}
 
 export type ToolCompleteData = {
-  tool: string;
-  result: "success" | "error";
-  output?: string;
-};
+  tool: string
+  result: "success" | "error"
+  output?: string
+}
 
 export type AgentSwitchData = {
-  from: string;
-  to: string;
-};
+  from: string
+  to: string
+}
 
 export type DoneData = {
-  conversationId: string;
-  fullResponse: string;
+  conversationId: string
+  fullResponse: string
   usage?: {
-    totalTokens?: number;
-    inputTokens?: number;
-    outputTokens?: number;
-  };
-};
+    totalTokens?: number
+    inputTokens?: number
+    outputTokens?: number
+  }
+}
 
 export type ErrorData = {
-  message: string;
-  code: string;
-};
+  message: string
+  code: string
+}
 
 export type TitleGeneratedData = {
-  conversationId: string;
-  title: string;
-};
+  conversationId: string
+  title: string
+}
 
 export type MemoryUpdatedData = {
-  preference: string;
-  action: "added" | "replaced" | "duplicate";
-};
+  preference: string
+  action: "added" | "replaced" | "duplicate"
+}
 
 /**
  * @description Configures the HTTP response headers for Server-Sent Events (SSE) streaming.
@@ -77,11 +77,11 @@ export type MemoryUpdatedData = {
  * });
  */
 export function setupSSEHeaders(res: Response): void {
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("X-Accel-Buffering", "no");
-  res.flushHeaders();
+  res.setHeader("Content-Type", "text/event-stream")
+  res.setHeader("Cache-Control", "no-cache")
+  res.setHeader("Connection", "keep-alive")
+  res.setHeader("X-Accel-Buffering", "no")
+  res.flushHeaders()
 }
 
 /**
@@ -106,10 +106,10 @@ export function writeSSEEvent<T>(
     type: eventType,
     data,
     timestamp: new Date().toISOString(),
-  };
+  }
 
-  res.write(`event: ${eventType}\n`);
-  res.write(`data: ${JSON.stringify(event)}\n\n`);
+  res.write(`event: ${eventType}\n`)
+  res.write(`data: ${JSON.stringify(event)}\n\n`)
 }
 
 /**
@@ -129,7 +129,7 @@ export function writeTextDelta(
   delta: string,
   fullText?: string
 ): void {
-  writeSSEEvent<TextDeltaData>(res, "text_delta", { delta, fullText });
+  writeSSEEvent<TextDeltaData>(res, "text_delta", { delta, fullText })
 }
 
 /**
@@ -149,7 +149,7 @@ export function writeToolStart(
   agent: string,
   args?: Record<string, unknown>
 ): void {
-  writeSSEEvent<ToolStartData>(res, "tool_start", { tool, agent, args });
+  writeSSEEvent<ToolStartData>(res, "tool_start", { tool, agent, args })
 }
 
 /**
@@ -174,7 +174,7 @@ export function writeToolComplete(
     tool,
     result,
     output,
-  });
+  })
 }
 
 /**
@@ -192,7 +192,7 @@ export function writeAgentSwitch(
   from: string,
   to: string
 ): void {
-  writeSSEEvent<AgentSwitchData>(res, "agent_switch", { from, to });
+  writeSSEEvent<AgentSwitchData>(res, "agent_switch", { from, to })
 }
 
 /**
@@ -216,7 +216,7 @@ export function writeDone(
   fullResponse: string,
   usage?: DoneData["usage"]
 ): void {
-  writeSSEEvent<DoneData>(res, "done", { conversationId, fullResponse, usage });
+  writeSSEEvent<DoneData>(res, "done", { conversationId, fullResponse, usage })
 }
 
 /**
@@ -235,7 +235,7 @@ export function writeError(
   message: string,
   code = "STREAM_ERROR"
 ): void {
-  writeSSEEvent<ErrorData>(res, "error", { message, code });
+  writeSSEEvent<ErrorData>(res, "error", { message, code })
 }
 
 /**
@@ -256,7 +256,7 @@ export function writeTitleGenerated(
   writeSSEEvent<TitleGeneratedData>(res, "title_generated", {
     conversationId,
     title,
-  });
+  })
 }
 
 export function writeMemoryUpdated(
@@ -267,7 +267,7 @@ export function writeMemoryUpdated(
   writeSSEEvent<MemoryUpdatedData>(res, "memory_updated", {
     preference,
     action,
-  });
+  })
 }
 
 /**
@@ -280,7 +280,7 @@ export function writeMemoryUpdated(
  * writeHeartbeat(res);
  */
 export function writeHeartbeat(res: Response): void {
-  writeSSEEvent(res, "heartbeat", { ping: true });
+  writeSSEEvent(res, "heartbeat", { ping: true })
 }
 
 /**
@@ -297,11 +297,11 @@ export function writeHeartbeat(res: Response): void {
 export function startHeartbeat(res: Response, intervalMs = 15_000): () => void {
   const interval = setInterval(() => {
     if (!res.writableEnded) {
-      writeHeartbeat(res);
+      writeHeartbeat(res)
     }
-  }, intervalMs);
+  }, intervalMs)
 
-  return () => clearInterval(interval);
+  return () => clearInterval(interval)
 }
 
 /**
@@ -316,6 +316,6 @@ export function startHeartbeat(res: Response, intervalMs = 15_000): () => void {
  */
 export function endSSEStream(res: Response): void {
   if (!res.writableEnded) {
-    res.end();
+    res.end()
   }
 }

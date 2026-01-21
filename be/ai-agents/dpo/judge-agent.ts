@@ -1,6 +1,7 @@
 import { Agent, run } from "@openai/agents"
 import { z } from "zod"
 import { MODELS } from "@/config"
+import { logger } from "@/lib/logger"
 import type { OptimizerOutput } from "./optimizer-agent"
 
 export const JudgeOutputSchema = z.object({
@@ -103,17 +104,31 @@ export async function runJudge(
   const prompt = `<user_query>${userQuery}</user_query>
 <original_prompt>${originalPrompt}</original_prompt>
 <optimizer_output>
-  Refined Prompt: ${optimizerOutput.refined_prompt}
+  Refined Prompt: ${optimizerOutput.refinedPrompt}
   Reasoning: ${optimizerOutput.reasoning}
   Confidence: ${optimizerOutput.confidence}
-  Optimization Type: ${optimizerOutput.optimization_type}
-  Detected Intent: ${optimizerOutput.detected_intent_category}
+  Optimization Type: ${optimizerOutput.optimizationType}
+  Detected Intent: ${optimizerOutput.detectedIntentCategory}
 </optimizer_output>
 
 Evaluate this optimization proposal and determine if it should be used.
 Return your judgment as JSON matching the output format.`
 
-  const result = await run(JUDGE_AGENT, prompt)
+  let result
+  try {
+    result = await run(JUDGE_AGENT, prompt)
+  } catch (error) {
+    // Return safe fallback if judge agent execution fails
+    return {
+      output: {
+        approved: false,
+        reasoning: `Judge agent execution failed: ${error instanceof Error ? error.message : "Unknown error"} - defaulting to base prompt`,
+        risk_level: "low",
+        recommendation: "use_base",
+      },
+      timeMs: Date.now() - startTime,
+    }
+  }
   const timeMs = Date.now() - startTime
 
   let output: JudgeOutput
@@ -125,7 +140,19 @@ Return your judgment as JSON matching the output format.`
         : result.finalOutput
 
     output = JudgeOutputSchema.parse(parsed)
-  } catch {
+  } catch (error) {
+    logger.warn("Judge output parsing failed - falling back to safe defaults", {
+      error: error instanceof Error ? error.message : String(error),
+      rawOutput: result.finalOutput,
+      userQuery: params.userQuery,
+      originalPromptLength: params.originalPrompt.length,
+      optimizerOutput: {
+        confidence: params.optimizerOutput.confidence,
+        optimizationType: params.optimizerOutput.optimizationType,
+        detectedIntentCategory: params.optimizerOutput.detectedIntentCategory,
+      },
+    })
+
     output = {
       approved: false,
       reasoning: "Failed to parse judge output - defaulting to base prompt",

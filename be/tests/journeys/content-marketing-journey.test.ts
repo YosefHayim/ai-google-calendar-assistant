@@ -27,17 +27,29 @@ describe("Content Marketing Journey", () => {
               {
                 heading: "Introduction",
                 wordCount: 250,
-                keyPoints: ["Remote work challenges", "Importance of time management", "Overview of techniques"],
+                keyPoints: [
+                  "Remote work challenges",
+                  "Importance of time management",
+                  "Overview of techniques",
+                ],
               },
               {
                 heading: "Technique 1: Time Blocking",
                 wordCount: 350,
-                keyPoints: ["What is time blocking", "How to implement", "Benefits for remote teams"],
+                keyPoints: [
+                  "What is time blocking",
+                  "How to implement",
+                  "Benefits for remote teams",
+                ],
               },
               {
                 heading: "Technique 2: Pomodoro Technique",
                 wordCount: 300,
-                keyPoints: ["25-minute work sessions", "Break periods", "Remote work adaptations"],
+                keyPoints: [
+                  "25-minute work sessions",
+                  "Break periods",
+                  "Remote work adaptations",
+                ],
               },
             ],
             totalWordCount: 2200,
@@ -53,7 +65,8 @@ describe("Content Marketing Journey", () => {
           imageSuggestions: [
             {
               type: "hero_image",
-              description: "Remote team collaborating with time management calendar",
+              description:
+                "Remote team collaborating with time management calendar",
               aiGenerated: true,
               alt: "Remote team time management visualization",
             },
@@ -85,7 +98,9 @@ describe("Content Marketing Journey", () => {
 
       expect(blogPostCreation.request.topic).toContain("Time Management")
       expect(blogPostCreation.aiGeneration.outline.sections).toHaveLength(3)
-      expect(blogPostCreation.aiGeneration.contentGeneration.qualityScore).toBe(0.89)
+      expect(blogPostCreation.aiGeneration.contentGeneration.qualityScore).toBe(
+        0.89
+      )
       expect(blogPostCreation.humanEditing.edits).toHaveLength(2)
     })
 
@@ -93,7 +108,8 @@ describe("Content Marketing Journey", () => {
       const seoOptimization = {
         content: {
           title: "10 Essential Time Management Techniques for Remote Teams",
-          metaDescription: "Discover proven time management strategies specifically designed for remote teams. Boost productivity with time blocking, Pomodoro technique, and more.",
+          metaDescription:
+            "Discover proven time management strategies specifically designed for remote teams. Boost productivity with time blocking, Pomodoro technique, and more.",
           url: "/blog/time-management-remote-teams",
           wordCount: 2280,
         },
@@ -173,10 +189,16 @@ describe("Content Marketing Journey", () => {
         },
       }
 
-      expect(seoOptimization.seoAnalysis.keywordOptimization.primaryKeyword).toBe("time management remote teams")
-      expect(seoOptimization.seoAnalysis.readabilityMetrics.fleschScore).toBe(72)
+      expect(
+        seoOptimization.seoAnalysis.keywordOptimization.primaryKeyword
+      ).toBe("time management remote teams")
+      expect(seoOptimization.seoAnalysis.readabilityMetrics.fleschScore).toBe(
+        72
+      )
       expect(seoOptimization.optimizationSuggestions).toHaveLength(3)
-      expect(seoOptimization.performancePrediction.organicTraffic.estimated).toBe(2500)
+      expect(
+        seoOptimization.performancePrediction.organicTraffic.estimated
+      ).toBe(2500)
     })
 
     it("should validate content publishing workflow", () => {
@@ -217,7 +239,12 @@ describe("Content Marketing Journey", () => {
           url: "https://example.com/blog/time-management-remote-teams",
           canonicalUrl: "https://example.com/blog/time-management-remote-teams",
           categories: ["Productivity", "Remote Work"],
-          tags: ["time management", "remote teams", "productivity", "work from home"],
+          tags: [
+            "time management",
+            "remote teams",
+            "productivity",
+            "work from home",
+          ],
         },
         distribution: {
           newsletter: {
@@ -231,12 +258,14 @@ describe("Content Marketing Journey", () => {
             posts: [
               {
                 platform: "linkedin",
-                content: "10 essential time management techniques for remote teams. Boost your productivity with these proven strategies! #RemoteWork #Productivity",
+                content:
+                  "10 essential time management techniques for remote teams. Boost your productivity with these proven strategies! #RemoteWork #Productivity",
                 scheduled: "2026-01-20T10:00:00Z",
               },
               {
                 platform: "twitter",
-                content: "🚀 10 time management techniques every remote team needs! From time blocking to Pomodoro - boost your productivity today. Link in bio #RemoteWork #TimeManagement",
+                content:
+                  "🚀 10 time management techniques every remote team needs! From time blocking to Pomodoro - boost your productivity today. Link in bio #RemoteWork #TimeManagement",
                 scheduled: "2026-01-20T11:00:00Z",
               },
             ],
@@ -245,7 +274,12 @@ describe("Content Marketing Journey", () => {
         postPublishing: {
           monitoring: {
             enabled: true,
-            metrics: ["page_views", "time_on_page", "bounce_rate", "social_shares"],
+            metrics: [
+              "page_views",
+              "time_on_page",
+              "bounce_rate",
+              "social_shares",
+            ],
             alerts: {
               lowEngagement: true,
               highBounceRate: true,
@@ -320,9 +354,9 @@ describe("Content Marketing Journey", () => {
             jobTitles: {
               "Software Engineer": 2850,
               "Product Manager": 1420,
-              "Designer": 980,
+              Designer: 980,
               "Marketing Manager": 750,
-              "Other": 7420,
+              Other: 7420,
             },
             companySizes: {
               "1-10": 5200,
@@ -332,12 +366,12 @@ describe("Content Marketing Journey", () => {
               "1000+": 1720,
             },
             industries: {
-              "Technology": 4250,
-              "Consulting": 2180,
-              "Finance": 1890,
-              "Healthcare": 1450,
-              "Education": 1200,
-              "Other": 4450,
+              Technology: 4250,
+              Consulting: 2180,
+              Finance: 1890,
+              Healthcare: 1450,
+              Education: 1200,
+              Other: 4450,
             },
           },
           preferences: {
@@ -360,7 +394,11 @@ describe("Content Marketing Journey", () => {
 
       expect(subscriberManagement.subscribers.total).toBe(15420)
       expect(subscriberManagement.segmentation.segments).toHaveLength(3)
-      expect(subscriberManagement.subscriberData.demographics.jobTitles["Software Engineer"]).toBe(2850)
+      expect(
+        subscriberManagement.subscriberData.demographics.jobTitles[
+          "Software Engineer"
+        ]
+      ).toBe(2850)
     })
 
     it("should validate newsletter creation and campaign management", () => {
@@ -379,13 +417,15 @@ describe("Content Marketing Journey", () => {
             {
               type: "hero",
               title: "Master Remote Team Productivity",
-              subtitle: "Proven strategies to keep your distributed team focused and productive",
+              subtitle:
+                "Proven strategies to keep your distributed team focused and productive",
               image: "remote-team-productivity.jpg",
             },
             {
               type: "article_preview",
               title: "10 Essential Time Management Techniques",
-              excerpt: "From time blocking to the Pomodoro technique, discover strategies that work for remote teams.",
+              excerpt:
+                "From time blocking to the Pomodoro technique, discover strategies that work for remote teams.",
               link: "/blog/time-management-remote-teams",
               image: "time-management-preview.jpg",
             },
@@ -425,9 +465,21 @@ describe("Content Marketing Journey", () => {
           aBTesting: {
             enabled: true,
             testGroups: [
-              { name: "subject_a", subject: "10 Strategies to Boost Remote Team Productivity", percentage: 33 },
-              { name: "subject_b", subject: "Transform Your Remote Team's Performance", percentage: 33 },
-              { name: "subject_c", subject: "Remote Work Success: 10 Proven Strategies", percentage: 34 },
+              {
+                name: "subject_a",
+                subject: "10 Strategies to Boost Remote Team Productivity",
+                percentage: 33,
+              },
+              {
+                name: "subject_b",
+                subject: "Transform Your Remote Team's Performance",
+                percentage: 33,
+              },
+              {
+                name: "subject_c",
+                subject: "Remote Work Success: 10 Proven Strategies",
+                percentage: 34,
+              },
             ],
             winnerCriteria: "open_rate",
             testDuration: 4, // hours
@@ -504,9 +556,9 @@ describe("Content Marketing Journey", () => {
           geographicBreakdown: {
             "United States": 0.38,
             "United Kingdom": 0.15,
-            "Germany": 0.12,
-            "Canada": 0.08,
-            "Other": 0.27,
+            Germany: 0.12,
+            Canada: 0.08,
+            Other: 0.27,
           },
         },
         aBTestResults: {
@@ -522,7 +574,7 @@ describe("Content Marketing Journey", () => {
             {
               variant: "subject_b",
               opens: 1020,
-              openRate: 0.340,
+              openRate: 0.34,
               clicks: 255,
               clickRate: 0.085,
             },
@@ -583,14 +635,16 @@ describe("Content Marketing Journey", () => {
             tweets: [
               {
                 id: "tweet-1",
-                content: "🚀 10 essential time management techniques for remote teams! Boost productivity with proven strategies. Link in bio #RemoteWork #Productivity",
+                content:
+                  "🚀 10 essential time management techniques for remote teams! Boost productivity with proven strategies. Link in bio #RemoteWork #Productivity",
                 publishedAt: "2026-01-20T12:00:00Z",
                 impressions: 890,
                 engagements: 45,
               },
               {
                 id: "tweet-2",
-                content: "From time blocking to Pomodoro - discover techniques that actually work for distributed teams. Which one do you use? #RemoteWork #TimeManagement",
+                content:
+                  "From time blocking to Pomodoro - discover techniques that actually work for distributed teams. Which one do you use? #RemoteWork #TimeManagement",
                 publishedAt: "2026-01-20T14:00:00Z",
                 impressions: 650,
                 engagements: 32,
@@ -642,8 +696,12 @@ describe("Content Marketing Journey", () => {
 
       expect(contentSyndication.content.platforms).toHaveLength(4)
       expect(contentSyndication.syndication.medium.claps).toBe(245)
-      expect(contentSyndication.crossPlatformOptimization.canonicalTags).toBe(true)
-      expect(contentSyndication.performanceTracking.unifiedAnalytics.totalViews).toBe(15200)
+      expect(contentSyndication.crossPlatformOptimization.canonicalTags).toBe(
+        true
+      )
+      expect(
+        contentSyndication.performanceTracking.unifiedAnalytics.totalViews
+      ).toBe(15200)
     })
 
     it("should validate social media campaign management", () => {
@@ -670,8 +728,14 @@ describe("Content Marketing Journey", () => {
             "expert_quotes",
           ],
           postingSchedule: {
-            linkedin: { frequency: "3_per_day", bestTimes: ["09:00", "12:00", "17:00"] },
-            twitter: { frequency: "5_per_day", bestTimes: ["08:00", "12:00", "16:00", "20:00"] },
+            linkedin: {
+              frequency: "3_per_day",
+              bestTimes: ["09:00", "12:00", "17:00"],
+            },
+            twitter: {
+              frequency: "5_per_day",
+              bestTimes: ["08:00", "12:00", "16:00", "20:00"],
+            },
             facebook: { frequency: "2_per_day", bestTimes: ["10:00", "14:00"] },
           },
         },
@@ -688,7 +752,8 @@ describe("Content Marketing Journey", () => {
           {
             date: "2026-01-20",
             platform: "twitter",
-            content: "Quick tip: Use the Pomodoro technique (25 min work + 5 min break) to maintain focus during remote work. What's your favorite productivity hack? #RemoteWork #Pomodoro",
+            content:
+              "Quick tip: Use the Pomodoro technique (25 min work + 5 min break) to maintain focus during remote work. What's your favorite productivity hack? #RemoteWork #Pomodoro",
             type: "quick_tip",
             pillar: "time_management",
             hashtags: ["RemoteWork", "Pomodoro", "Productivity"],
@@ -761,7 +826,9 @@ describe("Content Marketing Journey", () => {
 
       expect(socialMediaCampaign.campaign.platforms).toHaveLength(3)
       expect(socialMediaCampaign.contentStrategy.pillars).toHaveLength(3)
-      expect(socialMediaCampaign.performanceTracking.kpis.engagementRate).toBe(0.071)
+      expect(socialMediaCampaign.performanceTracking.kpis.engagementRate).toBe(
+        0.071
+      )
       expect(socialMediaCampaign.optimization.aBTesting).toHaveLength(1)
     })
 
@@ -777,9 +844,11 @@ describe("Content Marketing Journey", () => {
         repurposedContent: [
           {
             type: "linkedin_article",
-            title: "10 Time Management Techniques Every Remote Team Leader Needs",
+            title:
+              "10 Time Management Techniques Every Remote Team Leader Needs",
             wordCount: 1200,
-            excerpt: "Essential strategies for managing time in remote teams...",
+            excerpt:
+              "Essential strategies for managing time in remote teams...",
             publishedAt: "2026-01-21T10:00:00Z",
             platform: "linkedin",
             performance: {
@@ -840,7 +909,13 @@ describe("Content Marketing Journey", () => {
         ],
         repurposingStrategy: {
           contentMapping: {
-            blog_post: ["linkedin_article", "twitter_thread", "podcast", "infographic", "newsletter"],
+            blog_post: [
+              "linkedin_article",
+              "twitter_thread",
+              "podcast",
+              "infographic",
+              "newsletter",
+            ],
             podcast: ["blog_post", "social_clips", "newsletter"],
             infographic: ["social_posts", "blog_post", "newsletter"],
           },
@@ -866,8 +941,12 @@ describe("Content Marketing Journey", () => {
       }
 
       expect(contentRepurposing.repurposedContent).toHaveLength(5)
-      expect(contentRepurposing.repurposingStrategy.contentMapping.blog_post).toHaveLength(5)
-      expect(contentRepurposing.performanceSummary.amplificationFactor).toBe(3.2)
+      expect(
+        contentRepurposing.repurposingStrategy.contentMapping.blog_post
+      ).toHaveLength(5)
+      expect(contentRepurposing.performanceSummary.amplificationFactor).toBe(
+        3.2
+      )
     })
   })
 
@@ -910,7 +989,7 @@ describe("Content Marketing Journey", () => {
             attribution: {
               firstTouch: 0.45,
               lastTouch: 0.35,
-              multiTouch: 0.20,
+              multiTouch: 0.2,
             },
           },
         },
@@ -930,10 +1009,10 @@ describe("Content Marketing Journey", () => {
             locations: {
               "United States": 0.38,
               "United Kingdom": 0.15,
-              "Germany": 0.12,
-              "Canada": 0.08,
-              "Australia": 0.06,
-              "Other": 0.21,
+              Germany: 0.12,
+              Canada: 0.08,
+              Australia: 0.06,
+              Other: 0.21,
             },
           },
           behavior: {
@@ -960,7 +1039,11 @@ describe("Content Marketing Journey", () => {
               difficulty: 45,
             },
             relatedKeywords: [
-              { keyword: "remote work productivity", position: 15, searchVolume: 1800 },
+              {
+                keyword: "remote work productivity",
+                position: 15,
+                searchVolume: 1800,
+              },
               { keyword: "time blocking", position: 6, searchVolume: 3600 },
             ],
           },
@@ -970,7 +1053,7 @@ describe("Content Marketing Journey", () => {
             sources: {
               google: 0.78,
               bing: 0.12,
-              other: 0.10,
+              other: 0.1,
             },
           },
           technicalSEO: {
@@ -1010,7 +1093,9 @@ describe("Content Marketing Journey", () => {
       }
 
       expect(contentAnalytics.performance.traffic.totalViews).toBe(15200)
-      expect(contentAnalytics.audience.demographics.deviceTypes.desktop).toBe(0.58)
+      expect(contentAnalytics.audience.demographics.deviceTypes.desktop).toBe(
+        0.58
+      )
       expect(contentAnalytics.seo.rankings.primaryKeyword.position).toBe(8)
       expect(contentAnalytics.contentAnalysis.quality.readability).toBe(72)
     })
@@ -1031,12 +1116,17 @@ describe("Content Marketing Journey", () => {
             category: "seo",
             priority: "high",
             opportunity: "Improve meta description",
-            current: "Meta description is 145 characters, could be more compelling",
+            current:
+              "Meta description is 145 characters, could be more compelling",
             recommendation: "Make meta description more action-oriented",
             expectedImpact: "15% increase in click-through rate",
             effort: "low",
             implementation: {
-              steps: ["Rewrite meta description", "Add power words", "Include numbers"],
+              steps: [
+                "Rewrite meta description",
+                "Add power words",
+                "Include numbers",
+              ],
               timeEstimate: 15, // minutes
             },
           },
@@ -1049,7 +1139,11 @@ describe("Content Marketing Journey", () => {
             expectedImpact: "25% increase in time on page",
             effort: "medium",
             implementation: {
-              steps: ["Identify sections needing visuals", "Create/find images", "Add alt text"],
+              steps: [
+                "Identify sections needing visuals",
+                "Create/find images",
+                "Add alt text",
+              ],
               timeEstimate: 45,
             },
           },
@@ -1058,11 +1152,16 @@ describe("Content Marketing Journey", () => {
             priority: "medium",
             opportunity: "Improve heading hierarchy",
             current: "Some H3 tags could be H2 for better structure",
-            recommendation: "Restructure headings for better SEO and readability",
+            recommendation:
+              "Restructure headings for better SEO and readability",
             expectedImpact: "10% improvement in SEO score",
             effort: "low",
             implementation: {
-              steps: ["Review heading structure", "Update H2/H3 tags", "Test readability"],
+              steps: [
+                "Review heading structure",
+                "Update H2/H3 tags",
+                "Test readability",
+              ],
               timeEstimate: 20,
             },
           },
@@ -1075,7 +1174,11 @@ describe("Content Marketing Journey", () => {
             expectedImpact: "30% increase in conversion rate",
             effort: "medium",
             implementation: {
-              steps: ["Identify natural CTA placements", "Write compelling copy", "Design CTAs"],
+              steps: [
+                "Identify natural CTA placements",
+                "Write compelling copy",
+                "Design CTAs",
+              ],
               timeEstimate: 60,
             },
           },
@@ -1133,7 +1236,9 @@ describe("Content Marketing Journey", () => {
 
       expect(contentOptimization.optimizationOpportunities).toHaveLength(4)
       expect(contentOptimization.aBTestingSuggestions).toHaveLength(2)
-      expect(contentOptimization.implementationPlan.phase1.optimizations).toHaveLength(2)
+      expect(
+        contentOptimization.implementationPlan.phase1.optimizations
+      ).toHaveLength(2)
     })
 
     it("should validate content strategy analytics", () => {
@@ -1234,8 +1339,8 @@ describe("Content Marketing Journey", () => {
         performance: {
           kpis: {
             contentMarketingQualifiedLeads: 1240,
-            customerAcquisitionCost: 45.20,
-            customerLifetimeValue: 156.80,
+            customerAcquisitionCost: 45.2,
+            customerLifetimeValue: 156.8,
             contentMarketingROI: 3.47,
           },
           trends: {
@@ -1267,7 +1372,8 @@ describe("Content Marketing Journey", () => {
             category: "audience_engagement",
             priority: "high",
             recommendation: "Implement email nurturing sequences",
-            reasoning: "Low return visitor rate indicates need for better follow-up",
+            reasoning:
+              "Low return visitor rate indicates need for better follow-up",
             expectedImpact: "40% increase in return visitor rate",
           },
           {
@@ -1283,7 +1389,9 @@ describe("Content Marketing Journey", () => {
       expect(contentStrategyAnalytics.overview.totalContent).toBe(45)
       expect(contentStrategyAnalytics.contentTypes).toHaveLength(3)
       expect(contentStrategyAnalytics.topics).toHaveLength(3)
-      expect(contentStrategyAnalytics.performance.kpis.contentMarketingROI).toBe(3.47)
+      expect(
+        contentStrategyAnalytics.performance.kpis.contentMarketingROI
+      ).toBe(3.47)
       expect(contentStrategyAnalytics.recommendations).toHaveLength(3)
     })
   })

@@ -49,7 +49,7 @@ async function logOptimizationDecision(
   judgeTimeMs: number
 ): Promise<string | undefined> {
   const intentCategory: UserIntentCategory =
-    result.optimizerOutput?.detected_intent_category || "other"
+    result.optimizerOutput?.detectedIntentCategory || "other"
 
   const input: CreateOptimizationHistoryInput = {
     userId: config.userId,
@@ -57,7 +57,7 @@ async function logOptimizationDecision(
     userQuery: config.userQuery,
     originalPrompt: config.basePrompt,
     optimizedPrompt: result.wasOptimized
-      ? result.optimizerOutput?.refined_prompt
+      ? result.optimizerOutput?.refinedPrompt
       : null,
     optimizationReason: result.optimizerOutput?.reasoning || null,
     judgeReasoning: result.judgeOutput?.reasoning || null,
@@ -69,12 +69,26 @@ async function logOptimizationDecision(
     totalTimeMs: result.totalTimeMs,
     metadata: {
       optimizerConfidence: result.optimizerOutput?.confidence,
-      optimizationType: result.optimizerOutput?.optimization_type,
+      optimizationType: result.optimizerOutput?.optimizationType,
       judgeRiskLevel: result.judgeOutput?.risk_level,
     },
   }
 
-  const record = await createOptimizationHistory(input)
+  let record
+  try {
+    record = await createOptimizationHistory(input)
+  } catch (error) {
+    logger.error(
+      `${DPO_LOG_PREFIX} Failed to log optimization decision to database`,
+      {
+        userId: config.userId,
+        agentId: config.agentId,
+        error: error instanceof Error ? error.message : String(error),
+        outcome: result.outcome,
+      }
+    )
+    return undefined
+  }
 
   logger.info(`${DPO_LOG_PREFIX} Decision logged`, {
     recordId: record?.id,
@@ -156,11 +170,14 @@ export async function runDPO(config: DPOConfig): Promise<DPOResult> {
     optimizerOutput = optimizerResult.output
     optimizerTimeMs = optimizerResult.timeMs
   } catch (error) {
-    logger.error(`${DPO_LOG_PREFIX} Optimizer error, falling back to base prompt`, {
-      userId: config.userId,
-      agentId: config.agentId,
-      error: error instanceof Error ? error.message : String(error),
-    })
+    logger.error(
+      `${DPO_LOG_PREFIX} Optimizer error, falling back to base prompt`,
+      {
+        userId: config.userId,
+        agentId: config.agentId,
+        error: error instanceof Error ? error.message : String(error),
+      }
+    )
     const totalTimeMs = Date.now() - startTime
     const result: DPOResult = {
       effectivePrompt: config.userQuery,
@@ -173,7 +190,7 @@ export async function runDPO(config: DPOConfig): Promise<DPOResult> {
     return result
   }
 
-  if (optimizerOutput.optimization_type === "none") {
+  if (optimizerOutput.optimizationType === "none") {
     const totalTimeMs = Date.now() - startTime
     const result: DPOResult = {
       effectivePrompt: config.userQuery,
@@ -240,7 +257,7 @@ export async function runDPO(config: DPOConfig): Promise<DPOResult> {
 
   if (judgeOutput.recommendation === "use_optimized" && judgeOutput.approved) {
     const result: DPOResult = {
-      effectivePrompt: optimizerOutput.refined_prompt,
+      effectivePrompt: optimizerOutput.refinedPrompt,
       outcome: "OPTIMIZED",
       wasOptimized: true,
       wasRejected: false,

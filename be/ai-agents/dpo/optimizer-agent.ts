@@ -1,18 +1,20 @@
 import { Agent, run } from "@openai/agents"
-import { z } from "zod"
+
 import { MODELS } from "@/config"
+import { logger } from "@/lib/logger"
+import { z } from "zod"
 
 export const OptimizerOutputSchema = z.object({
-  refined_prompt: z.string(),
+  refinedPrompt: z.string(),
   reasoning: z.string(),
   confidence: z.number().min(0).max(1),
-  optimization_type: z.enum([
+  optimizationType: z.enum([
     "intent_clarification",
     "safety_enhancement",
     "context_injection",
     "none",
   ]),
-  detected_intent_category: z.enum([
+  detectedIntentCategory: z.enum([
     "scheduling",
     "deletion",
     "update",
@@ -56,15 +58,15 @@ DO NOT OPTIMIZE for:
 
 <output_format>
 Return a JSON object with:
-- refined_prompt: The enhanced prompt (or original if no optimization needed)
+- refinedPrompt: The enhanced prompt (or original if no optimization needed)
 - reasoning: WHY the base prompt was insufficient (or why it's sufficient)
 - confidence: 0.0-1.0 how confident you are in the optimization
-- optimization_type: What kind of enhancement was made
-- detected_intent_category: What the user is trying to do
+- optimizationType: What kind of enhancement was made
+- detectedIntentCategory: What the user is trying to do
 </output_format>
 
 <critical_rules>
-- If optimization_type is "none", refined_prompt MUST equal the original
+- If optimizationType is "none", refinedPrompt MUST equal the original
 - Reasoning MUST explain the decision, not just describe it
 - Never fabricate user intent - only clarify what's present
 - High confidence (>0.8) requires clear evidence of ambiguity/risk
@@ -106,7 +108,17 @@ ${userContext ? `<user_context>${userContext}</user_context>` : ""}
 Analyze this request and determine if the base prompt needs optimization.
 Return your analysis as JSON matching the output format.`
 
-  const result = await run(OPTIMIZER_AGENT, prompt)
+  let result
+  try {
+    result = await run(OPTIMIZER_AGENT, prompt)
+  } catch (error) {
+    logger.error(`[OptimizerAgent] Optimizer agent execution failed`, {
+      error: error instanceof Error ? error.message : String(error),
+    })
+    throw new Error(
+      `Optimizer agent execution failed: ${error instanceof Error ? error.message : "Unknown error"}`
+    )
+  }
   const timeMs = Date.now() - startTime
 
   let output: OptimizerOutput
@@ -118,13 +130,18 @@ Return your analysis as JSON matching the output format.`
         : result.finalOutput
 
     output = OptimizerOutputSchema.parse(parsed)
-  } catch {
+  } catch (error) {
+    logger.error(`[OptimizerAgent] Failed to parse optimizer output`, {
+      error: error instanceof Error ? error.message : String(error),
+      rawOutput: result.finalOutput,
+      userQuery,
+    })
     output = {
-      refined_prompt: userQuery,
+      refinedPrompt: userQuery,
       reasoning: "Failed to parse optimizer output - using original prompt",
       confidence: 0,
-      optimization_type: "none",
-      detected_intent_category: "other",
+      optimizationType: "none",
+      detectedIntentCategory: "other",
     }
   }
 

@@ -153,9 +153,7 @@ describe("End-to-End User Journey Integration", () => {
 
     mockCalendarAPI.calendarList.list.mockResolvedValue({
       data: {
-        items: [
-          { id: "primary", summary: "Primary Calendar", primary: true },
-        ],
+        items: [{ id: "primary", summary: "Primary Calendar", primary: true }],
       },
     })
 
@@ -273,9 +271,16 @@ describe("End-to-End User Journey Integration", () => {
         calendarId: "primary",
         requestBody: {
           summary: "Welcome to AI Calendar Assistant!",
-          description: "Your AI assistant is ready to help manage your schedule.",
-          start: { dateTime: "2026-01-22T10:00:00Z", timeZone: "America/New_York" },
-          end: { dateTime: "2026-01-22T10:30:00Z", timeZone: "America/New_York" },
+          description:
+            "Your AI assistant is ready to help manage your schedule.",
+          start: {
+            dateTime: "2026-01-22T10:00:00Z",
+            timeZone: "America/New_York",
+          },
+          end: {
+            dateTime: "2026-01-22T10:30:00Z",
+            timeZone: "America/New_York",
+          },
         },
       })
 
@@ -396,8 +401,14 @@ describe("End-to-End User Journey Integration", () => {
       // Event creation
       const eventData = {
         summary: "Team Meeting",
-        start: { dateTime: "2026-01-21T14:00:00-05:00", timeZone: "America/New_York" },
-        end: { dateTime: "2026-01-21T15:00:00-05:00", timeZone: "America/New_York" },
+        start: {
+          dateTime: "2026-01-21T14:00:00-05:00",
+          timeZone: "America/New_York",
+        },
+        end: {
+          dateTime: "2026-01-21T15:00:00-05:00",
+          timeZone: "America/New_York",
+        },
         attendees: [], // AI would ask for attendees
         reminders: [{ method: "popup", minutes: 15 }],
       }
@@ -459,8 +470,14 @@ describe("End-to-End User Journey Integration", () => {
         calendarId: "primary",
         eventId: "event-123",
         requestBody: {
-          start: { dateTime: "2026-01-21T15:00:00-05:00", timeZone: "America/New_York" },
-          end: { dateTime: "2026-01-21T16:00:00-05:00", timeZone: "America/New_York" },
+          start: {
+            dateTime: "2026-01-21T15:00:00-05:00",
+            timeZone: "America/New_York",
+          },
+          end: {
+            dateTime: "2026-01-21T16:00:00-05:00",
+            timeZone: "America/New_York",
+          },
         },
       })
 
@@ -531,9 +548,12 @@ describe("End-to-End User Journey Integration", () => {
 
     it("should handle subscription management", async () => {
       // Cancel subscription
-      const cancellation = await mockLemonSqueezy.updateSubscription("sub-123", {
-        cancelled: true,
-      })
+      const cancellation = await mockLemonSqueezy.updateSubscription(
+        "sub-123",
+        {
+          cancelled: true,
+        }
+      )
 
       expect(cancellation).toBeDefined()
 
@@ -647,8 +667,14 @@ describe("End-to-End User Journey Integration", () => {
 
       const recurringEvent = {
         summary: "Weekly Team Standup",
-        start: { dateTime: "2026-01-27T09:00:00-05:00", timeZone: "America/New_York" },
-        end: { dateTime: "2026-01-27T09:30:00-05:00", timeZone: "America/New_York" },
+        start: {
+          dateTime: "2026-01-27T09:00:00-05:00",
+          timeZone: "America/New_York",
+        },
+        end: {
+          dateTime: "2026-01-27T09:30:00-05:00",
+          timeZone: "America/New_York",
+        },
         recurrence: ["RRULE:FREQ=WEEKLY;BYDAY=MO"],
       }
 
@@ -724,10 +750,18 @@ describe("End-to-End User Journey Integration", () => {
 
       // Generate export
       const exportData = {
-        profile: { /* user profile */ },
-        conversations: [/* conversation history */],
-        calendar_events: [/* calendar data */],
-        analytics: { /* usage analytics */ },
+        profile: {
+          /* user profile */
+        },
+        conversations: [
+          /* conversation history */
+        ],
+        calendar_events: [
+          /* calendar data */
+        ],
+        analytics: {
+          /* usage analytics */
+        },
       }
 
       expect(exportRequest.dataTypes).toHaveLength(4)
@@ -744,7 +778,9 @@ describe("End-to-End User Journey Integration", () => {
       // Schedule deletion (GDPR compliance - 30 days)
       const scheduledDeletion = {
         ...deletionRequest,
-        executeAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        executeAt: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         status: "scheduled",
       }
 

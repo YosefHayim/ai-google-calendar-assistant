@@ -1,7 +1,7 @@
 import type { DailyBriefingFormData, VoicePreferenceFormData } from '@/lib/validations/preferences'
 
 import type { PersonaPreference } from '@/lib/validations/preferences'
-import { preferencesService } from '@/services/preferences.service'
+import { preferencesService } from '@/services/preferences-service'
 
 // Persona to feature configuration mapping
 export interface FeatureConfiguration {

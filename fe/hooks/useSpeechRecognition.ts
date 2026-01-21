@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { transcribeAudio } from '@/services/voice.service'
+import { transcribeAudio } from '@/services/voice-service'
 
 interface UseSpeechRecognitionReturn {
   isRecording: boolean

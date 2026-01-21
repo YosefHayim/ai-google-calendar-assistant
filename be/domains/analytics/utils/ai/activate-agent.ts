@@ -1,26 +1,26 @@
-import { type Agent, run, type Session } from "@openai/agents";
-import { AGENTS } from "@/ai-agents/agents";
+import { type Agent, run, type Session } from "@openai/agents"
+import { AGENTS } from "@/ai-agents/agents"
 import {
   type CreateSessionOptions,
   createAgentSession,
-} from "@/ai-agents/sessions/session-factory";
-import type { AgentContext } from "@/ai-agents/tool-registry";
-import type { AGENTS_LIST } from "@/types";
-import { asyncHandler } from "@/lib/http/async-handlers";
-import { logger } from "@/lib/logger";
+} from "@/ai-agents/sessions/session-factory"
+import type { AgentContext } from "@/ai-agents/tool-registry"
+import type { AGENTS_LIST } from "@/types"
+import { asyncHandler } from "@/lib/http/async-handlers"
+import { logger } from "@/lib/logger"
 
 export type ActivateAgentOptions = {
   /** Session for persistent memory - can be a Session instance or config to create one */
-  session?: Session | CreateSessionOptions;
+  session?: Session | CreateSessionOptions
   /** User email for tool authentication - REQUIRED for calendar operations */
-  email?: string;
+  email?: string
   /** Additional context to pass to the agent (merged with email) */
-  context?: Record<string, unknown>;
-};
+  context?: Record<string, unknown>
+}
 
 // Type for any agent (with or without specific context type)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyAgent = Agent<any, any>;
+type AnyAgent = Agent<any, any>
 
 /**
  * @description Activates and runs an AI agent with the specified prompt and configuration options.
@@ -65,48 +65,48 @@ export const activateAgent = asyncHandler(
     prompt: string,
     options?: ActivateAgentOptions
   ) => {
-    let agent: AnyAgent;
+    let agent: AnyAgent
 
     if (typeof agentKey === "string") {
-      agent = AGENTS[agentKey];
+      agent = AGENTS[agentKey]
     } else {
-      agent = agentKey;
+      agent = agentKey
     }
 
     if (!agent) {
-      logger.error("AI: activateAgent called: agent not found");
-      throw new Error("The provided agent is not valid.");
+      logger.error("AI: activateAgent called: agent not found")
+      throw new Error("The provided agent is not valid.")
     }
 
     if (!prompt) {
-      logger.error("AI: activateAgent called: prompt not found");
-      throw new Error(`Please provide the prompt for the agent: ${agent.name}`);
+      logger.error("AI: activateAgent called: prompt not found")
+      throw new Error(`Please provide the prompt for the agent: ${agent.name}`)
     }
 
     // Build run options with context containing email
-    const runOptions: { session?: Session; context?: AgentContext } = {};
+    const runOptions: { session?: Session; context?: AgentContext } = {}
 
     // Build context - email is REQUIRED for calendar tools
     const context: AgentContext = {
       email: options?.email || "",
       ...(options?.context as Partial<AgentContext>),
-    };
-    runOptions.context = context;
+    }
+    runOptions.context = context
 
     if (options?.session) {
       // If session config object is passed, create the session
       if ("userId" in options.session && "agentName" in options.session) {
         runOptions.session = createAgentSession(
           options.session as CreateSessionOptions
-        );
+        )
       } else {
         // It's already a Session instance
-        runOptions.session = options.session as Session;
+        runOptions.session = options.session as Session
       }
     }
-    return await run(agent, prompt, runOptions);
+    return await run(agent, prompt, runOptions)
   }
-);
+)
 
 /**
  * @description Runs a worker agent with its own persistent session for maintaining context
@@ -143,11 +143,11 @@ export async function runWorkerWithSession(
   prompt: string,
   sessionConfig: CreateSessionOptions
 ): Promise<string> {
-  const session = createAgentSession(sessionConfig);
+  const session = createAgentSession(sessionConfig)
 
-  const result = await run(agent, prompt, { session });
+  const result = await run(agent, prompt, { session })
 
-  const _itemCount = (await session.getItems()).length;
+  const _itemCount = (await session.getItems()).length
 
-  return result.finalOutput ?? "";
+  return result.finalOutput ?? ""
 }

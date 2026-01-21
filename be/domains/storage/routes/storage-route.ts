@@ -1,12 +1,12 @@
-import { reqResAsyncHandler, sendR } from "@/lib/http";
+import { reqResAsyncHandler, sendR } from "@/lib/http"
 
-import { StorageService } from "@/domains/storage/services/storage-service";
-import express from "express";
-import { logger } from "@/lib/logger";
-import multer from "multer";
-import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
+import { StorageService } from "@/domains/storage/services/storage-service"
+import express from "express"
+import { logger } from "@/lib/logger"
+import multer from "multer"
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
 
-const router = express.Router();
+const router = express.Router()
 
 // Configure multer for memory storage (files kept in memory)
 const upload = multer({
@@ -15,7 +15,7 @@ const upload = multer({
     fileSize: 50 * 1024 * 1024, // 50MB max
     files: 1, // Only one file at a time
   },
-});
+})
 
 /**
  * POST /api/storage/avatar
@@ -26,14 +26,14 @@ router.post(
   supabaseAuth(),
   upload.single("avatar"),
   reqResAsyncHandler(async (req, res) => {
-    const userId = req.user!.id;
+    const userId = req.user!.id
     if (!userId) {
-      return sendR(res, 401, "Authentication required");
+      return sendR(res, 401, "Authentication required")
     }
 
-    const file = req.file;
+    const file = req.file
     if (!file) {
-      return sendR(res, 400, "No file uploaded");
+      return sendR(res, 400, "No file uploaded")
     }
 
     // Upload avatar using the storage service
@@ -42,23 +42,23 @@ router.post(
       file.buffer,
       file.originalname,
       file.mimetype
-    );
+    )
 
     if (!result.success) {
-      return sendR(res, 400, result.error || "Unknown error");
+      return sendR(res, 400, result.error || "Unknown error")
     }
 
     // TODO: Update user profile in database with new avatar URL
     // This would require a database update to set avatar_url for the user
 
-    logger.info(`Avatar uploaded for user ${userId}: ${result.path}`);
+    logger.info(`Avatar uploaded for user ${userId}: ${result.path}`)
 
     sendR(res, 200, "Avatar uploaded successfully", {
       url: result.url,
       path: result.path,
-    });
+    })
   })
-);
+)
 
 /**
  * POST /api/storage/attachment
@@ -69,14 +69,14 @@ router.post(
   supabaseAuth(),
   upload.single("attachment"),
   reqResAsyncHandler(async (req, res) => {
-    const userId = req.user!.id;
+    const userId = req.user!.id
     if (!userId) {
-      return sendR(res, 401, "Authentication required");
+      return sendR(res, 401, "Authentication required")
     }
 
-    const file = req.file;
+    const file = req.file
     if (!file) {
-      return sendR(res, 400, "No file uploaded");
+      return sendR(res, 400, "No file uploaded")
     }
 
     // Upload attachment using the storage service
@@ -85,20 +85,20 @@ router.post(
       file.buffer,
       file.originalname,
       file.mimetype
-    );
+    )
 
     if (!result.success) {
-      return sendR(res, 400, result.error || "Unknown error");
+      return sendR(res, 400, result.error || "Unknown error")
     }
 
-    logger.info(`Attachment uploaded for user ${userId}: ${result.path}`);
+    logger.info(`Attachment uploaded for user ${userId}: ${result.path}`)
 
     sendR(res, 200, "Attachment uploaded successfully", {
       url: result.url,
       path: result.path,
-    });
+    })
   })
-);
+)
 
 /**
  * GET /api/storage/file/:bucket/:path*
@@ -108,24 +108,24 @@ router.get(
   /\/file\/([^\/]+)\/(.*)/,
   supabaseAuth(),
   reqResAsyncHandler(async (req, res) => {
-    const bucket = req.params[0] as string;
-    const path = req.params[1] as string;
-    const userId = req.user!.id;
+    const bucket = req.params[0] as string
+    const path = req.params[1] as string
+    const userId = req.user!.id
 
     if (!userId) {
-      return sendR(res, 401, "Authentication required");
+      return sendR(res, 401, "Authentication required")
     }
 
     // For avatars, allow public access
     if (bucket === StorageService.BUCKET_NAMES.AVATARS) {
-      const publicUrl = StorageService.getPublicUrl(bucket, path);
-      return sendR(res, 200, "File URL retrieved", { url: publicUrl });
+      const publicUrl = StorageService.getPublicUrl(bucket, path)
+      return sendR(res, 200, "File URL retrieved", { url: publicUrl })
     }
 
     // For attachments, check if user owns the file (path should start with userId/)
     if (bucket === StorageService.BUCKET_NAMES.ATTACHMENTS) {
       if (!path.startsWith(`${userId}/`)) {
-        return sendR(res, 403, "Access denied to this file");
+        return sendR(res, 403, "Access denied to this file")
       }
 
       // For private files, we could return a signed URL or stream the file
@@ -133,24 +133,24 @@ router.get(
         bucket,
         path as string,
         3600
-      ); // 1 hour expiry
+      ) // 1 hour expiry
 
       if (!signedUrlResult.success) {
         return sendR(
           res,
           500,
           signedUrlResult.error || "Failed to generate signed URL"
-        );
+        )
       }
 
       return sendR(res, 200, "File URL retrieved", {
         url: signedUrlResult.url,
-      });
+      })
     }
 
-    return sendR(res, 400, "Invalid bucket");
+    return sendR(res, 400, "Invalid bucket")
   })
-);
+)
 
 /**
  * DELETE /api/storage/file/:bucket/:path*
@@ -160,30 +160,30 @@ router.delete(
   /\/file\/([^\/]+)\/(.*)/,
   supabaseAuth(),
   reqResAsyncHandler(async (req, res) => {
-    const bucket = req.params[0] as string;
-    const path = req.params[1] as string;
-    const userId = req.user!.id;
+    const bucket = req.params[0] as string
+    const path = req.params[1] as string
+    const userId = req.user!.id
 
     if (!userId) {
-      return sendR(res, 401, "Authentication required");
+      return sendR(res, 401, "Authentication required")
     }
 
     // Check ownership - files should be in user-specific directories
     if (!path.startsWith(`${userId}/`)) {
-      return sendR(res, 403, "Access denied to this file");
+      return sendR(res, 403, "Access denied to this file")
     }
 
-    const result = await StorageService.deleteFile(bucket, path as string);
+    const result = await StorageService.deleteFile(bucket, path as string)
 
     if (!result.success) {
-      return sendR(res, 400, result.error || "Unknown error");
+      return sendR(res, 400, result.error || "Unknown error")
     }
 
-    logger.info(`File deleted by user ${userId}: ${bucket}/${path}`);
+    logger.info(`File deleted by user ${userId}: ${bucket}/${path}`)
 
-    sendR(res, 200, "File deleted successfully");
+    sendR(res, 200, "File deleted successfully")
   })
-);
+)
 
 /**
  * GET /api/storage/files/:bucket
@@ -193,31 +193,31 @@ router.get(
   "/files/:bucket",
   supabaseAuth(),
   reqResAsyncHandler(async (req, res) => {
-    const bucket = req.params.bucket as string;
-    const userId = req.user!.id;
+    const bucket = req.params.bucket as string
+    const userId = req.user!.id
     const { limit = "20", offset = "0" } = req.query as {
-      limit?: string;
-      offset?: string;
-    };
+      limit?: string
+      offset?: string
+    }
 
     if (!userId) {
-      return sendR(res, 401, "Authentication required");
+      return sendR(res, 401, "Authentication required")
     }
 
     const result = await StorageService.listFiles(bucket, {
       limit: Number.parseInt(limit as string, 10),
       offset: Number.parseInt(offset as string, 10),
       prefix: `${userId}/`, // Only show user's files
-    });
+    })
 
     if (!result.success) {
-      return sendR(res, 500, result.error || "Unknown error");
+      return sendR(res, 500, result.error || "Unknown error")
     }
 
     sendR(res, 200, "Files retrieved successfully", {
       files: result.files,
-    });
+    })
   })
-);
+)
 
-export default router;
+export default router

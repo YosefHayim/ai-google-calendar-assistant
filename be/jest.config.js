@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 /** @type {import('jest').Config} */
 module.exports = {
   preset: "ts-jest",
@@ -41,4 +41,4 @@ module.exports = {
   clearMocks: true,
   resetMocks: true,
   verbose: true,
-};
+}

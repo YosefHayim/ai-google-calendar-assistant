@@ -12,35 +12,35 @@ import {
   Row,
   Section,
   Text,
-} from "@react-email/components";
-import type * as React from "react";
+} from "@react-email/components"
+import type * as React from "react"
 
 // ============================================
 // Types
 // ============================================
 
 export type CalendarEvent = {
-  id: string;
-  summary: string;
-  start: string; // Formatted time string e.g., "9:00 AM"
-  end?: string;
-  duration?: string; // e.g., "1 hour", "30 min"
-  location?: string;
-  meetLink?: string;
-  color?: string;
-};
+  id: string
+  summary: string
+  start: string // Formatted time string e.g., "9:00 AM"
+  end?: string
+  duration?: string // e.g., "1 hour", "30 min"
+  location?: string
+  meetLink?: string
+  color?: string
+}
 
 export type DailyDigestProps = {
-  userName: string;
-  dateFormatted: string; // e.g., "Wednesday, January 15"
-  events: CalendarEvent[];
-  aiSummary?: string;
-  totalMeetingTime?: string; // e.g., "4h 30m"
-  dashboardUrl?: string;
-  settingsUrl?: string;
-  unsubscribeUrl?: string;
-  logoUrl?: string;
-};
+  userName: string
+  dateFormatted: string // e.g., "Wednesday, January 15"
+  events: CalendarEvent[]
+  aiSummary?: string
+  totalMeetingTime?: string // e.g., "4h 30m"
+  dashboardUrl?: string
+  settingsUrl?: string
+  unsubscribeUrl?: string
+  logoUrl?: string
+}
 
 // ============================================
 // Brand Colors & Styles
@@ -63,12 +63,12 @@ const colors = {
   accentBlueText: "#1967d2",
   accentCoral: "#fce8e6",
   accentCoralText: "#c5221f",
-};
+}
 
 const fonts = {
   primary:
     "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-};
+}
 
 // ============================================
 // Main Component
@@ -85,11 +85,11 @@ export const DailyDigest = ({
   unsubscribeUrl,
   logoUrl = "https://askally.io/logo.svg",
 }: DailyDigestProps) => {
-  const eventCount = events.length;
-  const hasEvents = eventCount > 0;
+  const eventCount = events.length
+  const hasEvents = eventCount > 0
   const previewText = hasEvents
     ? `${eventCount} event${eventCount !== 1 ? "s" : ""} scheduled for ${dateFormatted}`
-    : `No events scheduled for ${dateFormatted}`;
+    : `No events scheduled for ${dateFormatted}`
 
   return (
     <Html>
@@ -263,60 +263,60 @@ export const DailyDigest = ({
         </Container>
       </Body>
     </Html>
-  );
-};
+  )
+}
 
 // ============================================
 // Helper Functions
 // ============================================
 
 function getGreeting(): string {
-  const hour = new Date().getHours();
+  const hour = new Date().getHours()
   if (hour < 12) {
-    return "Good morning";
+    return "Good morning"
   }
   if (hour < 17) {
-    return "Good afternoon";
+    return "Good afternoon"
   }
-  return "Good evening";
+  return "Good evening"
 }
 
 function calculateTotalTime(events: CalendarEvent[]): string {
-  let totalMinutes = 0;
+  let totalMinutes = 0
 
   for (const event of events) {
     if (!event.duration) {
-      continue;
+      continue
     }
-    const match = event.duration.match(/(\d+)\s*hour|(\d+)\s*min/gi);
+    const match = event.duration.match(/(\d+)\s*hour|(\d+)\s*min/gi)
     if (!match) {
-      continue;
+      continue
     }
 
     for (const m of match) {
-      const num = Number.parseInt(m, 10);
+      const num = Number.parseInt(m, 10)
       if (m.toLowerCase().includes("hour")) {
-        totalMinutes += num * 60;
+        totalMinutes += num * 60
       } else {
-        totalMinutes += num;
+        totalMinutes += num
       }
     }
   }
 
   if (totalMinutes === 0) {
-    return "0m";
+    return "0m"
   }
 
-  const hours = Math.floor(totalMinutes / 60);
-  const mins = totalMinutes % 60;
+  const hours = Math.floor(totalMinutes / 60)
+  const mins = totalMinutes % 60
 
   if (hours > 0 && mins > 0) {
-    return `${hours}h ${mins}m`;
+    return `${hours}h ${mins}m`
   }
   if (hours > 0) {
-    return `${hours}h`;
+    return `${hours}h`
   }
-  return `${mins}m`;
+  return `${mins}m`
 }
 
 // ============================================
@@ -632,10 +632,10 @@ const styles = {
     color: colors.textMuted,
     textDecoration: "underline",
   } as React.CSSProperties,
-};
+}
 
 // ============================================
 // Default Export
 // ============================================
 
-export default DailyDigest;
+export default DailyDigest

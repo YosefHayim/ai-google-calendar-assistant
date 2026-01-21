@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
-import { ttsCache } from '@/services/tts-cache.service'
+import { ttsCache } from '@/services/tts-cache-service'
 import { useTranslation } from 'react-i18next'
 
 type VoiceType = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'

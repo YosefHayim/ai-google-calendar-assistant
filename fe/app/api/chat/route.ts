@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { sendMessageToGemini } from '@/services/geminiService'
+import { sendMessageToGemini } from '@/services/gemini-service'
 
 export async function POST(request: Request) {
   try {

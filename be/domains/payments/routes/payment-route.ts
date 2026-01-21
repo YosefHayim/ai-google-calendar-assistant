@@ -1,4 +1,4 @@
-import express from "express";
+import express from "express"
 import {
   cancelUserSubscription,
   createCreditPackCheckoutSession,
@@ -14,13 +14,13 @@ import {
   initializeFreePlan,
   requestRefund,
   upgradeSubscription,
-} from "@/domains/payments/controllers/payment-controller";
-import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
+} from "@/domains/payments/controllers/payment-controller"
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
 
-const router = express.Router();
+const router = express.Router()
 
 // GET /status - Get payment system status and configuration
-router.get("/status", getPaymentStatus);
+router.get("/status", getPaymentStatus)
 
 /**
  * GET /plans - Retrieve Available Subscription Plans
@@ -43,18 +43,18 @@ router.get("/status", getPaymentStatus);
  * @related Subscription management flow. Provides the data needed for pricing pages,
  * plan comparison, and subscription upgrade/downgrade decisions.
  */
-router.get("/plans", getPlans);
+router.get("/plans", getPlans)
 
 // GET /products - Get Lemon Squeezy products
-router.get("/products", getLemonSqueezyProductsEndpoint);
+router.get("/products", getLemonSqueezyProductsEndpoint)
 
 // GET /products/variants - Get Lemon Squeezy products with variants
-router.get("/products/variants", getLemonSqueezyProductsWithVariantsEndpoint);
+router.get("/products/variants", getLemonSqueezyProductsWithVariantsEndpoint)
 
 // POST /webhook - Handle Lemon Squeezy webhooks
 router.post("/webhook", express.raw({ type: "application/json" }), (req, res) =>
   handleWebhook(req, res)
-);
+)
 
 /**
  * GET /subscription - Retrieve User Subscription Status
@@ -81,10 +81,10 @@ router.post("/webhook", express.raw({ type: "application/json" }), (req, res) =>
  * @related Subscription management and feature gating. Used to display billing
  * information, enforce usage limits, and determine feature availability.
  */
-router.get("/subscription", supabaseAuth(), getSubscriptionStatus);
+router.get("/subscription", supabaseAuth(), getSubscriptionStatus)
 
 // POST /initialize-free - Initialize free plan for user
-router.post("/initialize-free", supabaseAuth(), initializeFreePlan);
+router.post("/initialize-free", supabaseAuth(), initializeFreePlan)
 
 /**
  * POST /checkout - Create Subscription Checkout Session
@@ -112,28 +112,28 @@ router.post("/initialize-free", supabaseAuth(), initializeFreePlan);
  * @related Subscription purchase flow. Creates secure payment sessions that handle
  * the complete subscription lifecycle from initial signup to recurring billing.
  */
-router.post("/checkout", supabaseAuth(), createSubscriptionCheckout);
+router.post("/checkout", supabaseAuth(), createSubscriptionCheckout)
 
 // POST /checkout/credits - Create credit pack checkout session
 router.post(
   "/checkout/credits",
   supabaseAuth(),
   createCreditPackCheckoutSession
-);
+)
 
 // POST /upgrade - Upgrade user subscription
-router.post("/upgrade", supabaseAuth(), upgradeSubscription);
+router.post("/upgrade", supabaseAuth(), upgradeSubscription)
 
 // POST /portal - Create customer portal session
-router.post("/portal", supabaseAuth(), createPortalSession);
+router.post("/portal", supabaseAuth(), createPortalSession)
 
 // POST /cancel - Cancel user subscription
-router.post("/cancel", supabaseAuth(), cancelUserSubscription);
+router.post("/cancel", supabaseAuth(), cancelUserSubscription)
 
 // POST /refund - Request refund for subscription
-router.post("/refund", supabaseAuth(), requestRefund);
+router.post("/refund", supabaseAuth(), requestRefund)
 
 // GET /billing - Get user billing information
-router.get("/billing", supabaseAuth(), getBillingInfo);
+router.get("/billing", supabaseAuth(), getBillingInfo)
 
-export default router;
+export default router

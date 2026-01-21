@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { eventsService, QuickAddResult } from '@/services/events.service'
+import { eventsService, QuickAddResult } from '@/services/events-service'
 import { queryKeys } from '@/lib/query/keys'
 import type { QuickAddEventRequest, QuickAddResponse } from '@/types/api'
 

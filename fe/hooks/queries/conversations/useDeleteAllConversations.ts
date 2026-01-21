@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { deleteAllConversations } from '@/services/chatService'
+import { deleteAllConversations } from '@/services/chat-service'
 import { queryKeys } from '@/lib/query'
 import type { MutationHookOptions } from '../useMutationWrapper'
 

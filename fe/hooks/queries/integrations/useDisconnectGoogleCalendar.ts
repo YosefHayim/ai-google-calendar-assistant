@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query'
-import { integrationsService } from '@/services/integrations.service'
+import { integrationsService } from '@/services/integrations-service'
 import { useMutationWrapper, type MutationHookOptions } from '../useMutationWrapper'
 import type { ApiResponse } from '@/types/api'
 

@@ -1,4 +1,4 @@
-import express from "express";
+import express from "express"
 import {
   broadcastNotification,
   getAdminMe,
@@ -17,15 +17,15 @@ import {
   sendPasswordReset,
   updateUserRole,
   updateUserStatus,
-} from "@/domains/admin/controllers/admin-controller";
-import { adminAuth } from "@/domains/admin/middleware/admin-auth";
-import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
+} from "@/domains/admin/controllers/admin-controller"
+import { adminAuth } from "@/domains/admin/middleware/admin-auth"
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
 
-const router = express.Router();
+const router = express.Router()
 
 // All admin routes require authentication + admin role
-router.use(supabaseAuth());
-router.use(adminAuth(["admin"]));
+router.use(supabaseAuth())
+router.use(adminAuth(["admin"]))
 
 /**
  * GET /dashboard/stats - Retrieve Administrative Dashboard Statistics
@@ -57,13 +57,13 @@ router.use(adminAuth(["admin"]));
  * @related Admin dashboard functionality. Provides administrators with comprehensive
  * business intelligence and system monitoring data to track platform health and growth.
  */
-router.get("/dashboard/stats", getDashboardStats);
-router.get("/dashboard/distribution", getSubscriptionDistribution);
-router.get("/dashboard/revenue-trends", getRevenueTrends);
-router.get("/dashboard/subscription-trends", getSubscriptionTrends);
+router.get("/dashboard/stats", getDashboardStats)
+router.get("/dashboard/distribution", getSubscriptionDistribution)
+router.get("/dashboard/revenue-trends", getRevenueTrends)
+router.get("/dashboard/subscription-trends", getSubscriptionTrends)
 
 // Current admin user
-router.get("/me", getAdminMe);
+router.get("/me", getAdminMe)
 
 /**
  * GET /users - Retrieve Paginated User List for Administration
@@ -103,23 +103,23 @@ router.get("/me", getAdminMe);
  * @related User administration workflow. Enables administrators to view, search,
  * and manage user accounts across the platform for support and maintenance purposes.
  */
-router.get("/users", getUsers);
-router.get("/users/:id", getUserById);
-router.patch("/users/:id/status", updateUserStatus);
-router.patch("/users/:id/role", updateUserRole);
-router.post("/users/:id/credits", grantCredits);
-router.post("/users/:id/password-reset", sendPasswordReset);
-router.post("/users/:id/impersonate", impersonateUser);
-router.post("/users/:id/revoke-sessions", revokeUserSessions);
-router.post("/broadcast", broadcastNotification);
+router.get("/users", getUsers)
+router.get("/users/:id", getUserById)
+router.patch("/users/:id/status", updateUserStatus)
+router.patch("/users/:id/role", updateUserRole)
+router.post("/users/:id/credits", grantCredits)
+router.post("/users/:id/password-reset", sendPasswordReset)
+router.post("/users/:id/impersonate", impersonateUser)
+router.post("/users/:id/revoke-sessions", revokeUserSessions)
+router.post("/broadcast", broadcastNotification)
 
 // Subscription endpoints
-router.get("/subscriptions", getSubscriptions);
+router.get("/subscriptions", getSubscriptions)
 
 // Payment endpoints
-router.get("/payments", getPaymentHistory);
+router.get("/payments", getPaymentHistory)
 
 // Audit log endpoints
-router.get("/audit-logs", getAuditLogs);
+router.get("/audit-logs", getAuditLogs)
 
-export default router;
+export default router

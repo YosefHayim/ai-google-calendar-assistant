@@ -50,7 +50,7 @@ describe("Smart Scheduling Intelligence Journey", () => {
               "1:1": 0.25,
               team: 0.38,
               client: 0.22,
-              strategy: 0.10,
+              strategy: 0.1,
               other: 0.05,
             },
             patterns: {
@@ -118,9 +118,13 @@ describe("Smart Scheduling Intelligence Journey", () => {
         },
       }
 
-      expect(patternRecognition.patterns.meetingFrequency.averagePerWeek).toBe(12.5)
+      expect(patternRecognition.patterns.meetingFrequency.averagePerWeek).toBe(
+        12.5
+      )
       expect(patternRecognition.patterns.meetingDuration.average).toBe(67)
-      expect(patternRecognition.patterns.meetingTypes.distribution.team).toBe(0.38)
+      expect(patternRecognition.patterns.meetingTypes.distribution.team).toBe(
+        0.38
+      )
       expect(patternRecognition.insights).toHaveLength(3)
       expect(patternRecognition.confidence.overall).toBe(0.89)
     })
@@ -137,7 +141,13 @@ describe("Smart Scheduling Intelligence Journey", () => {
               start: "09:00",
               end: "17:00",
               timezone: "America/New_York",
-              workDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+              workDays: [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+              ],
             },
             calendarEvents: [
               {
@@ -158,7 +168,13 @@ describe("Smart Scheduling Intelligence Journey", () => {
               start: "08:00",
               end: "16:00",
               timezone: "America/Los_Angeles",
-              workDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+              workDays: [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+              ],
             },
             calendarEvents: [
               {
@@ -179,7 +195,13 @@ describe("Smart Scheduling Intelligence Journey", () => {
               start: "10:00",
               end: "18:00",
               timezone: "Europe/London",
-              workDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+              workDays: [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+              ],
             },
             calendarEvents: [
               {
@@ -218,7 +240,10 @@ describe("Smart Scheduling Intelligence Journey", () => {
             {
               time: "2026-01-22T14:00:00Z",
               conflictingParticipants: ["colleague@example.com"],
-              alternativeTimes: ["2026-01-22T15:00:00Z", "2026-01-22T16:00:00Z"],
+              alternativeTimes: [
+                "2026-01-22T15:00:00Z",
+                "2026-01-22T16:00:00Z",
+              ],
             },
           ],
           recommendations: [
@@ -238,10 +263,16 @@ describe("Smart Scheduling Intelligence Journey", () => {
 
       expect(participantAnalysis.participants).toHaveLength(3)
       expect(participantAnalysis.participants[0].availabilityScore).toBe(0.85)
-      expect(participantAnalysis.groupAvailability.optimalTimeSlots).toHaveLength(2)
-      expect(participantAnalysis.groupAvailability.optimalTimeSlots[0].score).toBe(0.89)
+      expect(
+        participantAnalysis.groupAvailability.optimalTimeSlots
+      ).toHaveLength(2)
+      expect(
+        participantAnalysis.groupAvailability.optimalTimeSlots[0].score
+      ).toBe(0.89)
       expect(participantAnalysis.groupAvailability.conflicts).toHaveLength(1)
-      expect(participantAnalysis.groupAvailability.recommendations).toHaveLength(1)
+      expect(
+        participantAnalysis.groupAvailability.recommendations
+      ).toHaveLength(1)
     })
 
     it("should validate intelligent time slot suggestions", () => {
@@ -349,7 +380,9 @@ describe("Smart Scheduling Intelligence Journey", () => {
 
       expect(timeSlotSuggestions.suggestions).toHaveLength(3)
       expect(timeSlotSuggestions.suggestions[0].score).toBe(0.94)
-      expect(timeSlotSuggestions.suggestions[0].factors.participantAvailability).toBe(1.0)
+      expect(
+        timeSlotSuggestions.suggestions[0].factors.participantAvailability
+      ).toBe(1.0)
       expect(timeSlotSuggestions.suggestions[0].reasoning).toHaveLength(5)
       expect(timeSlotSuggestions.metadata.calendarsAnalyzed).toBe(3)
       expect(timeSlotSuggestions.insights.bestDay).toBe("tuesday")
@@ -419,8 +452,15 @@ describe("Smart Scheduling Intelligence Journey", () => {
             feasibility: 0.9,
             impact: "low",
             description: "Move strategy meeting to 3:00 PM",
-            pros: ["High availability", "Minimal coordination", "Good alternatives exist"],
-            cons: ["Changes preferred time", "May affect participant preferences"],
+            pros: [
+              "High availability",
+              "Minimal coordination",
+              "Good alternatives exist",
+            ],
+            cons: [
+              "Changes preferred time",
+              "May affect participant preferences",
+            ],
           },
           {
             strategy: "shorten_meeting",
@@ -428,7 +468,10 @@ describe("Smart Scheduling Intelligence Journey", () => {
             impact: "medium",
             description: "Reduce strategy meeting to 30 minutes",
             pros: ["Quick resolution", "Minimal scheduling changes"],
-            cons: ["May compromise meeting objectives", "Requires agenda adjustment"],
+            cons: [
+              "May compromise meeting objectives",
+              "Requires agenda adjustment",
+            ],
           },
           {
             strategy: "make_optional",
@@ -481,14 +524,18 @@ describe("Smart Scheduling Intelligence Journey", () => {
             {
               action: "send_notifications",
               recipients: ["organizer@example.com", "participant@example.com"],
-              message: "Meeting rescheduled to 3:00 PM due to conflict resolution",
+              message:
+                "Meeting rescheduled to 3:00 PM due to conflict resolution",
               status: "pending",
             },
             {
               action: "update_calendar",
               calendar: "primary",
               eventId: "meeting-123",
-              changes: { start: "2026-01-22T15:00:00-05:00", end: "2026-01-22T16:00:00-05:00" },
+              changes: {
+                start: "2026-01-22T15:00:00-05:00",
+                end: "2026-01-22T16:00:00-05:00",
+              },
               status: "pending",
             },
           ],
@@ -516,7 +563,9 @@ describe("Smart Scheduling Intelligence Journey", () => {
         },
       }
 
-      expect(conflictResolution.resolution.strategy).toBe("find_alternative_time")
+      expect(conflictResolution.resolution.strategy).toBe(
+        "find_alternative_time"
+      )
       expect(conflictResolution.resolution.selectedAlternative.score).toBe(0.87)
       expect(conflictResolution.implementation.steps).toHaveLength(3)
       expect(conflictResolution.outcome.success).toBe(true)
@@ -830,7 +879,7 @@ describe("Smart Scheduling Intelligence Journey", () => {
             preferredMeetingSizes: {
               small: 0.45, // 1-3 people
               medium: 0.35, // 4-8 people
-              large: 0.20, // 9+ people
+              large: 0.2, // 9+ people
             },
             responseTimeExpectations: {
               immediate: 0.3,
@@ -888,8 +937,13 @@ describe("Smart Scheduling Intelligence Journey", () => {
         },
       }
 
-      expect(preferenceLearning.preferences.timePreferences.preferredStartTimes[0].score).toBe(0.85)
-      expect(preferenceLearning.preferences.dayPreferences.preferredDays[0].score).toBe(0.95)
+      expect(
+        preferenceLearning.preferences.timePreferences.preferredStartTimes[0]
+          .score
+      ).toBe(0.85)
+      expect(
+        preferenceLearning.preferences.dayPreferences.preferredDays[0].score
+      ).toBe(0.95)
       expect(preferenceLearning.learningMetrics.confidence).toBe(0.87)
       expect(preferenceLearning.adaptation.recentChanges).toHaveLength(2)
     })
@@ -1009,7 +1063,11 @@ describe("Smart Scheduling Intelligence Journey", () => {
               title: "Q4 Review",
               start: "2026-01-20T14:00:00-05:00",
               end: "2026-01-20T15:00:00-05:00",
-              participants: ["organizer@example.com", "missing@example.com", "present@example.com"],
+              participants: [
+                "organizer@example.com",
+                "missing@example.com",
+                "present@example.com",
+              ],
             },
             missingParticipant: "missing@example.com",
             reason: "accepted_different_meeting",
@@ -1066,7 +1124,8 @@ describe("Smart Scheduling Intelligence Journey", () => {
               },
               {
                 action: "notify_all_participants",
-                message: "Participant joining virtually - meeting proceeds as scheduled",
+                message:
+                  "Participant joining virtually - meeting proceeds as scheduled",
               },
             ],
             estimatedDelay: 2, // minutes
@@ -1083,8 +1142,12 @@ describe("Smart Scheduling Intelligence Journey", () => {
 
       expect(lastMinuteResolution.analysis.conflict.timeToStart).toBe(15)
       expect(lastMinuteResolution.analysis.options).toHaveLength(3)
-      expect(lastMinuteResolution.recommendation.selectedOption).toBe("virtual_participation")
-      expect(lastMinuteResolution.recommendation.implementation.steps).toHaveLength(3)
+      expect(lastMinuteResolution.recommendation.selectedOption).toBe(
+        "virtual_participation"
+      )
+      expect(
+        lastMinuteResolution.recommendation.implementation.steps
+      ).toHaveLength(3)
       expect(lastMinuteResolution.learning.applied).toBe(true)
     })
 
@@ -1180,10 +1243,16 @@ describe("Smart Scheduling Intelligence Journey", () => {
       }
 
       expect(crisisScheduling.emergencyProtocols.overrideNormalRules).toBe(true)
-      expect(crisisScheduling.rapidScheduling.availableSlots[1].score).toBe(0.98)
+      expect(crisisScheduling.rapidScheduling.availableSlots[1].score).toBe(
+        0.98
+      )
       expect(crisisScheduling.rapidScheduling.selectedSlot.participants).toBe(8)
-      expect(crisisScheduling.crisisCommunication.autoNotifications.executives).toBe("immediate")
-      expect(crisisScheduling.postCrisisLearning.followUpActions).toHaveLength(2)
+      expect(
+        crisisScheduling.crisisCommunication.autoNotifications.executives
+      ).toBe("immediate")
+      expect(crisisScheduling.postCrisisLearning.followUpActions).toHaveLength(
+        2
+      )
     })
   })
 
@@ -1202,40 +1271,76 @@ describe("Smart Scheduling Intelligence Journey", () => {
         availabilityMatrix: {
           google: {
             busy: [
-              { start: "2026-01-22T09:00:00-05:00", end: "2026-01-22T10:00:00-05:00" },
-              { start: "2026-01-22T14:00:00-05:00", end: "2026-01-22T15:00:00-05:00" },
+              {
+                start: "2026-01-22T09:00:00-05:00",
+                end: "2026-01-22T10:00:00-05:00",
+              },
+              {
+                start: "2026-01-22T14:00:00-05:00",
+                end: "2026-01-22T15:00:00-05:00",
+              },
             ],
             free: [
-              { start: "2026-01-22T10:00:00-05:00", end: "2026-01-22T14:00:00-05:00" },
-              { start: "2026-01-22T15:00:00-05:00", end: "2026-01-22T17:00:00-05:00" },
+              {
+                start: "2026-01-22T10:00:00-05:00",
+                end: "2026-01-22T14:00:00-05:00",
+              },
+              {
+                start: "2026-01-22T15:00:00-05:00",
+                end: "2026-01-22T17:00:00-05:00",
+              },
             ],
           },
           outlook: {
             busy: [
-              { start: "2026-01-22T08:00:00-05:00", end: "2026-01-22T09:00:00-05:00" },
+              {
+                start: "2026-01-22T08:00:00-05:00",
+                end: "2026-01-22T09:00:00-05:00",
+              },
             ],
             tentative: [
-              { start: "2026-01-22T15:00:00-05:00", end: "2026-01-22T16:00:00-05:00" },
+              {
+                start: "2026-01-22T15:00:00-05:00",
+                end: "2026-01-22T16:00:00-05:00",
+              },
             ],
             free: [
-              { start: "2026-01-22T09:00:00-05:00", end: "2026-01-22T15:00:00-05:00" },
+              {
+                start: "2026-01-22T09:00:00-05:00",
+                end: "2026-01-22T15:00:00-05:00",
+              },
             ],
           },
           web_app: {
             busy: [],
             free: [
-              { start: "2026-01-22T08:00:00-05:00", end: "2026-01-22T18:00:00-05:00" },
+              {
+                start: "2026-01-22T08:00:00-05:00",
+                end: "2026-01-22T18:00:00-05:00",
+              },
             ],
           },
         },
         unifiedAvailability: {
           consolidatedBusy: [
-            { start: "2026-01-22T08:00:00-05:00", end: "2026-01-22T10:00:00-05:00" },
-            { start: "2026-01-22T14:00:00-05:00", end: "2026-01-22T16:00:00-05:00" },
+            {
+              start: "2026-01-22T08:00:00-05:00",
+              end: "2026-01-22T10:00:00-05:00",
+            },
+            {
+              start: "2026-01-22T14:00:00-05:00",
+              end: "2026-01-22T16:00:00-05:00",
+            },
           ],
           consolidatedFree: [
-            { start: "2026-01-22T10:00:00-05:00", end: "2026-01-22T14:00:00-05:00" },
-            { start: "2026-01-22T16:00:00-05:00", end: "2026-01-22T18:00:00-05:00" },
+            {
+              start: "2026-01-22T10:00:00-05:00",
+              end: "2026-01-22T14:00:00-05:00",
+            },
+            {
+              start: "2026-01-22T16:00:00-05:00",
+              end: "2026-01-22T18:00:00-05:00",
+            },
           ],
           conflicts: [
             {
@@ -1259,9 +1364,13 @@ describe("Smart Scheduling Intelligence Journey", () => {
 
       expect(crossPlatformSync.platforms).toHaveLength(3)
       expect(crossPlatformSync.availabilityMatrix.google.free).toHaveLength(2)
-      expect(crossPlatformSync.unifiedAvailability.consolidatedBusy).toHaveLength(2)
+      expect(
+        crossPlatformSync.unifiedAvailability.consolidatedBusy
+      ).toHaveLength(2)
       expect(crossPlatformSync.unifiedAvailability.conflicts).toHaveLength(1)
-      expect(crossPlatformSync.schedulingIntelligence.crossPlatformOptimization).toBe(true)
+      expect(
+        crossPlatformSync.schedulingIntelligence.crossPlatformOptimization
+      ).toBe(true)
     })
 
     it("should validate platform-specific scheduling rules", () => {
@@ -1358,7 +1467,9 @@ describe("Smart Scheduling Intelligence Journey", () => {
       expect(platformRules.google_calendar.rules.maxEventsPerDay).toBe(50)
       expect(platformRules.outlook.rules.attendeeLimits).toBe(500)
       expect(platformRules.web_app.limitations.maxTitleLength).toBe(200)
-      expect(platformRules.schedulingOptimization.platformSelection.rules).toHaveLength(3)
+      expect(
+        platformRules.schedulingOptimization.platformSelection.rules
+      ).toHaveLength(3)
     })
 
     it("should validate unified scheduling across platforms", () => {
@@ -1366,7 +1477,11 @@ describe("Smart Scheduling Intelligence Journey", () => {
         meetingRequest: {
           title: "Cross-Platform Strategy Meeting",
           duration: 90,
-          participants: ["organizer@example.com", "participant@outlook.com", "participant@company.com"],
+          participants: [
+            "organizer@example.com",
+            "participant@outlook.com",
+            "participant@company.com",
+          ],
           platforms: ["google_calendar", "outlook"],
         },
         platformAnalysis: {
@@ -1441,7 +1556,11 @@ describe("Smart Scheduling Intelligence Journey", () => {
           notifications: {
             sent: true,
             platforms: ["google_calendar", "outlook"],
-            recipients: ["organizer@example.com", "participant@outlook.com", "participant@company.com"],
+            recipients: [
+              "organizer@example.com",
+              "participant@outlook.com",
+              "participant@company.com",
+            ],
           },
         },
         monitoring: {
@@ -1467,7 +1586,9 @@ describe("Smart Scheduling Intelligence Journey", () => {
       }
 
       expect(unifiedScheduling.meetingRequest.platforms).toHaveLength(2)
-      expect(unifiedScheduling.platformAnalysis.google_calendar.optimalSlot.score).toBe(0.88)
+      expect(
+        unifiedScheduling.platformAnalysis.google_calendar.optimalSlot.score
+      ).toBe(0.88)
       expect(unifiedScheduling.unifiedBooking.bookingSequence).toHaveLength(2)
       expect(unifiedScheduling.execution.bookingResults).toHaveLength(2)
       expect(unifiedScheduling.monitoring.metrics.bookingTime).toBe(3.2)

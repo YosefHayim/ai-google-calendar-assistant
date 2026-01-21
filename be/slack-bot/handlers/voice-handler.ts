@@ -1,13 +1,13 @@
-import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from "@slack/bolt";
-import type { WebClient } from "@slack/web-api";
-import { transcribeAudio } from "@/domains/analytics/utils";
-import { logger } from "@/lib/logger";
-import { handleSlackAuth } from "../middleware/auth-handler";
-import { checkRateLimit } from "../middleware/rate-limiter";
-import { handleAgentRequest } from "./agent-handler";
+import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from "@slack/bolt"
+import type { WebClient } from "@slack/web-api"
+import { transcribeAudio } from "@/domains/analytics/utils"
+import { logger } from "@/lib/logger"
+import { handleSlackAuth } from "@/slack-bot/middleware/auth-handler"
+import { checkRateLimit } from "@/slack-bot/middleware/rate-limiter"
+import { handleAgentRequest } from "@/slack-bot/handlers/agent-handler"
 
 type FileSharedArgs = SlackEventMiddlewareArgs<"file_shared"> &
-  AllMiddlewareArgs;
+  AllMiddlewareArgs
 
 const AUDIO_MIMETYPES = [
   "audio/webm",
@@ -19,16 +19,16 @@ const AUDIO_MIMETYPES = [
   "audio/ogg",
   "audio/flac",
   "audio/x-m4a",
-];
+]
 
-const LOG_PREVIEW_LENGTH = 50;
+const LOG_PREVIEW_LENGTH = 50
 
 const isAudioFile = (mimetype?: string): boolean => {
   if (!mimetype) {
-    return false;
+    return false
   }
-  return AUDIO_MIMETYPES.some((type) => mimetype.startsWith(type));
-};
+  return AUDIO_MIMETYPES.some((type) => mimetype.startsWith(type))
+}
 
 const downloadSlackFile = async (
   url: string,
@@ -37,180 +37,175 @@ const downloadSlackFile = async (
   try {
     const response = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
-    });
+    })
 
     if (!response.ok) {
-      logger.error(`Slack Bot: File download failed: ${response.statusText}`);
-      return null;
+      logger.error(`Slack Bot: File download failed: ${response.statusText}`)
+      return null
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    const arrayBuffer = await response.arrayBuffer()
+    return Buffer.from(arrayBuffer)
   } catch (error) {
-    logger.error(`Slack Bot: Error downloading file: ${error}`);
-    return null;
+    logger.error(`Slack Bot: Error downloading file: ${error}`)
+    return null
   }
-};
+}
 
 const sendErrorMessage = async (
   client: WebClient,
   channel: string,
   text: string
 ): Promise<void> => {
-  await client.chat.postMessage({ channel, text });
-};
+  await client.chat.postMessage({ channel, text })
+}
 
 const getClientToken = (client: WebClient): string | null => {
   if ("botToken" in client && client.botToken) {
-    return client.botToken as string;
+    return client.botToken as string
   }
   if ("token" in client && client.token) {
-    return client.token as string;
+    return client.token as string
   }
-  return null;
-};
+  return null
+}
 
 type VoiceContext = {
-  client: WebClient;
-  userId: string;
-  teamId: string;
-  channelId: string;
-  fileId: string;
-};
+  client: WebClient
+  userId: string
+  teamId: string
+  channelId: string
+  fileId: string
+}
 
 const processVoiceFile = async (
   ctx: VoiceContext,
   file: {
-    mimetype?: string;
-    url_private_download?: string;
-    url_private?: string;
-    name?: string;
+    mimetype?: string
+    url_private_download?: string
+    url_private?: string
+    name?: string
   },
   email: string
 ): Promise<void> => {
-  const { client, userId, teamId, channelId, fileId } = ctx;
+  const { client, userId, teamId, channelId, fileId } = ctx
 
-  const downloadUrl = file.url_private_download ?? file.url_private;
+  const downloadUrl = file.url_private_download ?? file.url_private
   if (!downloadUrl) {
-    logger.error(`Slack Bot: No download URL for file ${fileId}`);
+    logger.error(`Slack Bot: No download URL for file ${fileId}`)
     await sendErrorMessage(
       client,
       channelId,
       "Sorry, I couldn't access your voice message. Please try again."
-    );
-    return;
+    )
+    return
   }
 
-  const token = getClientToken(client);
+  const token = getClientToken(client)
   if (!token) {
-    logger.error("Slack Bot: No token available for file download");
-    return;
+    logger.error("Slack Bot: No token available for file download")
+    return
   }
 
-  const audioBuffer = await downloadSlackFile(downloadUrl, token);
+  const audioBuffer = await downloadSlackFile(downloadUrl, token)
   if (!audioBuffer) {
     await sendErrorMessage(
       client,
       channelId,
       "Sorry, I couldn't download your voice message. Please try again."
-    );
-    return;
+    )
+    return
   }
 
   const transcription = await transcribeAudio(
     audioBuffer,
     file.mimetype ?? "audio/webm"
-  );
+  )
 
   if (!transcription.success) {
-    logger.error(`Slack Bot: Transcription failed: ${transcription.error}`);
+    logger.error(`Slack Bot: Transcription failed: ${transcription.error}`)
     await sendErrorMessage(
       client,
       channelId,
       "Sorry, I couldn't understand your voice message. Please try again or type your message."
-    );
-    return;
+    )
+    return
   }
 
-  const transcribedText = transcription.text ?? "";
+  const transcribedText = transcription.text ?? ""
   if (!transcribedText) {
     await sendErrorMessage(
       client,
       channelId,
       "Sorry, I couldn't understand your voice message. Please try again or type your message."
-    );
-    return;
+    )
+    return
   }
 
   logger.info(
     `Slack Bot: Transcribed voice from ${userId}: "${transcribedText.slice(0, LOG_PREVIEW_LENGTH)}..."`
-  );
+  )
 
   const response = await handleAgentRequest({
     message: transcribedText,
     email,
     slackUserId: userId,
     teamId,
-  });
+  })
 
-  await client.chat.postMessage({ channel: channelId, text: response });
-};
+  await client.chat.postMessage({ channel: channelId, text: response })
+}
 
 export const handleFileShared = async (args: FileSharedArgs): Promise<void> => {
-  const { event, client } = args;
-  const { file_id, user_id, channel_id } = event;
-  const teamId = "team_id" in event ? (event.team_id as string) : "unknown";
+  const { event, client } = args
+  const { file_id, user_id, channel_id } = event
+  const teamId = "team_id" in event ? (event.team_id as string) : "unknown"
 
-  const hasRequiredFields = user_id && file_id;
+  const hasRequiredFields = user_id && file_id && channel_id
   if (!hasRequiredFields) {
-    return;
+    return
   }
 
-  logger.info(`Slack Bot: File shared by ${user_id}: ${file_id}`);
+  logger.info(`Slack Bot: File shared by ${user_id}: ${file_id}`)
 
   try {
-    const fileInfo = await client.files.info({ file: file_id });
+    const fileInfo = await client.files.info({ file: file_id })
 
     if (!fileInfo.file) {
-      logger.warn(`Slack Bot: File not found: ${file_id}`);
-      return;
+      logger.warn(`Slack Bot: File not found: ${file_id}`)
+      return
     }
 
-    const file = fileInfo.file;
+    const file = fileInfo.file
 
     if (!isAudioFile(file.mimetype)) {
-      logger.debug(`Slack Bot: Skipping non-audio file: ${file.filetype}`);
-      return;
+      logger.debug(`Slack Bot: Skipping non-audio file: ${file.filetype}`)
+      return
     }
 
     logger.info(
       `Slack Bot: Processing audio file: ${file.name} (${file.mimetype})`
-    );
+    )
 
-    const rateCheck = checkRateLimit(user_id, "message");
+    const rateCheck = checkRateLimit(user_id, "message")
     if (!rateCheck.allowed) {
       await sendErrorMessage(
         client,
         channel_id,
         `You're sending voice messages too quickly. Please wait ${rateCheck.resetIn} seconds.`
-      );
-      return;
+      )
+      return
     }
 
-    const authResult = await handleSlackAuth(
-      client,
-      user_id,
-      teamId,
-      "[voice]"
-    );
+    const authResult = await handleSlackAuth(client, user_id, teamId, "[voice]")
 
     if (authResult.needsAuth) {
       await sendErrorMessage(
         client,
         channel_id,
         authResult.authMessage ?? "Please authenticate to use Ally."
-      );
-      return;
+      )
+      return
     }
 
     if (!authResult.session.email) {
@@ -218,8 +213,8 @@ export const handleFileShared = async (args: FileSharedArgs): Promise<void> => {
         client,
         channel_id,
         "I couldn't find your email. Please enter your email address to get started."
-      );
-      return;
+      )
+      return
     }
 
     const ctx: VoiceContext = {
@@ -228,15 +223,15 @@ export const handleFileShared = async (args: FileSharedArgs): Promise<void> => {
       teamId,
       channelId: channel_id,
       fileId: file_id,
-    };
+    }
 
-    await processVoiceFile(ctx, file, authResult.session.email);
+    await processVoiceFile(ctx, file, authResult.session.email)
   } catch (error) {
-    logger.error(`Slack Bot: Error processing voice message: ${error}`);
+    logger.error(`Slack Bot: Error processing voice message: ${error}`)
     await sendErrorMessage(
       client,
       channel_id,
       "Sorry, I encountered an error processing your voice message."
-    );
+    )
   }
-};
+}

@@ -3,7 +3,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
-import type { ConversationListItem } from '@/services/chatService'
+import type { ConversationListItem } from '@/services/chat-service'
 import { toast } from 'sonner'
 import { useArchiveConversation } from '@/hooks/queries/conversations'
 import { useChatContext } from '@/contexts/ChatContext'
