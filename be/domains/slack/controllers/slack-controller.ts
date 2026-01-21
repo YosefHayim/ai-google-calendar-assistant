@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import {
   deactivateWorkspace,
   exchangeCodeForToken,
@@ -7,16 +8,10 @@ import {
 import { STATUS_RESPONSE } from "@/config/constants/http";
 import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import { env } from "@/config/env";
-import express from "express";
 import { getSlackReceiver } from "@/slack-bot/init-bot";
 import { logger } from "@/lib/logger";
 import { sendR } from "@/lib/http";
 import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
-
-const router = express.Router();
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const slackUsersTable = () => (SUPABASE as any).from("slack_users");
 
 type SlackUserRow = {
   id: string;
@@ -35,7 +30,7 @@ type SlackUserRow = {
  * Receives events from Slack (messages, app_mentions, etc.)
  * Request URL: https://your-domain/api/slack/events
  */
-router.post("/events", async (req, res) => {
+export const handleEvents = async (req: Request, res: Response) => {
   try {
     if (req.body?.type === "url_verification") {
       logger.info("Slack events: URL verification challenge received");
@@ -59,7 +54,7 @@ router.post("/events", async (req, res) => {
       error: "Failed to process event",
     });
   }
-});
+};
 
 /**
  * Slack Slash Commands Endpoint
@@ -67,7 +62,7 @@ router.post("/events", async (req, res) => {
  * Receives slash commands from Slack (/ally, /today, etc.)
  * Request URL: https://your-domain/api/slack/commands
  */
-router.post("/commands", async (req, res) => {
+export const handleCommands = async (req: Request, res: Response) => {
   try {
     const receiver = getSlackReceiver();
     if (!receiver) {
@@ -84,7 +79,7 @@ router.post("/commands", async (req, res) => {
       error: "Failed to process command",
     });
   }
-});
+};
 
 /**
  * Slack Interactive Components Endpoint
@@ -92,7 +87,7 @@ router.post("/commands", async (req, res) => {
  * Receives interactive component payloads (buttons, modals, etc.)
  * Request URL: https://your-domain/api/slack/interactions
  */
-router.post("/interactions", async (req, res) => {
+export const handleInteractions = async (req: Request, res: Response) => {
   try {
     const receiver = getSlackReceiver();
     if (!receiver) {
@@ -109,14 +104,14 @@ router.post("/interactions", async (req, res) => {
       error: "Failed to process interaction",
     });
   }
-});
+};
 
-router.get("/oauth/install", (_req, res) => {
+export const handleOAuthInstall = (_req: Request, res: Response) => {
   const installUrl = generateInstallUrl();
   res.redirect(installUrl);
-});
+};
 
-router.get("/oauth/callback", async (req, res) => {
+export const handleOAuthCallback = async (req: Request, res: Response) => {
   const { code, error: slackError } = req.query;
 
   if (slackError) {
@@ -148,9 +143,9 @@ router.get("/oauth/callback", async (req, res) => {
   return res.redirect(
     `${env.urls.frontend}/integrations/slack?success=true&team=${encodeURIComponent(result.workspace.team_name || "")}`
   );
-});
+};
 
-router.post("/oauth/uninstall", async (req, res) => {
+export const handleOAuthUninstall = async (req: Request, res: Response) => {
   const { team_id: teamId } = req.body;
 
   if (!teamId) {
@@ -168,59 +163,62 @@ router.post("/oauth/uninstall", async (req, res) => {
   }
 
   return res.status(STATUS_RESPONSE.SUCCESS).json({ ok: true });
-});
+};
 
-router.get("/status", supabaseAuth(), async (req, res) => {
-  try {
-    const user = req.user;
-    if (!user?.email) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    }
+export const handleStatus = [
+  supabaseAuth(),
+  async (req: Request, res: Response) => {
+    try {
+      const user = req.user;
+      if (!user?.email) {
+        return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      }
 
-    const { data: dbUser } = await SUPABASE.from("users")
-      .select("id")
-      .eq("email", user.email)
-      .single();
+      const { data: dbUser } = await SUPABASE.from("users")
+        .select("id")
+        .eq("email", user.email)
+        .single();
 
-    if (!dbUser) {
+      if (!dbUser) {
+        return sendR(res, STATUS_RESPONSE.SUCCESS, "Slack integration status", {
+          isConnected: false,
+          slackUserId: null,
+          slackTeamId: null,
+          slackUsername: null,
+          connectedAt: null,
+          installUrl: generateInstallUrl(),
+        });
+      }
+
+      const { data: slackUser } = await (SUPABASE as any).from("slack_users")
+        .select(
+          "slack_user_id, slack_team_id, slack_username, created_at, is_linked"
+        )
+        .eq("user_id", dbUser.id)
+        .eq("is_linked", true)
+        .maybeSingle();
+
+      const typedSlackUser = slackUser as SlackUserRow | null;
       return sendR(res, STATUS_RESPONSE.SUCCESS, "Slack integration status", {
-        isConnected: false,
-        slackUserId: null,
-        slackTeamId: null,
-        slackUsername: null,
-        connectedAt: null,
+        isConnected: !!typedSlackUser?.is_linked,
+        slackUserId: typedSlackUser?.slack_user_id || null,
+        slackTeamId: typedSlackUser?.slack_team_id || null,
+        slackUsername: typedSlackUser?.slack_username || null,
+        connectedAt: typedSlackUser?.created_at || null,
         installUrl: generateInstallUrl(),
       });
+    } catch (error) {
+      logger.error(`Slack status: Error checking status: ${error}`);
+      return sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Failed to check Slack status"
+      );
     }
+  },
+];
 
-    const { data: slackUser } = await slackUsersTable()
-      .select(
-        "slack_user_id, slack_team_id, slack_username, created_at, is_linked"
-      )
-      .eq("user_id", dbUser.id)
-      .eq("is_linked", true)
-      .maybeSingle();
-
-    const typedSlackUser = slackUser as SlackUserRow | null;
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Slack integration status", {
-      isConnected: !!typedSlackUser?.is_linked,
-      slackUserId: typedSlackUser?.slack_user_id || null,
-      slackTeamId: typedSlackUser?.slack_team_id || null,
-      slackUsername: typedSlackUser?.slack_username || null,
-      connectedAt: typedSlackUser?.created_at || null,
-      installUrl: generateInstallUrl(),
-    });
-  } catch (error) {
-    logger.error(`Slack status: Error checking status: ${error}`);
-    return sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      "Failed to check Slack status"
-    );
-  }
-});
-
-router.get("/health", (_req, res) => {
+export const handleHealth = (_req: Request, res: Response) => {
   const receiver = getSlackReceiver();
   const isEnabled = env.integrations.slack.isEnabled;
 
@@ -228,6 +226,4 @@ router.get("/health", (_req, res) => {
     status: receiver && isEnabled ? "healthy" : "disabled",
     mode: "http",
   });
-});
-
-export default router;
+};

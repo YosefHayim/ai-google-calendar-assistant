@@ -1,60 +1,188 @@
-# Test Directory Structure
+# User Business Scenario Tests
 
-This directory contains organized tests following the application's architectural layers.
+This directory contains comprehensive tests covering all user business scenarios and journeys in the AI Google Calendar Assistant. Tests are organized by user experience rather than technical layers for better understanding and maintenance.
 
 ## Directory Structure
 
 ```
-__tests__/
-├── domain/          # Domain layer tests (Business logic, entities)
-├── application/     # Application layer tests (Use cases, services)
-├── infrastructure/  # Infrastructure layer tests (External integrations)
-└── controller/      # Controller layer tests (HTTP handlers, routes)
+tests/
+├── journeys/                    # End-to-end user journey tests
+│   ├── onboarding-journey.test.ts     # New user registration & setup
+│   ├── calendar-management-journey.test.ts # Calendar operations workflow
+│   ├── ai-assistant-journey.test.ts   # AI chat interactions
+│   ├── subscription-journey.test.ts   # Payment & subscription flow
+│   ├── team-collaboration-journey.test.ts # Team features
+│   └── advanced-features-journey.test.ts # Analytics, voice, integrations
+├── cross-modal/                 # Cross-platform interaction tests
+│   ├── web-to-telegram-sync.test.ts
+│   ├── voice-to-web-continuation.test.ts
+│   ├── whatsapp-integration.test.ts
+│   └── slack-workspace-sync.test.ts
+├── scenarios/                   # Business scenario tests (existing)
+│   ├── ai-chat-journey.test.ts
+│   ├── calendar-operations-journey.test.ts
+│   └── user-subscription-journey.test.ts
+├── edge-cases/                  # Error handling & boundary tests
+│   ├── error-recovery.test.ts
+│   ├── rate-limiting.test.ts
+│   ├── data-validation.test.ts
+│   └── security-boundaries.test.ts
+├── integration/                 # Full integration tests
+│   ├── api-endpoints.test.ts
+│   ├── database-integrations.test.ts
+│   └── external-services.test.ts
+├── controllers/                 # Unit tests for controllers
+├── services/                    # Unit tests for services
+├── utils/                       # Unit tests for utilities
+├── middlewares/                 # Middleware tests
+├── infrastructure/              # Infrastructure integration tests
+└── ai-agents/                   # AI agent specific tests
 ```
 
-## Coverage Targets
+## Test Categories & Coverage Targets
 
-Each layer has specific coverage requirements enforced by Jest:
-
-| Layer            | Coverage Target | Description                                    |
-|------------------|----------------|------------------------------------------------|
-| **Domain**       | 95%+           | Core business logic and domain entities        |
-| **Application**  | 90%+           | Use cases and application services             |
-| **Infrastructure** | 75%+        | External integrations (DB, APIs, etc.)         |
-| **Controller**   | 80%+           | HTTP controllers and route handlers            |
-| **Global**       | 75%+           | Default for any code not in above categories   |
+| Category | Coverage Target | Description |
+|----------|----------------|-------------|
+| **Journeys** | 95%+ | Critical user paths from onboarding to advanced features |
+| **Cross-modal** | 90%+ | Multi-platform synchronization and interactions |
+| **Edge Cases** | 85%+ | Error handling, security, and boundary conditions |
+| **Integration** | 80%+ | End-to-end API and service integrations |
+| **Unit Tests** | 75%+ | Individual components and utilities |
 
 ## Running Tests
 
 ```bash
 # Run all tests
-pnpm test
+bun run jest
 
 # Run tests with coverage
-pnpm test:coverage
+bun run jest --coverage
 
-# Run tests for specific layer
-pnpm test -- __tests__/domain
-pnpm test -- __tests__/application
-pnpm test -- __tests__/infrastructure
-pnpm test -- __tests__/controller
+# Run specific test categories
+bun run jest journeys/        # User journey tests
+bun run jest cross-modal/     # Cross-platform tests
+bun run jest edge-cases/      # Error handling tests
+bun run jest integration/     # Integration tests
+bun run jest scenarios/       # Business scenario tests (existing)
+
+# Run specific business scenarios
+bun run jest journeys/onboarding-journey.test.ts
+bun run jest journeys/calendar-management-journey.test.ts
+bun run jest journeys/ai-assistant-journey.test.ts
+bun run jest cross-modal/web-to-telegram-sync.test.ts
+bun run jest edge-cases/error-recovery.test.ts
+bun run jest integration/end-to-end-user-journey.test.ts
+
+# Run tests by business domain
+bun run jest --testNamePattern="subscription|payment"  # Payment-related tests
+bun run jest --testNamePattern="calendar|event"        # Calendar tests
+bun run jest --testNamePattern="ai|assistant"          # AI tests
+bun run jest --testNamePattern="voice|telegram"        # Multi-modal tests
 
 # Watch mode
-pnpm test:watch
+bun run jest --watch
+
+# Run tests with detailed output
+bun run jest --verbose
+
+# Run tests in band (single process, better for debugging)
+bun run jest --runInBand
 ```
 
-## Test File Naming
+## Test Organization Principles
 
-- Test files should use the `.test.ts` extension
-- Name tests after the file being tested: `user-service.test.ts`
-- Place tests in the appropriate layer directory
+### 1. Journey-Based Organization
+Tests are organized around user experiences rather than technical components:
+- **Journeys**: Complete user workflows from start to finish
+- **Scenarios**: Specific business use cases
+- **Cross-modal**: Interactions across different platforms/channels
+
+### 2. Business Logic First
+Each test focuses on business value:
+- What user problem is being solved?
+- What business rules apply?
+- What user expectations exist?
+
+### 3. Clear Test Naming
+Tests use descriptive names that explain the business scenario:
+```typescript
+describe("New User Onboarding Journey", () => {
+  it("should complete full registration and calendar setup", () => {
+    // Test implementation
+  });
+});
+```
+
+### 4. Comprehensive Coverage
+Tests cover all user touchpoints:
+- **Happy path**: Expected user flows
+- **Edge cases**: Error conditions and boundaries
+- **Cross-platform**: Consistency across web, mobile, voice, chat
+- **Data integrity**: Business rules and validations
+
+## Business Scenarios Covered
+
+### Core User Journeys
+1. **Onboarding**: Registration → OAuth → Calendar sync → First AI interaction
+2. **Calendar Management**: View events → Create events → Edit → Delete → Recurring
+3. **AI Assistant**: Chat → Voice → Quick add → Smart suggestions → Context awareness
+4. **Subscription**: Free trial → Payment → Upgrades → Cancellation → Refunds
+5. **Team Collaboration**: Invites → Shared calendars → Permissions → Notifications
+6. **Advanced Features**: Analytics → Voice calls → Integrations → Customizations
+
+### Cross-Modal Scenarios
+1. **Context Sync**: Start on web, continue on Telegram
+2. **Channel Switching**: Voice to chat to web seamlessly
+3. **Unified Experience**: Consistent behavior across all platforms
+4. **Notification Routing**: Appropriate channel for each notification type
+
+### Edge Cases & Error Handling
+1. **Network failures**: Retry logic and graceful degradation
+2. **Rate limiting**: Proper handling of API limits
+3. **Data validation**: Malformed inputs and security boundaries
+4. **Authentication**: Token refresh, session management, security
+5. **Payment failures**: Subscription issues, refunds, disputes
+6. **Calendar conflicts**: Overlapping events, permission issues
 
 ## Best Practices
 
-1. **Domain tests** should focus on business logic without external dependencies
-2. **Application tests** should test use cases with mocked dependencies
-3. **Infrastructure tests** may use real integrations or sophisticated mocks
-4. **Controller tests** should test HTTP request/response handling
+### 1. Business-Focused Testing
+```typescript
+// ✅ Good: Business scenario
+describe("User schedules meeting with AI", () => {
+  it("should create event when user says 'schedule team meeting tomorrow at 3pm'", () => {
+    // Test the complete business flow
+  });
+});
+
+// ❌ Bad: Technical implementation
+describe("ChatController.processMessage", () => {
+  it("should call AI agent with correct parameters", () => {
+    // Too focused on implementation details
+  });
+});
+```
+
+### 2. Comprehensive Mocking Strategy
+- **External APIs**: Mock Google Calendar, OpenAI, LemonSqueezy
+- **Database**: Mock Supabase queries and mutations
+- **Internal Services**: Mock complex business logic
+- **Time-dependent**: Mock dates and timers for predictable tests
+
+### 3. Test Data Management
+- **Factories**: Reusable test data builders
+- **Constants**: Well-known test values for consistency
+- **Cleanup**: Proper teardown and isolation
+
+### 4. Async Testing Best Practices
+- **Proper awaits**: All async operations properly awaited
+- **Promise flushing**: Handle microtask queues correctly
+- **Timeout handling**: Appropriate timeouts for external calls
+
+### 5. Error Testing
+- **Expected errors**: Test that errors are thrown for invalid inputs
+- **Recovery scenarios**: Test retry logic and fallback behavior
+- **User-friendly messages**: Verify error messages are helpful
 
 ## Coverage Reports
 

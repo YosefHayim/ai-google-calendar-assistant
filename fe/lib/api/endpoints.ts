@@ -462,8 +462,6 @@ export const ENDPOINTS = {
 
   VOICE_SYNTHESIZE: '/api/voice/synthesize',
 
-  VOICE_LIVEKIT_TOKEN: '/api/voice/livekit/token',
-
   // ============================================
   // ADMIN ENDPOINTS
   // ============================================

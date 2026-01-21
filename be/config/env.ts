@@ -178,6 +178,7 @@ const google = {
   clientId: CONSTANTS.GOOGLE_CLIENT_ID,
   clientSecret: getRequired("GOOGLE_CLIENT_SECRET"),
   apiKey: getOptional("GOOGLE_API_KEY"),
+  aiApiKey: getOptional("GOOGLE_AI_API_KEY"),
 } as const;
 
 const openai = {
@@ -333,6 +334,7 @@ export const env = {
   googleClientId: google.clientId,
   googleClientSecret: google.clientSecret,
   googleApiKey: google.apiKey,
+  googleAiApiKey: google.aiApiKey,
   openAiApiKey: openai.apiKey,
   telegramAccessToken: integrations.telegram.accessToken,
 };

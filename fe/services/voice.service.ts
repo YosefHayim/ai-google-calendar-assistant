@@ -17,11 +17,6 @@ export type TranscriptionResponse = {
   text: string
 }
 
-export type LiveKitTokenResponse = {
-  token: string
-  roomName: string
-  wsUrl: string
-}
 
 // ============================================
 // Simple transcription function (used by useSpeechRecognition hook)
@@ -89,10 +84,5 @@ export const voiceService = {
       { responseType: 'arraybuffer' },
     )
     return response.data
-  },
-
-  async getLiveKitToken(): Promise<ApiResponse<LiveKitTokenResponse>> {
-    const { data } = await apiClient.post<ApiResponse<LiveKitTokenResponse>>(ENDPOINTS.VOICE_LIVEKIT_TOKEN, {})
-    return data
   },
 }

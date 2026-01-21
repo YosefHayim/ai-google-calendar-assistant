@@ -13,6 +13,7 @@ import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/domains/cal
 import { reqResAsyncHandler, sendR } from "@/lib/http";
 import { logger } from "@/lib/logger";
 import { userRepository } from "@/lib/repositories/UserRepository";
+import { formatDateInTimezone, formatDateISOInTimezone } from "@/lib/date";
 
 // ============================================
 // Types
@@ -103,13 +104,7 @@ function isWithinTimeWindow(
  */
 function getTodayInTimezone(timezone: string): string {
   const now = new Date();
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  return formatter.format(now);
+  return formatDateISOInTimezone(now, timezone);
 }
 
 /**
@@ -126,13 +121,7 @@ function getDayBoundsInTimezone(timezone: string): {
   const now = new Date();
 
   // Get today's date in the user's timezone
-  const dateFormatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const todayStr = dateFormatter.format(now);
+  const todayStr = formatDateISOInTimezone(now, timezone);
 
   // Create start of day (00:00) and end of day (23:59:59)
   const startOfDay = new Date(`${todayStr}T00:00:00`);
@@ -452,13 +441,7 @@ async function processUserBriefing(
 
     const userName =
       user.first_name || user.display_name || user.email.split("@")[0];
-    const dateFormatter = new Intl.DateTimeFormat("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      timeZone: timezone,
-    });
-    const formattedDate = dateFormatter.format(new Date());
+    const formattedDate = formatDateInTimezone(new Date(), timezone);
 
     const channel = briefingPref.channel ?? "email";
     const subject = `Your Daily Briefing - ${events.length} event${events.length !== 1 ? "s" : ""} today`;

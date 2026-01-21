@@ -3,9 +3,15 @@ import type {
   SlackCommandMiddlewareArgs,
 } from "@slack/bolt";
 import { logger } from "@/lib/logger";
+import {
+  getAllyBrainForSlack,
+  toggleAllyBrainEnabled,
+  updateAllyBrainInstructions,
+  clearAllyBrainInstructions,
+} from "../utils/ally-brain";
 import { handleSlackAuth } from "../middleware/auth-handler";
 import { SlackResponseBuilder } from "../utils/response-builder";
-import { getSession } from "../utils/session";
+import { getSession, updateSession } from "../utils/session";
 import { handleAgentRequest } from "./agent-handler";
 
 type CommandArgs = SlackCommandMiddlewareArgs & AllMiddlewareArgs;

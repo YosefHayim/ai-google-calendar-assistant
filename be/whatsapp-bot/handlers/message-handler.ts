@@ -32,6 +32,11 @@ import {
   getVoicePreferenceForWhatsApp,
 } from "../utils/ally-brain";
 import {
+  handleCommand,
+  handleInteractiveReply,
+  parseCommand,
+} from "../utils/commands";
+import {
   getUserIdFromWhatsApp,
   whatsAppConversation,
 } from "../utils/conversation-history";
@@ -100,11 +105,38 @@ export const handleTextMessage = async (
     return;
   }
 
+  const LOG_PREVIEW_LENGTH = 50;
   logger.info(
-    `WhatsApp: Processing text message from ${from}: "${text.slice(0, 50)}..."`
+    `WhatsApp: Processing text message from ${from}: "${text.slice(0, LOG_PREVIEW_LENGTH)}..."`
   );
 
   await markAsRead(messageId);
+
+  const parsedCommand = parseCommand(text);
+  if (parsedCommand) {
+    const commandResult = await handleCommand(parsedCommand.command, parsedCommand.args, {
+      from,
+      email: userEmail,
+      contactName,
+    });
+    if (commandResult.handled) {
+      return;
+    }
+  }
+
+  await processNaturalLanguageMessage(processed, respondWithVoice, userEmail);
+};
+
+const processNaturalLanguageMessage = async (
+  processed: ProcessedMessage,
+  respondWithVoice: boolean,
+  userEmail?: string
+): Promise<void> => {
+  const { from, text, contactName } = processed;
+
+  if (!text) {
+    return;
+  }
 
   try {
     const conversationContext = await whatsAppConversation.addMessageToContext(
@@ -167,27 +199,8 @@ export const handleTextMessage = async (
     );
 
     if (respondWithVoice) {
-      const voicePref = await getVoicePreferenceForWhatsApp(from);
-
-      if (voicePref.enabled) {
-        const ttsResult = await generateSpeechForTelegram(
-          formattedResponse.replace(/[*_~`]/g, ""),
-          voicePref.voice
-        );
-
-        if (ttsResult.success && ttsResult.audioBuffer) {
-          const uploadResult = await uploadMedia(
-            ttsResult.audioBuffer,
-            "audio/ogg",
-            "response.ogg"
-          );
-
-          if (uploadResult.success && uploadResult.mediaId) {
-            await sendAudioMessage(from, uploadResult.mediaId);
-            return;
-          }
-        }
-      }
+      await tryVoiceResponse(from, formattedResponse);
+      return;
     }
 
     await sendTextMessage(from, formattedResponse);
@@ -208,6 +221,48 @@ export const handleTextMessage = async (
       )
     );
   }
+};
+
+const MARKDOWN_CHARS_REGEX = /[*_~`]/g;
+
+const tryVoiceResponse = async (
+  from: string,
+  formattedResponse: string
+): Promise<void> => {
+  const voicePref = await getVoicePreferenceForWhatsApp(from);
+
+  if (!voicePref.enabled) {
+    await sendTextMessage(from, formattedResponse);
+    return;
+  }
+
+  const ttsResult = await generateSpeechForTelegram(
+    formattedResponse.replace(MARKDOWN_CHARS_REGEX, ""),
+    voicePref.voice
+  );
+
+  if (!ttsResult.success) {
+    await sendTextMessage(from, formattedResponse);
+    return;
+  }
+
+  if (!ttsResult.audioBuffer) {
+    await sendTextMessage(from, formattedResponse);
+    return;
+  }
+
+  const uploadResult = await uploadMedia(
+    ttsResult.audioBuffer,
+    "audio/ogg",
+    "response.ogg"
+  );
+
+  if (uploadResult.success && uploadResult.mediaId) {
+    await sendAudioMessage(from, uploadResult.mediaId);
+    return;
+  }
+
+  await sendTextMessage(from, formattedResponse);
 };
 
 export const handleVoiceMessage = async (
@@ -288,14 +343,25 @@ export const handleVoiceMessage = async (
 };
 
 export const handleButtonReply = async (
-  processed: ProcessedMessage
+  processed: ProcessedMessage,
+  replyId: string,
+  userEmail?: string
 ): Promise<void> => {
-  const { from, messageId } = processed;
+  const { from, messageId, contactName } = processed;
 
-  logger.info(`WhatsApp: Received button reply from ${from}`);
+  logger.info(`WhatsApp: Received button reply from ${from}: ${replyId}`);
 
   await markAsRead(messageId);
-  await sendTextMessage(from, "Got your selection! Processing...");
+
+  const result = await handleInteractiveReply(replyId, {
+    from,
+    email: userEmail,
+    contactName,
+  });
+
+  if (!result.handled) {
+    await sendTextMessage(from, "Got your selection! Processing...");
+  }
 };
 
 export const handleIncomingMessage = async (
@@ -374,9 +440,15 @@ export const handleIncomingMessage = async (
       break;
     }
 
-    case "interactive":
-      await handleButtonReply(processed);
+    case "interactive": {
+      const interactiveData = message.interactive;
+      const replyId =
+        interactiveData?.button_reply?.id ||
+        interactiveData?.list_reply?.id ||
+        "";
+      await handleButtonReply(processed, replyId, resolution.email);
       break;
+    }
 
     case "image":
     case "video":

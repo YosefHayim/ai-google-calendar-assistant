@@ -56,7 +56,7 @@ AI Google Calendar Assistant (Ask Ally) is a sophisticated calendar automation p
 | **Multi-Platform Support** | Web dashboard, Voice input, Telegram bot, WhatsApp integration |
 | **Real-time Streaming** | Server-Sent Events (SSE) for live chat responses with typewriter effect |
 | **Gap Recovery** | AI-powered detection and filling of untracked calendar gaps |
-| **Voice Input** | Speech-to-text via browser API and LiveKit for hands-free calendar management |
+| **Voice Input** | Speech-to-text via browser API for hands-free calendar management |
 | **Analytics Dashboard** | Calendar insights with 12+ interactive visualizations |
 | **Multi-language** | i18n support (English, Hebrew, Arabic, German, French, Russian) with RTL |
 | **SaaS-Ready** | Multi-tenant architecture with Lemon Squeezy payment integration |
@@ -82,6 +82,7 @@ AI Google Calendar Assistant (Ask Ally) is a sophisticated calendar automation p
 | **Orchestrator Agent** | Routes requests to specialized tools and handoff agents |
 | **Direct Tools** | Fast, non-AI utilities for database operations (<100ms) |
 | **Handoff Agents** | Multi-step workflow handlers for create, update, delete |
+| **DPO System** | Dynamic Prompt Optimization with comprehensive logging and history tracking |
 | **Guardrails** | Safety checks for prompt injection and mass deletion protection |
 | **Session Persistence** | Supabase-backed agent state with automatic session management |
 | **Insights Generator** | AI-powered calendar analytics and productivity insights |
@@ -92,7 +93,7 @@ AI Google Calendar Assistant (Ask Ally) is a sophisticated calendar automation p
 |----------|----------|
 | **Telegram** | Natural language events, quick commands (/today, /week), multi-language, inline keyboards |
 | **WhatsApp** | Conversational calendar management (in development) |
-| **Voice** | LiveKit real-time voice rooms with OpenAI Whisper transcription |
+| **Voice** | Real-time voice transcription with OpenAI Whisper |
 
 ### Calendar Operations
 
@@ -100,6 +101,7 @@ AI Google Calendar Assistant (Ask Ally) is a sophisticated calendar automation p
 |---------|-------------|
 | **Full CRUD** | Create, read, update, delete events and calendars |
 | **Multi-Calendar** | Support for multiple calendars with AI-powered auto-selection |
+| **Cross-Platform Integration** | Google Calendar and Outlook support with Graph API |
 | **Conflict Detection** | Intelligent scheduling conflict identification |
 | **Recurring Events** | RRULE format support for recurring patterns |
 | **Timezone Handling** | Automatic timezone detection and conversion |
@@ -119,7 +121,7 @@ AI Google Calendar Assistant (Ask Ally) is a sophisticated calendar automation p
     │  │                                                                              │    │
     │  │   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐  │    │
     │  │   │  Web App     │   │  Voice       │   │  Telegram    │   │  WhatsApp    │  │    │
-    │  │   │  (Next.js)   │   │  (LiveKit)   │   │  Bot         │   │  Bot         │  │    │
+    │  │   │  (Next.js)   │   │  (Browser)   │   │  Bot         │   │  Bot         │  │    │
     │  │   │  Port: 4000  │   │  Real-time   │   │  (Grammy)    │   │  (Webhook)   │  │    │
     │  │   └──────┬───────┘   └──────┬───────┘   └──────┬───────┘   └──────┬───────┘  │    │
     │  │          │                  │                  │                  │          │    │
@@ -164,7 +166,7 @@ AI Google Calendar Assistant (Ask Ally) is a sophisticated calendar automation p
     │  │   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘  │    │
     │  │                                                                              │    │
     │  │   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐  │    │
-    │  │   │ LemonSqueezy │   │   LiveKit    │   │   Anthropic  │   │   Resend     │  │    │
+    │  │   │ LemonSqueezy │   │   Web APIs   │   │   Anthropic  │   │   Resend     │  │    │
     │  │   │  (Payments)  │   │   (Voice)    │   │   Claude     │   │   (Email)    │  │    │
     │  │   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘  │    │
     │  │                                                                              │    │
@@ -235,7 +237,7 @@ A key architectural feature is the **Shared Layer** that enables code reuse acro
 ### Design Principles
 
 1. **Single Source of Truth**: Tool handlers contain pure business logic, shared across all modalities
-2. **Framework Agnostic**: Core logic is independent of specific SDKs (OpenAI, LiveKit, Grammy)
+2. **Framework Agnostic**: Core logic is independent of specific SDKs (OpenAI, Grammy)
 3. **Adapter Pattern**: SDK-specific wrappers adapt shared handlers for each framework
 4. **Unified Context**: Redis-backed cross-modal state enables features like pronoun resolution
 
@@ -257,10 +259,10 @@ A key architectural feature is the **Shared Layer** that enables code reuse acro
                     │   ┌─────────────────┴─────────────────┐     │
                     │   │                                   │     │
                     │   ▼                                   ▼     │
-                    │ ┌───────────────┐     ┌───────────────┐     │
-                    │ │ OpenAI        │     │ LiveKit       │     │
-                    │ │ Adapter       │     │ Adapter       │     │
-                    │ └───────────────┘     └───────────────┘     │
+                    │ ┌───────────────┐                       │
+                    │ │ OpenAI        │                       │
+                    │ │ Adapter       │                       │
+                    │ └───────────────┘                       │
                     │                                             │
                     │   ┌─────────────────────────────────────┐   │
                     │   │   Unified Context Store (Redis)     │   │
@@ -275,9 +277,9 @@ A key architectural feature is the **Shared Layer** that enables code reuse acro
               ▼                           ▼                       ▼
         ┌───────────┐             ┌───────────┐           ┌───────────┐
         │   Chat    │             │   Voice   │           │  Telegram │
-        │  (Web)    │             │ (LiveKit) │           │   (Bot)   │
+        │  (Web)    │             │ (Browser) │           │   (Bot)   │
         │           │             │           │           │           │
-        │ OpenAI    │             │ LiveKit   │           │ OpenAI    │
+        │ OpenAI    │             │ Web APIs  │           │ OpenAI    │
         │ Agents    │             │ Agents +  │           │ Agents    │
         │ SDK       │             │ Realtime  │           │ SDK       │
         └───────────┘             └───────────┘           └───────────┘
@@ -317,7 +319,6 @@ ai-google-calendar-assistant/
 │   │   │   └── schemas/             # Zod schemas
 │   │   ├── adapters/                # SDK-specific wrappers
 │   │   │   ├── openai-adapter.ts    # @openai/agents wrapper
-│   │   │   └── livekit-adapter.ts   # @livekit/agents wrapper
 │   │   ├── context/                 # Cross-modal context (Redis)
 │   │   ├── orchestrator/            # Agent profiles & factories
 │   │   ├── prompts/                 # Shared prompt templates
@@ -337,7 +338,6 @@ ai-google-calendar-assistant/
 │   ├── middlewares/                 # Express middleware
 │   ├── telegram-bot/                # Telegram Bot (Grammy)
 │   ├── whatsapp-bot/                # WhatsApp Bot
-│   ├── voice-sidecar/               # LiveKit Voice Agent
 │   ├── utils/                       # Shared utilities
 │   ├── tests/                       # Test files (Jest)
 │   └── app.ts                       # Application entry point
@@ -388,7 +388,7 @@ ai-google-calendar-assistant/
 | **Auth** | Supabase Auth, Google OAuth 2.0 |
 | **Calendar** | Google Calendar API v105 |
 | **Telegram Bot** | Grammy v1.38.3 |
-| **Voice** | LiveKit Agents SDK, OpenAI Whisper |
+| **Voice** | OpenAI Whisper |
 | **Cache** | Redis (cross-modal context) |
 | **Payments** | Lemon Squeezy |
 | **Validation** | Zod v3.25 |
@@ -409,7 +409,7 @@ ai-google-calendar-assistant/
 | **Forms** | React Hook Form 7.70, Zod 4.3 |
 | **Charts** | Recharts 2.15, D3 7.9 |
 | **3D Graphics** | Three.js 0.182, React Three Fiber 9.5 |
-| **Voice** | LiveKit Client 2.16, Web Speech API |
+| **Voice** | Web Speech API |
 | **Icons** | Lucide Icons 0.562 |
 
 ---
@@ -472,7 +472,6 @@ See `/be/.env.example` for all available options.
 NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-NEXT_PUBLIC_LIVEKIT_URL=your_livekit_url  # Optional, for voice
 ```
 
 See `/fe/env.example` for all available options.
@@ -757,6 +756,8 @@ npm run update:db:types  # Generate Supabase types
 - [ ] WhatsApp bot completion
 - [ ] Enhanced conflict resolution
 - [ ] Meeting optimization suggestions
+- [ ] DPO system enhancements
+- [ ] Outlook integration expansion
 
 ### Planned Features
 
@@ -809,4 +810,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Vercel](https://vercel.com/) - Next.js and hosting
 - [shadcn/ui](https://ui.shadcn.com/) - UI components
 - [Grammy](https://grammy.dev/) - Telegram Bot framework
-- [LiveKit](https://livekit.io/) - Real-time voice infrastructure

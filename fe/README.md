@@ -33,7 +33,7 @@
 This frontend application provides:
 
 - **AI Chat Interface**: Conversational calendar management with real-time streaming responses
-- **Voice Input**: Speech-to-text via browser API and LiveKit integration
+- **Voice Input**: Speech-to-text via browser API
 - **Multiple View Modes**: Chat view, Avatar view, and 3D wall calendar visualization
 - **Analytics Dashboard**: Calendar insights with 12+ interactive chart components
 - **Real-time Updates**: Live calendar synchronization via SSE
@@ -52,7 +52,7 @@ This frontend application provides:
 | **Natural Language**     | Create, update, delete events via conversation          |
 | **Conversation History** | Persistent conversations with AI-generated titles       |
 | **Multiple View Modes**  | Chat view, Avatar view, 3D visualization                |
-| **Voice Input**          | Speech-to-text via browser API and LiveKit              |
+| **Voice Input**          | Speech-to-text via browser API                          |
 | **Voice Orb**            | Visual feedback animation during voice input            |
 | **Image Upload**         | Upload images for AI vision analysis                    |
 | **Markdown Support**     | Rich text rendering with syntax highlighting            |
@@ -194,8 +194,8 @@ This frontend application provides:
 │   ┌─────────────────────────────────────────────────────────────────────┐   │
 │   │                        EXTERNAL LAYER                               │   │
 │   │   ┌───────────────┐  ┌───────────────┐  ┌───────────────┐           │   │
-│   │   │ Backend API   │  │ Supabase      │  │ LiveKit       │           │   │
-│   │   │ (Express)     │  │ Auth          │  │ Voice         │           │   │
+│   │   │ Backend API   │  │ Supabase      │                          │   │
+│   │   │ (Express)     │  │ Auth          │                          │   │
 │   │   └───────────────┘  └───────────────┘  └───────────────┘           │   │
 │   └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
@@ -594,7 +594,6 @@ const form = useForm<FormValues>()
 | ---------------------- | --------------------------- | ------------------------------- |
 | `useStreamingChat`     | SSE chat streaming          | `hooks/useStreamingChat.ts`     |
 | `useSpeechRecognition` | Browser speech API          | `hooks/useSpeechRecognition.ts` |
-| `useLiveKitVoice`      | LiveKit voice integration   | `hooks/useLiveKitVoice.ts`      |
 | `useAgentProfiles`     | AI agent tier selection     | `hooks/useAgentProfiles.ts`     |
 | `useGapRecovery`       | Gap detection and filling   | `hooks/useGapRecovery.ts`       |
 | `useImageUpload`       | Image upload with preview   | `hooks/useImageUpload.ts`       |
@@ -680,17 +679,6 @@ const { isListening, transcript, startListening, stopListening, resetTranscript,
   continuous: false,
   onResult: (text) => {
     // Handle recognized text
-  },
-})
-```
-
-#### useLiveKitVoice
-
-```tsx
-const { isConnected, isRecording, connect, disconnect, startRecording, stopRecording, roomState } = useLiveKitVoice({
-  roomName: conversationId,
-  onTranscript: (text) => {
-    // Handle transcribed text
   },
 })
 ```
@@ -916,7 +904,6 @@ fe/
 │   │   ├── admin/               # Admin queries
 │   │   └── agent-profiles/      # Agent profile queries
 │   ├── useAgentProfiles.ts      # Agent profile selection
-│   ├── useLiveKitVoice.ts       # LiveKit voice integration
 │   ├── useSpeechRecognition.ts  # Browser speech API
 │   └── useStreamingChat.ts      # Chat streaming
 │
@@ -978,8 +965,6 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 # API
 NEXT_PUBLIC_API_URL=http://localhost:3000
 
-# LiveKit (optional, for voice)
-NEXT_PUBLIC_LIVEKIT_URL=your_livekit_url
 ```
 
 ### Installation

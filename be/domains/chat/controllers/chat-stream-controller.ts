@@ -3,23 +3,14 @@ import {
   type RunItemStreamEvent,
   type RunRawModelStreamEvent,
   run,
-} from "@openai/agents"
-import type { Request, Response } from "express"
-import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
-import { runDPO } from "@/ai-agents/dpo"
-import { createAgentSession } from "@/ai-agents/sessions/session-factory"
-import type { AgentContext } from "@/ai-agents/tool-registry"
-import { STATUS_RESPONSE } from "@/config"
-import { createCreditTransaction } from "@/domains/payments/services/credit-service"
-import { getAllyBrainPreference } from "@/domains/settings/services/user-preferences-service"
-import { unifiedContextStore } from "@/shared/context"
-import type { ImageContent } from "@/shared/llm"
-import {
-  generateConversationTitle,
-  summarizeMessages,
-} from "@/telegram-bot/utils/summarize"
-import { webConversation } from "@/domains/chat/utils/conversation/WebConversationAdapter"
-import { sendR } from "@/lib/http"
+} from "@openai/agents";
+import type { Request, Response } from "express";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
+import { runDPO } from "@/ai-agents/dpo";
+import { createAgentSession } from "@/ai-agents/sessions/session-factory";
+import type { AgentContext } from "@/ai-agents/tool-registry";
+import { STATUS_RESPONSE } from "@/config";
+import { webConversation } from "@/domains/chat/utils/conversation/WebConversationAdapter";
 import {
   endSSEStream,
   setupSSEHeaders,
@@ -29,25 +20,26 @@ import {
   writeError,
   writeMemoryUpdated,
   writeTextDelta,
-  writeTitleGenerated,
   writeToolComplete,
   writeToolStart,
-} from "@/domains/chat/utils/sse"
+} from "@/domains/chat/utils/sse";
+import {
+  buildChatPromptWithContext,
+  EMBEDDING_LIMIT,
+  EMBEDDING_THRESHOLD,
+  generateAndSaveTitle,
+  type StreamChatRequest,
+  type StreamingParams,
+  saveConversationMessages,
+} from "@/domains/chat/utils/stream-utils";
 import {
   getWebRelevantContext,
   storeWebEmbeddingAsync,
-} from "@/domains/chat/utils/web-embeddings"
+} from "@/domains/chat/utils/web-embeddings";
+import { createCreditTransaction } from "@/domains/payments/services/credit-service";
+import { sendR } from "@/lib/http";
+import { unifiedContextStore } from "@/shared/context";
 
-const EMBEDDING_THRESHOLD = 0.75;
-const EMBEDDING_LIMIT = 3;
-
-/**
- * Parses tool output from AI agent responses, handling both string and object formats.
- * Attempts to safely parse JSON strings while falling back gracefully for malformed data.
- *
- * @param output - Raw output from AI tool execution (string or object)
- * @returns Parsed tool result with success status and messages, or null if parsing fails
- */
 function parseToolOutput(
   output: unknown
 ): { success?: boolean; message?: string; newInstructions?: string } | null {
@@ -59,78 +51,6 @@ function parseToolOutput(
   } catch {
     return null;
   }
-}
-
-type StreamChatRequest = {
-  message: string;
-  images?: ImageContent[];
-};
-
-type PromptParams = {
-  message: string;
-  conversationContext: string;
-  semanticContext: string;
-  userEmail: string;
-  userId: string;
-  hasImages?: boolean;
-  imageCount?: number;
-};
-
-/**
- * Builds a comprehensive chat prompt with user context, conversation history, and semantic context.
- * Incorporates user preferences, current time, and any custom instructions from Ally Brain.
- * Prepares the complete context needed for the AI agent to provide personalized calendar assistance.
- *
- * @param params - Parameters for building the chat prompt
- * @returns Promise resolving to the complete formatted prompt string
- */
-async function buildChatPromptWithContext(
-  params: PromptParams
-): Promise<string> {
-  const {
-    message,
-    conversationContext,
-    semanticContext,
-    userEmail,
-    userId,
-    hasImages,
-    imageCount,
-  } = params;
-  const parts: string[] = [];
-
-  const allyBrain = await getAllyBrainPreference(userId);
-  if (allyBrain?.enabled && allyBrain?.instructions) {
-    parts.push("User's Custom Instructions (Always Remember) ");
-    parts.push(allyBrain.instructions);
-    parts.push("End Custom Instructions \n");
-  }
-
-  parts.push(`User Email: ${userEmail}`);
-  parts.push(`Current Time: ${new Date().toISOString()}`);
-
-  if (conversationContext) {
-    parts.push("\nToday's Conversation ");
-    parts.push(conversationContext);
-    parts.push("End Today's Conversation ");
-  }
-
-  if (semanticContext) {
-    parts.push("\nRelated Past Conversations ");
-    parts.push(semanticContext);
-    parts.push("End Past Conversations ");
-  }
-
-  if (hasImages && imageCount) {
-    parts.push(
-      `\n[User has attached ${imageCount} image(s) to this message. Please analyze them and help with any calendar-related content you find.]`
-    );
-  }
-
-  parts.push("\n<user_request>");
-  parts.push(message);
-  parts.push("</user_request>");
-
-  return parts.join("\n");
 }
 
 /**
@@ -238,33 +158,6 @@ async function handleOpenAIStreaming(
   return fullResponse;
 }
 
-type StreamingParams = {
-  res: Response;
-  userId: string;
-  userEmail: string;
-  message: string;
-  conversationId: string | null;
-  isNewConversation: boolean;
-  fullPrompt: string;
-  images?: ImageContent[];
-};
-
-/**
- * Main handler for streaming chat responses with comprehensive context management.
- * Orchestrates the complete chat flow including DPO optimization, semantic context retrieval,
- * conversation management, and credit tracking. Handles both new conversations and
- * continuation of existing ones with proper state management.
- *
- * @param params - Complete parameters for handling the streaming response
- * @param params.res - Express response object for SSE streaming
- * @param params.userId - Unique identifier of the authenticated user
- * @param params.userEmail - Email address of the user for context
- * @param params.message - The user's chat message
- * @param params.conversationId - Existing conversation ID or null for new conversations
- * @param params.isNewConversation - Whether this is the start of a new conversation
- * @param params.fullPrompt - Complete prompt with user context and conversation history
- * @param params.images - Optional array of image content attached to the message
- */
 async function handleStreamingResponse(params: StreamingParams): Promise<void> {
   const {
     res,
@@ -294,8 +187,8 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
     return;
   }
 
-  await unifiedContextStore.setModality(userId, "chat")
-  await unifiedContextStore.touch(userId)
+  await unifiedContextStore.setModality(userId, "chat");
+  await unifiedContextStore.touch(userId);
 
   const dpoResult = await runDPO({
     userId,
@@ -304,27 +197,26 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
     basePrompt: fullPrompt,
     userContext: undefined,
     isShadowRun: false,
-  })
+  });
 
   if (dpoResult.wasRejected) {
     writeError(
       res,
       "Your request was flagged for safety review. Please rephrase your request.",
       "REQUEST_REJECTED"
-    )
-    stopHeartbeat()
-    endSSEStream(res)
-    return
+    );
+    stopHeartbeat();
+    endSSEStream(res);
+    return;
   }
 
-  const effectivePrompt = dpoResult.effectivePrompt
+  const effectivePrompt = dpoResult.effectivePrompt;
 
-  let fullResponse = ""
-  let interactionSuccessful = false
-  let finalConversationId = conversationId
+  let fullResponse = "";
+  let interactionSuccessful = false;
 
   try {
-    const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`
+    const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`;
 
     fullResponse = await handleOpenAIStreaming(
       res,
@@ -332,40 +224,23 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
       userEmail,
       tempConversationId,
       effectivePrompt
-    )
+    );
+
+    const messageImages = images?.map((img) => ({
+      data: img.data,
+      mimeType: img.mimeType,
+    }));
+
+    const finalConversationId = await saveConversationMessages({
+      userId,
+      message,
+      fullResponse,
+      conversationId,
+      isNewConversation,
+      images: messageImages,
+    });
 
     if (fullResponse) {
-      const messageImages = images?.map((img) => ({
-        data: img.data,
-        mimeType: img.mimeType,
-      }));
-
-      if (isNewConversation) {
-        const result = await webConversation.createConversationWithMessages(
-          userId,
-          { role: "user", content: message, images: messageImages },
-          { role: "assistant", content: fullResponse },
-          summarizeMessages
-        );
-
-        if (result) {
-          finalConversationId = result.conversationId;
-        }
-      } else if (conversationId) {
-        await webConversation.addMessageToConversation(
-          conversationId,
-          userId,
-          { role: "user", content: message, images: messageImages },
-          summarizeMessages
-        );
-        await webConversation.addMessageToConversation(
-          conversationId,
-          userId,
-          { role: "assistant", content: fullResponse },
-          summarizeMessages
-        );
-      }
-
       storeWebEmbeddingAsync(userId, message, "user");
       storeWebEmbeddingAsync(userId, fullResponse, "assistant");
       interactionSuccessful = true;
@@ -374,16 +249,7 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
     writeDone(res, finalConversationId || "", fullResponse, undefined);
 
     if (isNewConversation && finalConversationId) {
-      try {
-        const title = await generateConversationTitle(message);
-        await webConversation.updateConversationTitle(
-          finalConversationId,
-          title
-        );
-        writeTitleGenerated(res, finalConversationId, title);
-      } catch (titleError) {
-        console.error("Title generation error:", titleError);
-      }
+      await generateAndSaveTitle(res, finalConversationId, message);
     }
   } catch (error) {
     console.error("Stream error:", error);
@@ -407,7 +273,7 @@ const streamChat = async (
   res: Response
 ): Promise<void> => {
   const { message, images } = req.body;
-  const userId = req.user!.id;
+  const userId = req.user?.id;
   const userEmail = req.user?.email;
 
   if (!message?.trim() && (!images || images.length === 0)) {
@@ -465,7 +331,7 @@ const streamContinueConversation = async (
   req: Request<{ id: string }, unknown, StreamChatRequest>,
   res: Response
 ): Promise<void> => {
-  const userId = req.user!.id;
+  const userId = req.user?.id;
   const userEmail = req.user?.email;
   const conversationId = req.params.id as string;
   const { message, images } = req.body;

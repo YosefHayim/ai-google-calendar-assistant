@@ -111,8 +111,8 @@ This backend service provides:
 │   ┌─────────────────────────────────────────────────────────────────────────┐   │
 │   │                           REQUEST LAYER                                 │   │
 │   │   ┌───────┐ ┌───────┐ ┌────────┐ ┌───────┐ ┌────────┐ ┌───────┐         │   │
-│   │   │ HTTP  │ │  SSE  │ │Telegram│ │ Slack │ │WhatsApp│ │LiveKit│         │   │
-│   │   │Routes │ │Stream │ │  Bot   │ │  Bot  │ │  Bot   │ │ Voice │         │   │
+│   │   │ HTTP  │ │  SSE  │ │Telegram│ │ Slack │ │WhatsApp│         │   │
+│   │   │Routes │ │Stream │ │  Bot   │ │  Bot  │ │  Bot   │         │   │
 │   │   └───┬───┘ └───┬───┘ └───┬────┘ └───┬───┘ └───┬────┘ └───┬───┘         │   │
 │   └───────┼─────────┼─────────┼─────────┼─────────┼─────────┼───────────────┘   │
 │            │            │           │           │           │                   │
@@ -129,7 +129,7 @@ This backend service provides:
 │   │                          SHARED LAYER                                   │   │
 │   │   ┌───────────────┐  ┌───────────────┐  ┌───────────────┐               │   │
 │   │   │ Tool Handlers │  │   Adapters    │  │ Context Store │               │   │
-│   │   │ (Pure Logic)  │  │ OpenAI/LiveKit│  │    (Redis)    │               │   │
+│   │   │ (Pure Logic)  │  │ OpenAI        │  │    (Redis)    │               │   │
 │   │   └───────────────┘  └───────────────┘  └───────────────┘               │   │
 │   └─────────────────────────────────────────────────────────────────────────┘   │
 │                                     │                                           │
@@ -208,7 +208,7 @@ The **Shared Layer** (`be/shared/`) is the architectural hub enabling code reuse
 
 1. **Framework Agnostic**: Tool handlers contain pure business logic with no SDK dependencies
 2. **Single Source of Truth**: One implementation shared by Chat, Voice, and Telegram
-3. **Adapter Pattern**: SDK-specific wrappers adapt handlers for OpenAI and LiveKit
+3. **Adapter Pattern**: SDK-specific wrappers adapt handlers for OpenAI
 4. **Testability**: Pure functions are easy to unit test in isolation
 
 ### Shared Layer Architecture
@@ -229,10 +229,10 @@ The **Shared Layer** (`be/shared/`) is the architectural hub enabling code reuse
                     │   ┌─────────────────┴─────────────────┐     │
                     │   │                                   │     │
                     │   ▼                                   ▼     │
-                    │ ┌───────────────┐     ┌───────────────┐     │
-                    │ │ OpenAI        │     │ LiveKit       │     │
-                    │ │ Adapter       │     │ Adapter       │     │
-                    │ └───────────────┘     └───────────────┘     │
+                    │ ┌───────────────┐                       │
+                    │ │ OpenAI        │                       │
+                    │ │ Adapter       │                       │
+                    │ └───────────────┘                       │
                     │                                             │
                     │   ┌─────────────────────────────────────┐   │
                     │   │   Unified Context Store (Redis)     │   │
@@ -247,7 +247,7 @@ The **Shared Layer** (`be/shared/`) is the architectural hub enabling code reuse
               ▼                 ▼           ▼           ▼                 ▼
         ┌───────────┐     ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐
         │   Chat    │     │   Voice   │ │  Telegram │ │   Slack   │ │ WhatsApp  │
-        │  (Web)    │     │ (LiveKit) │ │   (Bot)   │ │   (Bot)   │ │   (Bot)   │
+        │  (Web)    │     │ (Browser) │ │   (Bot)   │ │   (Bot)   │ │   (Bot)   │
         └───────────┘     └───────────┘ └───────────┘ └───────────┘ └───────────┘
 ```
 
@@ -310,15 +310,6 @@ const agent = new Agent({
   tools: SHARED_TOOLS,
   // ...
 })
-```
-
-#### LiveKit Adapter (`livekit-adapter.ts`)
-
-```typescript
-import { LIVEKIT_TOOL_DEFINITIONS, getLiveKitToolByName } from "@/shared/adapters/livekit-adapter"
-
-// Use for LiveKit Agents SDK voice integration
-const tools = getAllLiveKitTools()
 ```
 
 ### Context Store (`shared/context/`)
@@ -578,8 +569,7 @@ if (!safe) {
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
 | `POST` | `/transcribe` | Transcribe audio file | JWT |
-| `POST` | `/stream` | Real-time voice streaming | JWT |
-| `GET` | `/token` | Get LiveKit room token | JWT |
+| `POST` | `/synthesize` | Generate speech audio | JWT |
 
 ### Admin (`/api/admin`)
 
@@ -707,7 +697,6 @@ be/
 │   │   └── tool-executor.ts     # Provider-agnostic execution
 │   ├── adapters/                # SDK-specific wrappers
 │   │   ├── openai-adapter.ts    # @openai/agents wrapper
-│   │   └── livekit-adapter.ts   # @livekit/agents wrapper
 │   ├── context/                 # Cross-modal context (Redis)
 │   │   ├── unified-context-store.ts
 │   │   └── entity-tracker.ts    # Pronoun resolution
@@ -792,9 +781,6 @@ be/
 │   ├── init-whatsapp.ts
 │   └── handlers/
 │
-├── voice-sidecar/               # LiveKit Voice Agent
-│   ├── main.ts                  # Voice agent entry
-│   └── handlers/
 │
 ├── utils/                       # Utilities
 │   ├── calendar/                # Calendar operations
@@ -1046,7 +1032,6 @@ bun run sort         # Sort package.json
 | **Google RISC** | Cross-Account Protection | `@/routes/risc-route.ts` |
 | **OpenAI** | Agent orchestration, LLM | `@/ai-agents/` |
 | **Anthropic** | Alternative LLM provider | `@/config/clients/openai.ts` |
-| **LiveKit** | Real-time voice rooms | `@/voice-sidecar/` |
 | **Lemon Squeezy** | Payments (subscription) | `@/services/lemonsqueezy-service.ts` |
 | **Redis** | Cross-modal context store | `@/shared/context/` |
 | **Resend** | Email delivery | `@/controllers/contact-controller.ts` |
