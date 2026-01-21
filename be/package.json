@@ -5,7 +5,9 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
+    "backup:flags": "bun scripts/backup-feature-flags.ts",
     "build": "tsc && tsc-alias",
+    "db:seed:flags": "bun scripts/seed-feature-flags.ts",
     "check": "npx ultracite check",
     "dev": "bun --watch app.ts",
     "fix": "npx ultracite fix --unsafe",

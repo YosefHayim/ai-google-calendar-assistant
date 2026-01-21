@@ -187,6 +187,9 @@ supabase.exe
 *.sqlite
 *.sqlite3
 
+# Database backups
+backups/
+
 # Backup files
 *.bak
 *.backup
