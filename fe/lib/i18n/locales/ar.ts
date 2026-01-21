@@ -517,21 +517,10 @@ export const ar: TranslationShape = {
       creating: 'جاري الإنشاء...',
       create: 'إنشاء حدث',
     },
-  },
 
-  // Gaps Analysis
-  gaps: {
-    title: 'تحليل الفجوات',
     subtitle: 'اكتشف فرص الجدولة في تقويمك',
-    refresh: 'تحديث',
-    analyzing: 'جاري التحليل...',
     potentialGaps: 'فجوات محتملة تم تحديدها',
     analyzingPeriod: 'فترة التحليل:',
-    confidence: {
-      high: 'عالي',
-      medium: 'متوسط',
-      low: 'منخفض',
-    },
     actions: {
       selectCalendar: 'اختر التقويم',
       creating: 'جاري الإنشاء...',

@@ -1,6 +1,6 @@
 Contact: mailto:security@askally.io
-Expires: 2027-01-14T23:59:59.000Z
+Contact: https://askally.io/security#vulnerability-disclosure
+Expires: 2027-01-21T23:59:59.000Z
 Preferred-Languages: en, he, ar, de, fr, ru
-Acknowledgments: https://askally.io/security/acknowledgments
-Policy: https://askally.io/security/policy
 Canonical: https://askally.io/.well-known/security.txt
+Policy: https://askally.io/security#vulnerability-disclosure

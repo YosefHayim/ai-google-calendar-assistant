@@ -537,6 +537,17 @@ export const de: TranslationShape = {
       creating: 'Erstelle...',
       create: 'Termin erstellen',
     },
+
+    subtitle: 'Entdecken Sie Planungsmöglichkeiten in Ihrem Kalender',
+    potentialGaps: 'potenzielle Lücken identifiziert',
+    analyzingPeriod: 'Analysezeitraum:',
+    actions: {
+      selectCalendar: 'Kalender auswählen',
+      creating: 'Erstelle...',
+      createEvent: 'Ereignis erstellen',
+      skipping: 'Überspringe...',
+      skipGap: 'Lücke überspringen',
+    },
   },
 
   settings: {
@@ -869,28 +880,6 @@ export const de: TranslationShape = {
       time: 'Zeit',
       calendars: 'Kalender',
       health: 'Gesundheit',
-    },
-  },
-
-  // Gaps Analysis
-  gaps: {
-    title: 'Lückenanalyse',
-    subtitle: 'Entdecken Sie Planungsmöglichkeiten in Ihrem Kalender',
-    refresh: 'Aktualisieren',
-    analyzing: 'Analysiere...',
-    potentialGaps: 'potenzielle Lücken identifiziert',
-    analyzingPeriod: 'Analysezeitraum:',
-    confidence: {
-      high: 'Hoch',
-      medium: 'Mittel',
-      low: 'Niedrig',
-    },
-    actions: {
-      selectCalendar: 'Kalender auswählen',
-      creating: 'Erstelle...',
-      createEvent: 'Ereignis erstellen',
-      skipping: 'Überspringe...',
-      skipGap: 'Lücke überspringen',
     },
   },
 

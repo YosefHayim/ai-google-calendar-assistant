@@ -535,6 +535,17 @@ export const ru: TranslationShape = {
       creating: 'Создание...',
       create: 'Создать событие',
     },
+
+    subtitle: 'Обнаружьте возможности планирования в вашем календаре',
+    potentialGaps: 'потенциальных пробелов обнаружено',
+    analyzingPeriod: 'Период анализа:',
+    actions: {
+      selectCalendar: 'Выбрать календарь',
+      creating: 'Создание...',
+      createEvent: 'Создать событие',
+      skipping: 'Пропуск...',
+      skipGap: 'Пропустить пробел',
+    },
   },
 
   settings: {
@@ -860,28 +871,6 @@ export const ru: TranslationShape = {
       time: 'Время',
       calendars: 'Календари',
       health: 'Здоровье',
-    },
-  },
-
-  // Gaps Analysis
-  gaps: {
-    title: 'Анализ пробелов',
-    subtitle: 'Обнаружьте возможности планирования в вашем календаре',
-    refresh: 'Обновить',
-    analyzing: 'Анализ...',
-    potentialGaps: 'потенциальных пробелов обнаружено',
-    analyzingPeriod: 'Период анализа:',
-    confidence: {
-      high: 'Высокий',
-      medium: 'Средний',
-      low: 'Низкий',
-    },
-    actions: {
-      selectCalendar: 'Выбрать календарь',
-      creating: 'Создание...',
-      createEvent: 'Создать событие',
-      skipping: 'Пропуск...',
-      skipGap: 'Пропустить пробел',
     },
   },
 

@@ -549,6 +549,17 @@ export const he: TranslationShape = {
       creating: 'יוצר...',
       create: 'צור אירוע',
     },
+
+    subtitle: 'גלה הזדמנויות תזמון ביומן שלך',
+    potentialGaps: 'פערים פוטנציאליים זוהו',
+    analyzingPeriod: 'תקופת ניתוח:',
+    actions: {
+      selectCalendar: 'בחר יומן',
+      creating: 'יוצר...',
+      createEvent: 'צור אירוע',
+      skipping: 'מדלג...',
+      skipGap: 'דלג על פער',
+    },
   },
 
   // Settings
@@ -874,28 +885,6 @@ export const he: TranslationShape = {
       time: 'זמן',
       calendars: 'לוחות שנה',
       health: 'בריאות',
-    },
-  },
-
-  // Gaps Analysis
-  gaps: {
-    title: 'ניתוח פערים',
-    subtitle: 'גלה הזדמנויות תזמון ביומן שלך',
-    refresh: 'רענן',
-    analyzing: 'מנתח...',
-    potentialGaps: 'פערים פוטנציאליים זוהו',
-    analyzingPeriod: 'תקופת ניתוח:',
-    confidence: {
-      high: 'גבוה',
-      medium: 'בינוני',
-      low: 'נמוך',
-    },
-    actions: {
-      selectCalendar: 'בחר יומן',
-      creating: 'יוצר...',
-      createEvent: 'צור אירוע',
-      skipping: 'מדלג...',
-      skipGap: 'דלג על פער',
     },
   },
 

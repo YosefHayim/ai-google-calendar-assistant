@@ -568,6 +568,18 @@ export const en = {
       creating: 'Creating...',
       create: 'Create Event',
     },
+
+    // Analysis
+    subtitle: 'Discover scheduling opportunities in your calendar',
+    potentialGaps: 'potential gaps identified',
+    analyzingPeriod: 'Analyzing period:',
+    actions: {
+      selectCalendar: 'Select calendar',
+      creating: 'Creating...',
+      createEvent: 'Create Event',
+      skipping: 'Skipping...',
+      skipGap: 'Skip Gap',
+    },
   },
 
   // Settings
@@ -903,28 +915,6 @@ export const en = {
       time: 'Time',
       calendars: 'Calendars',
       health: 'Health',
-    },
-  },
-
-  // Gaps Analysis
-  gaps: {
-    title: 'Gap Analysis',
-    subtitle: 'Discover scheduling opportunities in your calendar',
-    refresh: 'Refresh',
-    analyzing: 'Analyzing...',
-    potentialGaps: 'potential gaps identified',
-    analyzingPeriod: 'Analyzing period:',
-    confidence: {
-      high: 'High',
-      medium: 'Medium',
-      low: 'Low',
-    },
-    actions: {
-      selectCalendar: 'Select calendar',
-      creating: 'Creating...',
-      createEvent: 'Create Event',
-      skipping: 'Skipping...',
-      skipGap: 'Skip Gap',
     },
   },
 

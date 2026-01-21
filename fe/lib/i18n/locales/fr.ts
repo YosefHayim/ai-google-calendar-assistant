@@ -540,6 +540,17 @@ export const fr: TranslationShape = {
       creating: 'Création...',
       create: 'Créer événement',
     },
+
+    subtitle: 'Découvrez les opportunités de planification dans votre calendrier',
+    potentialGaps: 'écarts potentiels identifiés',
+    analyzingPeriod: "Période d'analyse:",
+    actions: {
+      selectCalendar: 'Sélectionner le calendrier',
+      creating: 'Création...',
+      createEvent: 'Créer un événement',
+      skipping: 'Ignorer...',
+      skipGap: "Ignorer l'écart",
+    },
   },
 
   settings: {
@@ -870,28 +881,6 @@ export const fr: TranslationShape = {
       time: 'Temps',
       calendars: 'Calendriers',
       health: 'Santé',
-    },
-  },
-
-  // Gaps Analysis
-  gaps: {
-    title: 'Analyse des écarts',
-    subtitle: 'Découvrez les opportunités de planification dans votre calendrier',
-    refresh: 'Actualiser',
-    analyzing: 'Analyse...',
-    potentialGaps: 'écarts potentiels identifiés',
-    analyzingPeriod: "Période d'analyse:",
-    confidence: {
-      high: 'Élevé',
-      medium: 'Moyen',
-      low: 'Faible',
-    },
-    actions: {
-      selectCalendar: 'Sélectionner le calendrier',
-      creating: 'Création...',
-      createEvent: 'Créer un événement',
-      skipping: 'Ignorer...',
-      skipGap: "Ignorer l'écart",
     },
   },
 
