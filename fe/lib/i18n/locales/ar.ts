@@ -304,6 +304,11 @@ export const ar: TranslationShape = {
     logout: 'تسجيل الخروج',
     chatWithAlly: 'تحدث مع Ally',
     minimize: 'تصغير',
+    // User Footer items
+    upgradeToPro: 'الترقية إلى الإصدار الاحترافي',
+    billing: 'الفوترة',
+    notifications: 'الإشعارات',
+    logOut: 'تسجيل الخروج',
   },
 
   dashboard: {
@@ -1004,14 +1009,6 @@ export const ar: TranslationShape = {
       resources: 'الموارد',
       blog: 'سجل التغييرات',
       changeLog: 'سجل التغييرات',
-    },
-    sidebar: {
-      upgradeToPro: 'الترقية إلى الإصدار الاحترافي',
-      account: 'الحساب',
-      billing: 'الفوترة',
-      notifications: 'الإشعارات',
-      settings: 'الإعدادات',
-      logOut: 'تسجيل الخروج',
     },
     integrations: {
       title: 'التكاملات',

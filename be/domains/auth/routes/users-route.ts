@@ -25,6 +25,7 @@ import {
   geoLocationSchema,
   notificationSettingsSchema,
   otpVerificationSchema,
+  personaSchema,
   preferenceKeyParamSchema,
   reminderPreferencesSchema,
   signInSchema,
@@ -224,6 +225,14 @@ router.put(
   "/preferences/display_preferences",
   supabaseAuth(),
   validate(displayPreferencesSchema, "body"),
+  userPreferencesController.updatePreference
+)
+
+// PUT /preferences/persona - Update persona preference
+router.put(
+  "/preferences/persona",
+  supabaseAuth(),
+  validate(personaSchema, "body"),
   userPreferencesController.updatePreference
 )
 

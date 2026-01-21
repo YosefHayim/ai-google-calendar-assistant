@@ -114,7 +114,8 @@ export function ChatInterface() {
         speakText(fullResponse.split('\n')[0])
       }
     },
-    [t,
+    [
+      t,
       selectedConversationId,
       setConversationId,
       addConversationToList,

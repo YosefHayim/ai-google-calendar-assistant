@@ -317,6 +317,11 @@ export const he: TranslationShape = {
     logout: 'התנתקות',
     chatWithAlly: 'שוחח עם אלי',
     minimize: 'מזער',
+    // User Footer items
+    upgradeToPro: 'שדרג לפרו',
+    billing: 'חיוב',
+    notifications: 'התראות',
+    logOut: 'התנתק',
   },
 
   // Dashboard
@@ -1089,16 +1094,6 @@ export const he: TranslationShape = {
       resources: 'משאבים',
       blog: 'יומן שינויים',
       changeLog: 'יומן שינויים',
-    },
-
-    // Sidebar/User Footer
-    sidebar: {
-      upgradeToPro: 'שדרג לפרו',
-      account: 'חשבון',
-      billing: 'חיוב',
-      notifications: 'התראות',
-      settings: 'הגדרות',
-      logOut: 'התנתק',
     },
 
     // Integrations

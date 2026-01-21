@@ -1,4 +1,5 @@
 import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from "@slack/bolt"
+import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
 import { logger } from "@/lib/logger"
 import { handleSlackAuth } from "../middleware/auth-handler"
 
@@ -102,6 +103,22 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
     return
   }
 
+  if (authResult.session.userId && authResult.session.email) {
+    const access = await checkUserAccess(
+      authResult.session.userId,
+      authResult.session.email
+    )
+    if (!access.has_access && access.credits_remaining <= 0) {
+      const upgradeUrl = "https://askally.ai/pricing"
+      const msg =
+        access.subscription_status === null
+          ? `Your 14-day free trial has ended.\n\nUpgrade to Pro or Executive to continue using Ally:\n${upgradeUrl}`
+          : `You need an active subscription to use Ally.\n\nStart your free trial or upgrade:\n${upgradeUrl}`
+      await say(msg)
+      return
+    }
+  }
+
   const session = getSession(userId, teamId)
 
   if (session.pendingConfirmation) {
@@ -186,6 +203,22 @@ export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
       "I couldn't find your email. Please enter your email address to get started."
     )
     return
+  }
+
+  if (authResult.session.userId && authResult.session.email) {
+    const access = await checkUserAccess(
+      authResult.session.userId,
+      authResult.session.email
+    )
+    if (!access.has_access && access.credits_remaining <= 0) {
+      const upgradeUrl = "https://askally.ai/pricing"
+      const msg =
+        access.subscription_status === null
+          ? `Your 14-day free trial has ended.\n\nUpgrade to Pro or Executive to continue using Ally:\n${upgradeUrl}`
+          : `You need an active subscription to use Ally.\n\nStart your free trial or upgrade:\n${upgradeUrl}`
+      await say(msg)
+      return
+    }
   }
 
   if (!text) {

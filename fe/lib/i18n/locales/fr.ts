@@ -323,6 +323,11 @@ export const fr: TranslationShape = {
     logout: 'Déconnexion',
     chatWithAlly: 'Discuter avec Ally',
     minimize: 'Réduire',
+    // User Footer items
+    upgradeToPro: 'Passer à Pro',
+    billing: 'Facturation',
+    notifications: 'Notifications',
+    logOut: 'Se déconnecter',
   },
 
   dashboard: {
@@ -1090,16 +1095,6 @@ export const fr: TranslationShape = {
       resources: 'Ressources',
       blog: 'Journal des modifications',
       changeLog: 'Journal des modifications',
-    },
-
-    // Sidebar/User Footer
-    sidebar: {
-      upgradeToPro: 'Passer à Pro',
-      account: 'Compte',
-      billing: 'Facturation',
-      notifications: 'Notifications',
-      settings: 'Paramètres',
-      logOut: 'Se déconnecter',
     },
 
     // Integrations

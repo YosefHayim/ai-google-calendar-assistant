@@ -23,6 +23,8 @@ import { msToIso } from "@/lib/date/timestamp-utils"
 import { sendWelcomeEmail } from "@/domains/notifications/services/notification-dispatcher"
 import { syncUserCalendarsAfterOAuth } from "@/domains/calendar/utils/sync-calendars-after-oauth"
 
+const TRIAL_DURATION_DAYS = 14
+
 /**
  * Validates existing session and handles OAuth redirect flow.
  * Checks if the current access token is valid, attempts refresh if needed,
@@ -252,13 +254,17 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         )
       }
 
-      // Send welcome email for new users only (not returning users)
-      // A user is "new" if there was no existing user, or the existing user was orphaned and deleted
       const isNewUser = !existingUser || existingUser.id !== authUserId
       if (isNewUser) {
+        const trialEndDate = new Date()
+        trialEndDate.setDate(trialEndDate.getDate() + TRIAL_DURATION_DAYS)
+
+        await SUPABASE.from("users")
+          .update({ trial_end_date: trialEndDate.toISOString() })
+          .eq("id", userData.id)
+
         const userName = googleUser.given_name || normalizedEmail.split("@")[0]
-        // Fire and forget - don't block signup flow
-        await sendWelcomeEmail(normalizedEmail, userName).catch((err) => {
+        sendWelcomeEmail(normalizedEmail, userName).catch((err) => {
           console.error("Failed to send welcome email:", err)
         })
       }

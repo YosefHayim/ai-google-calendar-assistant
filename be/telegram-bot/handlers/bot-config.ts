@@ -10,6 +10,7 @@ import { env } from "@/config/env"
 import { googleTokenTgHandler } from "../middleware/google-token-tg-handler"
 import { logger } from "@/lib/logger"
 import { sessionExpiryMiddleware } from "../middleware/session-expiry"
+import { subscriptionGuardTelegram } from "../middleware/subscription-guard-tg"
 
 export type GlobalContext = SessionFlavor<SessionData> & Context
 
@@ -73,6 +74,7 @@ export const configureMiddleware = (bot: Bot<GlobalContext>): void => {
   bot.use(authRateLimiter)
   bot.use(authTgHandler)
   bot.use(googleTokenTgHandler)
+  bot.use(subscriptionGuardTelegram)
   bot.use(messageRateLimiter)
 }
 

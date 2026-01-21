@@ -5,6 +5,7 @@ import {
   generateSpeechForTelegram,
   transcribeAudio,
 } from "@/domains/analytics/utils"
+import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
 import { logger } from "@/lib/logger"
 import { unifiedContextStore } from "@/shared/context"
 import { updateLastActivity } from "../services/conversation-window"
@@ -394,7 +395,7 @@ export const handleIncomingMessage = async (
     const authLimit = await checkAuthRateLimit(phoneNumber)
     if (!authLimit.allowed) {
       await markAsRead(message.id)
-      await sendTextMessage(phoneNumber, authLimit.message!)
+      await sendTextMessage(phoneNumber, authLimit.message ?? "")
       return
     }
 
@@ -424,12 +425,26 @@ export const handleIncomingMessage = async (
     }
   }
 
+  if (resolution.userId && resolution.email) {
+    const access = await checkUserAccess(resolution.userId, resolution.email)
+    if (!access.has_access && access.credits_remaining <= 0) {
+      await markAsRead(message.id)
+      const upgradeUrl = "https://askally.ai/pricing"
+      const msg =
+        access.subscription_status === null
+          ? `Your 14-day free trial has ended.\n\nUpgrade to Pro or Executive to continue using Ally:\n${upgradeUrl}`
+          : `You need an active subscription to use Ally.\n\nStart your free trial or upgrade:\n${upgradeUrl}`
+      await sendTextMessage(phoneNumber, msg)
+      return
+    }
+  }
+
   switch (message.type) {
     case "text": {
       const msgLimit = await checkMessageRateLimit(phoneNumber)
       if (!msgLimit.allowed) {
         await markAsRead(message.id)
-        await sendTextMessage(phoneNumber, msgLimit.message!)
+        await sendTextMessage(phoneNumber, msgLimit.message ?? "")
         return
       }
       await handleTextMessage(processed, false, resolution.email)
@@ -440,7 +455,7 @@ export const handleIncomingMessage = async (
       const voiceLimit = await checkVoiceRateLimit(phoneNumber)
       if (!voiceLimit.allowed) {
         await markAsRead(message.id)
-        await sendTextMessage(phoneNumber, voiceLimit.message!)
+        await sendTextMessage(phoneNumber, voiceLimit.message ?? "")
         return
       }
       await handleVoiceMessage(processed, resolution.email)
