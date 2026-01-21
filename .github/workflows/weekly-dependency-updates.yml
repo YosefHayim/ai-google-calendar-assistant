@@ -1,0 +1,109 @@
+name: Weekly Dependency Updates
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Which project to update"
+        required: false
+        default: "both"
+        type: choice
+        options:
+          - both
+          - backend
+          - frontend
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: weekly-dependency-updates
+  cancel-in-progress: true
+
+env:
+  BUN_VERSION: "1.3.5"
+  NODE_VERSION: "22"
+
+jobs:
+  update-backend:
+    name: Update Backend (Bun)
+    runs-on: ubuntu-latest
+    if: github.event.inputs.target != 'frontend'
+    env:
+      HUSKY: "0"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Update dependencies
+        working-directory: ./be
+        run: |
+          bun update --latest
+          bun install
+
+      - name: Create PR for backend
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/weekly-be-updates
+          title: "chore(be): weekly dependency updates"
+          commit-message: "chore(be): weekly dependency updates"
+          body: |
+            Automated weekly dependency refresh for backend.
+            
+            - Updated with `bun update --latest`
+            - Refreshed lockfile with `bun install`
+          labels: dependencies,backend
+          delete-branch: true
+          add-paths: |
+            be/package.json
+            be/bun.lockb
+
+  update-frontend:
+    name: Update Frontend (npm)
+    runs-on: ubuntu-latest
+    if: github.event.inputs.target != 'backend'
+    env:
+      HUSKY: "0"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: fe/package-lock.json
+
+      - name: Update dependencies
+        working-directory: ./fe
+        run: |
+          npx npm-check-updates@latest -u --target minor
+          npm install
+
+      - name: Create PR for frontend
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/weekly-fe-updates
+          title: "chore(fe): weekly dependency updates"
+          commit-message: "chore(fe): weekly dependency updates"
+          body: |
+            Automated weekly dependency refresh for frontend.
+            
+            - Updated with `npm-check-updates --target minor`
+            - Refreshed lockfile with `npm install`
+          labels: dependencies,frontend
+          delete-branch: true
+          add-paths: |
+            fe/package.json
+            fe/package-lock.json
