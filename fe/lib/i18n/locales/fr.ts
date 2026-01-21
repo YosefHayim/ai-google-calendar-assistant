@@ -572,7 +572,7 @@ export const fr: TranslationShape = {
       general: 'Général',
       account: 'Abonnement',
       integrations: 'Intégrations',
-      assistant: 'Cerveau d\'Ally',
+      assistant: "Cerveau d'Ally",
       notifications: 'Notifications',
       security: 'Sécurité',
       dataControls: 'Données',
@@ -652,6 +652,48 @@ export const fr: TranslationShape = {
     next: 'Suivant',
     previous: 'Précédent',
     finish: 'Terminer',
+    steps: {
+      welcome: {
+        title: 'Bienvenue sur Ally',
+        description: "Votre assistant d'agenda alimenté par IA",
+        content:
+          "Ally vous aide à gérer votre agenda facilement en utilisant le langage naturel. Dites simplement à Ally ce dont vous avez besoin, et il s'occupe du reste.",
+        audioText:
+          "Bienvenue sur Ally, votre assistant d'agenda alimenté par IA ! Je suis là pour vous aider à gérer votre emploi du temps facilement. Laissez-moi vous faire faire le tour.",
+      },
+      chat: {
+        title: 'Discutez avec Ally',
+        description: 'Planification en langage naturel',
+        content:
+          'Tapez ou parlez simplement naturellement. Dites des choses comme "Planifier une réunion avec Jean demain à 14h" ou "Qu\'est-ce que j\'ai la semaine prochaine ?" Ally comprend le contexte et gère les demandes complexes.',
+        audioText:
+          'L\'interface de chat est votre principal moyen d\'interagir avec moi. Tapez simplement naturellement, comme si vous envoyiez un message à un ami. Dites des choses comme "Planifier un déjeuner avec Sarah demain" ou "Quels sont mes rendez-vous cette semaine ?"',
+      },
+      analytics: {
+        title: 'Suivez votre temps',
+        description: 'Insights sur votre emploi du temps',
+        content:
+          "Consultez des analyses détaillées sur la façon dont vous passez votre temps. Comprenez vos modèles de réunion, trouvez des opportunités d'optimisation et maintenez un équilibre sain entre vie professionnelle et vie privée.",
+        audioText:
+          "Le tableau de bord d'analyse vous donne des insights puissants sur la façon dont vous passez votre temps. Suivez les modèles de réunion, identifiez les périodes chargées et optimisez votre emploi du temps pour une meilleure productivité.",
+      },
+      gaps: {
+        title: 'Récupérez le temps perdu',
+        description: 'Trouvez et remplissez les créneaux libres',
+        content:
+          'Ally identifie automatiquement les périodes non suivies dans votre agenda. Examinez ces créneaux et ajoutez rapidement des événements pour maintenir un enregistrement précis de vos activités.',
+        audioText:
+          "La récupération des créneaux est une fonctionnalité unique qui vous aide à suivre où va votre temps. J'identifierai les périodes qui ne sont pas comptabilisées dans votre agenda, afin que vous puissiez les remplir et maintenir un emploi du temps précis.",
+      },
+      complete: {
+        title: 'Vous êtes prêt !',
+        description: 'Commencez à gérer votre agenda',
+        content:
+          "Vous êtes prêt à utiliser Ally ! N'oubliez pas que vous pouvez toujours accéder aux paramètres pour personnaliser votre expérience, connecter des agendas supplémentaires ou ajuster les préférences de notification.",
+        audioText:
+          "Félicitations ! Vous êtes prêt à commencer à utiliser Ally. Si vous avez besoin d'aide à tout moment, demandez-moi simplement. Je suis là pour rendre la gestion de votre agenda facile. Commençons !",
+      },
+    },
   },
 
   time: {
@@ -820,11 +862,8 @@ export const fr: TranslationShape = {
       userMessage: '"Rappelle-moi d\'appeler les investisseurs à 16h"',
       allyResponse: "Rappel défini : 'Appeler les investisseurs' à 16h00.",
     },
-  },
 
-  // Analytics
-  analytics: {
-    for: 'Analyses pour',
+    // Navigation tabs
     tabs: {
       overview: 'Aperçu',
       patterns: 'Motifs',
@@ -841,7 +880,7 @@ export const fr: TranslationShape = {
     refresh: 'Actualiser',
     analyzing: 'Analyse...',
     potentialGaps: 'écarts potentiels identifiés',
-    analyzingPeriod: 'Période d\'analyse:',
+    analyzingPeriod: "Période d'analyse:",
     confidence: {
       high: 'Élevé',
       medium: 'Moyen',
@@ -852,7 +891,7 @@ export const fr: TranslationShape = {
       creating: 'Création...',
       createEvent: 'Créer un événement',
       skipping: 'Ignorer...',
-      skipGap: 'Ignorer l\'écart',
+      skipGap: "Ignorer l'écart",
     },
   },
 
@@ -864,15 +903,18 @@ export const fr: TranslationShape = {
     },
     whatsappRelay: {
       title: 'Relais WhatsApp',
-      description: 'Le messager le plus populaire au monde, désormais votre ligne de commande exécutive. Privé, rapide et toujours accessible.',
+      description:
+        'Le messager le plus populaire au monde, désormais votre ligne de commande exécutive. Privé, rapide et toujours accessible.',
     },
     executiveDigests: {
       title: 'Résumés exécutifs',
-      description: 'Transforme les transcriptions d\'une heure en résumés actionnables de 5 minutes et prochaines étapes.',
+      description:
+        "Transforme les transcriptions d'une heure en résumés actionnables de 5 minutes et prochaines étapes.",
     },
     proactiveLogistics: {
       title: 'Logistique proactive',
-      description: 'Surveille les vols et services de voiture, ajustant votre emploi du temps en temps réel pour les retards.',
+      description:
+        'Surveille les vols et services de voiture, ajustant votre emploi du temps en temps réel pour les retards.',
     },
     focusProtection: {
       title: 'Protection du focus',
@@ -883,8 +925,9 @@ export const fr: TranslationShape = {
       description: 'Ally identifie les chevauchements de calendrier et suggère proactivement des résolutions logiques.',
     },
     voiceToAction: {
-      title: 'De la voix à l\'action',
-      description: 'Enregistrez des commandes en déplacement. Ally exécute des tâches complexes à partir d\'un simple audio.',
+      title: "De la voix à l'action",
+      description:
+        "Enregistrez des commandes en déplacement. Ally exécute des tâches complexes à partir d'un simple audio.",
     },
     leverageAnalytics: {
       title: 'Tirer parti des analyses',
@@ -1086,18 +1129,20 @@ export const fr: TranslationShape = {
       waitingList: {
         limitedEarlyAccess: 'Accès Anticipé Limité',
         titlePart1: 'Votre Calendrier,',
-        titlePart2: 'à l\'Écoute.',
-        subtitle: 'Dites-le simplement. Ally le programme. À travers la voix, le chat, Telegram et WhatsApp. Pas de formulaires. Pas de friction. Juste vous et votre temps, enfin travaillant ensemble.',
+        titlePart2: "à l'Écoute.",
+        subtitle:
+          'Dites-le simplement. Ally le programme. À travers la voix, le chat, Telegram et WhatsApp. Pas de formulaires. Pas de friction. Juste vous et votre temps, enfin travaillant ensemble.',
         namePlaceholder: 'Votre nom (optionnel)',
         emailPlaceholder: 'Email',
         joining: 'Inscription...',
         getEarlyAccess: 'Obtenir un Accès Anticipé',
-        positionMessage: 'Vous êtes #{{position}} sur la liste d\'attente !',
-        footerText: 'Rejoignez plus de 2 000 professionnels qui récupèrent leur temps. Nous vous notifierons dès que vous serez dans la file.',
-        footerTitle: 'L\'Avenir de la Planification',
+        positionMessage: "Vous êtes #{{position}} sur la liste d'attente !",
+        footerText:
+          'Rejoignez plus de 2 000 professionnels qui récupèrent leur temps. Nous vous notifierons dès que vous serez dans la file.',
+        footerTitle: "L'Avenir de la Planification",
         trustIndicators: {
           security: 'Sécurité de niveau entreprise',
-          speed: 'Réponse en moins d\'une seconde',
+          speed: "Réponse en moins d'une seconde",
           timeSaved: 'Économise 5+ heures/semaine',
         },
         platforms: {

@@ -1,0 +1,163 @@
+name: Cleanup Workflow History
+
+on:
+  schedule:
+    - cron: "0 4 * * 0" # Every Sunday at 04:00 UTC
+  workflow_dispatch:
+    inputs:
+      workflow_name:
+        description: "Specific workflow to clean (leave empty for all)"
+        required: false
+        default: ""
+      runs_to_keep:
+        description: "Number of runs to keep per workflow"
+        required: false
+        default: "1"
+      dry_run:
+        description: "Preview deletions without executing"
+        required: false
+        default: "false"
+        type: boolean
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: cleanup-workflow-history
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: Clean workflow run history
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean workflow history
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const currentRunId = context.runId;
+            const dryRun = '${{ github.event.inputs.dry_run }}' === 'true';
+            const runsToKeep = parseInt('${{ github.event.inputs.runs_to_keep }}' || '1', 10);
+            const targetWorkflow = '${{ github.event.inputs.workflow_name }}' || '';
+
+            const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+            // Get all workflows in the repo
+            const { data: workflowsData } = await github.rest.actions.listRepoWorkflows({
+              owner,
+              repo,
+              per_page: 100
+            });
+
+            const workflows = workflowsData.workflows;
+            core.info(`Found ${workflows.length} workflows in repository`);
+
+            let totalDeleted = 0;
+            let totalSkipped = 0;
+            let totalFailed = 0;
+
+            for (const workflow of workflows) {
+              // Skip if targeting specific workflow and this isn't it
+              if (targetWorkflow && !workflow.name.toLowerCase().includes(targetWorkflow.toLowerCase())) {
+                continue;
+              }
+
+              core.info(`\n📋 Processing workflow: ${workflow.name} (ID: ${workflow.id})`);
+
+              // Get runs for this workflow
+              const { data: runsData } = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: workflow.id,
+                per_page: 100,
+                status: 'completed'
+              });
+
+              const runs = runsData.workflow_runs;
+              core.info(`  Found ${runs.length} completed runs`);
+
+              // Skip if runs <= runsToKeep (no cleanup needed)
+              if (runs.length <= runsToKeep) {
+                core.info(`  ✅ Skipping - only ${runs.length} run(s), keeping ${runsToKeep}`);
+                totalSkipped += runs.length;
+                continue;
+              }
+
+              // Sort by created_at desc and skip the newest N
+              const sortedRuns = runs.sort((a, b) => 
+                new Date(b.created_at) - new Date(a.created_at)
+              );
+              
+              const runsToDelete = sortedRuns.slice(runsToKeep);
+              core.info(`  🗑️  Will delete ${runsToDelete.length} runs (keeping newest ${runsToKeep})`);
+
+              for (const run of runsToDelete) {
+                // Never delete the current run
+                if (run.id === currentRunId) {
+                  totalSkipped++;
+                  continue;
+                }
+
+                try {
+                  if (dryRun) {
+                    core.info(`  [dry-run] Would delete: #${run.run_number} (${run.created_at})`);
+                    totalDeleted++;
+                  } else {
+                    await github.rest.actions.deleteWorkflowRun({
+                      owner,
+                      repo,
+                      run_id: run.id
+                    });
+                    core.info(`  ✅ Deleted: #${run.run_number} (${run.created_at})`);
+                    totalDeleted++;
+                    // Small delay to avoid rate limiting
+                    await sleep(200);
+                  }
+                } catch (err) {
+                  if (err.status === 429) {
+                    core.warning(`  ⏳ Rate limited, waiting 5s...`);
+                    await sleep(5000);
+                    // Retry once
+                    try {
+                      if (!dryRun) {
+                        await github.rest.actions.deleteWorkflowRun({
+                          owner,
+                          repo,
+                          run_id: run.id
+                        });
+                        core.info(`  ✅ Deleted (retry): #${run.run_number}`);
+                        totalDeleted++;
+                      }
+                    } catch (retryErr) {
+                      core.warning(`  ❌ Failed to delete #${run.run_number}: ${retryErr.message}`);
+                      totalFailed++;
+                    }
+                  } else {
+                    core.warning(`  ❌ Failed to delete #${run.run_number}: ${err.message}`);
+                    totalFailed++;
+                  }
+                }
+              }
+
+              totalSkipped += runsToKeep;
+            }
+
+            // Summary
+            core.info(`\n${'='.repeat(50)}`);
+            core.info(`📊 SUMMARY`);
+            core.info(`${'='.repeat(50)}`);
+            core.info(`✅ Deleted: ${totalDeleted}`);
+            core.info(`⏭️  Skipped (kept): ${totalSkipped}`);
+            core.info(`❌ Failed: ${totalFailed}`);
+            
+            if (dryRun) {
+              core.notice(`DRY RUN - No runs were actually deleted`);
+            }
+
+            if (totalFailed > 0) {
+              core.setFailed(`${totalFailed} workflow runs failed to delete`);
+            }

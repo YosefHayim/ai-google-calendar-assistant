@@ -64,8 +64,8 @@ describe('calendarsService', () => {
       expect(mockGet).toHaveBeenCalledWith('/api/calendars', {
         params: { customCalendars: 'true' },
       })
-      expect(result.data).toHaveLength(2)
-      expect(result.data[0].calendarName).toBe('Primary Calendar')
+      expect(result.data!).toHaveLength(2)
+      expect(result.data![0].calendarName).toBe('Primary Calendar')
     })
 
     it('should fetch Google calendars when custom is false', async () => {
@@ -102,13 +102,13 @@ describe('calendarsService', () => {
       const result = await calendarsService.getCalendarById('calendar-123')
 
       expect(mockGet).toHaveBeenCalledWith('/api/calendars/calendar-123')
-      expect(result.data.calendarId).toBe('calendar-123')
-      expect(result.data.calendarName).toBe('My Calendar')
-      expect(result.data.calendarDescription).toBe('Personal events')
-      expect(result.data.calendarLocation).toBe('New York')
-      expect(result.data.timeZoneForCalendar).toBe('America/New_York')
-      expect(result.data.accessRole).toBe('owner')
-      expect(result.data.defaultReminders).toHaveLength(1)
+      expect(result.data!.calendarId).toBe('calendar-123')
+      expect(result.data!.calendarName).toBe('My Calendar')
+      expect(result.data!.calendarDescription).toBe('Personal events')
+      expect(result.data!.calendarLocation).toBe('New York')
+      expect(result.data!.timeZoneForCalendar).toBe('America/New_York')
+      expect(result.data!.accessRole).toBe('owner')
+      expect(result.data!.defaultReminders).toHaveLength(1)
     })
 
     it('should handle missing optional fields', async () => {
@@ -122,10 +122,10 @@ describe('calendarsService', () => {
 
       const result = await calendarsService.getCalendarById('calendar-minimal')
 
-      expect(result.data.calendarId).toBe('calendar-minimal')
-      expect(result.data.calendarDescription).toBeNull()
-      expect(result.data.calendarLocation).toBeNull()
-      expect(result.data.defaultReminders).toBeUndefined()
+      expect(result.data!.calendarId).toBe('calendar-minimal')
+      expect(result.data!.calendarDescription).toBeNull()
+      expect(result.data!.calendarLocation).toBeNull()
+      expect(result.data!.defaultReminders).toBeUndefined()
     })
 
     it('should use provided ID as fallback when response ID is missing', async () => {
@@ -135,7 +135,7 @@ describe('calendarsService', () => {
 
       const result = await calendarsService.getCalendarById('fallback-id')
 
-      expect(result.data.calendarId).toBe('fallback-id')
+      expect(result.data!.calendarId).toBe('fallback-id')
     })
 
     it('should handle null response data', async () => {
@@ -158,7 +158,7 @@ describe('calendarsService', () => {
       const result = await calendarsService.getSettings()
 
       expect(mockGet).toHaveBeenCalledWith('/api/calendars/settings')
-      expect(result.data.value).toBe('America/New_York')
+      expect(result.data!.value).toBe('America/New_York')
     })
   })
 
@@ -171,7 +171,7 @@ describe('calendarsService', () => {
       const result = await calendarsService.getSettingsById('work-calendar')
 
       expect(mockGet).toHaveBeenCalledWith('/api/calendars/settings/work-calendar')
-      expect(result.data.value).toBe('Europe/London')
+      expect(result.data!.value).toBe('Europe/London')
     })
   })
 
@@ -189,8 +189,8 @@ describe('calendarsService', () => {
       const result = await calendarsService.getColors()
 
       expect(mockGet).toHaveBeenCalledWith('/api/calendars/colors')
-      expect(Object.keys(result.data)).toHaveLength(3)
-      expect(result.data['1'].background).toBe('#a4bdfc')
+      expect(Object.keys(result.data!)).toHaveLength(3)
+      expect(result.data!['1'].background).toBe('#a4bdfc')
     })
   })
 
@@ -203,20 +203,20 @@ describe('calendarsService', () => {
       const result = await calendarsService.getTimezones()
 
       expect(mockGet).toHaveBeenCalledWith('/api/calendars/timezones')
-      expect(result.data.value).toBe('UTC')
+      expect(result.data!.value).toBe('UTC')
     })
   })
 
   describe('getFreeBusy', () => {
     it('should fetch free/busy information', async () => {
       const mockFreeBusy = {
-        'primary': {
+        primary: {
           busy: [
             { start: '2026-01-21T10:00:00Z', end: '2026-01-21T11:00:00Z' },
             { start: '2026-01-21T14:00:00Z', end: '2026-01-21T15:00:00Z' },
           ],
         },
-        'work': {
+        work: {
           busy: [{ start: '2026-01-21T09:00:00Z', end: '2026-01-21T10:00:00Z' }],
         },
       }
@@ -227,8 +227,8 @@ describe('calendarsService', () => {
       const result = await calendarsService.getFreeBusy()
 
       expect(mockGet).toHaveBeenCalledWith('/api/calendars/freebusy')
-      expect(result.data['primary'].busy).toHaveLength(2)
-      expect(result.data['work'].busy).toHaveLength(1)
+      expect(result.data!['primary'].busy).toHaveLength(2)
+      expect(result.data!['work'].busy).toHaveLength(1)
     })
   })
 
@@ -254,7 +254,7 @@ describe('calendarsService', () => {
           showHidden: undefined,
         },
       })
-      expect(result.data.items).toHaveLength(2)
+      expect(result.data!.items).toHaveLength(2)
     })
 
     it('should pass filter params correctly', async () => {
@@ -298,8 +298,8 @@ describe('calendarsService', () => {
       const result = await calendarsService.createCalendar(newCalendar)
 
       expect(mockPost).toHaveBeenCalledWith('/api/calendars', newCalendar)
-      expect(result.data.id).toBe('new-calendar-id')
-      expect(result.data.summary).toBe('New Project Calendar')
+      expect(result.data!.id).toBe('new-calendar-id')
+      expect(result.data!.summary).toBe('New Project Calendar')
     })
   })
 })

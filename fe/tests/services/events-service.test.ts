@@ -221,7 +221,7 @@ describe('eventsService', () => {
       expect(mockGet).toHaveBeenCalledWith('/api/events/analytics', {
         params: { timeMin: '2026-01-01', timeMax: '2026-01-31' },
       })
-      expect(result.data.totalEvents).toBe(150)
+      expect(result.data!.allEvents).toBe(150)
     })
   })
 
@@ -260,9 +260,7 @@ describe('eventsService', () => {
             status: 'error',
             message: 'Event conflicts with existing event',
             data: {
-              conflicts: [
-                { id: 'existing-event', summary: 'Team Standup' },
-              ],
+              conflicts: [{ id: 'existing-event', summary: 'Team Standup' }],
               suggestedEvent: {
                 summary: 'Lunch with John',
                 start: { dateTime: '2026-01-21T12:00:00Z' },

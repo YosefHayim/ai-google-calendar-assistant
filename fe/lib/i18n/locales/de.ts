@@ -649,6 +649,48 @@ export const de: TranslationShape = {
     next: 'Weiter',
     previous: 'Zurück',
     finish: 'Fertig',
+    steps: {
+      welcome: {
+        title: 'Willkommen bei Ally',
+        description: 'Ihr KI-gestützter Kalenderassistent',
+        content:
+          'Ally hilft Ihnen, Ihren Kalender mühelos mit natürlicher Sprache zu verwalten. Sagen Sie Ally einfach, was Sie brauchen, und es übernimmt den Rest.',
+        audioText:
+          'Willkommen bei Ally, Ihrem KI-gestützten Kalenderassistenten! Ich bin hier, um Ihnen zu helfen, Ihren Zeitplan mühelos zu verwalten. Lassen Sie mich Ihnen alles zeigen.',
+      },
+      chat: {
+        title: 'Chatten Sie mit Ally',
+        description: 'Terminplanung in natürlicher Sprache',
+        content:
+          'Tippen oder sprechen Sie einfach natürlich. Sagen Sie Dinge wie "Termin mit John morgen um 14 Uhr vereinbaren" oder "Was habe ich nächste Woche?" Ally versteht den Kontext und bearbeitet komplexe Anfragen.',
+        audioText:
+          'Die Chat-Oberfläche ist Ihre Hauptmethode, um mit mir zu interagieren. Tippen Sie einfach natürlich, als würden Sie einem Freund eine Nachricht schreiben. Sagen Sie Dinge wie "Mittagessen mit Sarah morgen planen" oder "Welche Meetings habe ich diese Woche?"',
+      },
+      analytics: {
+        title: 'Verfolgen Sie Ihre Zeit',
+        description: 'Einblicke in Ihren Zeitplan',
+        content:
+          'Sehen Sie detaillierte Analysen darüber, wie Sie Ihre Zeit verbringen. Verstehen Sie Ihre Besprechungsmuster, finden Sie Möglichkeiten zur Optimierung und erhalten Sie ein gesundes Gleichgewicht zwischen Arbeit und Leben.',
+        audioText:
+          'Das Analyse-Dashboard gibt Ihnen leistungsstarke Einblicke, wie Sie Ihre Zeit verbringen. Verfolgen Sie Besprechungsmuster, identifizieren Sie beschäftigte Zeiträume und optimieren Sie Ihren Zeitplan für bessere Produktivität.',
+      },
+      gaps: {
+        title: 'Verlorene Zeit wiederherstellen',
+        description: 'Finden und füllen Sie Zeitplanlücken',
+        content:
+          'Ally identifiziert automatisch nicht erfasste Zeiten in Ihrem Kalender. Überprüfen Sie diese Lücken und fügen Sie schnell Ereignisse hinzu, um einen genauen Aufzeichnung Ihrer Aktivitäten zu führen.',
+        audioText:
+          'Die Lückenwiederherstellung ist eine einzigartige Funktion, die Ihnen hilft zu verfolgen, wohin Ihre Zeit geht. Ich werde Zeiträume identifizieren, die in Ihrem Kalender nicht berücksichtigt werden, damit Sie sie ausfüllen und einen genauen Zeitplan führen können.',
+      },
+      complete: {
+        title: 'Sie sind bereit!',
+        description: 'Beginnen Sie mit der Verwaltung Ihres Kalenders',
+        content:
+          'Sie sind bereit, Ally zu verwenden! Denken Sie daran, dass Sie jederzeit auf die Einstellungen zugreifen können, um Ihre Erfahrung anzupassen, zusätzliche Kalender zu verbinden oder Benachrichtigungseinstellungen zu ändern.',
+        audioText:
+          'Herzlichen Glückwunsch! Sie sind bereit, Ally zu verwenden. Wenn Sie jemals Hilfe brauchen, fragen Sie mich einfach. Ich bin hier, um Ihre Kalenderverwaltung mühelos zu machen. Lassen Sie uns anfangen!',
+      },
+    },
   },
 
   time: {
@@ -819,11 +861,8 @@ export const de: TranslationShape = {
       userMessage: '"Erinnere mich, um 16 Uhr Investoren anzurufen"',
       allyResponse: "Erinnerung gesetzt: 'Investoren anrufen' um 16:00 Uhr.",
     },
-  },
 
-  // Analytics
-  analytics: {
-    for: 'Analysen für',
+    // Navigation tabs
     tabs: {
       overview: 'Übersicht',
       patterns: 'Muster',
@@ -863,11 +902,13 @@ export const de: TranslationShape = {
     },
     whatsappRelay: {
       title: 'WhatsApp-Relais',
-      description: 'Der beliebteste Messenger der Welt, jetzt Ihre exekutive Kommandozeile. Privat, schnell und immer zugänglich.',
+      description:
+        'Der beliebteste Messenger der Welt, jetzt Ihre exekutive Kommandozeile. Privat, schnell und immer zugänglich.',
     },
     executiveDigests: {
       title: 'Executive-Zusammenfassungen',
-      description: 'Verwandelt einstündige Transkripte in 5-minütige umsetzbare Zusammenfassungen und nächste Schritte.',
+      description:
+        'Verwandelt einstündige Transkripte in 5-minütige umsetzbare Zusammenfassungen und nächste Schritte.',
     },
     proactiveLogistics: {
       title: 'Proaktive Logistik',
@@ -1085,13 +1126,15 @@ export const de: TranslationShape = {
         limitedEarlyAccess: 'Begrenzter Vorabzugang',
         titlePart1: 'Ihr Kalender,',
         titlePart2: 'aufmerksam.',
-        subtitle: 'Sagen Sie es einfach. Ally plant es. Über Stimme, Chat, Telegram und WhatsApp. Keine Formulare. Keine Reibung. Nur Sie und Ihre Zeit, endlich zusammen arbeitend.',
+        subtitle:
+          'Sagen Sie es einfach. Ally plant es. Über Stimme, Chat, Telegram und WhatsApp. Keine Formulare. Keine Reibung. Nur Sie und Ihre Zeit, endlich zusammen arbeitend.',
         namePlaceholder: 'Ihr Name (optional)',
         emailPlaceholder: 'E-Mail',
         joining: 'Beitritt...',
         getEarlyAccess: 'Vorabzugang erhalten',
         positionMessage: 'Sie sind #{{position}} auf der Warteliste!',
-        footerText: 'Treten Sie mehr als 2.000 Fachleuten bei, die ihre Zeit zurückgewinnen. Wir benachrichtigen Sie, sobald Sie an der Reihe sind.',
+        footerText:
+          'Treten Sie mehr als 2.000 Fachleuten bei, die ihre Zeit zurückgewinnen. Wir benachrichtigen Sie, sobald Sie an der Reihe sind.',
         footerTitle: 'Die Zukunft der Terminplanung',
         trustIndicators: {
           security: 'Unternehmenssicherheit',
