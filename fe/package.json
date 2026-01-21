@@ -95,7 +95,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@babel/parser": "^7.28.5",
+    "@babel/parser": "^7.28.6",
     "@chromatic-com/storybook": "^5.0.0",
     "@eslint/js": "^9.39.2",
     "@next/bundle-analyzer": "^16.1.3",
