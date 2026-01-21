@@ -1,8 +1,10 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
-import { unifiedContextStore } from "@/shared/context";
 import { activateAgent } from "@/domains/analytics/utils";
 import { logger } from "@/lib/logger";
+import { unifiedContextStore } from "@/shared/context";
+import type { AllyBrainPreference } from "../utils/ally-brain";
+import { getAllyBrainForSlack } from "../utils/ally-brain";
 import {
   buildContextPrompt,
   slackConversation,
@@ -17,34 +19,51 @@ type AgentRequestParams = {
   teamId: string;
 };
 
-const buildSlackPrompt = (
-  email: string,
-  message: string,
-  conversationContext?: string,
-  languageCode?: string
-): string => {
+type BuildSlackPromptOptions = {
+  email: string;
+  message: string;
+  conversationContext?: string;
+  languageCode?: string;
+  allyBrain?: AllyBrainPreference | null;
+};
+
+const buildSlackPrompt = (options: BuildSlackPromptOptions): string => {
+  const { email, message, conversationContext, languageCode, allyBrain } =
+    options;
   const timestamp = new Date().toISOString();
   const parts: string[] = [];
 
-  parts.push(`Current date and time is ${timestamp}.`);
-  parts.push(`User: ${email}`);
-  parts.push("Platform: Slack");
+  parts.push(`<platform>
+Slack - Use Slack markdown formatting when appropriate.
+Keep responses professional but friendly.
+</platform>`);
+
+  if (allyBrain?.enabled && allyBrain.instructions?.trim()) {
+    parts.push(`<user_instructions>
+${allyBrain.instructions}
+</user_instructions>`);
+  }
+
+  parts.push(`<context>
+<timestamp>${timestamp}</timestamp>
+<user>${email}</user>
+</context>`);
 
   if (languageCode) {
     parts.push(
-      `IMPORTANT: User's preferred language is "${languageCode}". You MUST respond in this language.`
+      `<language>User's preferred language is "${languageCode}". You MUST respond in this language.</language>`
     );
   }
 
   if (conversationContext) {
-    parts.push(
-      `\n--- Conversation History ---\n${conversationContext}\n--- End History ---`
-    );
+    parts.push(`<conversation_history>
+${conversationContext}
+</conversation_history>`);
   }
 
-  parts.push(`\nCurrent request: ${message}`);
+  parts.push(`<current_request>${message}</current_request>`);
 
-  return parts.join("\n");
+  return parts.join("\n\n");
 };
 
 export const handleAgentRequest = async (
@@ -68,12 +87,15 @@ export const handleAgentRequest = async (
   }
 
   try {
-    const conversationContext = await slackConversation.addMessageToContext(
-      slackUserId,
-      teamId,
-      { role: "user", content: message },
-      summarizeMessages
-    );
+    const [conversationContext, allyBrain] = await Promise.all([
+      slackConversation.addMessageToContext(
+        slackUserId,
+        teamId,
+        { role: "user", content: message },
+        summarizeMessages
+      ),
+      getAllyBrainForSlack(slackUserId),
+    ]);
 
     const contextPrompt = buildContextPrompt(conversationContext);
 
@@ -81,12 +103,13 @@ export const handleAgentRequest = async (
       `Slack Bot: Processing request for user ${slackUserId}, prompt length: ${message.length} chars`
     );
 
-    const prompt = buildSlackPrompt(
+    const prompt = buildSlackPrompt({
       email,
       message,
-      contextPrompt,
-      session.codeLang
-    );
+      conversationContext: contextPrompt,
+      languageCode: session.codeLang,
+      allyBrain,
+    });
 
     const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
       email,
@@ -131,6 +154,8 @@ export const handleAgentRequest = async (
   }
 };
 
+const CONFLICT_RESPONSE_MIN_PARTS = 3;
+
 const handleConflictResponse = (
   slackUserId: string,
   teamId: string,
@@ -138,7 +163,7 @@ const handleConflictResponse = (
 ): string => {
   const parts = output.split("::");
 
-  if (parts.length < 3) {
+  if (parts.length < CONFLICT_RESPONSE_MIN_PARTS) {
     return output;
   }
 

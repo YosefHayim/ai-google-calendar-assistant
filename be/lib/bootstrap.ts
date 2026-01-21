@@ -10,12 +10,32 @@ import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
 export const bootstrapServices = () => {
   setImmediate(async () => {
     try {
-      startTelegramBot();
-      initWhatsApp();
-      initSlackBot();
-      await initializeJobScheduler();
+      // Initialize bots with individual error handling
+      try {
+        await startTelegramBot();
+      } catch (err) {
+        logger.error("Telegram Bot: Failed to initialize:", err);
+      }
 
-      logger.info("✅ All background services (Bots & Jobs) initialized.");
+      try {
+        initWhatsApp();
+      } catch (err) {
+        logger.error("WhatsApp: Failed to initialize:", err);
+      }
+
+      try {
+        initSlackBot();
+      } catch (err) {
+        logger.error("Slack Bot: Failed to initialize:", err);
+      }
+
+      try {
+        await initializeJobScheduler();
+      } catch (err) {
+        logger.error("Job Scheduler: Failed to initialize:", err);
+      }
+
+      logger.info("✅ All background services (Bots & Jobs) initialization attempted.");
     } catch (err) {
       logger.error("❌ Critical failure during background bootstrap:", err);
     }

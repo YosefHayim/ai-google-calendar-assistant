@@ -1,18 +1,18 @@
 import type {
   AllMiddlewareArgs,
   SlackCommandMiddlewareArgs,
-} from "@slack/bolt"
-import { logger } from "@/lib/logger"
+} from "@slack/bolt";
+import { logger } from "@/lib/logger";
+import { handleSlackAuth } from "../middleware/auth-handler";
 import {
+  clearAllyBrainInstructions,
   getAllyBrainForSlack,
   toggleAllyBrainEnabled,
   updateAllyBrainInstructions,
-  clearAllyBrainInstructions,
-} from "../utils/ally-brain"
-import { handleSlackAuth } from "../middleware/auth-handler"
-import { SlackResponseBuilder } from "../utils/response-builder"
-import { getSession } from "../utils/session"
-import { handleAgentRequest } from "./agent-handler"
+} from "../utils/ally-brain";
+import { SlackResponseBuilder } from "../utils/response-builder";
+import { getSession } from "../utils/session";
+import { handleAgentRequest } from "./agent-handler";
 
 const COMMAND_PREFIX_LENGTHS = {
   CREATE: 7,
@@ -22,7 +22,7 @@ const COMMAND_PREFIX_LENGTHS = {
   FEEDBACK: 9,
   BRAIN: 6,
   BRAIN_SET: 4,
-} as const
+} as const;
 
 type CommandArgs = SlackCommandMiddlewareArgs & AllMiddlewareArgs;
 
@@ -97,7 +97,7 @@ export const handleHelpCommand = async (args: CommandArgs): Promise<void> => {
 };
 
 export const handleTodayCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, respond } = args
+  const { command, respond } = args;
   const auth = await requireAuth(args);
   if (!(auth.authorized && auth.email)) {
     return;
@@ -608,69 +608,78 @@ export const handleSettingsCommand = async (
   });
 };
 
-type RespondFn = CommandArgs["respond"]
+type RespondFn = CommandArgs["respond"];
 
 const handleBrainToggle = async (
   slackUserId: string,
   enabled: boolean,
   respond: RespondFn
 ): Promise<boolean> => {
-  const success = await toggleAllyBrainEnabled(slackUserId, enabled)
+  const success = await toggleAllyBrainEnabled(slackUserId, enabled);
 
-  let message: string
+  let message: string;
   if (enabled) {
-    message = success ? "✅ Custom instructions enabled!" : "❌ Failed to enable. Please try again."
+    message = success
+      ? "✅ Custom instructions enabled!"
+      : "❌ Failed to enable. Please try again.";
   } else {
-    message = success ? "❌ Custom instructions disabled." : "❌ Failed to disable. Please try again."
+    message = success
+      ? "❌ Custom instructions disabled."
+      : "❌ Failed to disable. Please try again.";
   }
 
-  await respond({ text: message, response_type: "ephemeral" })
-  return true
-}
+  await respond({ text: message, response_type: "ephemeral" });
+  return true;
+};
 
 const handleBrainClear = async (
   slackUserId: string,
   respond: RespondFn
 ): Promise<boolean> => {
-  const success = await clearAllyBrainInstructions(slackUserId)
+  const success = await clearAllyBrainInstructions(slackUserId);
   await respond({
-    text: success ? "🗑️ Instructions cleared." : "❌ Failed to clear. Please try again.",
+    text: success
+      ? "🗑️ Instructions cleared."
+      : "❌ Failed to clear. Please try again.",
     response_type: "ephemeral",
-  })
-  return true
-}
+  });
+  return true;
+};
 
 const handleBrainSet = async (
   slackUserId: string,
   subcommand: string,
   respond: RespondFn
 ): Promise<boolean> => {
-  const instructions = subcommand.slice(COMMAND_PREFIX_LENGTHS.BRAIN_SET).trim()
+  const instructions = subcommand
+    .slice(COMMAND_PREFIX_LENGTHS.BRAIN_SET)
+    .trim();
   if (!instructions) {
     await respond({
       text: "Please provide instructions. Example: `/ally brain set I prefer morning meetings`",
       response_type: "ephemeral",
-    })
-    return true
+    });
+    return true;
   }
 
-  const success = await updateAllyBrainInstructions(slackUserId, instructions)
+  const success = await updateAllyBrainInstructions(slackUserId, instructions);
   await respond({
     text: success
       ? `✅ Instructions updated:\n_"${instructions}"_`
       : "❌ Failed to update. Please try again.",
     response_type: "ephemeral",
-  })
-  return true
-}
+  });
+  return true;
+};
 
 const showBrainStatus = async (
   slackUserId: string,
   respond: RespondFn
 ): Promise<void> => {
-  const allyBrain = await getAllyBrainForSlack(slackUserId)
-  const statusText = allyBrain?.enabled ? "✅ Enabled" : "❌ Disabled"
-  const instructions = allyBrain?.instructions || "_No custom instructions set yet._"
+  const allyBrain = await getAllyBrainForSlack(slackUserId);
+  const statusText = allyBrain?.enabled ? "✅ Enabled" : "❌ Disabled";
+  const instructions =
+    allyBrain?.instructions || "_No custom instructions set yet._";
 
   const response = SlackResponseBuilder.create()
     .header("🧠", "Ally's Brain")
@@ -692,50 +701,50 @@ const showBrainStatus = async (
     .context([
       "Example: `/ally brain set I prefer morning meetings. My timezone is PST.`",
     ])
-    .build()
+    .build();
 
   await respond({
     blocks: response.blocks,
     text: response.text,
     response_type: "ephemeral",
-  })
-}
+  });
+};
 
 export const handleBrainCommand = async (
   args: CommandArgs,
   subcommand?: string
 ): Promise<void> => {
-  const { command, respond } = args
-  const auth = await requireAuth(args)
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
 
   if (!auth.authorized) {
-    return
+    return;
   }
 
-  const slackUserId = command.user_id
+  const slackUserId = command.user_id;
 
   if (subcommand === "enable") {
-    await handleBrainToggle(slackUserId, true, respond)
-    return
+    await handleBrainToggle(slackUserId, true, respond);
+    return;
   }
 
   if (subcommand === "disable") {
-    await handleBrainToggle(slackUserId, false, respond)
-    return
+    await handleBrainToggle(slackUserId, false, respond);
+    return;
   }
 
   if (subcommand === "clear") {
-    await handleBrainClear(slackUserId, respond)
-    return
+    await handleBrainClear(slackUserId, respond);
+    return;
   }
 
   if (subcommand?.startsWith("set ")) {
-    await handleBrainSet(slackUserId, subcommand, respond)
-    return
+    await handleBrainSet(slackUserId, subcommand, respond);
+    return;
   }
 
-  await showBrainStatus(slackUserId, respond)
-}
+  await showBrainStatus(slackUserId, respond);
+};
 
 export const handleFeedbackCommand = async (
   args: CommandArgs,
@@ -768,88 +777,106 @@ export const handleFeedbackCommand = async (
   });
 };
 
-export const parseAndRouteCommand = async (
+type SimpleCommandHandler = (args: CommandArgs) => Promise<void>;
+type PrefixCommandHandler = (
+  args: CommandArgs,
+  content: string
+) => Promise<void>;
+
+const SIMPLE_COMMANDS: Record<string, SimpleCommandHandler> = {
+  help: handleHelpCommand,
+  today: handleTodayCommand,
+  tomorrow: handleTomorrowCommand,
+  week: handleWeekCommand,
+  month: handleMonthCommand,
+  free: handleFreeCommand,
+  busy: handleBusyCommand,
+  status: handleStatusCommand,
+  settings: handleSettingsCommand,
+  analytics: handleAnalyticsCommand,
+  calendars: handleCalendarsCommand,
+};
+
+const PREFIX_COMMANDS: Array<{
+  prefix: string;
+  handler: PrefixCommandHandler;
+  length: number;
+}> = [
+  {
+    prefix: "create ",
+    handler: handleCreateCommand,
+    length: COMMAND_PREFIX_LENGTHS.CREATE,
+  },
+  {
+    prefix: "update ",
+    handler: handleUpdateCommand,
+    length: COMMAND_PREFIX_LENGTHS.UPDATE,
+  },
+  {
+    prefix: "delete ",
+    handler: handleDeleteCommand,
+    length: COMMAND_PREFIX_LENGTHS.DELETE,
+  },
+  {
+    prefix: "search ",
+    handler: handleSearchCommand,
+    length: COMMAND_PREFIX_LENGTHS.SEARCH,
+  },
+  {
+    prefix: "feedback ",
+    handler: handleFeedbackCommand,
+    length: COMMAND_PREFIX_LENGTHS.FEEDBACK,
+  },
+];
+
+const routeSimpleCommand = (
+  text: string,
   args: CommandArgs
+): Promise<void> | null => {
+  const handler = SIMPLE_COMMANDS[text];
+  return handler ? handler(args) : null;
+};
+
+const routePrefixCommand = (
+  text: string,
+  fullText: string,
+  args: CommandArgs
+): Promise<void> | null => {
+  for (const { prefix, handler, length } of PREFIX_COMMANDS) {
+    if (text.startsWith(prefix)) {
+      return handler(args, fullText.slice(length));
+    }
+  }
+  return null;
+};
+
+const routeBrainCommand = (
+  text: string,
+  fullText: string,
+  args: CommandArgs
+): Promise<void> | null => {
+  if (text === "brain") {
+    return handleBrainCommand(args, undefined);
+  }
+  if (text.startsWith("brain ")) {
+    return handleBrainCommand(
+      args,
+      fullText.slice(COMMAND_PREFIX_LENGTHS.BRAIN).trim()
+    );
+  }
+  return null;
+};
+
+const handleFallbackAgentRequest = async (
+  args: CommandArgs,
+  fullText: string
 ): Promise<void> => {
-  const { command } = args;
-  const text = command.text.trim().toLowerCase();
-  const fullText = command.text.trim();
-
-  if (!text || text === "help") {
-    return handleHelpCommand(args);
-  }
-
-  if (text === "today") {
-    return handleTodayCommand(args);
-  }
-
-  if (text === "tomorrow") {
-    return handleTomorrowCommand(args);
-  }
-
-  if (text === "week") {
-    return handleWeekCommand(args);
-  }
-
-  if (text === "month") {
-    return handleMonthCommand(args);
-  }
-
-  if (text === "free") {
-    return handleFreeCommand(args);
-  }
-
-  if (text === "busy") {
-    return handleBusyCommand(args);
-  }
-
-  if (text === "status") {
-    return handleStatusCommand(args);
-  }
-
-  if (text === "settings") {
-    return handleSettingsCommand(args);
-  }
-
-  if (text === "analytics") {
-    return handleAnalyticsCommand(args);
-  }
-
-  if (text === "calendars") {
-    return handleCalendarsCommand(args);
-  }
-
-  if (text.startsWith("create ")) {
-    return handleCreateCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.CREATE))
-  }
-
-  if (text.startsWith("update ")) {
-    return handleUpdateCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.UPDATE))
-  }
-
-  if (text.startsWith("delete ")) {
-    return handleDeleteCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.DELETE))
-  }
-
-  if (text.startsWith("search ")) {
-    return handleSearchCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.SEARCH))
-  }
-
-  if (text.startsWith("feedback ")) {
-    return handleFeedbackCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.FEEDBACK))
-  }
-
-  if (text === "brain" || text.startsWith("brain ")) {
-    const subcommand = text === "brain" ? undefined : fullText.slice(COMMAND_PREFIX_LENGTHS.BRAIN).trim()
-    return handleBrainCommand(args, subcommand)
-  }
-
+  const { command, respond } = args;
   const auth = await requireAuth(args);
+
   if (!(auth.authorized && auth.email)) {
     return;
   }
-
-  const { respond } = args;
 
   await respond({
     text: "Processing your request...",
@@ -875,4 +902,37 @@ export const parseAndRouteCommand = async (
       response_type: "ephemeral",
     });
   }
+};
+
+export const parseAndRouteCommand = async (
+  args: CommandArgs
+): Promise<void> => {
+  const { command } = args;
+  const text = command.text.trim().toLowerCase();
+  const fullText = command.text.trim();
+
+  if (!text || text === "help") {
+    await handleHelpCommand(args);
+    return;
+  }
+
+  const simpleResult = routeSimpleCommand(text, args);
+  if (simpleResult) {
+    await simpleResult;
+    return;
+  }
+
+  const prefixResult = routePrefixCommand(text, fullText, args);
+  if (prefixResult) {
+    await prefixResult;
+    return;
+  }
+
+  const brainResult = routeBrainCommand(text, fullText, args);
+  if (brainResult) {
+    await brainResult;
+    return;
+  }
+
+  await handleFallbackAgentRequest(args, fullText);
 };

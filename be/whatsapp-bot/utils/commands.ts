@@ -573,18 +573,9 @@ ${instructions}
 _Reply with your new instructions to update them, or use the buttons below._`
 
   await sendInteractiveButtons(from, text, [
-    {
-      type: "reply",
-      reply: { id: "brain_enable", title: "Enable" },
-    },
-    {
-      type: "reply",
-      reply: { id: "brain_disable", title: "Disable" },
-    },
-    {
-      type: "reply",
-      reply: { id: "brain_edit", title: "Edit Instructions" },
-    },
+    { id: "brain_enable", title: "Enable" },
+    { id: "brain_disable", title: "Disable" },
+    { id: "brain_edit", title: "Edit Instructions" },
   ])
 
   return { handled: true, response: text }
@@ -635,9 +626,9 @@ Select an option:
 • *website* - Open web dashboard`
 
   await sendInteractiveButtons(from, text, [
-    { type: "reply", reply: { id: "cmd_brain", title: "🧠 Brain" } },
-    { type: "reply", reply: { id: "cmd_language", title: "🌐 Language" } },
-    { type: "reply", reply: { id: "cmd_status", title: "📊 Status" } },
+    { id: "cmd_brain", title: "🧠 Brain" },
+    { id: "cmd_language", title: "🌐 Language" },
+    { id: "cmd_status", title: "📊 Status" },
   ])
 
   return { handled: true, response: text }
