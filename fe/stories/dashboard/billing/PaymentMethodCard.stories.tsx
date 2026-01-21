@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { PaymentMethodCard } from '@/components/dashboard/billing/PaymentMethodCard'
 import { fn } from 'storybook/test'
-import type { PaymentMethod } from '@/services/payment.service'
+import type { PaymentMethod } from '@/services/payment-service'
 
 const meta: Meta<typeof PaymentMethodCard> = {
   title: 'Dashboard/Billing/PaymentMethodCard',

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { referralService, type ApplyReferralData } from '@/services/referral.service'
+import { referralService, type ApplyReferralData } from '@/services/referral-service'
 import { toast } from 'sonner'
 
 export const referralKeys = {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { ChatResponse, continueConversation } from '@/services/chatService'
+import { ChatResponse, continueConversation } from '@/services/chat-service'
 import { queryKeys } from '@/lib/query'
 import type { MutationHookOptions } from '../useMutationWrapper'
 

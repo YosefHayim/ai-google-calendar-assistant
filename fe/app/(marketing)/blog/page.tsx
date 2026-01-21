@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
 import { useBlogPosts, useBlogCategories, useFeaturedPosts } from '@/hooks/queries'
-import { getBlogImageUrl } from '@/services/blog.service'
+import { getBlogImageUrl } from '@/services/blog-service'
 import {
   BLOG_POSTS,
   BLOG_CATEGORIES as STATIC_CATEGORIES,
@@ -22,7 +22,7 @@ import {
 import { BookOpen, ArrowRight, Calendar, Clock, User, Mail, Sparkles } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { formatBlogDate } from '@/lib/formatUtils'
-import { newsletterService } from '@/services/newsletter.service'
+import { newsletterService } from '@/services/newsletter-service'
 import { toast } from 'sonner'
 
 export default function BlogPage() {

@@ -9,17 +9,17 @@ import {
   Preview,
   Section,
   Text,
-} from "@react-email/components";
-import type * as React from "react";
+} from "@react-email/components"
+import type * as React from "react"
 
 export type ContactFormEmailProps = {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  attachmentCount?: number;
-  logoUrl?: string;
-};
+  name: string
+  email: string
+  subject: string
+  message: string
+  attachmentCount?: number
+  logoUrl?: string
+}
 
 const colors = {
   primary: "#f97316",
@@ -31,12 +31,12 @@ const colors = {
   border: "#e5e5e5",
   cardBg: "#fafafa",
   attachmentBg: "#fff7ed",
-};
+}
 
 const fonts = {
   primary:
     "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-};
+}
 
 export const ContactFormEmail = ({
   name,
@@ -125,7 +125,7 @@ export const ContactFormEmail = ({
       </Container>
     </Body>
   </Html>
-);
+)
 
 const styles = {
   body: {
@@ -255,6 +255,6 @@ const styles = {
     margin: 0,
     lineHeight: "1.5",
   } as React.CSSProperties,
-};
+}
 
-export default ContactFormEmail;
+export default ContactFormEmail

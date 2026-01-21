@@ -1,33 +1,35 @@
-import type { AgentInputItem, Session } from "@openai/agents";
-import { MemorySession } from "@openai/agents";
+import type { AgentInputItem, Session } from "@openai/agents"
+
+import { MemorySession } from "@openai/agents"
+import { logger } from "@/lib/logger"
 
 // Note: SupabaseAgentSession removed - agent_sessions table was dropped for simpler architecture
-export type SessionType = "memory";
-export type CompactionStrategy = "none" | "responses";
+export type SessionType = "memory"
+export type CompactionStrategy = "none" | "responses"
 
-const DEFAULT_MAX_ITEMS = 50;
+const DEFAULT_MAX_ITEMS = 50
 
 export type CompactionConfig = {
   /** Trigger compaction after N items (default: 50) */
-  maxItems?: number;
+  maxItems?: number
   /** Model to use for summarization (default: gpt-4o-mini) */
-  summaryModel?: string;
-};
+  summaryModel?: string
+}
 
 export type CreateSessionOptions = {
   /** User's unique identifier */
-  userId: string;
+  userId: string
   /** Agent name for session scoping */
-  agentName: string;
+  agentName: string
   /** Optional task/conversation ID for further isolation */
-  taskId?: string;
+  taskId?: string
   /** Session storage backend (default: memory) */
-  sessionType?: SessionType;
+  sessionType?: SessionType
   /** Compaction strategy to keep context small (default: none) */
-  compaction?: CompactionStrategy;
+  compaction?: CompactionStrategy
   /** Configuration for compaction (if enabled) */
-  compactionConfig?: CompactionConfig;
-};
+  compactionConfig?: CompactionConfig
+}
 
 /**
  * Factory for creating agent sessions with optional compaction
@@ -54,17 +56,17 @@ export type CreateSessionOptions = {
  * ```
  */
 export function createAgentSession(options: CreateSessionOptions): Session {
-  const { compaction = "none", compactionConfig } = options;
+  const { compaction = "none", compactionConfig } = options
 
   // All sessions use memory now (Supabase sessions removed)
-  const baseSession: Session = new MemorySession();
+  const baseSession: Session = new MemorySession()
 
   // Wrap with compaction if requested
   if (compaction === "responses") {
-    return createCompactionWrapper(baseSession, compactionConfig);
+    return createCompactionWrapper(baseSession, compactionConfig)
   }
 
-  return baseSession;
+  return baseSession
 }
 
 /**
@@ -75,47 +77,47 @@ function createCompactionWrapper(
   baseSession: Session,
   config?: CompactionConfig
 ): Session {
-  const maxItems = config?.maxItems ?? DEFAULT_MAX_ITEMS;
+  const maxItems = config?.maxItems ?? DEFAULT_MAX_ITEMS
 
   return {
     getSessionId: () => baseSession.getSessionId(),
 
     getItems: async (limit?: number): Promise<AgentInputItem[]> => {
-      const items = await baseSession.getItems(limit);
-      return items;
+      const items = await baseSession.getItems(limit)
+      return items
     },
 
     addItems: async (items: AgentInputItem[]): Promise<void> => {
-      await baseSession.addItems(items);
+      await baseSession.addItems(items)
 
       // Check if we need to compact
-      const allItems = await baseSession.getItems();
+      const allItems = await baseSession.getItems()
       if (allItems.length > maxItems) {
-        console.log(
+        logger.info(
           `[Session] Items (${allItems.length}) exceed maxItems (${maxItems}), compaction recommended`
-        );
+        )
       }
     },
 
     popItem: (): Promise<AgentInputItem | undefined> => baseSession.popItem(),
     clearSession: (): Promise<void> => baseSession.clearSession(),
-  };
+  }
 }
 
 /**
  * Utility to get session info for debugging
  */
 export async function getSessionInfo(session: Session): Promise<{
-  sessionId: string;
-  itemCount: number;
+  sessionId: string
+  itemCount: number
 }> {
   const [sessionId, items] = await Promise.all([
     session.getSessionId(),
     session.getItems(),
-  ]);
+  ])
 
   return {
     sessionId,
     itemCount: items.length,
-  };
+  }
 }

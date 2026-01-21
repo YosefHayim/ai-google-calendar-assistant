@@ -1,0 +1,362 @@
+import { ENDPOINTS } from '@/lib/api/endpoints'
+import { apiClient } from '@/lib/api/client'
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export type PlanSlug = string
+export type PlanInterval = 'monthly' | 'yearly'
+export type SubscriptionStatus =
+  | 'on_trial'
+  | 'trialing'
+  | 'active'
+  | 'past_due'
+  | 'canceled'
+  | 'cancelled'
+  | 'unpaid'
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'paused'
+  | 'expired'
+
+export interface Plan {
+  id: string
+  name: string
+  slug: string
+  description: string
+  pricing: {
+    monthly: number
+    yearly: number
+    perUse: number
+  }
+  limits: {
+    aiInteractionsMonthly: number | null
+    actionPackSize: number | null
+  }
+  features: string[]
+  isPopular: boolean
+  isHighlighted: boolean
+  variantIdMonthly: string | null
+  variantIdYearly: string | null
+  buyNowUrlMonthly: string | null
+  buyNowUrlYearly: string | null
+  hasFreeTrial: boolean
+  trialDays: number | null
+}
+
+export interface PaymentStatus {
+  enabled: boolean
+  provider: 'lemonsqueezy'
+  trialDays: number
+  moneyBackDays: number
+}
+
+export interface SubscriptionInfo {
+  id: string
+  status: SubscriptionStatus
+  interval: PlanInterval
+  trialEnd: string | null
+  currentPeriodEnd: string | null
+  cancelAtPeriodEnd: boolean
+  moneyBackEligibleUntil: string | null
+  isLinkedToProvider: boolean
+}
+
+export interface UserAccess {
+  has_access: boolean
+  subscription_status: SubscriptionStatus | string | null
+  plan_name: string | null
+  plan_slug: string | null
+  interactions_used: number
+  interactions_remaining: number | null
+  credits_remaining: number
+  trial_days_left: number | null
+  trial_end_date: string | null
+  money_back_eligible: boolean
+  subscription: SubscriptionInfo | null
+}
+
+export interface CheckoutParams {
+  planSlug: string
+  interval: PlanInterval
+  successUrl?: string
+  cancelUrl?: string
+}
+
+export interface CreditPackCheckoutParams {
+  credits: number
+  planSlug: string
+  successUrl?: string
+  cancelUrl?: string
+}
+
+// ============================================================================
+// API Response Types
+// ============================================================================
+
+interface ApiResponse<T> {
+  status: 'success' | 'error'
+  message: string
+  data?: T
+}
+
+// ============================================================================
+// Payment Service
+// ============================================================================
+
+/**
+ * Get payment provider configuration status
+ */
+export const getPaymentStatus = async (): Promise<PaymentStatus> => {
+  const response = await apiClient.get<ApiResponse<PaymentStatus>>(ENDPOINTS.PAYMENTS_STATUS)
+  if (!response.data.data) {
+    throw new Error('Failed to get payment status: No data returned')
+  }
+  return response.data.data
+}
+
+/**
+ * Get all available subscription plans
+ */
+export const getPlans = async (): Promise<Plan[]> => {
+  const response = await apiClient.get<ApiResponse<{ plans: Plan[] }>>(ENDPOINTS.PAYMENTS_PLANS)
+  return response.data.data?.plans || []
+}
+
+/**
+ * Get current user's subscription status
+ */
+export const getSubscriptionStatus = async (): Promise<UserAccess> => {
+  const response = await apiClient.get<ApiResponse<UserAccess>>(ENDPOINTS.PAYMENTS_SUBSCRIPTION)
+  if (!response.data.data) {
+    throw new Error('Failed to get subscription status: No data returned')
+  }
+  return response.data.data
+}
+
+/**
+ * Initialize free starter plan for user
+ */
+export const initializeFreePlan = async (): Promise<void> => {
+  await apiClient.post(ENDPOINTS.PAYMENTS_INITIALIZE_FREE)
+}
+
+/**
+ * Create checkout session for subscription
+ */
+export const createSubscriptionCheckout = async (params: CheckoutParams): Promise<string> => {
+  const response = await apiClient.post<ApiResponse<{ checkoutUrl: string; sessionId: string }>>(
+    ENDPOINTS.PAYMENTS_CHECKOUT,
+    params,
+  )
+  if (!response.data.data?.checkoutUrl) {
+    throw new Error('Failed to create checkout: No checkout URL returned')
+  }
+  return response.data.data.checkoutUrl
+}
+
+/**
+ * Create checkout session for credit pack
+ */
+export const createCreditPackCheckout = async (params: CreditPackCheckoutParams): Promise<string> => {
+  const response = await apiClient.post<ApiResponse<{ checkoutUrl: string; sessionId: string }>>(
+    ENDPOINTS.PAYMENTS_CHECKOUT_CREDITS,
+    params,
+  )
+  if (!response.data.data?.checkoutUrl) {
+    throw new Error('Failed to create credit pack checkout: No checkout URL returned')
+  }
+  return response.data.data.checkoutUrl
+}
+
+/**
+ * Create billing portal session and redirect
+ */
+export const createBillingPortalSession = async (returnUrl?: string): Promise<string> => {
+  const response = await apiClient.post<ApiResponse<{ portalUrl: string }>>(ENDPOINTS.PAYMENTS_PORTAL, { returnUrl })
+  if (!response.data.data?.portalUrl) {
+    throw new Error('Failed to create billing portal session: No portal URL returned')
+  }
+  return response.data.data.portalUrl
+}
+
+/**
+ * Cancel subscription
+ */
+export const cancelSubscription = async (reason?: string, immediate = false): Promise<void> => {
+  await apiClient.post(ENDPOINTS.PAYMENTS_CANCEL, { reason, immediate })
+}
+
+/**
+ * Request money-back refund
+ */
+export const requestRefund = async (reason?: string): Promise<{ success: boolean; message: string }> => {
+  const response = await apiClient.post<ApiResponse<{ success: boolean; message: string }>>(ENDPOINTS.PAYMENTS_REFUND, {
+    reason,
+  })
+  return response.data.data || { success: false, message: response.data.message }
+}
+
+export interface UpgradeParams {
+  planSlug: PlanSlug
+  interval: PlanInterval
+}
+
+export interface UpgradeResult {
+  subscription: {
+    id: string
+    status: SubscriptionStatus
+    interval: PlanInterval
+    planId: string
+  }
+  prorated: boolean
+}
+
+/**
+ * Upgrade or downgrade subscription plan
+ */
+export const upgradeSubscription = async (params: UpgradeParams): Promise<UpgradeResult> => {
+  const response = await apiClient.post<ApiResponse<UpgradeResult>>(ENDPOINTS.PAYMENTS_UPGRADE, params)
+  if (!response.data.data) {
+    throw new Error('Failed to upgrade subscription: No data returned')
+  }
+  return response.data.data
+}
+
+// ============================================================================
+// Billing Overview Types
+// ============================================================================
+
+export type TransactionStatus = 'succeeded' | 'pending' | 'failed'
+export type CardBrand = 'visa' | 'mastercard' | 'amex' | 'discover' | 'unknown'
+
+export interface PaymentMethod {
+  id: string
+  brand: CardBrand
+  last4: string
+  expiryMonth: number
+  expiryYear: number
+  isDefault: boolean
+}
+
+export interface Transaction {
+  id: string
+  date: string
+  description: string
+  amount: number
+  currency: string
+  status: TransactionStatus
+  invoiceUrl: string | null
+}
+
+export interface BillingOverview {
+  paymentMethod: PaymentMethod | null
+  transactions: Transaction[]
+}
+
+/**
+ * Get billing overview (payment method, transactions)
+ */
+export const getBillingOverview = async (): Promise<BillingOverview> => {
+  const response = await apiClient.get<ApiResponse<BillingOverview>>(ENDPOINTS.PAYMENTS_BILLING)
+  if (!response.data.data) {
+    throw new Error('Failed to get billing overview: No data returned')
+  }
+  return response.data.data
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+/**
+ * Redirect to checkout
+ */
+export const redirectToCheckout = async (params: CheckoutParams): Promise<void> => {
+  const checkoutUrl = await createSubscriptionCheckout(params)
+  window.location.href = checkoutUrl
+}
+
+/**
+ * Redirect to credit pack checkout
+ */
+export const redirectToCreditPackCheckout = async (params: CreditPackCheckoutParams): Promise<void> => {
+  const checkoutUrl = await createCreditPackCheckout(params)
+  window.location.href = checkoutUrl
+}
+
+/**
+ * Redirect to billing portal
+ */
+export const redirectToBillingPortal = async (returnUrl?: string): Promise<void> => {
+  const portalUrl = await createBillingPortalSession(returnUrl)
+  window.location.href = portalUrl
+}
+
+/**
+ * Calculate days remaining in trial
+ */
+export const calculateTrialDaysLeft = (trialEnd: string | null): number | null => {
+  if (!trialEnd) return null
+  const endDate = new Date(trialEnd)
+  const now = new Date()
+  const diffMs = endDate.getTime() - now.getTime()
+  return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)))
+}
+
+/**
+ * Check if subscription is in money-back period
+ */
+export const isMoneyBackEligible = (moneyBackUntil: string | null): boolean => {
+  if (!moneyBackUntil) return false
+  return new Date(moneyBackUntil) > new Date()
+}
+
+// ============================================================================
+// Lemon Squeezy Products API
+// ============================================================================
+
+export interface LemonSqueezyProduct {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  price: number
+  priceFormatted: string
+  buyNowUrl: string
+  status: 'draft' | 'published'
+  testMode: boolean
+}
+
+export interface LemonSqueezyVariant {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  price: number
+  priceFormatted: string
+  isSubscription: boolean
+  interval: 'day' | 'week' | 'month' | 'year' | null
+  intervalCount: number | null
+  hasFreeTrial: boolean
+  trialInterval: 'day' | 'week' | 'month' | 'year' | null
+  trialIntervalCount: number | null
+  status: 'draft' | 'published' | 'pending'
+}
+
+export interface LemonSqueezyProductWithVariants extends LemonSqueezyProduct {
+  variants: LemonSqueezyVariant[]
+}
+
+export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> => {
+  const response = await apiClient.get<ApiResponse<{ products: LemonSqueezyProduct[] }>>(ENDPOINTS.PAYMENTS_PRODUCTS)
+  return response.data.data?.products || []
+}
+
+export const getLemonSqueezyProductsWithVariants = async (): Promise<LemonSqueezyProductWithVariants[]> => {
+  const response = await apiClient.get<ApiResponse<{ products: LemonSqueezyProductWithVariants[] }>>(
+    ENDPOINTS.PAYMENTS_PRODUCTS_VARIANTS,
+  )
+  return response.data.data?.products || []
+}

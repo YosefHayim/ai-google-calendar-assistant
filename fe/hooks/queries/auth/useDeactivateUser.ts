@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import type { ApiResponse } from '@/types/api'
 import { STORAGE_KEYS } from '@/lib/constants'
-import { authService } from '@/services/auth.service'
+import { authService } from '@/services/auth-service'
 import { queryKeys } from '@/lib/query/keys'
 
 /**

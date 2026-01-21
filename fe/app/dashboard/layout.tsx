@@ -10,7 +10,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
 import SettingsModal from '@/components/dashboard/shared/SettingsModal'
 import { TrialExpirationBanner } from '@/components/dashboard/shared/TrialExpirationBanner'
-import { redirectToCheckout } from '@/services/payment.service'
+import { redirectToCheckout } from '@/services/payment-service'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 

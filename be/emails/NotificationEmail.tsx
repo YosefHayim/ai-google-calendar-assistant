@@ -10,19 +10,19 @@ import {
   Preview,
   Section,
   Text,
-} from "@react-email/components";
-import type * as React from "react";
+} from "@react-email/components"
+import type * as React from "react"
 
 export type NotificationEmailProps = {
-  userName: string;
-  eventTitle: string;
-  eventTime: string;
-  eventDate: string;
-  notificationType?: "reminder" | "update" | "cancelled";
-  dashboardUrl?: string;
-  settingsUrl?: string;
-  logoUrl?: string;
-};
+  userName: string
+  eventTitle: string
+  eventTime: string
+  eventDate: string
+  notificationType?: "reminder" | "update" | "cancelled"
+  dashboardUrl?: string
+  settingsUrl?: string
+  logoUrl?: string
+}
 
 const colors = {
   primary: "#f97316",
@@ -33,12 +33,12 @@ const colors = {
   textMuted: "#a3a3a3",
   border: "#e5e5e5",
   cardBg: "#fafafa",
-};
+}
 
 const fonts = {
   primary:
     "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-};
+}
 
 export const NotificationEmail = ({
   userName = "there",
@@ -53,41 +53,41 @@ export const NotificationEmail = ({
   const getNotificationMessage = () => {
     switch (notificationType) {
       case "reminder":
-        return `You have an upcoming event: "${eventTitle}" scheduled for ${eventDate} at ${eventTime}.`;
+        return `You have an upcoming event: "${eventTitle}" scheduled for ${eventDate} at ${eventTime}.`
       case "update":
-        return `Your event "${eventTitle}" has been updated. It's now scheduled for ${eventDate} at ${eventTime}.`;
+        return `Your event "${eventTitle}" has been updated. It's now scheduled for ${eventDate} at ${eventTime}.`
       case "cancelled":
-        return `Your event "${eventTitle}" originally scheduled for ${eventDate} at ${eventTime} has been cancelled.`;
+        return `Your event "${eventTitle}" originally scheduled for ${eventDate} at ${eventTime} has been cancelled.`
       default:
-        return "";
+        return ""
     }
-  };
+  }
 
   const getTitle = () => {
     switch (notificationType) {
       case "reminder":
-        return "Event Reminder";
+        return "Event Reminder"
       case "update":
-        return "Event Updated";
+        return "Event Updated"
       case "cancelled":
-        return "Event Cancelled";
+        return "Event Cancelled"
       default:
-        return "Calendar Notification";
+        return "Calendar Notification"
     }
-  };
+  }
 
   const _getEmoji = () => {
     switch (notificationType) {
       case "reminder":
-        return "calendar";
+        return "calendar"
       case "update":
-        return "arrows_counterclockwise";
+        return "arrows_counterclockwise"
       case "cancelled":
-        return "x";
+        return "x"
       default:
-        return "bell";
+        return "bell"
     }
-  };
+  }
 
   return (
     <Html>
@@ -159,8 +159,8 @@ export const NotificationEmail = ({
         </Container>
       </Body>
     </Html>
-  );
-};
+  )
+}
 
 const styles = {
   body: {
@@ -268,6 +268,6 @@ const styles = {
     margin: 0,
     lineHeight: "1.5",
   } as React.CSSProperties,
-};
+}
 
-export default NotificationEmail;
+export default NotificationEmail

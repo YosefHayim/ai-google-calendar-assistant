@@ -3,106 +3,118 @@ import {
   type InputGuardrail,
   InputGuardrailTripwireTriggered,
   run,
-} from "@openai/agents";
-import { z } from "zod";
-import { MODELS } from "@/config";
-import { logger } from "@/utils/logger";
+} from "@openai/agents"
+import { z } from "zod"
+import { logger } from "@/lib/logger"
+import { MODELS } from "@/config/constants/ai"
 
-const MAX_INPUT_LENGTH = 5000;
-const LOG_SUBSTRING_LENGTH = 200;
-const PRECHECK_LOG_SUBSTRING_LENGTH = 100;
+const MAX_INPUT_LENGTH = 5000
+const LOG_SUBSTRING_LENGTH = 200
+const PRECHECK_LOG_SUBSTRING_LENGTH = 100
 
 const REQUEST_EXTRACTION_PATTERNS = [
   /<user_request>\s*([\s\S]*?)\s*<\/user_request>/i,
   /<current_request>\s*([\s\S]*?)\s*<\/current_request>/i,
   /<request>\s*([\s\S]*?)\s*<\/request>/i,
   /Current request:\s*(.+?)$/s,
-];
+]
 
 type ConversationMessage = {
-  role?: string;
-  type?: string;
-  content?: string | Array<{ text?: string; type?: string }>;
-  output?: { text?: string } | string;
-  name?: string;
-};
+  role?: string
+  type?: string
+  content?: string | Array<{ text?: string; type?: string }>
+  output?: { text?: string } | string
+  name?: string
+}
 
+/**
+ * Extracts user request content from text using predefined regex patterns.
+ * Looks for content wrapped in XML-like tags or following specific prefixes.
+ *
+ * @param text - The input text to extract request from
+ * @returns The extracted request string or null if no pattern matches
+ */
 const extractRequestFromText = (text: string): string | null => {
   for (const pattern of REQUEST_EXTRACTION_PATTERNS) {
-    const match = text.match(pattern);
+    const match = text.match(pattern)
     if (match?.[1]) {
-      return match[1].trim();
+      return match[1].trim()
     }
   }
 
-  return null;
-};
+  return null
+}
 
 /**
- * SECURITY: Extracts user's current request from conversation history to prevent context overflow.
- * Function call results (e.g., 100 calendar events JSON) would otherwise exceed the 5000 char limit.
+ * Extracts the user's current request from conversation input for guardrail processing.
+ * SECURITY: Prevents context overflow by extracting only the current user request,
+ * avoiding issues where function call results (e.g., 100 calendar events JSON)
+ * would exceed the 5000 character limit.
+ *
+ * @param input - Either a string or array of conversation messages
+ * @returns The extracted user request string, truncated if necessary
  */
 const extractUserRequestForGuardrail = (
   input: string | ConversationMessage[]
 ): string => {
-  console.log(
+  logger.info(
     "EXTRACT CALLED, input type:",
     typeof input,
     "length:",
     typeof input === "string" ? input.length : "N/A"
-  );
+  )
   if (typeof input === "string") {
-    const extracted = extractRequestFromText(input);
-    console.log("REGEX RESULT:", !!extracted, "captured:", extracted);
+    const extracted = extractRequestFromText(input)
+    logger.info("REGEX RESULT:", !!extracted, "captured:", extracted)
     if (extracted) {
-      return extracted;
+      return extracted
     }
-    return input;
+    return input
   }
 
   if (!Array.isArray(input)) {
-    return JSON.stringify(input);
+    return JSON.stringify(input)
   }
 
   for (let i = input.length - 1; i >= 0; i--) {
-    const msg = input[i];
+    const msg = input[i]
 
     if (msg.role !== "user" || msg.type !== "message") {
-      continue;
+      continue
     }
 
     if (typeof msg.content === "string") {
-      const extracted = extractRequestFromText(msg.content);
+      const extracted = extractRequestFromText(msg.content)
       if (extracted) {
-        return extracted;
+        return extracted
       }
-      return msg.content;
+      return msg.content
     }
 
     if (Array.isArray(msg.content)) {
       const textContent = msg.content
         .filter((c) => c.type === "text" || c.type === "output_text")
         .map((c) => c.text || "")
-        .join("\n");
+        .join("\n")
       if (textContent) {
-        const extracted = extractRequestFromText(textContent);
+        const extracted = extractRequestFromText(textContent)
         if (extracted) {
-          return extracted;
+          return extracted
         }
-        return textContent;
+        return textContent
       }
     }
   }
 
-  const fallbackStr = JSON.stringify(input);
+  const fallbackStr = JSON.stringify(input)
   if (fallbackStr.length > MAX_INPUT_LENGTH) {
     logger.warn(
       `AI: calendarSafetyGuardrail: Could not extract user request, truncating input from ${fallbackStr.length} to ${MAX_INPUT_LENGTH} chars`
-    );
-    return fallbackStr.substring(0, MAX_INPUT_LENGTH);
+    )
+    return fallbackStr.substring(0, MAX_INPUT_LENGTH)
   }
-  return fallbackStr;
-};
+  return fallbackStr
+}
 
 const INJECTION_PATTERNS = [
   /ignore\s+(all\s+)?(previous|prior|above)\s+instructions?/i,
@@ -120,8 +132,15 @@ const INJECTION_PATTERNS = [
   /dan\s+mode/i,
   /developer\s+mode/i,
   /act\s+as\s+if\s+you\s+(have\s+no|don't\s+have)\s+restrictions?/i,
-];
+]
 
+/**
+ * Performs initial safety checks on input before processing through the full guardrail.
+ * Checks for input length limits and common injection patterns.
+ *
+ * @param input - The user input string to validate
+ * @returns Object indicating if input is safe and optional rejection reason
+ */
 export const preCheckInput = (
   input: string
 ): { safe: boolean; reason?: string } => {
@@ -129,7 +148,7 @@ export const preCheckInput = (
     return {
       safe: false,
       reason: "Input too long. Please keep your message under 5000 characters.",
-    };
+    }
   }
 
   for (const pattern of INJECTION_PATTERNS) {
@@ -138,12 +157,12 @@ export const preCheckInput = (
         safe: false,
         reason:
           "I cannot process requests that attempt to modify my instructions.",
-      };
+      }
     }
   }
 
-  return { safe: true };
-};
+  return { safe: true }
+}
 
 const SafetyCheckSchema = z.object({
   isSafe: z
@@ -168,7 +187,7 @@ const SafetyCheckSchema = z.object({
     .describe(
       "A friendly error message to show the user if the guardrail trips."
     ),
-});
+})
 
 const safetyCheckAgent = new Agent({
   name: "Calendar Safety Bouncer",
@@ -209,8 +228,16 @@ const safetyCheckAgent = new Agent({
     If the input is standard (e.g., "book a meeting", "what do I have today?", "delete the Dental Appt at 3pm"), return isSafe: true.
   `,
   outputType: SafetyCheckSchema,
-});
+})
 
+/**
+ * Creates a standardized guardrail result object for OpenAI Agents SDK.
+ *
+ * @param guardrailName - The name/identifier of the guardrail
+ * @param tripwireTriggered - Whether the guardrail safety check was triggered
+ * @param outputInfo - Additional information about the guardrail check result
+ * @returns Formatted guardrail result object compatible with OpenAI Agents SDK
+ */
 const createGuardrailResult = (
   guardrailName: string,
   tripwireTriggered: boolean,
@@ -218,36 +245,41 @@ const createGuardrailResult = (
 ) => ({
   guardrail: { type: "input" as const, name: guardrailName },
   output: { tripwireTriggered, outputInfo },
-});
+})
 
+/**
+ * Input guardrail that enforces safety protocols for calendar AI operations.
+ * Prevents mass deletions, jailbreak attempts, PII exposure, and other unsafe actions.
+ * Uses a dedicated safety checking agent to analyze user requests against predefined rules.
+ */
 export const calendarSafetyGuardrail: InputGuardrail = {
   name: "Calendar Safety Protocols",
   runInParallel: false,
   execute: async ({ input, context }) => {
     const userRequest = extractUserRequestForGuardrail(
       input as string | ConversationMessage[]
-    );
+    )
 
     logger.info(
       `AI: calendarSafetyGuardrail: Extracted user request (${userRequest.length} chars): ${userRequest.substring(0, LOG_SUBSTRING_LENGTH)}...`
-    );
+    )
 
-    const preCheck = preCheckInput(userRequest);
+    const preCheck = preCheckInput(userRequest)
     if (!preCheck.safe) {
       logger.info(
         `AI: calendarSafetyGuardrail: Pre-check failed for input: ${userRequest.substring(0, PRECHECK_LOG_SUBSTRING_LENGTH)}`
-      );
+      )
       throw new InputGuardrailTripwireTriggered(
         preCheck.reason || "I cannot process this request.",
         createGuardrailResult("Calendar Safety Protocols - Pre-Check", true, {
           reason: preCheck.reason,
         })
-      );
+      )
     }
 
-    const result = await run(safetyCheckAgent, userRequest, { context });
+    const result = await run(safetyCheckAgent, userRequest, { context })
 
-    const safetyData = result.finalOutput;
+    const safetyData = result.finalOutput
 
     if (!safetyData) {
       throw new InputGuardrailTripwireTriggered(
@@ -257,7 +289,7 @@ export const calendarSafetyGuardrail: InputGuardrail = {
           true,
           { reason: "No safety data returned" }
         )
-      );
+      )
     }
 
     if (!safetyData.isSafe) {
@@ -269,12 +301,12 @@ export const calendarSafetyGuardrail: InputGuardrail = {
           true,
           safetyData
         )
-      );
+      )
     }
 
     return {
       outputInfo: safetyData,
       tripwireTriggered: false,
-    };
+    }
   },
-};
+}

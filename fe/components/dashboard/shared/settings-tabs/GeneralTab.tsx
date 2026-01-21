@@ -238,9 +238,9 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
         </div>
 
         {/* Avatar Upload Section */}
-        <div className="py-4">
+        {/* <div className="py-4">
           <AvatarUpload userData={userData} />
-        </div>
+        </div> */}
 
         <SettingsSection>
           <SettingsRow

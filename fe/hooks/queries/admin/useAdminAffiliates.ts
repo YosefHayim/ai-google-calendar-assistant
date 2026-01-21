@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getAffiliateById, getAffiliateSettings, getAffiliates } from '@/services/admin.service'
+import { getAffiliateById, getAffiliateSettings, getAffiliates } from '@/services/admin-service'
 import type { AdminAffiliateListParams } from '@/types/admin'
 
 export const useAdminAffiliates = (params: AdminAffiliateListParams) =>

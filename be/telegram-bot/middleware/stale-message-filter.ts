@@ -1,13 +1,13 @@
-import type { MiddlewareFn } from "grammy";
-import { logger } from "@/utils/logger";
-import type { GlobalContext } from "../init-bot";
+import type { MiddlewareFn } from "grammy"
+import { logger } from "@/lib/logger"
+import type { GlobalContext } from "../init-bot"
 
 /**
  * Maximum age of a message in seconds before it's considered stale.
  * Messages older than this threshold will be silently discarded.
  * Default: 60 seconds
  */
-const STALE_MESSAGE_THRESHOLD_SECONDS = 60;
+const STALE_MESSAGE_THRESHOLD_SECONDS = 60
 
 /**
  * Stale Message Filter Middleware
@@ -35,31 +35,31 @@ export const staleMessageFilter: MiddlewareFn<GlobalContext> = async (
   // Only filter standard messages, not callback queries
   // Callback query message.date is the original message time, not click time
   if (!ctx.message) {
-    return next();
+    return next()
   }
 
   // Extract the message timestamp from the update
   // Telegram provides the date as Unix timestamp (seconds since epoch)
-  const messageDate = ctx.message.date;
+  const messageDate = ctx.message.date
 
   // Calculate message age in seconds
-  const currentTimeSeconds = Math.floor(Date.now() / 1000);
-  const messageAgeSeconds = currentTimeSeconds - messageDate;
+  const currentTimeSeconds = Math.floor(Date.now() / 1000)
+  const messageAgeSeconds = currentTimeSeconds - messageDate
 
   // Check if the message is stale
   if (messageAgeSeconds > STALE_MESSAGE_THRESHOLD_SECONDS) {
-    const userId = ctx.from?.id;
-    const chatId = ctx.chat?.id;
+    const userId = ctx.from?.id
+    const chatId = ctx.chat?.id
 
     logger.info(
       `Stale message filter: Discarding message from user ${userId} in chat ${chatId}. ` +
         `Message age: ${messageAgeSeconds}s (threshold: ${STALE_MESSAGE_THRESHOLD_SECONDS}s)`
-    );
+    )
 
     // Silently discard the message by not calling next()
-    return;
+    return
   }
 
   // Message is fresh, proceed with normal processing
-  return next();
-};
+  return next()
+}

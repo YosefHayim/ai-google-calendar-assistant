@@ -44,6 +44,96 @@ const BADGE_STYLES: Record<ChangeType, { variant: 'default' | 'secondary' | 'out
 
 const CHANGELOG_DATA: ChangelogEntry[] = [
   {
+    version: '1.0.143',
+    date: 'January 21, 2026',
+    changes: [
+      {
+        type: 'feature',
+        title: 'Dynamic Prompt Optimization (DPO) System',
+        description:
+          'Advanced DPO implementation with comprehensive logging and history tracking for intelligent prompt optimization and performance metrics.',
+        icon: Sparkles,
+      },
+      {
+        type: 'feature',
+        title: 'Enhanced Admin & User Management',
+        description:
+          'Expanded admin controllers and services with improved user management capabilities and enhanced dashboard controls.',
+        icon: Users,
+      },
+      {
+        type: 'feature',
+        title: 'Timezone & Calendar Category Handlers',
+        description:
+          'New timezone and calendar category retrieval capabilities for enhanced calendar management and filtering.',
+        icon: Calendar,
+      },
+      {
+        type: 'improvement',
+        title: 'Performance & Monitoring Enhancements',
+        description:
+          'Major performance improvements across the application with enhanced monitoring capabilities and optimized component loading.',
+        icon: Zap,
+      },
+      {
+        type: 'improvement',
+        title: 'Extended Internationalization Support',
+        description:
+          'Enhanced localization in admin dialogs and dashboard components for better multi-language user experience.',
+        icon: Sparkles,
+      },
+      {
+        type: 'feature',
+        title: 'Compare Page & Layout',
+        description:
+          'New comparison interface for Ask Ally with enhanced user experience and feature showcase capabilities.',
+        icon: Sparkles,
+      },
+      {
+        type: 'feature',
+        title: 'Notification Settings API',
+        description:
+          'New notification settings endpoint with comprehensive validation schema for granular user notification controls.',
+        icon: Bell,
+      },
+      {
+        type: 'feature',
+        title: 'Outlook Graph API Integration',
+        description:
+          'Extended calendar integration capabilities with Microsoft Outlook support through Graph API for cross-platform calendar management.',
+        icon: Calendar,
+      },
+      {
+        type: 'improvement',
+        title: 'Gap Analysis Enhancements',
+        description:
+          'Improved gap analysis types and request handling for better calendar time tracking and productivity insights.',
+        icon: BarChart3,
+      },
+      {
+        type: 'improvement',
+        title: 'UI/UX Improvements',
+        description:
+          'Enhanced tooltips, improved onboarding flow, and persona preference settings for better user guidance and experience.',
+        icon: Sparkles,
+      },
+      {
+        type: 'fix',
+        title: 'TypeScript & Error Handling Fixes',
+        description:
+          'Resolved TypeScript compilation errors, improved error handling in user settings, and fixed component type issues.',
+        icon: Bug,
+      },
+      {
+        type: 'improvement',
+        title: 'Code Refactoring & Optimization',
+        description:
+          'Major code refactoring for consistency, optimized Docker configurations, streamlined middleware, and enhanced import organization.',
+        icon: Zap,
+      },
+    ],
+  },
+  {
     version: '2.5.0',
     date: 'January 18, 2026',
     changes: [

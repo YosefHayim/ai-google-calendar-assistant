@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from "zod"
 
-const MAX_PREFERENCE_LENGTH = 500;
+const MAX_PREFERENCE_LENGTH = 500
 
 export const updateUserBrainSchema = z.object({
   preference: z
@@ -25,6 +25,6 @@ export const updateUserBrainSchema = z.object({
         "If this preference contradicts an existing one, provide the old rule text here to replace it. Leave empty if not replacing an existing preference.",
     })
     .default(""),
-});
+})
 
-export type UpdateUserBrainParams = z.infer<typeof updateUserBrainSchema>;
+export type UpdateUserBrainParams = z.infer<typeof updateUserBrainSchema>

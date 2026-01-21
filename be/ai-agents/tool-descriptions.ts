@@ -178,4 +178,4 @@ The tool automatically:
 - Detects and avoids duplicate preferences
 - Replaces conflicting preferences when replacesExisting is provided
 - Preserves existing instructions while adding new ones`,
-} as const;
+} as const

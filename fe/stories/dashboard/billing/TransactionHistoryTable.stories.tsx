@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { TransactionHistoryTable } from '@/components/dashboard/billing/TransactionHistoryTable'
-import type { Transaction } from '@/services/payment.service'
+import type { Transaction } from '@/services/payment-service'
 
 const meta: Meta<typeof TransactionHistoryTable> = {
   title: 'Dashboard/Billing/TransactionHistoryTable',

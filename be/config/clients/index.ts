@@ -1,11 +1,11 @@
-export { CALENDAR, OAUTH2CLIENT } from "./google-oauth";
+export { CALENDAR, OAUTH2CLIENT } from "@/infrastructure/google/google-oauth"
 export {
   getLemonSqueezyStoreId,
   initializeLemonSqueezy,
   isLemonSqueezyEnabled,
   LEMONSQUEEZY_CONFIG,
-} from "./lemonsqueezy";
-export { initializeOpenAI } from "./openai";
+} from "@/infrastructure/lemonsqueezy/lemonsqueezy"
+export { initializeOpenAI } from "@/infrastructure/openai/openai"
 export {
   captureEvent,
   getPostHogClient,
@@ -13,8 +13,12 @@ export {
   initializePostHog,
   isPostHogEnabled,
   shutdownPostHog,
-} from "./posthog";
-export { disconnectRedis, isRedisConnected, redisClient } from "./redis";
+} from "@/infrastructure/posthog/posthog"
+export {
+  disconnectRedis,
+  isRedisConnected,
+  redisClient,
+} from "@/infrastructure/redis/redis"
 export {
   emitToUser,
   getActiveConnectionCount,
@@ -24,5 +28,5 @@ export {
   isUserConnected,
   type NotificationPayload,
   shutdownSocketServer,
-} from "./socket-server";
-export { SUPABASE } from "./supabase";
+} from "@/infrastructure/socket/socket-server"
+export { SUPABASE } from "@/infrastructure/supabase/supabase"

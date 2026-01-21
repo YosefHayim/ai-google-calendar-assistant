@@ -104,8 +104,10 @@ COPY --from=prod-deps --chown=appuser:appuser /app/package.json ./
 # Copy compiled JavaScript from builder stage
 COPY --from=builder --chown=appuser:appuser /app/dist ./dist
 
-# Copy public/static assets
-COPY --from=builder --chown=appuser:appuser /app/public ./public
+# Backend API server doesn't need public static assets
+
+# Create logs directory with proper permissions
+RUN mkdir -p logs && chown appuser:appuser logs
 
 # Switch to non-privileged user
 USER appuser

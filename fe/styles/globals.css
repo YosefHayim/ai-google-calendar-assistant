@@ -201,3 +201,61 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Mobile responsive fixes for homepage */
+@media (max-width: 768px) {
+  /* Reset main container for full width */
+  main {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 auto !important;
+  }
+
+  /* Fix homepage sections for full width */
+  section {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Ensure containers take full width */
+  .max-w-7xl,
+  .max-w-4xl,
+  .max-w-2xl {
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+
+  /* Fix BentoGrid section specifically */
+  section.bg-background.dark\\:bg-\\[\\#030303\\] {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Ensure all images in feature cards have max-width: 100% */
+  .group img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Center buttons on mobile */
+  .flex.flex-col.sm\\:flex-row.gap-3.sm\\:gap-4,
+  .flex.flex-col.sm\\:flex-row.gap-3.sm\\:gap-4.justify-center {
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  /* Ensure button containers are full width */
+  .w-full.sm\\:w-auto {
+    width: 100% !important;
+  }
+
+  /* Fix hero section content */
+  section.relative.min-h-\\[85vh\\].sm\\:min-h-\\[90vh\\] .relative.z-10 {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}

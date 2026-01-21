@@ -1,4 +1,4 @@
-import type { Plan } from '@/services/payment.service'
+import type { Plan } from '@/services/payment-service'
 
 export type ActionType = 'upgrade' | 'downgrade' | 'current'
 

@@ -9,4 +9,4 @@ export {
   INTENT_RECOGNITION,
   RESPONSE_STYLE,
   TIME_INFERENCE,
-} from "./base-prompts";
+} from "./base-prompts"

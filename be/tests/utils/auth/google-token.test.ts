@@ -1,19 +1,19 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { mockFn } from "../../test-utils";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals"
+import { mockFn } from "../../test-utils"
 
 // Mock functions
-const mockGenerateAuthUrl = mockFn();
-const mockSetCredentials = mockFn();
-const mockRefreshAccessToken = mockFn();
-const mockFindUserWithGoogleTokens = mockFn();
-const mockFindUserIdByEmail = mockFn();
-const mockUpdateGoogleTokens = mockFn();
-const mockDeactivateGoogleTokens = mockFn();
+const mockGenerateAuthUrl = mockFn()
+const mockSetCredentials = mockFn()
+const mockRefreshAccessToken = mockFn()
+const mockFindUserWithGoogleTokens = mockFn()
+const mockFindUserIdByEmail = mockFn()
+const mockUpdateGoogleTokens = mockFn()
+const mockDeactivateGoogleTokens = mockFn()
 
 // Create a mock OAuth2 class
 class MockOAuth2 {
-  setCredentials = mockSetCredentials;
-  refreshAccessToken = mockRefreshAccessToken;
+  setCredentials = mockSetCredentials
+  refreshAccessToken = mockRefreshAccessToken
 }
 
 jest.mock("@/config", () => ({
@@ -26,7 +26,7 @@ jest.mock("@/config", () => ({
     googleClientId: "client-id",
     googleClientSecret: "client-secret",
   },
-}));
+}))
 
 jest.mock("googleapis", () => ({
   google: {
@@ -34,13 +34,13 @@ jest.mock("googleapis", () => ({
       OAuth2: MockOAuth2,
     },
   },
-}));
+}))
 
-jest.mock("@/utils/date/timestamp-utils", () => ({
+jest.mock("@/lib/date/timestamp-utils", () => ({
   isoToMs: (iso: string) => new Date(iso).getTime(),
-}));
+}))
 
-jest.mock("@/utils/repositories/UserRepository", () => ({
+jest.mock("@/lib/repositories/UserRepository", () => ({
   userRepository: {
     findUserWithGoogleTokens: (email: string) =>
       mockFindUserWithGoogleTokens(email),
@@ -49,7 +49,7 @@ jest.mock("@/utils/repositories/UserRepository", () => ({
     deactivateGoogleTokens: (userId: string) =>
       mockDeactivateGoogleTokens(userId),
   },
-}));
+}))
 
 // Import after mocks
 import {
@@ -61,36 +61,36 @@ import {
   NEAR_EXPIRY_BUFFER_MS,
   persistGoogleTokens,
   refreshGoogleAccessToken,
-} from "@/utils/auth/google-token";
+} from "@/domains/auth/utils/google-token"
 
 describe("Google Token Utilities", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
   describe("generateGoogleAuthUrl", () => {
     it("should generate auth URL without consent prompt by default", () => {
       mockGenerateAuthUrl.mockReturnValue(
         "https://accounts.google.com/oauth?prompt=none"
-      );
+      )
 
-      const url = generateGoogleAuthUrl();
+      const url = generateGoogleAuthUrl()
 
       expect(mockGenerateAuthUrl).toHaveBeenCalledWith({
         access_type: "offline",
         scope: ["calendar.readonly", "calendar.events"],
         include_granted_scopes: true,
         redirect_uri: "https://example.com/callback",
-      });
-      expect(url).toBe("https://accounts.google.com/oauth?prompt=none");
-    });
+      })
+      expect(url).toBe("https://accounts.google.com/oauth?prompt=none")
+    })
 
     it("should generate auth URL with consent prompt when forced", () => {
       mockGenerateAuthUrl.mockReturnValue(
         "https://accounts.google.com/oauth?prompt=consent"
-      );
+      )
 
-      const url = generateGoogleAuthUrl({ forceConsent: true });
+      const url = generateGoogleAuthUrl({ forceConsent: true })
 
       expect(mockGenerateAuthUrl).toHaveBeenCalledWith({
         access_type: "offline",
@@ -98,67 +98,67 @@ describe("Google Token Utilities", () => {
         include_granted_scopes: true,
         redirect_uri: "https://example.com/callback",
         prompt: "consent",
-      });
-      expect(url).toBe("https://accounts.google.com/oauth?prompt=consent");
-    });
-  });
+      })
+      expect(url).toBe("https://accounts.google.com/oauth?prompt=consent")
+    })
+  })
 
   describe("checkTokenExpiry", () => {
     it("should return expired if no expiry date", () => {
-      const result = checkTokenExpiry(null);
+      const result = checkTokenExpiry(null)
 
       expect(result).toEqual({
         isExpired: true,
         isNearExpiry: true,
         expiresInMs: null,
-      });
-    });
+      })
+    })
 
     it("should return expired if undefined expiry date", () => {
-      const result = checkTokenExpiry(undefined);
+      const result = checkTokenExpiry(undefined)
 
       expect(result).toEqual({
         isExpired: true,
         isNearExpiry: true,
         expiresInMs: null,
-      });
-    });
+      })
+    })
 
     it("should return expired for past date", () => {
-      const pastDate = Date.now() - 60_000; // 1 minute ago
-      const result = checkTokenExpiry(pastDate);
+      const pastDate = Date.now() - 60_000 // 1 minute ago
+      const result = checkTokenExpiry(pastDate)
 
-      expect(result.isExpired).toBe(true);
-      expect(result.expiresInMs).toBe(null);
-    });
+      expect(result.isExpired).toBe(true)
+      expect(result.expiresInMs).toBe(null)
+    })
 
     it("should return near expiry for soon-to-expire token", () => {
-      const nearFuture = Date.now() + 2 * 60 * 1000; // 2 minutes from now
-      const result = checkTokenExpiry(nearFuture);
+      const nearFuture = Date.now() + 2 * 60 * 1000 // 2 minutes from now
+      const result = checkTokenExpiry(nearFuture)
 
-      expect(result.isExpired).toBe(false);
-      expect(result.isNearExpiry).toBe(true);
-      expect(result.expiresInMs).toBeGreaterThan(0);
-      expect(result.expiresInMs).toBeLessThanOrEqual(NEAR_EXPIRY_BUFFER_MS);
-    });
+      expect(result.isExpired).toBe(false)
+      expect(result.isNearExpiry).toBe(true)
+      expect(result.expiresInMs).toBeGreaterThan(0)
+      expect(result.expiresInMs).toBeLessThanOrEqual(NEAR_EXPIRY_BUFFER_MS)
+    })
 
     it("should return not expired for valid token", () => {
-      const futureDate = Date.now() + 30 * 60 * 1000; // 30 minutes from now
-      const result = checkTokenExpiry(futureDate);
+      const futureDate = Date.now() + 30 * 60 * 1000 // 30 minutes from now
+      const result = checkTokenExpiry(futureDate)
 
-      expect(result.isExpired).toBe(false);
-      expect(result.isNearExpiry).toBe(false);
-      expect(result.expiresInMs).toBeGreaterThan(NEAR_EXPIRY_BUFFER_MS);
-    });
+      expect(result.isExpired).toBe(false)
+      expect(result.isNearExpiry).toBe(false)
+      expect(result.expiresInMs).toBeGreaterThan(NEAR_EXPIRY_BUFFER_MS)
+    })
 
     it("should handle ISO date string", () => {
-      const futureDate = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour from now
-      const result = checkTokenExpiry(futureDate);
+      const futureDate = new Date(Date.now() + 60 * 60 * 1000).toISOString() // 1 hour from now
+      const result = checkTokenExpiry(futureDate)
 
-      expect(result.isExpired).toBe(false);
-      expect(result.isNearExpiry).toBe(false);
-    });
-  });
+      expect(result.isExpired).toBe(false)
+      expect(result.isNearExpiry).toBe(false)
+    })
+  })
 
   describe("fetchGoogleTokensByEmail", () => {
     it("should fetch tokens for email", async () => {
@@ -166,31 +166,31 @@ describe("Google Token Utilities", () => {
         access_token: "access-token",
         refresh_token: "refresh-token",
         expiry_date: Date.now() + 3_600_000,
-      };
+      }
       mockFindUserWithGoogleTokens.mockResolvedValue({
         data: mockTokens,
         error: null,
-      });
+      })
 
-      const result = await fetchGoogleTokensByEmail("test@example.com");
+      const result = await fetchGoogleTokensByEmail("test@example.com")
 
       expect(mockFindUserWithGoogleTokens).toHaveBeenCalledWith(
         "test@example.com"
-      );
-      expect(result).toEqual({ data: mockTokens, error: null });
-    });
+      )
+      expect(result).toEqual({ data: mockTokens, error: null })
+    })
 
     it("should return error if user not found", async () => {
       mockFindUserWithGoogleTokens.mockResolvedValue({
         data: null,
         error: "User not found",
-      });
+      })
 
-      const result = await fetchGoogleTokensByEmail("notfound@example.com");
+      const result = await fetchGoogleTokensByEmail("notfound@example.com")
 
-      expect(result).toEqual({ data: null, error: "User not found" });
-    });
-  });
+      expect(result).toEqual({ data: null, error: "User not found" })
+    })
+  })
 
   describe("refreshGoogleAccessToken", () => {
     it("should throw error if no refresh token", async () => {
@@ -198,12 +198,12 @@ describe("Google Token Utilities", () => {
         access_token: "access-token",
         refresh_token: null,
         expiry_date: Date.now(),
-      };
+      }
 
       await expect(refreshGoogleAccessToken(tokens as any)).rejects.toThrow(
         "REAUTH_REQUIRED: No refresh token available"
-      );
-    });
+      )
+    })
 
     it("should refresh token successfully", async () => {
       const tokens = {
@@ -213,167 +213,167 @@ describe("Google Token Utilities", () => {
         token_type: "Bearer",
         scope: "calendar",
         id_token: "id-token",
-      };
-      const newExpiry = Date.now() + 3_600_000;
+      }
+      const newExpiry = Date.now() + 3_600_000
       mockRefreshAccessToken.mockResolvedValue({
         credentials: {
           access_token: "new-access-token",
           expiry_date: newExpiry,
         },
-      });
+      })
 
-      const result = await refreshGoogleAccessToken(tokens as any);
+      const result = await refreshGoogleAccessToken(tokens as any)
 
-      expect(mockSetCredentials).toHaveBeenCalled();
+      expect(mockSetCredentials).toHaveBeenCalled()
       expect(result).toEqual({
         accessToken: "new-access-token",
         expiryDate: newExpiry,
-      });
-    });
+      })
+    })
 
     it("should throw error if no access token returned", async () => {
       const tokens = {
         access_token: "old-access-token",
         refresh_token: "refresh-token",
         expiry_date: Date.now(),
-      };
+      }
       mockRefreshAccessToken.mockResolvedValue({
         credentials: { access_token: null, expiry_date: Date.now() },
-      });
+      })
 
       await expect(refreshGoogleAccessToken(tokens as any)).rejects.toThrow(
         "No access token received from Google"
-      );
-    });
+      )
+    })
 
     it("should throw error if no expiry date returned", async () => {
       const tokens = {
         access_token: "old-access-token",
         refresh_token: "refresh-token",
         expiry_date: Date.now(),
-      };
+      }
       mockRefreshAccessToken.mockResolvedValue({
         credentials: { access_token: "new-token", expiry_date: null },
-      });
+      })
 
       await expect(refreshGoogleAccessToken(tokens as any)).rejects.toThrow(
         "No expiry date received from Google"
-      );
-    });
+      )
+    })
 
     it("should throw REAUTH_REQUIRED for invalid_grant error", async () => {
       const tokens = {
         access_token: "old-access-token",
         refresh_token: "refresh-token",
         expiry_date: Date.now(),
-      };
+      }
       mockRefreshAccessToken.mockRejectedValue({
         code: "invalid_grant",
         message: "Token has been expired or revoked",
-      });
+      })
 
       await expect(refreshGoogleAccessToken(tokens as any)).rejects.toThrow(
         "REAUTH_REQUIRED"
-      );
-    });
+      )
+    })
 
     it("should throw REAUTH_REQUIRED for token expired message", async () => {
       const tokens = {
         access_token: "old-access-token",
         refresh_token: "refresh-token",
         expiry_date: Date.now(),
-      };
+      }
       mockRefreshAccessToken.mockRejectedValue({
         message: "Token has been expired or revoked",
-      });
+      })
 
       await expect(refreshGoogleAccessToken(tokens as any)).rejects.toThrow(
         "REAUTH_REQUIRED"
-      );
-    });
+      )
+    })
 
     it("should throw TOKEN_REFRESH_FAILED for other errors", async () => {
       const tokens = {
         access_token: "old-access-token",
         refresh_token: "refresh-token",
         expiry_date: Date.now(),
-      };
+      }
       mockRefreshAccessToken.mockRejectedValue({
         message: "Network error",
-      });
+      })
 
       await expect(refreshGoogleAccessToken(tokens as any)).rejects.toThrow(
         "TOKEN_REFRESH_FAILED: Network error"
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe("persistGoogleTokens", () => {
     it("should persist tokens for existing user", async () => {
-      mockFindUserIdByEmail.mockResolvedValue("user-123");
-      mockUpdateGoogleTokens.mockResolvedValue(undefined);
+      mockFindUserIdByEmail.mockResolvedValue("user-123")
+      mockUpdateGoogleTokens.mockResolvedValue(undefined)
 
       await persistGoogleTokens("test@example.com", {
         accessToken: "new-access-token",
         expiryDate: Date.now() + 3_600_000,
-      });
+      })
 
-      expect(mockFindUserIdByEmail).toHaveBeenCalledWith("test@example.com");
+      expect(mockFindUserIdByEmail).toHaveBeenCalledWith("test@example.com")
       expect(mockUpdateGoogleTokens).toHaveBeenCalledWith(
         "user-123",
         "new-access-token",
         expect.any(Number)
-      );
-    });
+      )
+    })
 
     it("should throw error if user not found", async () => {
-      mockFindUserIdByEmail.mockResolvedValue(null);
+      mockFindUserIdByEmail.mockResolvedValue(null)
 
       await expect(
         persistGoogleTokens("notfound@example.com", {
           accessToken: "token",
           expiryDate: Date.now(),
         })
-      ).rejects.toThrow("Failed to find user: User not found");
-    });
-  });
+      ).rejects.toThrow("Failed to find user: User not found")
+    })
+  })
 
   describe("deactivateGoogleTokens", () => {
     it("should deactivate tokens for existing user", async () => {
-      mockFindUserIdByEmail.mockResolvedValue("user-123");
-      mockDeactivateGoogleTokens.mockResolvedValue(undefined);
+      mockFindUserIdByEmail.mockResolvedValue("user-123")
+      mockDeactivateGoogleTokens.mockResolvedValue(undefined)
 
-      await deactivateGoogleTokens("test@example.com");
+      await deactivateGoogleTokens("test@example.com")
 
-      expect(mockFindUserIdByEmail).toHaveBeenCalledWith("test@example.com");
-      expect(mockDeactivateGoogleTokens).toHaveBeenCalledWith("user-123");
-    });
+      expect(mockFindUserIdByEmail).toHaveBeenCalledWith("test@example.com")
+      expect(mockDeactivateGoogleTokens).toHaveBeenCalledWith("user-123")
+    })
 
     it("should throw error if user not found", async () => {
-      mockFindUserIdByEmail.mockResolvedValue(null);
+      mockFindUserIdByEmail.mockResolvedValue(null)
 
       await expect(
         deactivateGoogleTokens("notfound@example.com")
-      ).rejects.toThrow("Failed to find user: User not found");
-    });
-  });
+      ).rejects.toThrow("Failed to find user: User not found")
+    })
+  })
 
   describe("getUserIdByEmail", () => {
     it("should return user ID for valid email", async () => {
-      mockFindUserIdByEmail.mockResolvedValue("user-123");
+      mockFindUserIdByEmail.mockResolvedValue("user-123")
 
-      const result = await getUserIdByEmail("test@example.com");
+      const result = await getUserIdByEmail("test@example.com")
 
-      expect(mockFindUserIdByEmail).toHaveBeenCalledWith("test@example.com");
-      expect(result).toBe("user-123");
-    });
+      expect(mockFindUserIdByEmail).toHaveBeenCalledWith("test@example.com")
+      expect(result).toBe("user-123")
+    })
 
     it("should return null if user not found", async () => {
-      mockFindUserIdByEmail.mockResolvedValue(null);
+      mockFindUserIdByEmail.mockResolvedValue(null)
 
-      const result = await getUserIdByEmail("notfound@example.com");
+      const result = await getUserIdByEmail("notfound@example.com")
 
-      expect(result).toBeNull();
-    });
-  });
-});
+      expect(result).toBeNull()
+    })
+  })
+})

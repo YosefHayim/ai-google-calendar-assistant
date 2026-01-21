@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { randomUUID } from "node:crypto";
 
 /**
@@ -37,9 +37,7 @@ export const getClientIp = (req: Request): string => {
   const forwardedFor = req.headers["x-forwarded-for"];
   if (forwardedFor) {
     // Get the first IP in the chain (original client)
-    const ips = Array.isArray(forwardedFor)
-      ? forwardedFor[0]
-      : forwardedFor.split(",")[0];
+    const ips = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor.split(",")[0];
     return ips?.trim() || req.ip || "unknown";
   }
   return req.ip || req.socket?.remoteAddress || "unknown";
@@ -83,8 +81,7 @@ const maskEmail = (email: string): string => {
   if (!(local && domain)) {
     return "***@***.***";
   }
-  const maskedLocal =
-    local.length > 2 ? `${local[0]}***${local[local.length - 1]}` : "***";
+  const maskedLocal = local.length > 2 ? `${local[0]}***${local[local.length - 1]}` : "***";
   return `${maskedLocal}@${domain}`;
 };
 
@@ -92,11 +89,7 @@ const maskEmail = (email: string): string => {
  * Security audit middleware
  * Attaches request ID and logs security events
  */
-export const securityAuditMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+export const securityAuditMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const startTime = Date.now();
   const requestId = generateRequestId();
 
@@ -116,7 +109,7 @@ export const securityAuditMiddleware = (
         requestId,
         eventType,
         action: getActionFromRoute(req),
-        userId: req.user!.id,
+        userId: req.user?.id,
         userEmail: req.user?.email,
         ip: getClientIp(req),
         userAgent: req.headers["user-agent"] || "unknown",
@@ -134,16 +127,9 @@ export const securityAuditMiddleware = (
 /**
  * Determine event type based on request/response
  */
-const getEventType = (
-  req: Request,
-  res: Response
-): SecurityAuditEvent["eventType"] => {
+const getEventType = (req: Request, res: Response): SecurityAuditEvent["eventType"] => {
   // Authentication events
-  if (
-    req.path.includes("/signin") ||
-    req.path.includes("/signup") ||
-    req.path.includes("/logout")
-  ) {
+  if (req.path.includes("/signin") || req.path.includes("/signup") || req.path.includes("/logout")) {
     return "AUTH";
   }
 
@@ -220,11 +206,7 @@ const getActionFromRoute = (req: Request): string => {
  */
 const shouldLogEvent = (req: Request, res: Response): boolean => {
   // Always log auth events
-  if (
-    req.path.includes("/signin") ||
-    req.path.includes("/signup") ||
-    req.path.includes("/logout")
-  ) {
+  if (req.path.includes("/signin") || req.path.includes("/signup") || req.path.includes("/logout")) {
     return true;
   }
 
@@ -239,11 +221,7 @@ const shouldLogEvent = (req: Request, res: Response): boolean => {
   }
 
   // Log sensitive routes
-  if (
-    req.path.includes("/callback") ||
-    req.path.includes("/token") ||
-    req.path.includes("/refresh")
-  ) {
+  if (req.path.includes("/callback") || req.path.includes("/token") || req.path.includes("/refresh")) {
     return true;
   }
 
@@ -258,18 +236,13 @@ const shouldLogEvent = (req: Request, res: Response): boolean => {
 /**
  * Log specific security events manually
  */
-export const logAuthEvent = (
-  req: Request,
-  action: string,
-  success: boolean,
-  details?: Record<string, unknown>
-): void => {
+export const logAuthEvent = (req: Request, action: string, success: boolean, details?: Record<string, unknown>): void => {
   logSecurityEvent({
     timestamp: new Date().toISOString(),
     requestId: req.requestId || generateRequestId(),
     eventType: success ? "AUTH" : "SECURITY",
     action,
-    userId: req.user!.id,
+    userId: req.user?.id,
     userEmail: req.user?.email,
     ip: getClientIp(req),
     userAgent: req.headers["user-agent"] || "unknown",

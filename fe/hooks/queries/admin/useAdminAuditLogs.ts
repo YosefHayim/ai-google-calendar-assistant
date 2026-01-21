@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getAuditLogs } from '@/services/admin.service'
+import { getAuditLogs } from '@/services/admin-service'
 
 export const useAdminAuditLogs = (params: {
   page?: number

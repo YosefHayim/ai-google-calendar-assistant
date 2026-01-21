@@ -9,15 +9,15 @@ import {
   Preview,
   Section,
   Text,
-} from "@react-email/components";
-import type * as React from "react";
+} from "@react-email/components"
+import type * as React from "react"
 
 export type ResetPasswordEmailProps = {
-  userName: string;
-  resetPasswordLink: string;
-  securityUrl?: string;
-  logoUrl?: string;
-};
+  userName: string
+  resetPasswordLink: string
+  securityUrl?: string
+  logoUrl?: string
+}
 
 const colors = {
   primary: "#f97316",
@@ -27,12 +27,12 @@ const colors = {
   textSecondary: "#737373",
   textMuted: "#a3a3a3",
   border: "#e5e5e5",
-};
+}
 
 const fonts = {
   primary:
     "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-};
+}
 
 export const ResetPasswordEmail = ({
   userName = "there",
@@ -108,7 +108,7 @@ export const ResetPasswordEmail = ({
       </Container>
     </Body>
   </Html>
-);
+)
 
 const styles = {
   body: {
@@ -204,6 +204,6 @@ const styles = {
     marginTop: "24px",
     lineHeight: "1.5",
   } as React.CSSProperties,
-};
+}
 
-export default ResetPasswordEmail;
+export default ResetPasswordEmail

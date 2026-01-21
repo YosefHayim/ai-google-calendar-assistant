@@ -149,6 +149,35 @@ export function formatDurationMs(durationMs: number, options: { style?: 'short' 
 }
 
 /**
+ * Formats time remaining until a future date as days and hours.
+ *
+ * @param endDate - The end date (string or Date)
+ * @returns Formatted string like "5d 12h" or "3h", or null if date is in the past
+ *
+ * @example
+ * formatTimeRemaining('2026-01-20T15:00:00') // "5d 12h"
+ * formatTimeRemaining(new Date(Date.now() + 3600000)) // "1h"
+ */
+export function formatTimeRemaining(endDate: string | Date | null | undefined): string | null {
+  if (!endDate) return null
+
+  const now = new Date()
+  const end = typeof endDate === 'string' ? new Date(endDate) : endDate
+  const diffMs = end.getTime() - now.getTime()
+
+  if (diffMs <= 0) return null
+
+  const totalHours = Math.floor(diffMs / (1000 * 60 * 60))
+  const days = Math.floor(totalHours / 24)
+  const hours = totalHours % 24
+
+  if (days > 0) {
+    return `${days}d ${hours}h`
+  }
+  return `${hours}h`
+}
+
+/**
  * Formats hours with a specified number of decimal places.
  *
  * @param hours - Number of hours

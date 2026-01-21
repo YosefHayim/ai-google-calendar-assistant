@@ -334,6 +334,11 @@ export const en = {
     logout: 'Logout',
     chatWithAlly: 'Chat with Ally',
     minimize: 'Minimize',
+    // User Footer items
+    upgradeToPro: 'Upgrade to Pro',
+    billing: 'Billing',
+    notifications: 'Notifications',
+    logOut: 'Log out',
   },
 
   // Dashboard
@@ -1142,16 +1147,6 @@ export const en = {
       resources: 'Resources',
       blog: 'Change Log',
       changeLog: 'Change Log',
-    },
-
-    // Sidebar/User Footer
-    sidebar: {
-      upgradeToPro: 'Upgrade to Pro',
-      account: 'Account',
-      billing: 'Billing',
-      notifications: 'Notifications',
-      settings: 'Settings',
-      logOut: 'Log out',
     },
 
     // Integrations

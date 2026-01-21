@@ -1,6 +1,6 @@
 'use client'
 
-import { ConversationListItem, updateConversationTitle } from '@/services/chatService'
+import { ConversationListItem, updateConversationTitle } from '@/services/chat-service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import type { MutationHookOptions } from '../useMutationWrapper'

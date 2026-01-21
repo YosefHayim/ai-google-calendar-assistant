@@ -1,4 +1,4 @@
-import { getConversation, type FullConversation } from '@/services/chatService'
+import { getConversation, type FullConversation } from '@/services/chat-service'
 import { QUERY_CONFIG } from '@/lib/constants'
 import { queryKeys } from '@/lib/query'
 import { useQuery } from '@tanstack/react-query'

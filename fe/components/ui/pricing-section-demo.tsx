@@ -5,7 +5,7 @@ import { usePlans, useSubscriptionStatus } from '@/hooks/queries/billing'
 
 import { AlertCircle } from 'lucide-react'
 import { HandWrittenTitleDemo } from '@/components/ui/hand-writing-text-demo'
-import type { Plan } from '@/services/payment.service'
+import type { Plan } from '@/services/payment-service'
 import { PricingSection } from '@/components/ui/pricing-section'
 import type { PricingTier } from '@/lib/constants/plans'
 import React from 'react'

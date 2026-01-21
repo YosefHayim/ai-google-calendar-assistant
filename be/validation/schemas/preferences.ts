@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { sanitizeString } from "../middleware";
+import { z } from "zod"
+import { sanitizeString } from "../middleware"
 
 export const allyBrainSchema = z.object({
   enabled: z.boolean(),
@@ -9,15 +9,15 @@ export const allyBrainSchema = z.object({
     .transform(sanitizeString)
     .optional()
     .default(""),
-});
+})
 
 export const contextualSchedulingSchema = z.object({
   enabled: z.boolean(),
-});
+})
 
 export const crossPlatformSyncSchema = z.object({
   enabled: z.boolean(),
-});
+})
 
 export const geoLocationSchema = z.object({
   enabled: z.boolean(),
@@ -28,7 +28,7 @@ export const geoLocationSchema = z.object({
       timestamp: z.string(),
     })
     .optional(),
-});
+})
 
 export const preferenceKeyParamSchema = z.object({
   key: z.enum(
@@ -51,33 +51,33 @@ export const preferenceKeyParamSchema = z.object({
       }),
     }
   ),
-});
+})
 
-export type AllyBrainBody = z.infer<typeof allyBrainSchema>;
+export type AllyBrainBody = z.infer<typeof allyBrainSchema>
 export type ContextualSchedulingBody = z.infer<
   typeof contextualSchedulingSchema
->;
+>
 
 export const eventReminderSchema = z.object({
   method: z.enum(["email", "popup"]),
   minutes: z.number().int().min(0).max(40_320),
-});
+})
 
 export const reminderPreferencesSchema = z.object({
   enabled: z.boolean(),
   defaultReminders: z.array(eventReminderSchema).max(5).optional(),
   useCalendarDefaults: z.boolean().optional().default(true),
-});
+})
 
-export type ReminderPreferencesBody = z.infer<typeof reminderPreferencesSchema>;
+export type ReminderPreferencesBody = z.infer<typeof reminderPreferencesSchema>
 
 export const updateCalendarRemindersSchema = z.object({
   defaultReminders: z.array(eventReminderSchema).max(5),
-});
+})
 
 export type UpdateCalendarRemindersBody = z.infer<
   typeof updateCalendarRemindersSchema
->;
+>
 
 const ttsVoiceSchema = z.enum([
   "alloy",
@@ -86,26 +86,26 @@ const ttsVoiceSchema = z.enum([
   "onyx",
   "nova",
   "shimmer",
-]);
+])
 
 export const voicePreferenceSchema = z.object({
   enabled: z.boolean(),
   voice: ttsVoiceSchema.optional().default("alloy"),
-});
+})
 
-export type VoicePreferenceBody = z.infer<typeof voicePreferenceSchema>;
+export type VoicePreferenceBody = z.infer<typeof voicePreferenceSchema>
 
 const ianaTimezoneSchema = z.string().refine(
   (tz) => {
     try {
-      Intl.DateTimeFormat(undefined, { timeZone: tz });
-      return true;
+      Intl.DateTimeFormat(undefined, { timeZone: tz })
+      return true
     } catch {
-      return false;
+      return false
     }
   },
   { message: "Invalid IANA timezone" }
-);
+)
 
 export const dailyBriefingSchema = z.object({
   enabled: z.boolean(),
@@ -116,28 +116,28 @@ export const dailyBriefingSchema = z.object({
       "Time must be in HH:MM 24-hour format (e.g., 08:30)"
     ),
   timezone: ianaTimezoneSchema,
-});
+})
 
-export type DailyBriefingBody = z.infer<typeof dailyBriefingSchema>;
+export type DailyBriefingBody = z.infer<typeof dailyBriefingSchema>
 
-const notificationChannelSchema = z.enum(["push", "email", "telegram"]);
+const notificationChannelSchema = z.enum(["push", "email", "telegram"])
 
 export const notificationSettingsSchema = z.object({
   eventConfirmations: z.array(notificationChannelSchema),
   conflictAlerts: z.array(notificationChannelSchema),
   featureUpdates: z.array(notificationChannelSchema),
-});
+})
 
 export type NotificationSettingsBody = z.infer<
   typeof notificationSettingsSchema
->;
+>
 
 export const displayPreferencesSchema = z.object({
   timezone: ianaTimezoneSchema,
   timeFormat: z.enum(["12h", "24h"]),
-});
+})
 
-export type DisplayPreferencesBody = z.infer<typeof displayPreferencesSchema>;
+export type DisplayPreferencesBody = z.infer<typeof displayPreferencesSchema>
 
 export const personaSchema = z.object({
   persona: z
@@ -154,6 +154,6 @@ export const personaSchema = z.object({
   notificationFrequency: z.enum(["realtime", "daily_digest", "weekly_summary"]),
   onboardingCompleted: z.boolean(),
   onboardingCompletedAt: z.string().optional(),
-});
+})
 
-export type PersonaBody = z.infer<typeof personaSchema>;
+export type PersonaBody = z.infer<typeof personaSchema>

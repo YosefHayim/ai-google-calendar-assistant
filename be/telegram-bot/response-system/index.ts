@@ -19,7 +19,7 @@
  */
 
 // Adapter exports
-export { createTelegramAdapter, TelegramAdapter } from "./adapters";
+export { createTelegramAdapter, TelegramAdapter } from "./adapters"
 
 // Type exports
 export type {
@@ -41,7 +41,7 @@ export type {
   RtlStrategy,
   TextDirection,
   WeekSchedule,
-} from "./core";
+} from "./core"
 // Core exports
 export {
   applyLineBasedDirection,
@@ -70,7 +70,7 @@ export {
   // RTL utilities
   UNICODE_MARKERS,
   unescapeHtml,
-} from "./core";
+} from "./core"
 
 // Template exports
 export {
@@ -102,4 +102,4 @@ export {
   weeklyCalendarTemplate,
   // Info/Notification templates
   welcomeTemplate,
-} from "./templates";
+} from "./templates"

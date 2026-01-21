@@ -11,7 +11,7 @@ import {
   upgradeSubscription,
   type Plan,
   type PlanInterval,
-} from '@/services/payment.service'
+} from '@/services/payment-service'
 import { toast } from 'sonner'
 import { useSubscriptionStatus, usePlans } from '@/hooks/queries/billing'
 import { CurrentPlanCard } from './components/CurrentPlanCard'
@@ -81,9 +81,11 @@ export const SubscriptionTab: React.FC = () => {
           return
         }
 
-        const isLinkedToProvider = access?.subscription?.isLinkedToProvider === true
+        const canUpgradeExisting =
+          access?.subscription?.isLinkedToProvider === true &&
+          access?.subscription_status === 'active'
 
-        if (isLinkedToProvider) {
+        if (canUpgradeExisting) {
           await upgradeSubscription({
             planSlug: plan.slug,
             interval: selectedFrequency as PlanInterval,
@@ -129,7 +131,7 @@ export const SubscriptionTab: React.FC = () => {
   }
 
   const isPerUse = selectedFrequency === 'per use'
-  const isTrialing = access?.subscription_status === 'trialing'
+  const isTrialing = access?.subscription_status === 'on_trial' || access?.subscription_status === 'trialing'
 
   const displayPlans = isTrialing ? plans?.filter((plan) => plan.pricing.monthly > 0 || plan.pricing.yearly > 0) : plans
 
@@ -141,8 +143,10 @@ export const SubscriptionTab: React.FC = () => {
         planSlug={access?.plan_slug}
         planName={access?.plan_name}
         subscriptionStatus={access?.subscription_status}
+        interactionsUsed={access?.interactions_used}
         interactionsRemaining={access?.interactions_remaining}
         trialDaysLeft={access?.trial_days_left}
+        trialEndDate={access?.trial_end_date}
         isLoading={actionLoading === 'portal'}
         onManageBilling={handleManageBilling}
         isHighlighted={currentPlan?.isHighlighted}

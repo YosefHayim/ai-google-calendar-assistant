@@ -5,14 +5,17 @@ import { Clock, Crown, ExternalLink, Loader2, Shield, Zap } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { formatTimeRemaining } from '@/lib/formatUtils'
 import React from 'react'
 
 interface CurrentPlanCardProps {
   planSlug: string | null | undefined
   planName: string | null | undefined
   subscriptionStatus: string | null | undefined
+  interactionsUsed: number | null | undefined
   interactionsRemaining: number | null | undefined
   trialDaysLeft: number | null | undefined
+  trialEndDate: string | null | undefined
   isLoading: boolean
   onManageBilling: () => void
   isHighlighted?: boolean
@@ -23,14 +26,18 @@ export function CurrentPlanCard({
   planSlug,
   planName,
   subscriptionStatus,
+  interactionsUsed,
   interactionsRemaining,
   trialDaysLeft,
+  trialEndDate,
   isLoading,
   onManageBilling,
   isHighlighted,
   isPopular,
 }: CurrentPlanCardProps) {
-  const isTrialing = subscriptionStatus === 'trialing'
+  const isTrialing = subscriptionStatus === 'on_trial' || subscriptionStatus === 'trialing'
+  const trialTimeDisplay = formatTimeRemaining(trialEndDate) ?? (trialDaysLeft ? `${trialDaysLeft}d` : null)
+
   const getPlanIcon = () => {
     if (isHighlighted || planSlug?.includes('executive') || planSlug?.includes('sovereignty')) {
       return <Crown className="w-5 h-5 text-primary" />
@@ -53,20 +60,20 @@ export function CurrentPlanCard({
               <p className="text-xs text-muted-foreground dark:text-muted-foreground">Current Plan</p>
               <p className="font-semibold text-foreground dark:text-white truncate">{planName}</p>
             </div>
-            {isTrialing && trialDaysLeft !== null && trialDaysLeft !== undefined ? (
+            {isTrialing && trialTimeDisplay ? (
               <Badge variant="default" className="text-xs sm:hidden">
                 <Clock className="w-3 h-3 mr-1" />
-                {trialDaysLeft} {trialDaysLeft === 1 ? 'day' : 'days'} left
+                {trialTimeDisplay} left
               </Badge>
             ) : (
               <Badge className="bg-primary/20 text-primary text-xs sm:hidden">Active</Badge>
             )}
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {isTrialing && trialDaysLeft !== null && trialDaysLeft !== undefined ? (
+            {isTrialing && trialTimeDisplay ? (
               <Badge variant="default" className="text-xs hidden sm:inline-flex">
                 <Clock className="w-3 h-3 mr-1" />
-                {trialDaysLeft} {trialDaysLeft === 1 ? 'day' : 'days'} left
+                {trialTimeDisplay} left
               </Badge>
             ) : (
               <Badge className="bg-primary/20 text-primary text-xs hidden sm:inline-flex">Active</Badge>
@@ -90,15 +97,21 @@ export function CurrentPlanCard({
         </div>
         {(interactionsRemaining !== null && interactionsRemaining !== undefined) || isTrialing ? (
           <div className="mt-3 pt-3 border-t border-primary/10 space-y-2">
-            {interactionsRemaining !== null && interactionsRemaining !== undefined && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">AI Interactions</span>
+              <span className="font-medium text-foreground dark:text-white">
+                {isTrialing ? 'Unlimited' : `${interactionsRemaining} remaining`}
+              </span>
+            </div>
+            {isTrialing && interactionsUsed !== null && interactionsUsed !== undefined && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">AI Interactions</span>
-                <span className="font-medium text-foreground dark:text-white">{interactionsRemaining} remaining</span>
+                <span className="text-muted-foreground">Used during trial</span>
+                <span className="font-medium text-foreground dark:text-white">{interactionsUsed}</span>
               </div>
             )}
             {isTrialing && (
               <p className="text-xs text-muted-foreground dark:text-muted-foreground">
-                Your trial gives you full access. Choose a plan below to continue after your trial ends.
+                Your trial gives you unlimited access. Choose a plan below to continue after your trial ends.
               </p>
             )}
           </div>

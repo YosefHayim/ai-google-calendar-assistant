@@ -1,6 +1,6 @@
-import { STATUS_RESPONSE } from "@/config";
-import rateLimit from "express-rate-limit";
-import { sendR } from "@/utils/http";
+import { STATUS_RESPONSE } from "@/config"
+import rateLimit from "express-rate-limit"
+import { sendR } from "@/lib/http"
 
 /**
  * Rate limiter for authentication endpoints
@@ -23,14 +23,14 @@ export const authRateLimiter = rateLimit({
         code: "RATE_LIMIT_EXCEEDED",
         retryAfter: 15 * 60, // seconds
       }
-    );
+    )
   },
   skip: (_req) => {
     // Skip rate limiting for successful requests (optional)
     // This allows users to continue after successful auth
-    return false;
+    return false
   },
-});
+})
 
 /**
  * Rate limiter for OTP verification
@@ -53,9 +53,9 @@ export const otpRateLimiter = rateLimit({
         code: "RATE_LIMIT_EXCEEDED",
         retryAfter: 5 * 60,
       }
-    );
+    )
   },
-});
+})
 
 /**
  * Rate limiter for token refresh
@@ -78,9 +78,9 @@ export const refreshRateLimiter = rateLimit({
         code: "RATE_LIMIT_EXCEEDED",
         retryAfter: 15 * 60,
       }
-    );
+    )
   },
-});
+})
 
 /**
  * General API rate limiter
@@ -103,9 +103,9 @@ export const apiRateLimiter = rateLimit({
         code: "RATE_LIMIT_EXCEEDED",
         retryAfter: 60,
       }
-    );
+    )
   },
-});
+})
 
 /**
  * AI/Chat rate limiter - STRICT
@@ -130,9 +130,9 @@ export const aiChatRateLimiter = rateLimit({
         code: "AI_RATE_LIMIT_EXCEEDED",
         retryAfter: 60,
       }
-    );
+    )
   },
-});
+})
 
 /**
  * AI/Chat rate limiter - BURST protection
@@ -156,9 +156,9 @@ export const aiChatBurstLimiter = rateLimit({
         code: "AI_BURST_LIMIT_EXCEEDED",
         retryAfter: 10,
       }
-    );
+    )
   },
-});
+})
 
 /**
  * Voice/Whisper rate limiter - STRICT
@@ -183,9 +183,9 @@ export const voiceRateLimiter = rateLimit({
         code: "VOICE_RATE_LIMIT_EXCEEDED",
         retryAfter: 60,
       }
-    );
+    )
   },
-});
+})
 
 /**
  * Voice/Whisper burst limiter
@@ -209,9 +209,9 @@ export const voiceBurstLimiter = rateLimit({
         code: "VOICE_BURST_LIMIT_EXCEEDED",
         retryAfter: 10,
       }
-    );
+    )
   },
-});
+})
 
 /**
  * Calendar AI rate limiter
@@ -237,6 +237,6 @@ export const calendarAiRateLimiter = rateLimit({
         code: "CALENDAR_AI_RATE_LIMIT_EXCEEDED",
         retryAfter: 60,
       }
-    );
+    )
   },
-});
+})

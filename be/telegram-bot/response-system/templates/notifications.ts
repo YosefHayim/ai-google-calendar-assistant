@@ -3,8 +3,8 @@
  * Pre-built templates for success, error, and info notifications
  */
 
-import { sanitizeUserInput } from "../core/html-escaper";
-import { ResponseBuilder } from "../core/response-builder";
+import { sanitizeUserInput } from "../core/html-escaper"
+import { ResponseBuilder } from "../core/response-builder"
 
 // ============================================
 // Success Templates
@@ -21,13 +21,13 @@ export function eventCreatedTemplate(
   const builder = ResponseBuilder.telegram()
     .type("success")
     .header("✅", "Event Created!")
-    .section("📌", eventName, dateTime);
+    .section("📌", eventName, dateTime)
 
   if (calendarName) {
-    builder.text(`Added to: ${calendarName}`);
+    builder.text(`Added to: ${calendarName}`)
   }
 
-  return builder.footer(undefined, "You're all set!");
+  return builder.footer(undefined, "You're all set!")
 }
 
 /**
@@ -41,7 +41,7 @@ export function eventUpdatedTemplate(
     .type("success")
     .header("✅", "Event Updated!")
     .section("📌", eventName, changes)
-    .footer(undefined, "Changes saved!");
+    .footer(undefined, "Changes saved!")
 }
 
 /**
@@ -54,7 +54,7 @@ export function eventDeletedTemplate(eventName: string): ResponseBuilder {
     .text(
       `"${sanitizeUserInput(eventName)}" has been removed from your calendar.`
     )
-    .footer(undefined, "Your calendar has been updated.");
+    .footer(undefined, "Your calendar has been updated.")
 }
 
 /**
@@ -66,13 +66,13 @@ export function successTemplate(
 ): ResponseBuilder {
   const builder = ResponseBuilder.telegram()
     .type("success")
-    .header("✅", message);
+    .header("✅", message)
 
   if (detail) {
-    builder.text(detail);
+    builder.text(detail)
   }
 
-  return builder;
+  return builder
 }
 
 // ============================================
@@ -91,16 +91,16 @@ export function eventNotFoundTemplate(
     .header("😕", "Couldn't Find Meeting")
     .text(
       `I couldn't find any event matching "${sanitizeUserInput(searchTerm)}".`
-    );
+    )
 
   if (suggestions && suggestions.length > 0) {
-    const items = suggestions.map((s) => ({ text: s, bullet: "dot" as const }));
-    builder.section("💡", "Did you mean:", items);
+    const items = suggestions.map((s) => ({ text: s, bullet: "dot" as const }))
+    builder.section("💡", "Did you mean:", items)
   }
 
   return builder.footer(
     "Try searching with different keywords or check your spelling."
-  );
+  )
 }
 
 /**
@@ -111,7 +111,7 @@ export function connectionErrorTemplate(): ResponseBuilder {
     .type("error")
     .header("😕", "Connection Issue")
     .text("I'm having trouble connecting to your calendar.")
-    .footer("Try /settings to reconnect your Google Calendar.");
+    .footer("Try /settings to reconnect your Google Calendar.")
 }
 
 /**
@@ -122,7 +122,7 @@ export function permissionErrorTemplate(): ResponseBuilder {
     .type("error")
     .header("🔒", "Permission Required")
     .text("I don't have permission to access that calendar.")
-    .footer("Check your Google Calendar sharing settings.");
+    .footer("Check your Google Calendar sharing settings.")
 }
 
 /**
@@ -136,14 +136,14 @@ export function timeConflictTemplate(
     text: e,
     bullet: "emoji" as const,
     bulletEmoji: "⚠️",
-  }));
+  }))
 
   return ResponseBuilder.telegram()
     .type("warning")
     .header("⚠️", "Time Conflict Detected")
     .text(`"${sanitizeUserInput(eventName)}" overlaps with:`)
     .list(items)
-    .footer("Would you like to proceed anyway?");
+    .footer("Would you like to proceed anyway?")
 }
 
 /**
@@ -159,7 +159,7 @@ export function errorTemplate(
     .text(message)
     .footer(
       suggestion || "Please try again or contact support if the issue persists."
-    );
+    )
 }
 
 // ============================================
@@ -172,7 +172,7 @@ export function errorTemplate(
 export function welcomeTemplate(userName?: string): ResponseBuilder {
   const greeting = userName
     ? `Welcome, ${userName}!`
-    : "Welcome to Your AI Calendar Assistant!";
+    : "Welcome to Your AI Calendar Assistant!"
 
   return ResponseBuilder.telegram()
     .type("info")
@@ -189,7 +189,7 @@ export function welcomeTemplate(userName?: string): ResponseBuilder {
       { bullet: "none", text: "'What's on my calendar today?'" },
       { bullet: "none", text: "'Schedule a meeting tomorrow at 2pm'" },
     ])
-    .footer(undefined, "Let's make your day more organized! ✨");
+    .footer(undefined, "Let's make your day more organized! ✨")
 }
 
 /**
@@ -203,7 +203,7 @@ export function sessionEndedTemplate(): ResponseBuilder {
       "Your conversation has been cleared. " +
         "I'm always here when you need me — just send a message to start fresh!"
     )
-    .footer(undefined, "Have a productive day! ✨");
+    .footer(undefined, "Have a productive day! ✨")
 }
 
 /**
@@ -239,7 +239,7 @@ export function helpTemplate(): ResponseBuilder {
       { bullet: "dot", text: "/exit — End session" },
     ])
     .text("💬 Or just chat naturally!")
-    .footer("'How much time did I spend in meetings this week vs last week?'");
+    .footer("'How much time did I spend in meetings this week vs last week?'")
 }
 
 /**
@@ -257,14 +257,14 @@ export function statusTemplate(
         "Google Calendar: Connected",
         email ? `Account: ${email}` : "Account: Verified",
       ])
-      .footer(undefined, "Everything is working smoothly!");
+      .footer(undefined, "Everything is working smoothly!")
   }
 
   return ResponseBuilder.telegram()
     .type("error")
     .header("🔴", "Connection Issue")
     .text("Your Google Calendar is not connected.")
-    .footer("Use /settings to reconnect.");
+    .footer("Use /settings to reconnect.")
 }
 
 /**
@@ -284,7 +284,7 @@ export function settingsTemplate(): ResponseBuilder {
       { bullet: "dot", text: "Working hours" },
       { bullet: "dot", text: "Notification preferences" },
     ])
-    .footer("Tell me what you'd like to change!");
+    .footer("Tell me what you'd like to change!")
 }
 
 /**
@@ -301,7 +301,7 @@ export function feedbackTemplate(): ResponseBuilder {
       "Suggest new features you'd love to see",
     ])
     .text("Just type your feedback and I'll make sure the team sees it.")
-    .footer(undefined, "Thank you for helping us build something amazing! ✨");
+    .footer(undefined, "Thank you for helping us build something amazing! ✨")
 }
 
 /**
@@ -311,7 +311,7 @@ export function loadingTemplate(action: string): ResponseBuilder {
   return ResponseBuilder.telegram()
     .type("info")
     .header("⏳", action)
-    .text("Just a moment...");
+    .text("Just a moment...")
 }
 
 /**
@@ -326,5 +326,5 @@ export function confirmationTemplate(
     .header("❓", "Please Confirm")
     .text(action)
     .text(details)
-    .footer("Reply with 'yes' to confirm or 'no' to cancel.");
+    .footer("Reply with 'yes' to confirm or 'no' to cancel.")
 }

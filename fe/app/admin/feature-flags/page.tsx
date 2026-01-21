@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import type { CreateFeatureFlagInput, FeatureFlag } from '@/services/feature-flags.service'
+import type { CreateFeatureFlagInput, FeatureFlag } from '@/services/feature-flags-service'
 import {
   Dialog,
   DialogContent,

@@ -7,7 +7,7 @@
 AI-powered Google Calendar Assistant with **multi-modal architecture**. Four interaction modalities:
 
 - **Chat** (web) - OpenAI Agents SDK via streaming SSE
-- **Voice** (real-time) - LiveKit Agents SDK + OpenAI Realtime API
+- **Voice** (real-time) - Browser APIs + OpenAI Whisper
 - **Telegram** - OpenAI Agents SDK via Grammy bot
 - **WhatsApp** - OpenAI Agents SDK (undocumented, WIP)
 
@@ -164,7 +164,6 @@ npm run format              # Prettier
 | Supabase            | PostgreSQL + Auth   | `be/config/clients/`                  |
 | Google Calendar API | Events, OAuth       | `be/utils/calendar/`                  |
 | OpenAI              | Agent orchestration | `be/ai-agents/`                       |
-| LiveKit             | Real-time voice     | `be/voice-sidecar/`                   |
 | Lemon Squeezy       | Payments            | `be/services/lemonsqueezy-service.ts` |
 | Redis               | Cross-modal context | `be/shared/context/`                  |
 

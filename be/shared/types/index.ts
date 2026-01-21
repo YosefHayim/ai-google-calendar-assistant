@@ -11,8 +11,8 @@
  * await getEventHandler(params, ctx)
  */
 export type HandlerContext = {
-  email: string;
-};
+  email: string
+}
 
 /**
  * Context for OpenAI Agents SDK tools. Passed via RunContext<AgentContext>.
@@ -22,8 +22,8 @@ export type HandlerContext = {
  * runner.run(agent, { context: { email: userEmail } })
  */
 export type AgentContext = {
-  email: string;
-};
+  email: string
+}
 
 /**
  * Controls event data projection for different modalities.
@@ -31,36 +31,36 @@ export type AgentContext = {
  * - CHAT_STANDARD: Standard fields for chat UI (includes description, location)
  * - FULL: All fields for API responses
  */
-export type ProjectionMode = "VOICE_LITE" | "CHAT_STANDARD" | "FULL";
+export type ProjectionMode = "VOICE_LITE" | "CHAT_STANDARD" | "FULL"
 
 /**
  * Interaction modality for cross-modal context tracking.
  * Stored in Redis to enable context continuity across channels.
  */
-export type Modality = "chat" | "voice" | "telegram" | "whatsapp" | "api";
+export type Modality = "chat" | "voice" | "telegram" | "whatsapp" | "api"
 
 /**
  * Represents a calendar event that conflicts with a proposed time slot.
  * Returned by checkConflictsHandler and checkEventConflicts.
  */
 export type ConflictingEvent = {
-  id: string;
-  summary: string;
-  start: string;
-  end: string;
-  calendarId: string;
-  calendarName: string;
-};
+  id: string
+  summary: string
+  start: string
+  end: string
+  calendarId: string
+  calendarName: string
+}
 
 /**
  * Result of conflict checking operations.
  * Used by pre_create_validation tool and conflict checking utilities.
  */
 export type ConflictCheckResult = {
-  hasConflicts: boolean;
-  conflictingEvents: ConflictingEvent[];
-  error?: string;
-};
+  hasConflicts: boolean
+  conflictingEvents: ConflictingEvent[]
+  error?: string
+}
 
 /**
  * Converts any error type to a user-friendly string message.
@@ -73,22 +73,22 @@ export type ConflictCheckResult = {
  */
 export function stringifyError(error: unknown): string {
   if (error instanceof Error) {
-    return error.message;
+    return error.message
   }
   if (typeof error === "object" && error !== null) {
     if (
       "message" in error &&
       typeof (error as { message: unknown }).message === "string"
     ) {
-      return (error as { message: string }).message;
+      return (error as { message: string }).message
     }
     try {
-      return JSON.stringify(error);
+      return JSON.stringify(error)
     } catch {
-      return "Unknown error occurred";
+      return "Unknown error occurred"
     }
   }
-  return String(error);
+  return String(error)
 }
 
 /**
@@ -101,11 +101,11 @@ export function stringifyError(error: unknown): string {
  * if (type === "auth") return { error: "Please re-authenticate" }
  */
 export function categorizeError(error: unknown): {
-  type: "auth" | "database" | "other";
-  message: string;
+  type: "auth" | "database" | "other"
+  message: string
 } {
-  const errorMsg = error instanceof Error ? error.message : String(error);
-  const lowerMsg = errorMsg.toLowerCase();
+  const errorMsg = error instanceof Error ? error.message : String(error)
+  const lowerMsg = errorMsg.toLowerCase()
 
   if (
     lowerMsg.includes("no credentials found") ||
@@ -121,7 +121,7 @@ export function categorizeError(error: unknown): {
     return {
       type: "auth",
       message: "No credentials found - authorization required.",
-    };
+    }
   }
 
   if (
@@ -134,8 +134,8 @@ export function categorizeError(error: unknown): {
     return {
       type: "database",
       message: "Database error - please try again in a moment.",
-    };
+    }
   }
 
-  return { type: "other", message: errorMsg };
+  return { type: "other", message: errorMsg }
 }

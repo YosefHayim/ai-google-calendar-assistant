@@ -1,10 +1,10 @@
-import type { Bot } from "grammy";
-import { InputFile } from "grammy";
-import type { ImageContent } from "@/shared/llm";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { transcribeAudio } from "@/utils/ai/voice-transcription";
-import { logger } from "@/utils/logger";
-import { getTranslatorFromLanguageCode } from "../i18n";
+import type { Bot } from "grammy"
+import { InputFile } from "grammy"
+import type { ImageContent } from "@/shared/llm"
+import { generateSpeechForTelegram } from "@/domains/analytics/utils"
+import { transcribeAudio } from "@/domains/analytics/utils"
+import { logger } from "@/lib/logger"
+import { getTranslatorFromLanguageCode } from "../i18n"
 import {
   CANCEL_RESPONSES,
   COMMANDS,
@@ -13,8 +13,8 @@ import {
   initiateEmailChange,
   isDuplicateMessage,
   startTypingIndicator,
-} from "../utils";
-import { getVoicePreferenceForTelegram } from "../utils/ally-brain";
+} from "../utils"
+import { getVoicePreferenceForTelegram } from "../utils/ally-brain"
 import {
   handleAboutMeCommand,
   handleAnalyticsCommand,
@@ -47,22 +47,22 @@ import {
   handleUsageCommand,
   handleWebsiteCommand,
   handleWeekCommand,
-} from "../utils/commands";
-import { processPhoto } from "../utils/image-handler";
+} from "../utils/commands"
+import { processPhoto } from "../utils/image-handler"
 import {
   handleAgentRequest,
   handleCancellation,
   handleConfirmation,
-} from "./agent-handler";
-import type { GlobalContext } from "./bot-config";
+} from "./agent-handler"
+import type { GlobalContext } from "./bot-config"
 
 const MessageAction = {
   CONFIRM: "confirm",
   CANCEL: "cancel",
   OTHER: "other",
-} as const;
+} as const
 
-type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction];
+type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction]
 
 /**
  * Classify user text as confirmation, cancellation, or neutral response.
@@ -75,49 +75,49 @@ type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction];
  * @returns MessageActionType indicating CONFIRM, CANCEL, or OTHER
  */
 const classifyConfirmationResponse = (text: string): MessageActionType => {
-  const lowerText = text.toLowerCase();
+  const lowerText = text.toLowerCase()
 
   if (
     CONFIRM_RESPONSES.includes(lowerText as (typeof CONFIRM_RESPONSES)[number])
   ) {
-    return MessageAction.CONFIRM;
+    return MessageAction.CONFIRM
   }
 
   if (
     CANCEL_RESPONSES.includes(lowerText as (typeof CANCEL_RESPONSES)[number])
   ) {
-    return MessageAction.CANCEL;
+    return MessageAction.CANCEL
   }
 
-  return MessageAction.OTHER;
-};
+  return MessageAction.OTHER
+}
 
 const handlePendingConfirmation = async (
   ctx: GlobalContext,
   text: string
 ): Promise<void> => {
-  const action = classifyConfirmationResponse(text);
-  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const action = classifyConfirmationResponse(text)
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   switch (action) {
     case MessageAction.CONFIRM: {
-      await handleConfirmation(ctx);
-      break;
+      await handleConfirmation(ctx)
+      break
     }
 
     case MessageAction.CANCEL: {
-      await handleCancellation(ctx);
-      break;
+      await handleCancellation(ctx)
+      break
     }
 
     default: {
-      await ctx.reply(t("errors.pendingEventPrompt"));
-      break;
+      await ctx.reply(t("errors.pendingEventPrompt"))
+      break
     }
   }
-};
+}
 
-type CommandHandler = (ctx: GlobalContext) => Promise<void>;
+type CommandHandler = (ctx: GlobalContext) => Promise<void>
 
 const SIMPLE_COMMANDS: Record<string, CommandHandler> = {
   [COMMANDS.START]: handleStartCommand,
@@ -140,12 +140,12 @@ const SIMPLE_COMMANDS: Record<string, CommandHandler> = {
   [COMMANDS.ASVOICE]: handleAsVoiceCommand,
   [COMMANDS.WEBSITE]: handleWebsiteCommand,
   [COMMANDS.RESCHEDULE]: handleRescheduleCommand,
-};
+}
 
 type AgentCommand = {
-  handler: CommandHandler;
-  prompt: string;
-};
+  handler: CommandHandler
+  prompt: string
+}
 
 const AGENT_COMMANDS: Record<string, AgentCommand> = {
   [COMMANDS.TODAY]: {
@@ -200,109 +200,109 @@ const AGENT_COMMANDS: Record<string, AgentCommand> = {
     prompt:
       "Check my Google Calendar connection status. Verify my account is connected and show when the token expires.",
   },
-};
+}
 
 const handleSessionStates = async (
   ctx: GlobalContext,
   text: string
 ): Promise<boolean> => {
-  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   if (ctx.session.pendingEmailChange) {
-    const handled = await handlePendingEmailChange(ctx, text);
+    const handled = await handlePendingEmailChange(ctx, text)
     if (handled) {
-      return true;
+      return true
     }
   }
 
   if (ctx.session.awaitingEmailChange) {
-    ctx.session.awaitingEmailChange = undefined;
-    await initiateEmailChange(ctx, text);
-    return true;
+    ctx.session.awaitingEmailChange = undefined
+    await initiateEmailChange(ctx, text)
+    return true
   }
 
   if (ctx.session.awaitingBrainInstructions) {
-    const handled = await handleBrainInstructionsInput(ctx, text);
+    const handled = await handleBrainInstructionsInput(ctx, text)
     if (handled) {
-      return true;
+      return true
     }
   }
 
   if (ctx.session.pendingConfirmation) {
-    await handlePendingConfirmation(ctx, text);
-    return true;
+    await handlePendingConfirmation(ctx, text)
+    return true
   }
 
   if (ctx.session.isProcessing) {
-    await ctx.reply(t("errors.processingPreviousRequest"));
-    return true;
+    await ctx.reply(t("errors.processingPreviousRequest"))
+    return true
   }
 
-  return false;
-};
+  return false
+}
 
 type MessageOptions = {
-  respondWithVoice?: boolean;
-  images?: ImageContent[];
-};
+  respondWithVoice?: boolean
+  images?: ImageContent[]
+}
 
 const handleFreeTextMessage = async (
   ctx: GlobalContext,
   text: string,
   options: MessageOptions = {}
 ): Promise<void> => {
-  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   if (!ctx.session.agentActive) {
-    ctx.session.agentActive = true;
-    await ctx.reply(t("common.typeExitToStop"));
+    ctx.session.agentActive = true
+    await ctx.reply(t("common.typeExitToStop"))
   }
 
-  await handleAgentRequestWithVoice(ctx, text, options);
-};
+  await handleAgentRequestWithVoice(ctx, text, options)
+}
 
 const handleAgentRequestWithVoice = async (
   ctx: GlobalContext,
   text: string,
   options: MessageOptions = {}
 ): Promise<void> => {
-  const { respondWithVoice = false, images } = options;
-  const telegramUserId = ctx.from?.id ?? 0;
+  const { respondWithVoice = false, images } = options
+  const telegramUserId = ctx.from?.id ?? 0
 
-  const originalReply = ctx.reply.bind(ctx);
+  const originalReply = ctx.reply.bind(ctx)
 
   ctx.reply = async (
     textResponse: string,
     other?: Parameters<typeof originalReply>[1]
   ) => {
-    let sentAsVoice = false;
+    let sentAsVoice = false
 
     if (respondWithVoice) {
-      const voicePref = await getVoicePreferenceForTelegram(telegramUserId);
+      const voicePref = await getVoicePreferenceForTelegram(telegramUserId)
 
       if (voicePref.enabled) {
-        const cleanText = textResponse.replace(/<[^>]*>/g, "");
+        const cleanText = textResponse.replace(/<[^>]*>/g, "")
         const ttsResult = await generateSpeechForTelegram(
           cleanText,
           voicePref.voice
-        );
+        )
 
         if (ttsResult.success && ttsResult.audioBuffer) {
           try {
             await ctx.replyWithVoice(
               new InputFile(ttsResult.audioBuffer, "response.ogg")
-            );
-            sentAsVoice = true;
+            )
+            sentAsVoice = true
 
             ctx.session.lastAgentResponse = {
               text: textResponse,
               sentAsVoice: true,
               timestamp: Date.now(),
-            };
+            }
 
-            return {} as ReturnType<typeof originalReply>;
+            return {} as ReturnType<typeof originalReply>
           } catch (voiceError) {
-            logger.error(`TG Voice: Failed to send voice: ${voiceError}`);
+            logger.error(`TG Voice: Failed to send voice: ${voiceError}`)
           }
         }
       }
@@ -312,15 +312,15 @@ const handleAgentRequestWithVoice = async (
       text: textResponse,
       sentAsVoice,
       timestamp: Date.now(),
-    };
+    }
 
-    return originalReply(textResponse, other);
-  };
+    return originalReply(textResponse, other)
+  }
 
-  await handleAgentRequest(ctx, text, { images });
+  await handleAgentRequest(ctx, text, { images })
 
-  ctx.reply = originalReply;
-};
+  ctx.reply = originalReply
+}
 
 /**
  * Process incoming voice messages from Telegram users.
@@ -334,53 +334,53 @@ const handleAgentRequestWithVoice = async (
  * @returns Promise that resolves when voice message is fully processed
  */
 const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
-  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id ?? 0;
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const telegramUserId = ctx.from?.id ?? 0
 
-  const voice = ctx.message?.voice;
+  const voice = ctx.message?.voice
   if (!voice) {
-    return;
+    return
   }
 
   // Start typing indicator while processing voice
-  const stopTyping = startTypingIndicator(ctx);
+  const stopTyping = startTypingIndicator(ctx)
 
   try {
-    const file = await ctx.api.getFile(voice.file_id);
+    const file = await ctx.api.getFile(voice.file_id)
     if (!file.file_path) {
-      stopTyping();
-      await ctx.reply(t("errors.processingError"));
-      return;
+      stopTyping()
+      await ctx.reply(t("errors.processingError"))
+      return
     }
 
-    const fileUrl = `https://api.telegram.org/file/bot${ctx.api.token}/${file.file_path}`;
-    const response = await fetch(fileUrl);
-    const audioBuffer = Buffer.from(await response.arrayBuffer());
+    const fileUrl = `https://api.telegram.org/file/bot${ctx.api.token}/${file.file_path}`
+    const response = await fetch(fileUrl)
+    const audioBuffer = Buffer.from(await response.arrayBuffer())
 
-    const transcription = await transcribeAudio(audioBuffer, "audio/ogg");
+    const transcription = await transcribeAudio(audioBuffer, "audio/ogg")
 
     if (!(transcription.success && transcription.text)) {
-      stopTyping();
-      await ctx.reply(transcription.error ?? t("errors.processingError"));
-      return;
+      stopTyping()
+      await ctx.reply(transcription.error ?? t("errors.processingError"))
+      return
     }
 
     logger.info(
       `TG Voice: Transcribed ${audioBuffer.length} bytes to "${transcription.text.substring(0, 50)}..." for user ${telegramUserId}`
-    );
+    )
 
     // Stop typing before passing to agent (agent handler will start its own)
-    stopTyping();
+    stopTyping()
     await handleFreeTextMessage(ctx, transcription.text, {
       respondWithVoice: true,
-    });
+    })
   } catch (error) {
-    logger.error(`TG Voice: Error processing voice message: ${error}`);
-    await ctx.reply(t("errors.processingError"));
+    logger.error(`TG Voice: Error processing voice message: ${error}`)
+    await ctx.reply(t("errors.processingError"))
   } finally {
-    stopTyping();
+    stopTyping()
   }
-};
+}
 
 /**
  * Register all message event handlers for the Telegram bot.
@@ -395,92 +395,92 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
  */
 export const registerMessageHandler = (bot: Bot<GlobalContext>): void => {
   bot.on("message:voice", async (ctx) => {
-    const msgId = ctx.message.message_id;
+    const msgId = ctx.message.message_id
 
     if (isDuplicateMessage(ctx, msgId)) {
-      return;
+      return
     }
 
-    await handleVoiceMessage(ctx);
-  });
+    await handleVoiceMessage(ctx)
+  })
 
   bot.on("message:text", async (ctx) => {
-    const msgId = ctx.message.message_id;
-    const text = ctx.message.text;
+    const msgId = ctx.message.message_id
+    const text = ctx.message.text
 
     if (isDuplicateMessage(ctx, msgId)) {
-      return;
+      return
     }
 
-    const simpleHandler = SIMPLE_COMMANDS[text];
+    const simpleHandler = SIMPLE_COMMANDS[text]
     if (simpleHandler) {
-      await simpleHandler(ctx);
-      return;
+      await simpleHandler(ctx)
+      return
     }
 
-    const agentCommand = AGENT_COMMANDS[text];
+    const agentCommand = AGENT_COMMANDS[text]
     if (agentCommand) {
-      await agentCommand.handler(ctx);
+      await agentCommand.handler(ctx)
 
       if (!ctx.session.agentActive) {
-        ctx.session.agentActive = true;
+        ctx.session.agentActive = true
       }
 
-      await handleAgentRequest(ctx, agentCommand.prompt);
-      return;
+      await handleAgentRequest(ctx, agentCommand.prompt)
+      return
     }
 
-    const sessionHandled = await handleSessionStates(ctx, text);
+    const sessionHandled = await handleSessionStates(ctx, text)
     if (sessionHandled) {
-      return;
+      return
     }
 
-    await handleFreeTextMessage(ctx, text);
-  });
+    await handleFreeTextMessage(ctx, text)
+  })
 
   // Handle photo messages (single or with caption)
   bot.on("message:photo", async (ctx) => {
-    const msgId = ctx.message.message_id;
-    const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+    const msgId = ctx.message.message_id
+    const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
     if (isDuplicateMessage(ctx, msgId)) {
-      return;
+      return
     }
 
-    const photo = ctx.message.photo;
-    const caption = ctx.message.caption || "";
+    const photo = ctx.message.photo
+    const caption = ctx.message.caption || ""
 
     if (!photo || photo.length === 0) {
-      return;
+      return
     }
 
     // Start typing indicator
-    const stopTyping = startTypingIndicator(ctx);
+    const stopTyping = startTypingIndicator(ctx)
 
     try {
       // Process the photo
-      const imageContent = await processPhoto(ctx.api, photo);
+      const imageContent = await processPhoto(ctx.api, photo)
 
       if (!imageContent) {
-        stopTyping();
-        await ctx.reply(t("errors.imageProcessingError"));
-        return;
+        stopTyping()
+        await ctx.reply(t("errors.imageProcessingError"))
+        return
       }
 
-      const images = [imageContent];
+      const images = [imageContent]
 
-      logger.info(`TG Photo: Processing 1 image for user ${ctx.from?.id ?? 0}`);
+      logger.info(`TG Photo: Processing 1 image for user ${ctx.from?.id ?? 0}`)
 
       // Use caption as the message, or a default prompt
-      const text = caption || t("common.analyzeImage");
+      const text = caption || t("common.analyzeImage")
 
-      stopTyping();
-      await handleFreeTextMessage(ctx, text, { images });
+      stopTyping()
+      await handleFreeTextMessage(ctx, text, { images })
     } catch (error) {
-      logger.error(`TG Photo: Error processing photo: ${error}`);
-      await ctx.reply(t("errors.processingError"));
+      logger.error(`TG Photo: Error processing photo: ${error}`)
+      await ctx.reply(t("errors.processingError"))
     } finally {
-      stopTyping();
+      stopTyping()
     }
-  });
-};
+  })
+}

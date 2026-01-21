@@ -32,7 +32,7 @@ import {
   type Plan,
   type PlanSlug,
   type PlanInterval,
-} from '@/services/payment.service'
+} from '@/services/payment-service'
 import { PaymentMethodCard } from '@/components/dashboard/billing/PaymentMethodCard'
 import { TransactionHistoryTable } from '@/components/dashboard/billing/TransactionHistoryTable'
 import { ConfirmDialog } from '@/components/dashboard/shared/ConfirmDialog'

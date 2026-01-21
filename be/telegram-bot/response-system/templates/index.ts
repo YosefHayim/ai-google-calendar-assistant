@@ -11,7 +11,7 @@ export {
   todayScheduleTemplate,
   tomorrowScheduleTemplate,
   weeklyCalendarTemplate,
-} from "./calendar";
+} from "./calendar"
 
 // Notification templates
 export {
@@ -35,4 +35,4 @@ export {
   timeConflictTemplate,
   // Info/Notifications
   welcomeTemplate,
-} from "./notifications";
+} from "./notifications"

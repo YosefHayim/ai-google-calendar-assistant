@@ -1,19 +1,19 @@
-import OpenAI from "openai";
-import { z } from "zod";
-import { MODELS } from "@/config";
-import { env } from "@/config/env";
-import type { InsightsMetrics } from "@/utils/ai/insights-calculator";
-import { logger } from "@/utils/logger";
+import type { InsightsMetrics } from "@/domains/analytics/utils"
+import { MODELS } from "@/config"
+import OpenAI from "openai"
+import { env } from "@/config/env"
+import { logger } from "@/lib/logger"
+import { z } from "zod"
 
 // ============================================================================
 // CONSTANTS
 // ============================================================================
 
-const MAX_INSIGHT_TITLE_LENGTH = 25;
-const MAX_INSIGHT_VALUE_LENGTH = 15;
-const MAX_INSIGHT_DESCRIPTION_LENGTH = 100;
-const ERROR_SUBSTRING_LENGTH = 200;
-const BASE_BACKOFF_DELAY_MS = 1000;
+const MAX_INSIGHT_TITLE_LENGTH = 25
+const MAX_INSIGHT_VALUE_LENGTH = 15
+const MAX_INSIGHT_DESCRIPTION_LENGTH = 100
+const ERROR_SUBSTRING_LENGTH = 200
+const BASE_BACKOFF_DELAY_MS = 1000
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -40,7 +40,7 @@ export const INSIGHT_ICONS = [
   "heart",
   "layers",
   "pie-chart",
-] as const;
+] as const
 
 export const INSIGHT_COLORS = [
   "amber",
@@ -49,10 +49,10 @@ export const INSIGHT_COLORS = [
   "rose",
   "indigo",
   "orange",
-] as const;
+] as const
 
-export type InsightIconName = (typeof INSIGHT_ICONS)[number];
-export type InsightColor = (typeof INSIGHT_COLORS)[number];
+export type InsightIconName = (typeof INSIGHT_ICONS)[number]
+export type InsightColor = (typeof INSIGHT_COLORS)[number]
 
 export const InsightSchema = z.object({
   id: z
@@ -74,17 +74,17 @@ export const InsightSchema = z.object({
     .max(MAX_INSIGHT_DESCRIPTION_LENGTH)
     .describe("Brief explanation of the insight (max 100 chars)"),
   color: z.enum(INSIGHT_COLORS).describe("Color theme for the card"),
-});
+})
 
 export const InsightsResponseSchema = z.object({
   insights: z
     .array(InsightSchema)
     .length(10)
     .describe("Exactly 10 unique insights"),
-});
+})
 
-export type AIInsight = z.infer<typeof InsightSchema>;
-export type AIInsightsResponse = z.infer<typeof InsightsResponseSchema>;
+export type AIInsight = z.infer<typeof InsightSchema>
+export type AIInsightsResponse = z.infer<typeof InsightsResponseSchema>
 
 // ============================================================================
 // SYSTEM PROMPT
@@ -140,13 +140,13 @@ TREND INSIGHTS:
 - "Meeting Density": Events per day average | icon: activity | color: amber
 - "Time Distribution": Morning vs afternoon preference | icon: sun | color: orange
 
-Return a JSON object with exactly 10 insights that tell an interesting story about this user's schedule.`;
+Return a JSON object with exactly 10 insights that tell an interesting story about this user's schedule.`
 
 // ============================================================================
 // GENERATOR FUNCTION
 // ============================================================================
 
-const INSIGHTS_MODEL = MODELS.GPT_4_1_NANO;
+const INSIGHTS_MODEL = MODELS.GPT_4_1_NANO
 
 /**
  * Generate AI-powered insights from calendar metrics
@@ -162,9 +162,9 @@ export async function generateInsights(
   periodStart: string,
   periodEnd: string
 ): Promise<AIInsightsResponse> {
-  const openai = new OpenAI({ apiKey: env.openAiApiKey });
+  const openai = new OpenAI({ apiKey: env.openAiApiKey })
 
-  logger.debug(`Generating insights for period ${periodStart} to ${periodEnd}`);
+  logger.debug(`Generating insights for period ${periodStart} to ${periodEnd}`)
 
   // Build the JSON schema instruction for the model
   const jsonSchemaInstruction = `
@@ -181,7 +181,7 @@ You MUST respond with a valid JSON object matching this exact structure:
     }
   ]
 }
-The insights array MUST contain exactly 10 items.`;
+The insights array MUST contain exactly 10 items.`
 
   const response = await openai.chat.completions.create({
     model: INSIGHTS_MODEL,
@@ -200,36 +200,34 @@ ${JSON.stringify(metrics, null, 2)}`,
     ],
     response_format: { type: "json_object" },
     temperature: 0.7, // Some variety in insight selection
-  });
+  })
 
-  const content = response.choices[0]?.message?.content;
+  const content = response.choices[0]?.message?.content
 
   if (!content) {
-    throw new Error("Failed to get AI response - no content returned");
+    throw new Error("Failed to get AI response - no content returned")
   }
 
   // Parse and validate with Zod
-  let parsed: unknown;
+  let parsed: unknown
   try {
-    parsed = JSON.parse(content);
+    parsed = JSON.parse(content)
   } catch {
     throw new Error(
       `Failed to parse AI response as JSON: ${content.substring(0, ERROR_SUBSTRING_LENGTH)}`
-    );
+    )
   }
 
-  const result = InsightsResponseSchema.safeParse(parsed);
+  const result = InsightsResponseSchema.safeParse(parsed)
 
   if (!result.success) {
-    logger.error(`Insights validation failed: ${result.error.message}`);
-    throw new Error(`Invalid insights format: ${result.error.message}`);
+    logger.error(`Insights validation failed: ${result.error.message}`)
+    throw new Error(`Invalid insights format: ${result.error.message}`)
   }
 
-  logger.debug(
-    `Generated ${result.data.insights.length} insights successfully`
-  );
+  logger.debug(`Generated ${result.data.insights.length} insights successfully`)
 
-  return result.data;
+  return result.data
 }
 
 /**
@@ -249,39 +247,42 @@ export async function generateInsightsWithRetry(
   periodEnd: string,
   maxRetries = 3
 ): Promise<AIInsightsResponse> {
-  let lastError: Error | null = null;
+  let lastError: Error | null = null
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const result = await generateInsights(metrics, periodStart, periodEnd);
+      const result = await generateInsights(metrics, periodStart, periodEnd)
       logger.debug(
         `Generated insights successfully: ${JSON.stringify(result, null, 2)}`
-      );
-      return result;
+      )
+      return result
     } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
+      lastError = error instanceof Error ? error : new Error(String(error))
       logger.warn(
         `Insights generation attempt ${attempt}/${maxRetries} failed: ${lastError.message}`
-      );
+      )
 
       if (attempt < maxRetries) {
         // Exponential backoff: 1s, 2s, 4s
-        const delayMs = BASE_BACKOFF_DELAY_MS * 2 ** (attempt - 1);
-        await sleep(delayMs);
+        const delayMs = BASE_BACKOFF_DELAY_MS * 2 ** (attempt - 1)
+        await sleep(delayMs)
       }
     }
   }
 
-  logger.error(`All ${maxRetries} insight generation attempts failed`);
+  logger.error(`All ${maxRetries} insight generation attempts failed`)
   throw (
     lastError ||
     new Error("Failed to generate insights after multiple attempts")
-  );
+  )
 }
 
 /**
- * Sleep utility for retry backoff
+ * Sleep utility for retry backoff delays.
+ *
+ * @param ms - Number of milliseconds to sleep
+ * @returns Promise that resolves after the specified delay
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }

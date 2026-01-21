@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 import { ConversationList } from '@/components/dashboard/shared/sidebar-components/ConversationList'
-import type { ConversationListItem } from '@/services/chatService'
+import type { ConversationListItem } from '@/services/chat-service'
 import { useState } from 'react'
 
 const meta: Meta<typeof ConversationList> = {

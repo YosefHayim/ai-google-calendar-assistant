@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { sanitizeString } from "../middleware";
+import { z } from "zod"
+import { sanitizeString } from "../middleware"
 
 const dayOfWeekSchema = z.enum([
   "sunday",
@@ -9,7 +9,7 @@ const dayOfWeekSchema = z.enum([
   "thursday",
   "friday",
   "saturday",
-]);
+])
 
 const supportedEventLanguageSchema = z.enum([
   "en",
@@ -18,7 +18,7 @@ const supportedEventLanguageSchema = z.enum([
   "he",
   "ar",
   "ru",
-]);
+])
 
 export const gapAnalysisQuerySchema = z.object({
   startDate: z.string().datetime("Invalid start date format").optional(),
@@ -42,11 +42,11 @@ export const gapAnalysisQuerySchema = z.object({
     .max(50, "Limit cannot exceed 50")
     .optional()
     .default(10),
-});
+})
 
 export const gapIdParamSchema = z.object({
   gapId: z.string().uuid("Invalid gap ID format").min(1, "Gap ID is required"),
-});
+})
 
 export const fillGapSchema = z.object({
   summary: z
@@ -68,7 +68,7 @@ export const fillGapSchema = z.object({
     .string()
     .max(500, "Calendar ID must be less than 500 characters")
     .optional(),
-});
+})
 
 export const skipGapSchema = z.object({
   reason: z
@@ -76,7 +76,7 @@ export const skipGapSchema = z.object({
     .max(500, "Reason must be less than 500 characters")
     .transform(sanitizeString)
     .optional(),
-});
+})
 
 export const updateGapSettingsSchema = z.object({
   autoGapAnalysis: z.boolean().optional(),
@@ -113,9 +113,9 @@ export const updateGapSettingsSchema = z.object({
     .max(6, "Cannot select more than 6 languages")
     .optional(),
   languageSetupComplete: z.boolean().optional(),
-});
+})
 
-export type GapAnalysisQuery = z.infer<typeof gapAnalysisQuerySchema>;
-export type FillGapBody = z.infer<typeof fillGapSchema>;
-export type SkipGapBody = z.infer<typeof skipGapSchema>;
-export type UpdateGapSettingsBody = z.infer<typeof updateGapSettingsSchema>;
+export type GapAnalysisQuery = z.infer<typeof gapAnalysisQuerySchema>
+export type FillGapBody = z.infer<typeof fillGapSchema>
+export type SkipGapBody = z.infer<typeof skipGapSchema>
+export type UpdateGapSettingsBody = z.infer<typeof updateGapSettingsSchema>

@@ -3,18 +3,19 @@
  * Handles onboarding and account linking for WhatsApp users
  */
 
-import { env } from "@/config";
-import { SUPABASE } from "@/config/clients/supabase";
-import type { Database } from "@/database.types";
-import { logger } from "@/utils/logger";
-import type { WhatsAppInteractiveContent } from "../types";
-import { sendButtonMessage, sendTextMessage } from "./send-message";
+import { sendButtonMessage, sendTextMessage } from "./send-message"
 
-type WhatsAppUser = Database["public"]["Tables"]["whatsapp_users"]["Row"];
+import type { Database } from "@/database.types"
+import { SUPABASE } from "@/infrastructure/supabase/supabase"
+import type { WhatsAppInteractiveContent } from "../types"
+import { env } from "@/config/env"
+import { logger } from "@/lib/logger"
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const OTP_CLEANUP_REGEX = /[\s-]/g;
-const OTP_FORMAT_REGEX = /^\d{6}$/;
+type WhatsAppUser = Database["public"]["Tables"]["whatsapp_users"]["Row"]
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const OTP_CLEANUP_REGEX = /[\s-]/g
+const OTP_FORMAT_REGEX = /^\d{6}$/
 
 type OnboardingStep =
   | "welcome"
@@ -22,15 +23,15 @@ type OnboardingStep =
   | "email_input"
   | "otp_verification"
   | "google_auth"
-  | "complete";
+  | "complete"
 
 export type UserResolution = {
-  user: WhatsAppUser;
-  isLinked: boolean;
-  needsOnboarding: boolean;
-  email?: string;
-  onboardingStep: OnboardingStep;
-};
+  user: WhatsAppUser
+  isLinked: boolean
+  needsOnboarding: boolean
+  email?: string
+  onboardingStep: OnboardingStep
+}
 
 /**
  * Gets or creates a WhatsApp user and determines next action
@@ -43,7 +44,7 @@ export const resolveWhatsAppUser = async (
   const { data: existingUser } = await SUPABASE.from("whatsapp_users")
     .select("*")
     .eq("whatsapp_phone", phoneNumber)
-    .single();
+    .single()
 
   if (existingUser) {
     // Update activity
@@ -53,20 +54,20 @@ export const resolveWhatsAppUser = async (
         whatsapp_name: displayName || existingUser.whatsapp_name,
         message_count: (existingUser.message_count || 0) + 1,
       })
-      .eq("id", existingUser.id);
+      .eq("id", existingUser.id)
 
     // Get linked user's email if available
-    let email: string | undefined;
+    let email: string | undefined
     if (existingUser.user_id) {
       const { data: userData } = await SUPABASE.from("users")
         .select("email")
         .eq("id", existingUser.user_id)
-        .single();
-      email = userData?.email || undefined;
+        .single()
+      email = userData?.email || undefined
     }
 
     const onboardingStep =
-      (existingUser.onboarding_step as OnboardingStep) || "welcome";
+      (existingUser.onboarding_step as OnboardingStep) || "welcome"
 
     return {
       user: existingUser,
@@ -74,7 +75,7 @@ export const resolveWhatsAppUser = async (
       needsOnboarding: !existingUser.is_linked || onboardingStep !== "complete",
       email,
       onboardingStep,
-    };
+    }
   }
 
   // Create new user
@@ -92,13 +93,13 @@ export const resolveWhatsAppUser = async (
       message_count: 1,
     })
     .select()
-    .single();
+    .single()
 
   if (insertError || !newUser) {
     logger.error(
       `WhatsApp: Failed to create user for ${phoneNumber}: ${insertError?.message}`
-    );
-    throw new Error(`Failed to create WhatsApp user: ${insertError?.message}`);
+    )
+    throw new Error(`Failed to create WhatsApp user: ${insertError?.message}`)
   }
 
   return {
@@ -106,8 +107,8 @@ export const resolveWhatsAppUser = async (
     isLinked: false,
     needsOnboarding: true,
     onboardingStep: "welcome",
-  };
-};
+  }
+}
 
 /**
  * Updates the onboarding step for a WhatsApp user
@@ -118,8 +119,8 @@ const updateOnboardingStep = async (
 ): Promise<void> => {
   await SUPABASE.from("whatsapp_users")
     .update({ onboarding_step: step })
-    .eq("whatsapp_phone", phoneNumber);
-};
+    .eq("whatsapp_phone", phoneNumber)
+}
 
 /**
  * Handles onboarding flow based on current step
@@ -130,46 +131,46 @@ export const handleOnboarding = async (
   currentStep: OnboardingStep,
   interactiveReply?: WhatsAppInteractiveContent
 ): Promise<{ handled: boolean; nextStep?: OnboardingStep }> => {
-  const text = messageText.toLowerCase().trim();
+  const text = messageText.toLowerCase().trim()
 
   // Handle reset command at any step
   if (text === "reset" || text === "/reset") {
-    await updateOnboardingStep(phoneNumber, "welcome");
-    await sendWelcomeMessage(phoneNumber);
-    return { handled: true, nextStep: "awaiting_choice" };
+    await updateOnboardingStep(phoneNumber, "welcome")
+    await sendWelcomeMessage(phoneNumber)
+    return { handled: true, nextStep: "awaiting_choice" }
   }
 
   // Handle resend OTP command
   if (text === "resend" && currentStep === "otp_verification") {
-    return await resendOtp(phoneNumber);
+    return await resendOtp(phoneNumber)
   }
 
   switch (currentStep) {
     case "welcome":
-      await sendWelcomeMessage(phoneNumber);
-      return { handled: true, nextStep: "awaiting_choice" };
+      await sendWelcomeMessage(phoneNumber)
+      return { handled: true, nextStep: "awaiting_choice" }
 
     case "awaiting_choice":
-      return await handleChoiceSelection(phoneNumber, text, interactiveReply);
+      return await handleChoiceSelection(phoneNumber, text, interactiveReply)
 
     case "email_input":
-      return await handleEmailInput(phoneNumber, messageText);
+      return await handleEmailInput(phoneNumber, messageText)
 
     case "otp_verification":
-      return await handleOtpVerification(phoneNumber, messageText);
+      return await handleOtpVerification(phoneNumber, messageText)
 
     case "google_auth":
-      return await checkGoogleAuthStatus(phoneNumber);
+      return await checkGoogleAuthStatus(phoneNumber)
 
     case "complete":
-      return { handled: false }; // Proceed to AI agent
+      return { handled: false } // Proceed to AI agent
 
     default:
       // Unknown step, restart onboarding
-      await sendWelcomeMessage(phoneNumber);
-      return { handled: true, nextStep: "awaiting_choice" };
+      await sendWelcomeMessage(phoneNumber)
+      return { handled: true, nextStep: "awaiting_choice" }
   }
-};
+}
 
 /**
  * Sends the welcome message with options
@@ -183,10 +184,10 @@ const sendWelcomeMessage = async (phoneNumber: string): Promise<void> => {
       { id: "create_new", title: "No, create new" },
     ],
     { headerText: "Welcome to Ally!" }
-  );
+  )
 
-  await updateOnboardingStep(phoneNumber, "awaiting_choice");
-};
+  await updateOnboardingStep(phoneNumber, "awaiting_choice")
+}
 
 /**
  * Handles the user's choice (existing or new account)
@@ -197,28 +198,28 @@ const handleChoiceSelection = async (
   interactiveReply?: WhatsAppInteractiveContent
 ): Promise<{ handled: boolean; nextStep?: OnboardingStep }> => {
   // Check for interactive button reply
-  const buttonId = interactiveReply?.button_reply?.id;
+  const buttonId = interactiveReply?.button_reply?.id
 
   // Also accept text-based responses
   const wantsToLink =
     buttonId === "link_existing" ||
     text.includes("yes") ||
     text.includes("link") ||
-    text.includes("existing");
+    text.includes("existing")
 
   const wantsToCreate =
     buttonId === "create_new" ||
     text.includes("no") ||
     text.includes("new") ||
-    text.includes("create");
+    text.includes("create")
 
   if (wantsToLink || wantsToCreate) {
     await sendTextMessage(
       phoneNumber,
       "Please enter your email address to continue:\n\n(I'll send you a verification code)"
-    );
-    await updateOnboardingStep(phoneNumber, "email_input");
-    return { handled: true, nextStep: "email_input" };
+    )
+    await updateOnboardingStep(phoneNumber, "email_input")
+    return { handled: true, nextStep: "email_input" }
   }
 
   // Didn't understand the choice
@@ -229,10 +230,10 @@ const handleChoiceSelection = async (
       { id: "link_existing", title: "Yes, link account" },
       { id: "create_new", title: "No, create new" },
     ]
-  );
+  )
 
-  return { handled: true };
-};
+  return { handled: true }
+}
 
 /**
  * Handles email input during onboarding
@@ -242,14 +243,14 @@ const handleEmailInput = async (
   email: string
 ): Promise<{ handled: boolean; nextStep?: OnboardingStep }> => {
   // Validate email format
-  const trimmedEmail = email.trim().toLowerCase();
+  const trimmedEmail = email.trim().toLowerCase()
 
   if (!EMAIL_REGEX.test(trimmedEmail)) {
     await sendTextMessage(
       phoneNumber,
       "That doesn't look like a valid email address. Please enter a valid email:"
-    );
-    return { handled: true };
+    )
+    return { handled: true }
   }
 
   // Store pending email
@@ -258,7 +259,7 @@ const handleEmailInput = async (
       pending_email: trimmedEmail,
       onboarding_step: "otp_verification",
     })
-    .eq("whatsapp_phone", phoneNumber);
+    .eq("whatsapp_phone", phoneNumber)
 
   // Send OTP via Supabase Auth
   const { error } = await SUPABASE.auth.signInWithOtp({
@@ -266,26 +267,26 @@ const handleEmailInput = async (
     options: {
       shouldCreateUser: true,
     },
-  });
+  })
 
   if (error) {
     logger.error(
       `WhatsApp: Failed to send OTP to ${trimmedEmail}: ${error.message}`
-    );
+    )
     await sendTextMessage(
       phoneNumber,
       "Sorry, I couldn't send the verification code. Please try again or use a different email."
-    );
-    return { handled: true };
+    )
+    return { handled: true }
   }
 
   await sendTextMessage(
     phoneNumber,
     `I've sent a 6-digit verification code to *${trimmedEmail}*.\n\nPlease enter the code here.\n\n_Didn't receive it? Type 'resend' to get a new code._`
-  );
+  )
 
-  return { handled: true, nextStep: "otp_verification" };
-};
+  return { handled: true, nextStep: "otp_verification" }
+}
 
 /**
  * Resends OTP to the pending email
@@ -296,15 +297,15 @@ const resendOtp = async (
   const { data: waUser } = await SUPABASE.from("whatsapp_users")
     .select("pending_email")
     .eq("whatsapp_phone", phoneNumber)
-    .single();
+    .single()
 
   if (!waUser?.pending_email) {
     await sendTextMessage(
       phoneNumber,
       "I don't have an email on file. Let's start over. What's your email?"
-    );
-    await updateOnboardingStep(phoneNumber, "email_input");
-    return { handled: true, nextStep: "email_input" };
+    )
+    await updateOnboardingStep(phoneNumber, "email_input")
+    return { handled: true, nextStep: "email_input" }
   }
 
   const { error } = await SUPABASE.auth.signInWithOtp({
@@ -312,26 +313,26 @@ const resendOtp = async (
     options: {
       shouldCreateUser: true,
     },
-  });
+  })
 
   if (error) {
     logger.error(
       `WhatsApp: Failed to resend OTP to ${waUser.pending_email}: ${error.message}`
-    );
+    )
     await sendTextMessage(
       phoneNumber,
       "Sorry, I couldn't resend the code. Please try again in a moment."
-    );
-    return { handled: true };
+    )
+    return { handled: true }
   }
 
   await sendTextMessage(
     phoneNumber,
     `I've sent a new verification code to *${waUser.pending_email}*.`
-  );
+  )
 
-  return { handled: true };
-};
+  return { handled: true }
+}
 
 /**
  * Handles OTP verification
@@ -344,26 +345,26 @@ const handleOtpVerification = async (
   const { data: waUser } = await SUPABASE.from("whatsapp_users")
     .select("pending_email")
     .eq("whatsapp_phone", phoneNumber)
-    .single();
+    .single()
 
   if (!waUser?.pending_email) {
     await sendTextMessage(
       phoneNumber,
       "Something went wrong. Let's start over. What's your email?"
-    );
-    await updateOnboardingStep(phoneNumber, "email_input");
-    return { handled: true, nextStep: "email_input" };
+    )
+    await updateOnboardingStep(phoneNumber, "email_input")
+    return { handled: true, nextStep: "email_input" }
   }
 
   // Clean OTP (remove spaces, dashes)
-  const cleanOtp = otp.replace(OTP_CLEANUP_REGEX, "").trim();
+  const cleanOtp = otp.replace(OTP_CLEANUP_REGEX, "").trim()
 
   if (!OTP_FORMAT_REGEX.test(cleanOtp)) {
     await sendTextMessage(
       phoneNumber,
       "Please enter the 6-digit code from your email.\n\n_Type 'resend' if you need a new code._"
-    );
-    return { handled: true };
+    )
+    return { handled: true }
   }
 
   // Verify OTP
@@ -371,17 +372,17 @@ const handleOtpVerification = async (
     email: waUser.pending_email,
     token: cleanOtp,
     type: "email",
-  });
+  })
 
   if (error || !authData.user) {
     logger.warn(
       `WhatsApp: OTP verification failed for ${phoneNumber}: ${error?.message}`
-    );
+    )
     await sendTextMessage(
       phoneNumber,
       "That code didn't work. Please check and try again, or type 'resend' for a new code."
-    );
-    return { handled: true };
+    )
+    return { handled: true }
   }
 
   // Link accounts
@@ -392,11 +393,11 @@ const handleOtpVerification = async (
       pending_email: null,
       onboarding_step: "google_auth",
     })
-    .eq("whatsapp_phone", phoneNumber);
+    .eq("whatsapp_phone", phoneNumber)
 
   logger.info(
     `WhatsApp: Successfully linked ${phoneNumber} to user ${authData.user.id}`
-  );
+  )
 
   // Check if user has Google Calendar connected
   const { data: oauthToken } = await SUPABASE.from("oauth_tokens")
@@ -404,31 +405,31 @@ const handleOtpVerification = async (
     .eq("user_id", authData.user.id)
     .eq("provider", "google")
     .eq("is_valid", true)
-    .maybeSingle();
+    .maybeSingle()
 
   if (oauthToken) {
     // Already has Google Calendar
     await SUPABASE.from("whatsapp_users")
       .update({ onboarding_step: "complete" })
-      .eq("whatsapp_phone", phoneNumber);
+      .eq("whatsapp_phone", phoneNumber)
 
     await sendTextMessage(
       phoneNumber,
       "*Account linked successfully!* Your Google Calendar is already connected.\n\nTry asking me:\n- _What's on my calendar today?_\n- _Schedule a meeting tomorrow at 2pm_\n- _Show me my week_"
-    );
-    return { handled: true, nextStep: "complete" };
+    )
+    return { handled: true, nextStep: "complete" }
   }
 
   // Need to connect Google Calendar
-  const authUrl = `${env.server.baseUrl}/api/users/signup/google?redirect=whatsapp&phone=${encodeURIComponent(phoneNumber)}`;
+  const authUrl = `${env.server.baseUrl}/api/users/signup/google?redirect=whatsapp&phone=${encodeURIComponent(phoneNumber)}`
 
   await sendTextMessage(
     phoneNumber,
     `*Email verified!*\n\nNow let's connect your Google Calendar. Tap the link below to authorize:\n\n${authUrl}\n\n_Once you've connected, send me any message to continue._`
-  );
+  )
 
-  return { handled: true, nextStep: "google_auth" };
-};
+  return { handled: true, nextStep: "google_auth" }
+}
 
 /**
  * Checks if the user has completed Google OAuth
@@ -439,12 +440,12 @@ const checkGoogleAuthStatus = async (
   const { data: waUser } = await SUPABASE.from("whatsapp_users")
     .select("user_id")
     .eq("whatsapp_phone", phoneNumber)
-    .single();
+    .single()
 
   if (!waUser?.user_id) {
     // User somehow lost their user_id, restart onboarding
-    await sendWelcomeMessage(phoneNumber);
-    return { handled: true, nextStep: "awaiting_choice" };
+    await sendWelcomeMessage(phoneNumber)
+    return { handled: true, nextStep: "awaiting_choice" }
   }
 
   const { data: oauthToken } = await SUPABASE.from("oauth_tokens")
@@ -452,30 +453,30 @@ const checkGoogleAuthStatus = async (
     .eq("user_id", waUser.user_id)
     .eq("provider", "google")
     .eq("is_valid", true)
-    .maybeSingle();
+    .maybeSingle()
 
   if (oauthToken) {
     await SUPABASE.from("whatsapp_users")
       .update({ onboarding_step: "complete" })
-      .eq("whatsapp_phone", phoneNumber);
+      .eq("whatsapp_phone", phoneNumber)
 
     await sendTextMessage(
       phoneNumber,
       "*You're all set!* Your Google Calendar is now connected.\n\nTry asking me:\n- _What's on my calendar today?_\n- _Schedule a meeting tomorrow at 2pm_\n- _Show me my week_"
-    );
-    return { handled: true, nextStep: "complete" };
+    )
+    return { handled: true, nextStep: "complete" }
   }
 
   // Still waiting for Google auth
-  const authUrl = `${env.server.baseUrl}/api/users/signup/google?redirect=whatsapp&phone=${encodeURIComponent(phoneNumber)}`;
+  const authUrl = `${env.server.baseUrl}/api/users/signup/google?redirect=whatsapp&phone=${encodeURIComponent(phoneNumber)}`
 
   await sendTextMessage(
     phoneNumber,
     `I'm still waiting for you to connect your Google Calendar.\n\nTap here to connect:\n${authUrl}`
-  );
+  )
 
-  return { handled: true };
-};
+  return { handled: true }
+}
 
 /**
  * Checks if a WhatsApp user has completed onboarding
@@ -486,10 +487,10 @@ export const isOnboardingComplete = async (
   const { data } = await SUPABASE.from("whatsapp_users")
     .select("is_linked, onboarding_step")
     .eq("whatsapp_phone", phoneNumber)
-    .single();
+    .single()
 
-  return data?.is_linked === true && data?.onboarding_step === "complete";
-};
+  return data?.is_linked === true && data?.onboarding_step === "complete"
+}
 
 /**
  * Gets the email for a linked WhatsApp user
@@ -500,16 +501,16 @@ export const getEmailForWhatsAppUser = async (
   const { data: waUser } = await SUPABASE.from("whatsapp_users")
     .select("user_id")
     .eq("whatsapp_phone", phoneNumber)
-    .single();
+    .single()
 
   if (!waUser?.user_id) {
-    return null;
+    return null
   }
 
   const { data: userData } = await SUPABASE.from("users")
     .select("email")
     .eq("id", waUser.user_id)
-    .single();
+    .single()
 
-  return userData?.email || null;
-};
+  return userData?.email || null
+}

@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from "zod"
 
-const REMINDER_MAX_MINUTES = 40_320;
+const REMINDER_MAX_MINUTES = 40_320
 
 export const reminderMethodSchema = z.enum(["email", "popup"], {
   description:
     "Reminder notification method: 'email' for email notification, 'popup' for browser/device popup.",
-});
+})
 
 export const eventReminderSchema = z.object({
   method: reminderMethodSchema,
@@ -17,7 +17,7 @@ export const eventReminderSchema = z.object({
       REMINDER_MAX_MINUTES,
       `Reminder cannot be more than ${REMINDER_MAX_MINUTES} minutes (4 weeks) before event`
     ),
-});
+})
 
 export const eventRemindersSchema = z.object({
   useDefault: z.boolean({
@@ -31,7 +31,7 @@ export const eventRemindersSchema = z.object({
     .describe(
       "Custom reminders array. Required field - use empty array [] when useDefault is true, or provide up to 5 reminder objects when useDefault is false."
     ),
-});
+})
 
 export const setEventRemindersSchema = z
   .object({
@@ -46,15 +46,15 @@ export const setEventRemindersSchema = z
       .optional()
       .transform((val) => {
         if (!val || val === "/" || val.trim() === "") {
-          return null;
+          return null
         }
-        return val.trim();
+        return val.trim()
       }),
     reminders: eventRemindersSchema,
   })
   .describe(
     "Set reminders for a specific event. Can use calendar defaults or custom overrides."
-  );
+  )
 
 export const getCalendarDefaultRemindersSchema = z
   .object({
@@ -63,7 +63,7 @@ export const getCalendarDefaultRemindersSchema = z
       .default("primary")
       .describe("Calendar ID to get default reminders for."),
   })
-  .describe("Get the default reminders configured for a calendar.");
+  .describe("Get the default reminders configured for a calendar.")
 
 export const updateCalendarDefaultRemindersSchema = z
   .object({
@@ -78,11 +78,11 @@ export const updateCalendarDefaultRemindersSchema = z
   })
   .describe(
     "Update the default reminders for a calendar. These will be used when useDefault is true on events."
-  );
+  )
 
 export const getUserReminderPreferencesSchema = z
   .object({})
-  .describe("Get the user's stored reminder preferences from Ally's brain.");
+  .describe("Get the user's stored reminder preferences from Ally's brain.")
 
 export const updateUserReminderPreferencesSchema = z
   .object({
@@ -102,17 +102,17 @@ export const updateUserReminderPreferencesSchema = z
         "If true, use the calendar's defaults. If false, use the user's custom defaults."
       ),
   })
-  .describe("Update the user's reminder preferences stored in Ally's brain.");
+  .describe("Update the user's reminder preferences stored in Ally's brain.")
 
-export type EventReminder = z.infer<typeof eventReminderSchema>;
-export type EventReminders = z.infer<typeof eventRemindersSchema>;
-export type SetEventRemindersParams = z.infer<typeof setEventRemindersSchema>;
+export type EventReminder = z.infer<typeof eventReminderSchema>
+export type EventReminders = z.infer<typeof eventRemindersSchema>
+export type SetEventRemindersParams = z.infer<typeof setEventRemindersSchema>
 export type GetCalendarDefaultRemindersParams = z.infer<
   typeof getCalendarDefaultRemindersSchema
->;
+>
 export type UpdateCalendarDefaultRemindersParams = z.infer<
   typeof updateCalendarDefaultRemindersSchema
->;
+>
 export type UserReminderPreferencesParams = z.infer<
   typeof updateUserReminderPreferencesSchema
->;
+>

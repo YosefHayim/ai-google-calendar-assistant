@@ -1,6 +1,6 @@
-"use strict";
-const path = require("node:path");
-require("dotenv").config({ path: path.join(__dirname, ".env") });
+"use strict"
+const path = require("node:path")
+require("dotenv").config({ path: path.join(__dirname, ".env") })
 
 module.exports = {
   apps: [
@@ -40,4 +40,4 @@ module.exports = {
       ignore_watch: ["node_modules", "logs", ".git"],
     },
   ],
-};
+}

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Loader2, Send, AlertTriangle, Info, AlertCircle } from 'lucide-react'
-import { broadcastNotification, type BroadcastType } from '@/services/admin.service'
+import { broadcastNotification, type BroadcastType } from '@/services/admin-service'
 import { toast } from 'sonner'
 
 interface BroadcastDialogProps {

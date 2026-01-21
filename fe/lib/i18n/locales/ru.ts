@@ -321,6 +321,11 @@ export const ru: TranslationShape = {
     logout: 'Выйти',
     chatWithAlly: 'Чат с Ally',
     minimize: 'Свернуть',
+    // User Footer items
+    upgradeToPro: 'Обновить до Pro',
+    billing: 'Оплата',
+    notifications: 'Уведомления',
+    logOut: 'Выйти',
   },
 
   dashboard: {
@@ -1075,16 +1080,6 @@ export const ru: TranslationShape = {
       resources: 'Ресурсы',
       blog: 'Журнал изменений',
       changeLog: 'Журнал изменений',
-    },
-
-    // Sidebar/User Footer
-    sidebar: {
-      upgradeToPro: 'Обновить до Pro',
-      account: 'Аккаунт',
-      billing: 'Оплата',
-      notifications: 'Уведомления',
-      settings: 'Настройки',
-      logOut: 'Выйти',
     },
 
     // Integrations

@@ -10,7 +10,7 @@ import { OnboardingLayoutContent } from '../layout'
 import { applyAutoConfiguration } from '@/lib/onboarding/auto-configuration'
 import { motion } from 'framer-motion'
 import { personaDefaults } from '@/lib/validations/preferences'
-import { preferencesService } from '@/services/preferences.service'
+import { preferencesService } from '@/services/preferences-service'
 import { useRouter } from 'next/navigation'
 
 interface AutoConfiguredFeature {

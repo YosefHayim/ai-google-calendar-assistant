@@ -4,7 +4,7 @@ import { QueryHookOptions, useQueryWrapper } from '../useQueryWrapper'
 
 import type { EventQueryParams } from '@/types/api'
 import { QUERY_CONFIG } from '@/lib/constants'
-import { eventsService } from '@/services/events.service'
+import { eventsService } from '@/services/events-service'
 import { queryKeys } from '@/lib/query/keys'
 import { useQuery } from '@tanstack/react-query'
 

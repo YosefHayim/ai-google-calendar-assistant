@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { resetMemory, ResetMemoryResult } from '@/services/chatService'
+import { resetMemory, ResetMemoryResult } from '@/services/chat-service'
 import { queryKeys } from '@/lib/query'
 import type { MutationHookOptions } from '../useMutationWrapper'
 

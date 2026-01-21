@@ -11,7 +11,7 @@ import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { usePostHog } from 'posthog-js/react'
 import { useTranslation } from 'react-i18next'
-import { waitingListService } from '@/services/waiting-list.service'
+import { waitingListService } from '@/services/waiting-list-service'
 
 const platforms = [
   { icon: Mic, label: 'Voice', delay: 0 },

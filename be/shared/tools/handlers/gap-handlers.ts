@@ -1,72 +1,72 @@
-import type { HandlerContext } from "@/shared/types";
+import type { HandlerContext } from "@/shared/types"
 import {
   analyzeGapsForUser,
   fillGap as fillGapInternal,
   formatGapsForDisplay,
-} from "@/utils/calendar/gap-recovery";
+} from "@/domains/calendar/utils/gap-recovery"
 import type {
   AnalyzeGapsParams,
   FillGapParams,
   FormatGapsDisplayParams,
-} from "../schemas";
+} from "../schemas"
 
-export type { HandlerContext };
+export type { HandlerContext }
 
 export type GapCandidateDTO = {
-  id: string;
-  start: string;
-  end: string;
-  durationMinutes: number;
-  durationFormatted: string;
-  precedingEventSummary: string;
-  precedingEventLink: string | null;
-  followingEventSummary: string;
-  followingEventLink: string | null;
-  suggestion: string | null;
-  confidence: number;
-};
+  id: string
+  start: string
+  end: string
+  durationMinutes: number
+  durationFormatted: string
+  precedingEventSummary: string
+  precedingEventLink: string | null
+  followingEventSummary: string
+  followingEventLink: string | null
+  suggestion: string | null
+  confidence: number
+}
 
 export type AnalyzeGapsResult = {
-  gaps: GapCandidateDTO[];
-  count: number;
-  error?: string;
-};
+  gaps: GapCandidateDTO[]
+  count: number
+  error?: string
+}
 
 export type FillGapResult = {
-  success: boolean;
-  eventId?: string;
-  error?: string;
-};
+  success: boolean
+  eventId?: string
+  error?: string
+}
 
 export type FormatGapsResult = {
-  formatted: string;
-  error?: string;
-};
+  formatted: string
+  error?: string
+}
 
 export async function analyzeGapsHandler(
   params: AnalyzeGapsParams,
   ctx: HandlerContext
 ): Promise<AnalyzeGapsResult> {
-  const { email } = ctx;
+  const { email } = ctx
 
   try {
     const gaps = await analyzeGapsForUser({
       email,
       lookbackDays: params.lookbackDays || 7,
       calendarId: params.calendarId || "primary",
-    });
+    })
 
     return {
       gaps,
       count: gaps.length,
-    };
+    }
   } catch (error) {
-    console.error("Gap analysis failed:", error);
+    console.error("Gap analysis failed:", error)
     return {
       gaps: [],
       count: 0,
       error: error instanceof Error ? error.message : "Failed to analyze gaps.",
-    };
+    }
   }
 }
 
@@ -74,7 +74,7 @@ export async function fillGapHandler(
   params: FillGapParams,
   ctx: HandlerContext
 ): Promise<FillGapResult> {
-  const { email } = ctx;
+  const { email } = ctx
 
   try {
     const result = await fillGapInternal({
@@ -89,15 +89,15 @@ export async function fillGapHandler(
         location: params.location || undefined,
         calendarId: params.calendarId,
       },
-    });
+    })
 
-    return result;
+    return result
   } catch (error) {
-    console.error("Fill gap failed:", error);
+    console.error("Fill gap failed:", error)
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to fill gap.",
-    };
+    }
   }
 }
 
@@ -105,14 +105,14 @@ export function formatGapsHandler(
   params: FormatGapsDisplayParams
 ): FormatGapsResult {
   try {
-    const gaps = JSON.parse(params.gapsJson) as GapCandidateDTO[];
-    const formatted = formatGapsForDisplay(gaps);
-    return { formatted };
+    const gaps = JSON.parse(params.gapsJson) as GapCandidateDTO[]
+    const formatted = formatGapsForDisplay(gaps)
+    return { formatted }
   } catch (error) {
-    console.error("Format gaps failed:", error);
+    console.error("Format gaps failed:", error)
     return {
       formatted: "",
       error: error instanceof Error ? error.message : "Failed to format gaps.",
-    };
+    }
   }
 }

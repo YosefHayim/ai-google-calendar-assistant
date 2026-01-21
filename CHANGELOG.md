@@ -7,6 +7,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.143] - 2026-01-21
+
+### Features
+
+- **Admin & User Management**: Enhanced admin controllers and services for comprehensive user management
+  - New admin dashboard capabilities with improved user controls
+  - Enhanced user service integrations and management features
+
+- **DPO System**: Dynamic Prompt Optimization implementation with comprehensive logging and history tracking
+  - Advanced prompt optimization capabilities
+  - Full audit trail for prompt changes and performance metrics
+
+- **Timezone & Calendar Handlers**: Added timezone and calendar category retrieval handlers
+  - Enhanced calendar management with timezone support
+  - Improved calendar categorization and filtering
+
+- **Performance Enhancements**: Significant performance improvements across the application
+  - Enhanced monitoring capabilities and system optimization
+  - Improved component performance and loading times
+
+- **Localization & i18n**: Extended internationalization support
+  - Added i18n support in admin dialogs
+  - Enhanced localization in dashboard components
+
+- **UI/UX Improvements**: User interface and experience enhancements
+  - Added tooltips to ViewSwitcher buttons for better user guidance
+  - Enhanced dashboard components with localization support
+  - Improved onboarding flow and persona preferences
+
+- **API Enhancements**: New endpoints and request handling improvements
+  - Added notification settings endpoint with validation schema
+  - Enhanced gap analysis types and request handling
+  - Implemented compare page and layout for Ask Ally
+
+- **Outlook Integration**: Added Outlook Graph types library support
+  - Extended calendar integration capabilities
+  - Microsoft Outlook compatibility enhancements
+
+### Bug Fixes
+
+- **TypeScript Errors**: Fixed various TypeScript compilation issues
+  - Resolved request.ip type errors in NextRequest
+  - Fixed React.memo syntax errors in components
+  - Corrected type imports and gap handling issues
+
+- **Error Handling**: Improved error handling and localization
+  - Enhanced error messages in user and gaps settings components
+  - Better error recovery in controller files
+
+### Technical
+
+- **47 commits** across multiple modules since previous version
+- **New Components**: `ComparePage`, `NotificationSettings`, enhanced admin controllers
+- **Database Changes**: DPO system tables, enhanced audit logging
+- **Performance**: Component optimization, monitoring enhancements, CSP improvements
+- **Dependencies**: Updated package dependencies and configuration
+  - Synchronized package-lock.json with package.json
+  - Updated import organization and dynamic component loading
+
+### Refactoring
+
+- **Code Consistency**: Standardized environment variable imports and user ID access patterns
+- **Docker Optimization**: Enhanced Dockerfile configurations for Next.js and AWS App Runner
+- **Middleware Updates**: Streamlined middleware and CSP management, migrated to proxy.ts
+- **Component Structure**: Optimized font loading, improved localization support
+- **Import Organization**: Reorganized imports across multiple files for consistency
+
+---
+
 ## [1.0.142] - 2026-01-18
 
 ### Features
@@ -121,10 +190,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Auth**: Fix logout flow - now properly clears auth tokens while preserving onboarding state
   - Previously `localStorage.clear()` wiped onboarding flag causing re-onboarding
   - Now only clears `access_token`, `refresh_token`, and `user` keys
-  
 - **Redis**: Auto-fix eviction policy on startup
   - Sets `maxmemory-policy` to `noeviction` if configured as `volatile-lru`
-  
 - **TypeScript**: Fix feature flag service build errors
   - Cast Supabase client for `feature_flags` table (not in generated types)
   - Fix user status comparison in auth middleware
@@ -300,14 +367,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Summary Statistics
 
-| Category | Count |
-|----------|-------|
-| Total Commits | 231 |
-| Features | 110+ |
-| Bug Fixes | 25+ |
-| Refactoring | 25+ |
-| Documentation | 8 |
-| Chores | 10+ |
+| Category      | Count |
+| ------------- | ----- |
+| Total Commits | 1,165 |
+| Features      | 140+  |
+| Bug Fixes     | 35+   |
+| Refactoring   | 45+   |
+| Documentation | 10    |
+| Chores        | 15+   |
 
 ### Key Highlights
 
@@ -319,12 +386,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 6. **Feature Flag System** - Advanced feature management with audit trails
 7. **Session Restoration** - Intelligent session management
 8. **WhatsApp Integration** - Enhanced messaging with GDPR compliance
-9. **Google RISC Integration** - Added Cross-Account Protection for enhanced security
-10. **CloudFront CDN** - Improved performance with CDN and multi-stage Docker builds
-11. **LemonSqueezy Migration** - Moved from Stripe to LemonSqueezy for subscriptions
-12. **3D Character** - Ally 3D character with animations
-13. **Voice Features** - TTS, voice preferences, and transcription capabilities
+9. **DPO System** - Dynamic Prompt Optimization with comprehensive logging
+10. **Performance Enhancements** - Major performance improvements and monitoring
+11. **Outlook Integration** - Extended calendar integration capabilities
+12. **Google RISC Integration** - Added Cross-Account Protection for enhanced security
+13. **CloudFront CDN** - Improved performance with CDN and multi-stage Docker builds
+14. **LemonSqueezy Migration** - Moved from Stripe to LemonSqueezy for subscriptions
+15. **3D Character** - Ally 3D character with animations
+16. **Voice Features** - TTS, voice preferences, and transcription capabilities
 
 ---
 
-*Generated on 2026-01-18*
+_Generated on 2026-01-21_

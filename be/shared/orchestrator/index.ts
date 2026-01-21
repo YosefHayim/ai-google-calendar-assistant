@@ -6,4 +6,4 @@ export {
   runTextAgent,
   type StreamEvent,
   type TextAgentConfig,
-} from "./text-agent-factory";
+} from "./text-agent-factory"

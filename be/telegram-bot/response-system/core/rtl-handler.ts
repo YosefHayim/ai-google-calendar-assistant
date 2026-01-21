@@ -3,7 +3,7 @@
  * Handles bidirectional text for Hebrew and other RTL languages
  */
 
-import type { RtlStrategy, TextDirection } from "./types";
+import type { RtlStrategy, TextDirection } from "./types"
 
 /**
  * Unicode directional markers
@@ -31,14 +31,14 @@ export const UNICODE_MARKERS = {
   FSI: "\u2068",
   /** Pop Directional Isolate */
   PDI: "\u2069",
-} as const;
+} as const
 
 /**
  * RTL script detection patterns
  */
-const RTL_PATTERN = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
-const HEBREW_PATTERN = /[\u0590-\u05FF]/;
-const ARABIC_PATTERN = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
+const RTL_PATTERN = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
+const HEBREW_PATTERN = /[\u0590-\u05FF]/
+const ARABIC_PATTERN = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/
 
 /**
  * Detect if text contains any RTL characters
@@ -47,7 +47,7 @@ const ARABIC_PATTERN = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
  * @returns true if text contains RTL characters
  */
 export function containsRtl(text: string): boolean {
-  return RTL_PATTERN.test(text);
+  return RTL_PATTERN.test(text)
 }
 
 /**
@@ -57,7 +57,7 @@ export function containsRtl(text: string): boolean {
  * @returns true if text contains Hebrew
  */
 export function containsHebrew(text: string): boolean {
-  return HEBREW_PATTERN.test(text);
+  return HEBREW_PATTERN.test(text)
 }
 
 /**
@@ -67,7 +67,7 @@ export function containsHebrew(text: string): boolean {
  * @returns true if text contains Arabic
  */
 export function containsArabic(text: string): boolean {
-  return ARABIC_PATTERN.test(text);
+  return ARABIC_PATTERN.test(text)
 }
 
 /**
@@ -78,20 +78,20 @@ export function containsArabic(text: string): boolean {
  */
 export function isRtlText(text: string): boolean {
   if (!text) {
-    return false;
+    return false
   }
 
   // Find first strong directional character
   for (const char of text) {
     if (RTL_PATTERN.test(char)) {
-      return true;
+      return true
     }
     if (/[a-zA-Z]/.test(char)) {
-      return false;
+      return false
     }
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -102,17 +102,17 @@ export function isRtlText(text: string): boolean {
  */
 export function detectDirection(text: string): TextDirection {
   if (!text) {
-    return "ltr";
+    return "ltr"
   }
 
-  const rtlChars = (text.match(RTL_PATTERN) || []).length;
-  const ltrChars = (text.match(/[a-zA-Z]/g) || []).length;
+  const rtlChars = (text.match(RTL_PATTERN) || []).length
+  const ltrChars = (text.match(/[a-zA-Z]/g) || []).length
 
   if (rtlChars === 0 && ltrChars === 0) {
-    return "ltr";
+    return "ltr"
   }
 
-  return rtlChars > ltrChars ? "rtl" : "ltr";
+  return rtlChars > ltrChars ? "rtl" : "ltr"
 }
 
 /**
@@ -128,16 +128,16 @@ export function applyUnicodeDirection(
   direction: TextDirection
 ): string {
   if (!text) {
-    return "";
+    return ""
   }
 
-  const resolvedDir = direction === "auto" ? detectDirection(text) : direction;
+  const resolvedDir = direction === "auto" ? detectDirection(text) : direction
 
   if (resolvedDir === "rtl") {
-    return `${UNICODE_MARKERS.RLI}${text}${UNICODE_MARKERS.PDI}`;
+    return `${UNICODE_MARKERS.RLI}${text}${UNICODE_MARKERS.PDI}`
   }
 
-  return `${UNICODE_MARKERS.LRI}${text}${UNICODE_MARKERS.PDI}`;
+  return `${UNICODE_MARKERS.LRI}${text}${UNICODE_MARKERS.PDI}`
 }
 
 /**
@@ -153,7 +153,7 @@ export function applyLineBasedDirection(
   direction: TextDirection
 ): string {
   if (!text) {
-    return "";
+    return ""
   }
 
   if (direction === "auto") {
@@ -161,21 +161,20 @@ export function applyLineBasedDirection(
     return text
       .split("\n")
       .map((line) => {
-        const lineDir = detectDirection(line);
+        const lineDir = detectDirection(line)
         const marker =
-          lineDir === "rtl" ? UNICODE_MARKERS.RLM : UNICODE_MARKERS.LRM;
-        return `${marker}${line}`;
+          lineDir === "rtl" ? UNICODE_MARKERS.RLM : UNICODE_MARKERS.LRM
+        return `${marker}${line}`
       })
-      .join("\n");
+      .join("\n")
   }
 
-  const marker =
-    direction === "rtl" ? UNICODE_MARKERS.RLM : UNICODE_MARKERS.LRM;
+  const marker = direction === "rtl" ? UNICODE_MARKERS.RLM : UNICODE_MARKERS.LRM
 
   return text
     .split("\n")
     .map((line) => `${marker}${line}`)
-    .join("\n");
+    .join("\n")
 }
 
 /**
@@ -193,30 +192,30 @@ export function applyRtl(
   strategy: RtlStrategy
 ): string {
   if (!text) {
-    return "";
+    return ""
   }
 
   // If no RTL content and direction is auto/ltr, skip processing
   if (direction !== "rtl" && !containsRtl(text)) {
-    return text;
+    return text
   }
 
   switch (strategy) {
     case "unicode-markers":
-      return applyUnicodeDirection(text, direction);
+      return applyUnicodeDirection(text, direction)
 
     case "line-based":
-      return applyLineBasedDirection(text, direction);
+      return applyLineBasedDirection(text, direction)
 
     case "both": {
       // Apply both strategies for maximum compatibility
-      let result = applyLineBasedDirection(text, direction);
-      result = applyUnicodeDirection(result, direction);
-      return result;
+      let result = applyLineBasedDirection(text, direction)
+      result = applyUnicodeDirection(result, direction)
+      return result
     }
 
     default:
-      return text;
+      return text
   }
 }
 
@@ -232,10 +231,10 @@ export function isolateDirection(
   text: string,
   direction: TextDirection
 ): string {
-  const resolvedDir = direction === "auto" ? detectDirection(text) : direction;
+  const resolvedDir = direction === "auto" ? detectDirection(text) : direction
   const marker =
-    resolvedDir === "rtl" ? UNICODE_MARKERS.RLI : UNICODE_MARKERS.LRI;
-  return `${marker}${text}${UNICODE_MARKERS.PDI}`;
+    resolvedDir === "rtl" ? UNICODE_MARKERS.RLI : UNICODE_MARKERS.LRI
+  return `${marker}${text}${UNICODE_MARKERS.PDI}`
 }
 
 /**
@@ -252,9 +251,9 @@ export function formatLabelValue(
   value: string,
   labelDirection: TextDirection = "ltr"
 ): string {
-  const isolatedLabel = isolateDirection(label, labelDirection);
-  const isolatedValue = isolateDirection(value, "auto");
-  return `${isolatedLabel}\n${isolatedValue}`;
+  const isolatedLabel = isolateDirection(label, labelDirection)
+  const isolatedValue = isolateDirection(value, "auto")
+  return `${isolatedLabel}\n${isolatedValue}`
 }
 
 /**
@@ -266,5 +265,5 @@ export function formatLabelValue(
  * @returns Formatted inline string
  */
 export function formatInlineLabelValue(label: string, value: string): string {
-  return `${isolateDirection(label, "ltr")} ${isolateDirection(value, "auto")}`;
+  return `${isolateDirection(label, "ltr")} ${isolateDirection(value, "auto")}`
 }

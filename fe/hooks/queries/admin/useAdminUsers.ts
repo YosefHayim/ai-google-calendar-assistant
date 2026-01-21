@@ -6,7 +6,7 @@ import {
   updateUserRole,
   grantCredits,
   sendPasswordReset,
-} from '@/services/admin.service'
+} from '@/services/admin-service'
 import type { AdminUserListParams, UserStatus, UserRole } from '@/types/admin'
 
 export const useAdminUsers = (params: AdminUserListParams) => {

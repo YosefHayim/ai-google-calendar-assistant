@@ -3,7 +3,7 @@
 import { QueryHookOptions, useQueryWrapper } from '../useQueryWrapper'
 
 import { QUERY_CONFIG } from '@/lib/constants'
-import { authService } from '@/services/auth.service'
+import { authService } from '@/services/auth-service'
 import { queryKeys } from '@/lib/query/keys'
 import { useQuery } from '@tanstack/react-query'
 

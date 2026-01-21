@@ -1,72 +1,78 @@
-import { InputGuardrailTripwireTriggered } from "@openai/agents";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
-import { unifiedContextStore } from "@/shared/context";
-import { activateAgent } from "@/utils/ai";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { transcribeAudio } from "@/utils/ai/voice-transcription";
-import { logger } from "@/utils/logger";
-import { updateLastActivity } from "../services/conversation-window";
-import { downloadVoiceMessage, uploadMedia } from "../services/media";
+import { InputGuardrailTripwireTriggered } from "@openai/agents"
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import {
+  activateAgent,
+  generateSpeechForTelegram,
+  transcribeAudio,
+} from "@/domains/analytics/utils"
+import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
+import { logger } from "@/lib/logger"
+import { unifiedContextStore } from "@/shared/context"
+import { updateLastActivity } from "../services/conversation-window"
+import { downloadVoiceMessage, uploadMedia } from "../services/media"
 import {
   checkAuthRateLimit,
   checkMessageRateLimit,
   checkVoiceRateLimit,
   resetRateLimit,
-} from "../services/rate-limiter";
+} from "../services/rate-limiter"
 import {
   markAsRead,
   sendAudioMessage,
   sendTextMessage,
-} from "../services/send-message";
-import {
-  handleOnboarding,
-  resolveWhatsAppUser,
-} from "../services/user-linking";
+} from "../services/send-message"
+import { handleOnboarding, resolveWhatsAppUser } from "../services/user-linking"
 import type {
   ProcessedMessage,
   WhatsAppContact,
   WhatsAppIncomingMessage,
-} from "../types";
+} from "../types"
 import {
   getAllyBrainForWhatsApp,
+  getLanguagePreferenceForWhatsApp,
   getVoicePreferenceForWhatsApp,
-} from "../utils/ally-brain";
+} from "../utils/ally-brain"
+import {
+  handleCommand,
+  handleInteractiveReply,
+  parseCommand,
+} from "../utils/commands"
 import {
   getUserIdFromWhatsApp,
   whatsAppConversation,
-} from "../utils/conversation-history";
-import { getRelevantContext, storeEmbeddingAsync } from "../utils/embeddings";
+} from "../utils/conversation-history"
+import { getRelevantContext, storeEmbeddingAsync } from "../utils/embeddings"
 import {
   formatErrorForWhatsApp,
   htmlToWhatsApp,
-} from "../utils/format-response";
+} from "../utils/format-response"
 import {
   buildAgentPromptWithContext,
   summarizeMessages,
-} from "../utils/prompts";
+} from "../utils/prompts"
 
-const processedMessages = new Map<string, number>();
-const MESSAGE_DEDUP_TTL_MS = 60_000;
+const processedMessages = new Map<string, number>()
+const MESSAGE_DEDUP_TTL_MS = 60_000
 
 const cleanupProcessedMessages = (): void => {
-  const now = Date.now();
+  const now = Date.now()
   for (const [messageId, timestamp] of processedMessages.entries()) {
     if (now - timestamp > MESSAGE_DEDUP_TTL_MS) {
-      processedMessages.delete(messageId);
+      processedMessages.delete(messageId)
     }
   }
-};
+}
 
 const isDuplicateMessage = (messageId: string): boolean => {
-  cleanupProcessedMessages();
+  cleanupProcessedMessages()
 
   if (processedMessages.has(messageId)) {
-    return true;
+    return true
   }
 
-  processedMessages.set(messageId, Date.now());
-  return false;
-};
+  processedMessages.set(messageId, Date.now())
+  return false
+}
 
 export const processIncomingMessage = (
   message: WhatsAppIncomingMessage,
@@ -86,25 +92,56 @@ export const processIncomingMessage = (
   contactName: contact?.profile?.name,
   isVoice: message.audio?.voice === true || message.type === "audio",
   replyToMessageId: message.context?.id,
-});
+})
 
 export const handleTextMessage = async (
   processed: ProcessedMessage,
   respondWithVoice = false,
   userEmail?: string
 ): Promise<void> => {
-  const { from, messageId, text, contactName } = processed;
+  const { from, messageId, text, contactName } = processed
 
   if (!text) {
-    logger.warn(`WhatsApp: Received empty text message from ${from}`);
-    return;
+    logger.warn(`WhatsApp: Received empty text message from ${from}`)
+    return
   }
 
+  const LOG_PREVIEW_LENGTH = 50
   logger.info(
-    `WhatsApp: Processing text message from ${from}: "${text.slice(0, 50)}..."`
-  );
+    `WhatsApp: Processing text message from ${from}: "${text.slice(0, LOG_PREVIEW_LENGTH)}..."`
+  )
 
-  await markAsRead(messageId);
+  await markAsRead(messageId)
+
+  const parsedCommand = parseCommand(text)
+  if (parsedCommand) {
+    const commandResult = await handleCommand(
+      parsedCommand.command,
+      parsedCommand.args,
+      {
+        from,
+        email: userEmail,
+        contactName,
+      }
+    )
+    if (commandResult.handled) {
+      return
+    }
+  }
+
+  await processNaturalLanguageMessage(processed, respondWithVoice, userEmail)
+}
+
+const processNaturalLanguageMessage = async (
+  processed: ProcessedMessage,
+  respondWithVoice: boolean,
+  userEmail?: string
+): Promise<void> => {
+  const { from, text, contactName } = processed
+
+  if (!text) {
+    return
+  }
 
   try {
     const conversationContext = await whatsAppConversation.addMessageToContext(
@@ -112,34 +149,37 @@ export const handleTextMessage = async (
       contactName,
       { role: "user", content: text },
       summarizeMessages
-    );
+    )
 
-    storeEmbeddingAsync(from, text, "user");
+    storeEmbeddingAsync(from, text, "user")
 
     const contextPrompt =
-      whatsAppConversation.buildContextPrompt(conversationContext);
+      whatsAppConversation.buildContextPrompt(conversationContext)
 
     const semanticContext = await getRelevantContext(from, text, {
       threshold: 0.75,
       limit: 3,
-    });
+    })
 
     const fullContext = [contextPrompt, semanticContext]
       .filter(Boolean)
-      .join("\n\n");
+      .join("\n\n")
 
-    const userId = await getUserIdFromWhatsApp(from);
-    const allyBrain = await getAllyBrainForWhatsApp(from);
+    const [userId, allyBrain, languageCode] = await Promise.all([
+      getUserIdFromWhatsApp(from),
+      getAllyBrainForWhatsApp(from),
+      getLanguagePreferenceForWhatsApp(from),
+    ])
 
     if (userId) {
-      await unifiedContextStore.setModality(userId, "whatsapp");
-      await unifiedContextStore.touch(userId);
+      await unifiedContextStore.setModality(userId, "whatsapp")
+      await unifiedContextStore.touch(userId)
     }
 
     const prompt = buildAgentPromptWithContext(userEmail, text, fullContext, {
       allyBrain,
-      languageCode: "en",
-    });
+      languageCode,
+    })
 
     const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
       session: userId
@@ -149,8 +189,8 @@ export const handleTextMessage = async (
             taskId: from,
           }
         : undefined,
-    });
-    const finalOutput = result.finalOutput || "";
+    })
+    const finalOutput = result.finalOutput || ""
 
     if (finalOutput) {
       await whatsAppConversation.addMessageToContext(
@@ -158,112 +198,135 @@ export const handleTextMessage = async (
         contactName,
         { role: "assistant", content: finalOutput },
         summarizeMessages
-      );
-      storeEmbeddingAsync(from, finalOutput, "assistant");
+      )
+      storeEmbeddingAsync(from, finalOutput, "assistant")
     }
 
     const formattedResponse = htmlToWhatsApp(
       finalOutput || "I couldn't process your request."
-    );
+    )
 
     if (respondWithVoice) {
-      const voicePref = await getVoicePreferenceForWhatsApp(from);
-
-      if (voicePref.enabled) {
-        const ttsResult = await generateSpeechForTelegram(
-          formattedResponse.replace(/[*_~`]/g, ""),
-          voicePref.voice
-        );
-
-        if (ttsResult.success && ttsResult.audioBuffer) {
-          const uploadResult = await uploadMedia(
-            ttsResult.audioBuffer,
-            "audio/ogg",
-            "response.ogg"
-          );
-
-          if (uploadResult.success && uploadResult.mediaId) {
-            await sendAudioMessage(from, uploadResult.mediaId);
-            return;
-          }
-        }
-      }
+      await tryVoiceResponse(from, formattedResponse)
+      return
     }
 
-    await sendTextMessage(from, formattedResponse);
+    await sendTextMessage(from, formattedResponse)
   } catch (error) {
     if (error instanceof InputGuardrailTripwireTriggered) {
       logger.warn(
         `WhatsApp: Guardrail triggered for user ${from}: ${error.message}`
-      );
-      await sendTextMessage(from, error.message);
-      return;
+      )
+      await sendTextMessage(from, error.message)
+      return
     }
 
-    logger.error(`WhatsApp: Error processing message from ${from}: ${error}`);
+    logger.error(`WhatsApp: Error processing message from ${from}: ${error}`)
     await sendTextMessage(
       from,
       formatErrorForWhatsApp(
         "Sorry, I encountered an error processing your request. Please try again."
       )
-    );
+    )
   }
-};
+}
+
+const MARKDOWN_CHARS_REGEX = /[*_~`]/g
+
+const tryVoiceResponse = async (
+  from: string,
+  formattedResponse: string
+): Promise<void> => {
+  const voicePref = await getVoicePreferenceForWhatsApp(from)
+
+  if (!voicePref.enabled) {
+    await sendTextMessage(from, formattedResponse)
+    return
+  }
+
+  const ttsResult = await generateSpeechForTelegram(
+    formattedResponse.replace(MARKDOWN_CHARS_REGEX, ""),
+    voicePref.voice
+  )
+
+  if (!ttsResult.success) {
+    await sendTextMessage(from, formattedResponse)
+    return
+  }
+
+  if (!ttsResult.audioBuffer) {
+    await sendTextMessage(from, formattedResponse)
+    return
+  }
+
+  const uploadResult = await uploadMedia(
+    ttsResult.audioBuffer,
+    "audio/ogg",
+    "response.ogg"
+  )
+
+  if (uploadResult.success && uploadResult.mediaId) {
+    await sendAudioMessage(from, uploadResult.mediaId)
+    return
+  }
+
+  await sendTextMessage(from, formattedResponse)
+}
 
 export const handleVoiceMessage = async (
   processed: ProcessedMessage,
   userEmail?: string
 ): Promise<void> => {
-  const { from, messageId, mediaId, mediaMimeType } = processed;
+  const { from, messageId, mediaId, mediaMimeType } = processed
 
   if (!mediaId) {
     logger.warn(
       `WhatsApp: Received voice message without media ID from ${from}`
-    );
-    return;
+    )
+    return
   }
 
-  logger.info(`WhatsApp: Processing voice message from ${from}`);
+  logger.info(`WhatsApp: Processing voice message from ${from}`)
 
-  await markAsRead(messageId);
+  await markAsRead(messageId)
 
   try {
-    const downloadResult = await downloadVoiceMessage(mediaId);
+    const downloadResult = await downloadVoiceMessage(mediaId)
 
     if (!(downloadResult.success && downloadResult.audioBuffer)) {
       logger.error(
         `WhatsApp: Failed to download voice message: ${downloadResult.error}`
-      );
+      )
       await sendTextMessage(
         from,
         formatErrorForWhatsApp(
           "Sorry, I couldn't process your voice message. Please try again."
         )
-      );
-      return;
+      )
+      return
     }
 
     const transcription = await transcribeAudio(
       downloadResult.audioBuffer,
       mediaMimeType || "audio/ogg"
-    );
+    )
 
     if (!(transcription.success && transcription.text)) {
       logger.error(
         `WhatsApp: Failed to transcribe audio: ${transcription.error}`
-      );
+      )
       await sendTextMessage(
         from,
         formatErrorForWhatsApp(
           "Sorry, I couldn't understand your voice message. Please try again or type your message."
         )
-      );
-      return;
+      )
+      return
     }
 
     logger.info(
       `WhatsApp: Transcribed voice message from ${from}: "${transcription.text.slice(0, 50)}..."`
-    );
+    )
 
     await handleTextMessage(
       {
@@ -273,131 +336,162 @@ export const handleVoiceMessage = async (
       },
       true,
       userEmail
-    );
+    )
   } catch (error) {
     logger.error(
       `WhatsApp: Error processing voice message from ${from}: ${error}`
-    );
+    )
     await sendTextMessage(
       from,
       formatErrorForWhatsApp(
         "Sorry, I encountered an error processing your voice message."
       )
-    );
+    )
   }
-};
+}
 
 export const handleButtonReply = async (
-  processed: ProcessedMessage
+  processed: ProcessedMessage,
+  replyId: string,
+  userEmail?: string
 ): Promise<void> => {
-  const { from, messageId } = processed;
+  const { from, messageId, contactName } = processed
 
-  logger.info(`WhatsApp: Received button reply from ${from}`);
+  logger.info(`WhatsApp: Received button reply from ${from}: ${replyId}`)
 
-  await markAsRead(messageId);
-  await sendTextMessage(from, "Got your selection! Processing...");
-};
+  await markAsRead(messageId)
+
+  const result = await handleInteractiveReply(replyId, {
+    from,
+    email: userEmail,
+    contactName,
+  })
+
+  if (!result.handled) {
+    await sendTextMessage(from, "Got your selection! Processing...")
+  }
+}
 
 export const handleIncomingMessage = async (
   message: WhatsAppIncomingMessage,
   contact?: WhatsAppContact
 ): Promise<void> => {
   if (isDuplicateMessage(message.id)) {
-    logger.debug(`WhatsApp: Skipping duplicate message ${message.id}`);
-    return;
+    logger.debug(`WhatsApp: Skipping duplicate message ${message.id}`)
+    return
   }
 
-  const processed = processIncomingMessage(message, contact);
-  const phoneNumber = processed.from;
+  const processed = processIncomingMessage(message, contact)
+  const phoneNumber = processed.from
 
-  await updateLastActivity(phoneNumber);
+  await updateLastActivity(phoneNumber)
 
   const resolution = await resolveWhatsAppUser(
     phoneNumber,
     processed.contactName
-  );
+  )
 
   if (resolution.needsOnboarding) {
-    const authLimit = await checkAuthRateLimit(phoneNumber);
+    const authLimit = await checkAuthRateLimit(phoneNumber)
     if (!authLimit.allowed) {
-      await markAsRead(message.id);
-      await sendTextMessage(phoneNumber, authLimit.message!);
-      return;
+      await markAsRead(message.id)
+      await sendTextMessage(phoneNumber, authLimit.message ?? "")
+      return
     }
 
     if (message.type === "text" || message.type === "interactive") {
-      const interactiveReply = message.interactive;
+      const interactiveReply = message.interactive
       const result = await handleOnboarding(
         phoneNumber,
         processed.text || "",
         resolution.onboardingStep,
         interactiveReply
-      );
+      )
 
       if (result.handled) {
         if (result.nextStep === "complete") {
-          await resetRateLimit(phoneNumber, "auth");
+          await resetRateLimit(phoneNumber, "auth")
         }
-        await markAsRead(message.id);
-        return;
+        await markAsRead(message.id)
+        return
       }
     } else {
-      await markAsRead(message.id);
+      await markAsRead(message.id)
       await sendTextMessage(
         phoneNumber,
         "Please complete the account setup first. Send me a text message to continue."
-      );
-      return;
+      )
+      return
+    }
+  }
+
+  if (resolution.userId && resolution.email) {
+    const access = await checkUserAccess(resolution.userId, resolution.email)
+    if (!access.has_access && access.credits_remaining <= 0) {
+      await markAsRead(message.id)
+      const upgradeUrl = "https://askally.ai/pricing"
+      const msg =
+        access.subscription_status === null
+          ? `Your 14-day free trial has ended.\n\nUpgrade to Pro or Executive to continue using Ally:\n${upgradeUrl}`
+          : `You need an active subscription to use Ally.\n\nStart your free trial or upgrade:\n${upgradeUrl}`
+      await sendTextMessage(phoneNumber, msg)
+      return
     }
   }
 
   switch (message.type) {
     case "text": {
-      const msgLimit = await checkMessageRateLimit(phoneNumber);
+      const msgLimit = await checkMessageRateLimit(phoneNumber)
       if (!msgLimit.allowed) {
-        await markAsRead(message.id);
-        await sendTextMessage(phoneNumber, msgLimit.message!);
-        return;
+        await markAsRead(message.id)
+        await sendTextMessage(phoneNumber, msgLimit.message ?? "")
+        return
       }
-      await handleTextMessage(processed, false, resolution.email);
-      break;
+      await handleTextMessage(processed, false, resolution.email)
+      break
     }
 
     case "audio": {
-      const voiceLimit = await checkVoiceRateLimit(phoneNumber);
+      const voiceLimit = await checkVoiceRateLimit(phoneNumber)
       if (!voiceLimit.allowed) {
-        await markAsRead(message.id);
-        await sendTextMessage(phoneNumber, voiceLimit.message!);
-        return;
+        await markAsRead(message.id)
+        await sendTextMessage(phoneNumber, voiceLimit.message ?? "")
+        return
       }
-      await handleVoiceMessage(processed, resolution.email);
-      break;
+      await handleVoiceMessage(processed, resolution.email)
+      break
     }
 
-    case "interactive":
-      await handleButtonReply(processed);
-      break;
+    case "interactive": {
+      const interactiveData = message.interactive
+      const replyId =
+        interactiveData?.button_reply?.id ||
+        interactiveData?.list_reply?.id ||
+        ""
+      await handleButtonReply(processed, replyId, resolution.email)
+      break
+    }
 
     case "image":
     case "video":
     case "document":
-      await markAsRead(message.id);
+      await markAsRead(message.id)
       await sendTextMessage(
         phoneNumber,
         "I received your file, but I can currently only process text and voice messages. Please describe what you need help with."
-      );
-      break;
+      )
+      break
 
     case "location":
-      await markAsRead(message.id);
+      await markAsRead(message.id)
       await sendTextMessage(
         phoneNumber,
         "Thanks for sharing your location! I'll keep that in mind for scheduling events nearby."
-      );
-      break;
+      )
+      break
 
     default:
-      logger.warn(`WhatsApp: Unhandled message type: ${message.type}`);
-      await markAsRead(message.id);
+      logger.warn(`WhatsApp: Unhandled message type: ${message.type}`)
+      await markAsRead(message.id)
   }
-};
+}

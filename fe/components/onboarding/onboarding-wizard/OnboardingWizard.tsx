@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronRight, ChevronLeft, Volume2, VolumeX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { voiceService } from '@/services/voice.service'
+import { voiceService } from '@/services/voice-service'
 import { ONBOARDING_STEPS } from './constants'
 import { OnboardingStyles, StepIndicator, StepContent, AudioProgressBar } from './components'
 
@@ -130,6 +130,16 @@ export function OnboardingWizard({ isOpen, onClose, onComplete }: OnboardingWiza
     onClose()
   }
 
+  const handleSkipStep = () => {
+    stopAudio()
+    if (isLastStep) {
+      onComplete()
+      onClose()
+    } else {
+      setCurrentStep((prev) => prev + 1)
+    }
+  }
+
   const toggleAudio = () => {
     if (audioEnabled) {
       stopAudio()
@@ -192,16 +202,28 @@ export function OnboardingWizard({ isOpen, onClose, onComplete }: OnboardingWiza
                 Back
               </Button>
 
-              <Button onClick={handleNext} disabled={!canProceed && audioEnabled}>
-                {isLastStep ? (
-                  'Get Started'
-                ) : (
-                  <>
-                    Next
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </>
+              <div className="flex items-center gap-3">
+                {!isLastStep && (
+                  <Button
+                    variant="ghost"
+                    onClick={handleSkipStep}
+                    disabled={!canProceed && audioEnabled}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Skip Step
+                  </Button>
                 )}
-              </Button>
+                <Button onClick={handleNext} disabled={!canProceed && audioEnabled}>
+                  {isLastStep ? (
+                    'Get Started'
+                  ) : (
+                    <>
+                      Next
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
 
             <AudioProgressBar isVisible={audioEnabled && isPlaying} />

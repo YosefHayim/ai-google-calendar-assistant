@@ -1,13 +1,13 @@
-import { Agent } from "@openai/agents";
-import { CURRENT_MODEL, MODELS } from "@/config";
-import { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions";
-import { AGENT_INSTRUCTIONS } from "./agents-instructions";
-import { calendarSafetyGuardrail } from "./guardrails";
-import { AGENT_TOOLS, DIRECT_TOOLS } from "./tool-registry";
+import { Agent } from "@openai/agents"
+import { CURRENT_MODEL, MODELS } from "@/config"
+import { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions"
+import { AGENT_INSTRUCTIONS } from "./agents-instructions"
+import { calendarSafetyGuardrail } from "./guardrails"
+import { AGENT_TOOLS, DIRECT_TOOLS } from "./tool-registry"
 
 // Model tiers for different agent complexity levels
-const FAST_MODEL = MODELS.GPT_4_1_NANO; // Simple tool-calling agents (fast, cheap)
-const MEDIUM_MODEL = MODELS.GPT_4_1_MINI; // Multi-tool orchestration
+const FAST_MODEL = MODELS.GPT_4_1_NANO // Simple tool-calling agents (fast, cheap)
+const MEDIUM_MODEL = MODELS.GPT_4_1_MINI // Multi-tool orchestration
 // CURRENT_MODEL (GPT_5_MINI) used for complex reasoning/NLP
 
 export const AGENTS = {
@@ -56,7 +56,7 @@ export const AGENTS = {
     model: CURRENT_MODEL, // Needs smarter model for NLP
     instructions: AGENT_INSTRUCTIONS.parseEventText,
   }),
-};
+}
 
 export const HANDOFF_AGENTS = {
   createEventHandoff: new Agent({
@@ -101,7 +101,7 @@ export const HANDOFF_AGENTS = {
       AGENTS.registerUser.asTool({ toolName: "register_user" }), // Needed for actual registration
     ],
   }),
-};
+}
 
 export const ORCHESTRATOR_AGENT = new Agent({
   name: "calendar_orchestrator_agent",
@@ -129,4 +129,4 @@ export const ORCHESTRATOR_AGENT = new Agent({
     DIRECT_TOOLS.update_user_brain, // Adaptive memory - save permanent preferences
   ],
   inputGuardrails: [calendarSafetyGuardrail],
-});
+})

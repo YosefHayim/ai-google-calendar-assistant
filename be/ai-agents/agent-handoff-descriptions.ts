@@ -1,4 +1,4 @@
-import { RECOMMENDED_PROMPT_PREFIX } from "@openai/agents-core/extensions";
+import { RECOMMENDED_PROMPT_PREFIX } from "@openai/agents-core/extensions"
 
 export const HANDOFF_DESCRIPTIONS = {
   generateGoogleAuthUrl: `${RECOMMENDED_PROMPT_PREFIX}
@@ -35,4 +35,4 @@ Behavior:
 • By keywords → prefer exact match, then most imminent
 • Recurring: requires scope; occurrence needs occurrenceDate
 Constraints: Single attempt, JSON only, stops on ambiguity`,
-};
+}

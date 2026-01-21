@@ -3,7 +3,7 @@
 import type { DismissAllGapsResponse, FillGapRequest, FillGapResponse, SkipGapResponse } from '@/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { gapsService } from '@/services/gaps.service'
+import { gapsService } from '@/services/gaps-service'
 import { queryKeys } from '@/lib/query/keys'
 import { toast } from 'sonner'
 

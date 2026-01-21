@@ -4,7 +4,7 @@ import type { AdminUser, UserRole, UserStatus } from '@/types/admin'
 import { Calendar, CreditCard, Eye, Globe, Loader2, LogOut, Mail, Shield, User } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React, { useState } from 'react'
-import { impersonateUser, revokeUserSessions } from '@/services/admin.service'
+import { impersonateUser, revokeUserSessions } from '@/services/admin-service'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

@@ -482,6 +482,6 @@ export const en = {
   "commands.reschedule.cancelledText": "No changes were made to your calendar.",
   "commands.reschedule.keepOriginal": "Keep Original",
   "botMenu.reschedule": "Smart reschedule",
-} as const;
+} as const
 
-export type TranslationKey = keyof typeof en;
+export type TranslationKey = keyof typeof en

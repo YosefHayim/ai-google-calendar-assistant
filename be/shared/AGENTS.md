@@ -10,7 +10,7 @@ MODALITIES (Chat, Voice, Telegram, WhatsApp)
         ▼
 ┌─────────────────────────────────────────┐
 │         SDK ADAPTERS                    │
-│  openai-adapter.ts | livekit-adapter.ts │
+│  openai-adapter.ts │
 └─────────────────────────────────────────┘
         │
         ▼

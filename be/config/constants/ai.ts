@@ -75,4 +75,4 @@ export enum MODELS {
   DAVINCI_002 = "davinci-002",
 }
 
-export const CURRENT_MODEL = MODELS.GPT_5_MINI;
+export const CURRENT_MODEL = MODELS.GPT_5_MINI

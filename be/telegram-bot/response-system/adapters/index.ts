@@ -2,4 +2,4 @@
  * Adapters module exports
  */
 
-export { createTelegramAdapter, TelegramAdapter } from "./telegram-adapter";
+export { createTelegramAdapter, TelegramAdapter } from "./telegram-adapter"

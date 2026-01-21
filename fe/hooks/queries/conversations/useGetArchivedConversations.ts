@@ -1,8 +1,8 @@
 'use client'
 
-import type { ConversationListResponse } from '@/services/chatService'
+import type { ConversationListResponse } from '@/services/chat-service'
 import type { UseQueryOptions } from '@tanstack/react-query'
-import { getArchivedConversations } from '@/services/chatService'
+import { getArchivedConversations } from '@/services/chat-service'
 import { queryKeys } from '@/lib/query'
 import { useQuery } from '@tanstack/react-query'
 

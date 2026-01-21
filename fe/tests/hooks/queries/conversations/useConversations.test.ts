@@ -53,7 +53,7 @@ mock.module('@tanstack/react-query', () => ({
   QueryClientProvider: ({ children }: { children: unknown }) => children,
 }))
 
-mock.module('@/services/chatService', () => ({
+mock.module('@/services/chat-service', () => ({
   getConversations: mockGetConversations,
 }))
 

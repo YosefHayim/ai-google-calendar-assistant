@@ -478,4 +478,4 @@ export const ru = {
   "commands.reschedule.cancelledText": "Календарь не был изменён.",
   "commands.reschedule.keepOriginal": "Оставить как есть",
   "botMenu.reschedule": "Умное перепланирование",
-} as const;
+} as const

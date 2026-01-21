@@ -1,5 +1,5 @@
-import validator from "validator";
-import { z } from "zod";
+import validator from "validator"
+import { z } from "zod"
 
 // ═══════════════════════════════════════════════════════════════════════════
 // REMINDER SCHEMAS - Google Calendar API compliant
@@ -7,12 +7,12 @@ import { z } from "zod";
 // Methods: "email" or "popup"
 // ═══════════════════════════════════════════════════════════════════════════
 
-const REMINDER_MAX_MINUTES = 40_320; // 4 weeks in minutes
+const REMINDER_MAX_MINUTES = 40_320 // 4 weeks in minutes
 
 export const reminderMethodSchema = z.enum(["email", "popup"], {
   description:
     "Reminder notification method: 'email' for email notification, 'popup' for browser/device popup.",
-});
+})
 
 export const eventReminderSchema = z.object({
   method: reminderMethodSchema,
@@ -24,7 +24,7 @@ export const eventReminderSchema = z.object({
       REMINDER_MAX_MINUTES,
       `Reminder cannot be more than ${REMINDER_MAX_MINUTES} minutes (4 weeks) before event`
     ),
-});
+})
 
 export const eventRemindersSchema = z.object({
   useDefault: z.boolean({
@@ -38,10 +38,10 @@ export const eventRemindersSchema = z.object({
     .describe(
       "Custom reminders array. Required field - use empty array [] when useDefault is true, or provide up to 5 reminder objects when useDefault is false."
     ),
-});
+})
 
 const requiredString = (description: string, message = "Required.") =>
-  z.coerce.string({ description }).trim().min(1, { message });
+  z.coerce.string({ description }).trim().min(1, { message })
 
 const calendarSchema = z.coerce
   .string({
@@ -51,11 +51,11 @@ const calendarSchema = z.coerce
   .transform((val) => {
     // Reject obviously invalid values and normalize
     if (!val || val === "/" || val.trim() === "") {
-      return null;
+      return null
     }
-    return val.trim();
+    return val.trim()
   })
-  .nullable();
+  .nullable()
 
 // Email schema - only used for registration where user provides email
 const emailSchema = z.coerce
@@ -63,7 +63,7 @@ const emailSchema = z.coerce
     description: "The email address of the user.",
   })
   .includes("@", { message: "Must include @ symbol" })
-  .refine((v) => validator.isEmail(v), { message: "Invalid email address." });
+  .refine((v) => validator.isEmail(v), { message: "Invalid email address." })
 
 export const makeEventTime = () =>
   z
@@ -94,7 +94,7 @@ export const makeEventTime = () =>
         })
         .nullable(),
     })
-    .describe("Event start or end time, with optional timezone.");
+    .describe("Event start or end time, with optional timezone.")
 
 const makeFullEventParams = () =>
   z
@@ -113,7 +113,7 @@ const makeFullEventParams = () =>
     })
     .describe(
       "Full event parameters including summary, description, location, start, end times, and optional reminders. Email is automatically provided from user context."
-    );
+    )
 
 export const PARAMETERS_TOOLS = {
   generateGoogleAuthUrlParameters: z.object({}),
@@ -203,18 +203,18 @@ export const PARAMETERS_TOOLS = {
         .transform((val) => {
           // Filter out empty values in start time object
           if (!val) {
-            return null;
+            return null
           }
           const cleaned = {
             date: val.date === "" ? null : val.date,
             dateTime: val.dateTime === "" ? null : val.dateTime,
             timeZone: val.timeZone === "" ? null : val.timeZone,
-          };
+          }
           // Return null if all fields are empty/null
           if (!(cleaned.date || cleaned.dateTime)) {
-            return null;
+            return null
           }
-          return cleaned;
+          return cleaned
         })
         .nullable()
         .default(null),
@@ -222,18 +222,18 @@ export const PARAMETERS_TOOLS = {
         .transform((val) => {
           // Filter out empty values in end time object
           if (!val) {
-            return null;
+            return null
           }
           const cleaned = {
             date: val.date === "" ? null : val.date,
             dateTime: val.dateTime === "" ? null : val.dateTime,
             timeZone: val.timeZone === "" ? null : val.timeZone,
-          };
+          }
           // Return null if all fields are empty/null
           if (!(cleaned.date || cleaned.dateTime)) {
-            return null;
+            return null
           }
-          return cleaned;
+          return cleaned
         })
         .nullable()
         .default(null),
@@ -386,4 +386,4 @@ export const PARAMETERS_TOOLS = {
         ),
     })
     .describe("Update the user's reminder preferences stored in Ally's brain."),
-};
+}

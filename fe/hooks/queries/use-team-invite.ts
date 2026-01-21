@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { teamInviteService, type CreateInviteData, type CreateTeamData } from '@/services/team-invite.service'
+import { teamInviteService, type CreateInviteData, type CreateTeamData } from '@/services/team-invite-service'
 import { toast } from 'sonner'
 
 export const teamKeys = {
