@@ -47,6 +47,7 @@ export const mockUserRecord: Database["public"]["Tables"]["users"]["Row"] = {
   ai_interactions_used: 0,
   credits_remaining: 0,
   usage_reset_at: null,
+  trial_end_date: null,
 }
 
 /**

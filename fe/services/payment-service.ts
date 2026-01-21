@@ -65,13 +65,14 @@ export interface SubscriptionInfo {
 
 export interface UserAccess {
   has_access: boolean
-  subscription_status: SubscriptionStatus | null
+  subscription_status: SubscriptionStatus | string | null
   plan_name: string | null
   plan_slug: string | null
   interactions_used: number
   interactions_remaining: number | null
   credits_remaining: number
   trial_days_left: number | null
+  trial_end_date: string | null
   money_back_eligible: boolean
   subscription: SubscriptionInfo | null
 }

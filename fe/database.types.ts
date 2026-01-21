@@ -1040,6 +1040,7 @@ export type Database = {
           role: Database["public"]["Enums"]["user_role"]
           status: Database["public"]["Enums"]["user_status"] | null
           timezone: string | null
+          trial_end_date: string | null
           updated_at: string
           usage_reset_at: string | null
         }
@@ -1061,6 +1062,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"]
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
+          trial_end_date?: string | null
           updated_at?: string
           usage_reset_at?: string | null
         }
@@ -1082,6 +1084,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"]
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
+          trial_end_date?: string | null
           updated_at?: string
           usage_reset_at?: string | null
         }

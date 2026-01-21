@@ -89,13 +89,14 @@ export type LSSubscriptionInfo = {
 
 export type UserAccess = {
   has_access: boolean
-  subscription_status: LemonSqueezySubscriptionStatus | null
+  subscription_status: LemonSqueezySubscriptionStatus | string | null
   plan_name: string | null
   plan_slug: string | null
   interactions_used: number
   interactions_remaining: number | null
   credits_remaining: number
   trial_days_left: number | null
+  trial_end_date: string | null
   subscription: LSSubscriptionInfo | null
 }
 
@@ -229,20 +230,22 @@ export const getUserUsage = async (
   aiInteractionsUsed: number
   creditsRemaining: number
   usageResetAt: string | null
+  trialEndDate: string | null
 }> => {
   const { data, error } = await SUPABASE.from("users")
-    .select("ai_interactions_used, credits_remaining, usage_reset_at")
+    .select("ai_interactions_used, credits_remaining, usage_reset_at, trial_end_date")
     .eq("id", userId)
     .single()
 
   if (error || !data) {
-    return { aiInteractionsUsed: 0, creditsRemaining: 0, usageResetAt: null }
+    return { aiInteractionsUsed: 0, creditsRemaining: 0, usageResetAt: null, trialEndDate: null }
   }
 
   return {
     aiInteractionsUsed: data.ai_interactions_used || 0,
     creditsRemaining: data.credits_remaining || 0,
     usageResetAt: data.usage_reset_at,
+    trialEndDate: data.trial_end_date,
   }
 }
 
@@ -320,6 +323,29 @@ export const checkUserAccess = async (
     subscription && ACTIVE_LS_STATUSES.includes(subscription.status)
 
   if (!hasActiveSubscription) {
+    const now = new Date()
+    const localTrialEnd = usage.trialEndDate ? new Date(usage.trialEndDate) : null
+    const isOnLocalTrial = localTrialEnd && localTrialEnd > now
+
+    if (isOnLocalTrial) {
+      const localTrialDaysLeft = Math.max(
+        0,
+        Math.ceil((localTrialEnd.getTime() - now.getTime()) / MILLISECONDS_PER_DAY)
+      )
+      return {
+        has_access: true,
+        subscription_status: "on_trial",
+        plan_name: "Free Trial",
+        plan_slug: null,
+        interactions_used: usage.aiInteractionsUsed,
+        interactions_remaining: null,
+        credits_remaining: usage.creditsRemaining,
+        trial_days_left: localTrialDaysLeft,
+        trial_end_date: usage.trialEndDate,
+        subscription: null,
+      }
+    }
+
     return {
       has_access: false,
       subscription_status: subscription?.status ?? null,
@@ -329,6 +355,7 @@ export const checkUserAccess = async (
       interactions_remaining: null,
       credits_remaining: usage.creditsRemaining,
       trial_days_left: null,
+      trial_end_date: null,
       subscription,
     }
   }
@@ -368,6 +395,7 @@ export const checkUserAccess = async (
     interactions_remaining: interactionsRemaining,
     credits_remaining: usage.creditsRemaining,
     trial_days_left: trialDaysLeft,
+    trial_end_date: subscription.trialEndsAt,
     subscription,
   }
 }

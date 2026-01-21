@@ -144,6 +144,7 @@ export const SubscriptionTab: React.FC = () => {
         interactionsUsed={access?.interactions_used}
         interactionsRemaining={access?.interactions_remaining}
         trialDaysLeft={access?.trial_days_left}
+        trialEndDate={access?.trial_end_date}
         isLoading={actionLoading === 'portal'}
         onManageBilling={handleManageBilling}
         isHighlighted={currentPlan?.isHighlighted}
