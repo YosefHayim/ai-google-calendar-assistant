@@ -1,5 +1,7 @@
-import type { Credentials, OAuth2Client } from "google-auth-library"
+import type { Credentials } from "google-auth-library"
 import { type calendar_v3, google } from "googleapis"
+
+type OAuth2Client = InstanceType<typeof google.auth.OAuth2>
 import { env } from "@/config/env"
 import { REDIRECT_URI } from "@/config/env"
 import type { TokensProps } from "@/types"

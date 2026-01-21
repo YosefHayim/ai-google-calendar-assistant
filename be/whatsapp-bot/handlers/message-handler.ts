@@ -425,8 +425,8 @@ export const handleIncomingMessage = async (
     }
   }
 
-  if (resolution.userId && resolution.email) {
-    const access = await checkUserAccess(resolution.userId, resolution.email)
+  if (resolution.user.user_id && resolution.email) {
+    const access = await checkUserAccess(resolution.user.user_id, resolution.email)
     if (!access.has_access && access.credits_remaining <= 0) {
       await markAsRead(message.id)
       const upgradeUrl = "https://askally.ai/pricing"
