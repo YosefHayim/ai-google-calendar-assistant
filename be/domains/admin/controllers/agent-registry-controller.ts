@@ -20,7 +20,7 @@ export const getAgents = reqResAsyncHandler(async (_req: Request, res: Response)
 
 export const getAgentById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const { agentId } = req.params
+    const agentId = req.params.agentId as string
 
     const { data, error } = await SUPABASE.from("agents_registry")
       .select("*")
@@ -50,7 +50,7 @@ export const getAgentById = reqResAsyncHandler(
 
 export const updateAgentPrompt = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const { agentId } = req.params
+    const agentId = req.params.agentId as string
     const { basePrompt, description } = req.body
 
     if (!basePrompt || typeof basePrompt !== "string") {
@@ -126,7 +126,7 @@ export const updateAgentPrompt = reqResAsyncHandler(
 
 export const getOptimizationHistory = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const { agentId } = req.params
+    const agentId = req.params.agentId as string
     const limit = Number(req.query.limit) || DEFAULT_HISTORY_LIMIT
 
     const { data, error } = await SUPABASE.from("optimization_history")
@@ -161,7 +161,7 @@ export const getOptimizationHistory = reqResAsyncHandler(
 
 export const promoteOptimization = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const { optimizationId } = req.params
+    const optimizationId = req.params.optimizationId as string
 
     const { data: optimization, error: fetchError } = await SUPABASE.from(
       "optimization_history"
@@ -252,7 +252,7 @@ export const refreshAgentCache = reqResAsyncHandler(
 
 export const getOptimizationStats = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const { agentId } = req.params
+    const agentId = req.params.agentId as string
 
     const { data, error } = await SUPABASE.from("optimization_history")
       .select("outcome, total_time_ms")
