@@ -813,6 +813,75 @@ export type Database = {
         }
         Relationships: []
       }
+      slack_workspaces: {
+        Row: {
+          app_id: string | null
+          authed_user_id: string | null
+          bot_token: string
+          bot_user_id: string | null
+          created_at: string
+          enterprise_id: string | null
+          enterprise_name: string | null
+          id: string
+          installed_at: string | null
+          installed_by_user_id: string | null
+          is_active: boolean
+          is_enterprise_install: boolean | null
+          scope: string | null
+          team_id: string
+          team_name: string | null
+          updated_at: string
+          webhook_channel: string | null
+          webhook_channel_id: string | null
+          webhook_configuration_url: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          app_id?: string | null
+          authed_user_id?: string | null
+          bot_token: string
+          bot_user_id?: string | null
+          created_at?: string
+          enterprise_id?: string | null
+          enterprise_name?: string | null
+          id?: string
+          installed_at?: string | null
+          installed_by_user_id?: string | null
+          is_active?: boolean
+          is_enterprise_install?: boolean | null
+          scope?: string | null
+          team_id: string
+          team_name?: string | null
+          updated_at?: string
+          webhook_channel?: string | null
+          webhook_channel_id?: string | null
+          webhook_configuration_url?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          app_id?: string | null
+          authed_user_id?: string | null
+          bot_token?: string
+          bot_user_id?: string | null
+          created_at?: string
+          enterprise_id?: string | null
+          enterprise_name?: string | null
+          id?: string
+          installed_at?: string | null
+          installed_by_user_id?: string | null
+          is_active?: boolean
+          is_enterprise_install?: boolean | null
+          scope?: string | null
+          team_id?: string
+          team_name?: string | null
+          updated_at?: string
+          webhook_channel?: string | null
+          webhook_channel_id?: string | null
+          webhook_configuration_url?: string | null
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
       team_members: {
         Row: {
           id: string
