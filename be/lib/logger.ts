@@ -94,8 +94,6 @@ const clearLogFilesOnStartup = () => {
   }
 }
 
-clearLogFilesOnStartup()
-
 // Custom Formatter: Stringify JSON + add an extra Newline (\n) for the gap
 const jsonWithGap = winston.format.printf((info) => `${JSON.stringify(info)}\n`)
 
@@ -167,3 +165,6 @@ export const logger = winston.createLogger({
   defaultMeta: { service: "user-service" },
   transports,
 })
+
+// Clean up old log files on startup (only in development)
+clearLogFilesOnStartup()

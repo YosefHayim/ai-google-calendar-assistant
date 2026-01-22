@@ -9,8 +9,8 @@ import { logger } from "@/lib/logger"
  * @param {Date | string | null | undefined} date - The date to format. Can be a Date object,
  *   an ISO 8601 string, or other parseable date string. Returns "Invalid date" if null/undefined.
  * @param {boolean} [withTime=false] - Whether to include time (hour and minute) in the output.
- * @param {string} [desiredLanguage="he-IL"] - The locale to use for formatting (BCP 47 language tag).
- *   Defaults to Hebrew (Israel).
+ * @param {string} [desiredLanguage] - The locale to use for formatting (BCP 47 language tag).
+ *   If not provided, defaults to the user's language preference.
  * @returns {string} A localized date string, or "Invalid date" if the input cannot be parsed.
  * @example
  * // Format a Date object in Hebrew (default)
@@ -35,7 +35,7 @@ import { logger } from "@/lib/logger"
 const formatDate = (
   date: Date | string | null | undefined,
   withTime = false,
-  desiredLanguage = "he-IL"
+  desiredLanguage?: string
 ): string => {
   if (!date) {
     logger.error("Date: formatDate called: date not found")

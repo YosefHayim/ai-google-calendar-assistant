@@ -327,6 +327,14 @@ export const ar: TranslationShape = {
     refresh: 'تحديث',
     analyzing: 'جاري تحليل التقويم...',
 
+    tabs: {
+      overview: 'نظرة عامة',
+      patterns: 'الأنماط',
+      time: 'الوقت',
+      calendars: 'التقويمات',
+      health: 'الصحة',
+    },
+
     calendarFilter: {
       filterByCalendar: 'تصفية حسب التقويم',
       allCalendars: 'جميع التقويمات',
@@ -467,6 +475,7 @@ export const ar: TranslationShape = {
     title: 'استعادة الفجوات',
     description: 'اكتشف الوقت غير المسجل في تقويمك',
     analyzing: 'جاري تحليل التقويم...',
+    refresh: 'تحديث',
 
     header: {
       found: 'تم العثور على {{count}} فجوات',

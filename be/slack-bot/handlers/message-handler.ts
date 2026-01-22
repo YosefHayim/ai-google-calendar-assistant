@@ -10,6 +10,7 @@ import {
   handleCancellation,
   handleConfirmation,
 } from "./agent-handler"
+import { handleOCRConfirmation, hasPendingOCREvents } from "./file-handler"
 
 const TYPING_EMOJI = "hourglass_flowing_sand"
 
@@ -120,6 +121,29 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
   }
 
   const session = getSession(userId, teamId)
+  const channel = "channel" in event ? (event.channel as string) : ""
+
+  const hasPendingOCR = await hasPendingOCREvents(userId)
+  if (hasPendingOCR) {
+    const lowerText = text.toLowerCase()
+    const isConfirm =
+      lowerText === "yes" || lowerText === "confirm" || lowerText === "y"
+    const isCancel =
+      lowerText === "no" || lowerText === "cancel" || lowerText === "n"
+
+    if (isConfirm || isCancel) {
+      const handled = await handleOCRConfirmation({
+        client,
+        userId,
+        channelId: channel,
+        email: authResult.session.email,
+        action: isConfirm ? "confirm" : "cancel",
+      })
+      if (handled) {
+        return
+      }
+    }
+  }
 
   if (session.pendingConfirmation) {
     const lowerText = text.toLowerCase()
@@ -138,8 +162,6 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
       return
     }
   }
-
-  const channel = "channel" in event ? (event.channel as string) : ""
 
   try {
     if (channel && ts) {

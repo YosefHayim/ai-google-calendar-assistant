@@ -8,8 +8,23 @@ import {
 import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
 import { logger } from "@/lib/logger"
 import { unifiedContextStore } from "@/shared/context"
+import {
+  executeConfirmation,
+  extractEventsFromFiles,
+  type FileContent,
+  formatEventsForConfirmation,
+  getPendingEvents,
+  isSupportedMimeType,
+  processFileBuffer,
+  type SupportedMimeType,
+  storePendingEvents,
+} from "@/shared/ocr"
 import { updateLastActivity } from "../services/conversation-window"
-import { downloadVoiceMessage, uploadMedia } from "../services/media"
+import {
+  downloadMedia,
+  downloadVoiceMessage,
+  uploadMedia,
+} from "../services/media"
 import {
   checkAuthRateLimit,
   checkMessageRateLimit,
@@ -372,6 +387,220 @@ export const handleButtonReply = async (
   }
 }
 
+const MODALITY = "whatsapp" as const
+
+export const handleDocumentMessage = async (
+  processed: ProcessedMessage,
+  _userEmail?: string
+): Promise<void> => {
+  const { from, messageId, mediaId, mediaMimeType, contactName } = processed
+
+  if (!mediaId) {
+    logger.warn(`WhatsApp: Document message without media ID from ${from}`)
+    return
+  }
+
+  const mimeType = mediaMimeType || "application/octet-stream"
+  if (!isSupportedMimeType(mimeType)) {
+    await markAsRead(messageId)
+    await sendTextMessage(
+      from,
+      "I received your file, but I can only process images, PDFs, ICS calendar files, and spreadsheets (Excel/CSV) for event extraction."
+    )
+    return
+  }
+
+  logger.info(`WhatsApp: Processing document from ${from}: ${mimeType}`)
+  await markAsRead(messageId)
+
+  try {
+    const downloadResult = await downloadMedia(mediaId)
+    if (!(downloadResult.success && downloadResult.buffer)) {
+      await sendTextMessage(
+        from,
+        formatErrorForWhatsApp(
+          "Sorry, I couldn't download your file. Please try again."
+        )
+      )
+      return
+    }
+
+    const processResult = processFileBuffer(
+      downloadResult.buffer,
+      mimeType as SupportedMimeType,
+      "document"
+    )
+
+    if (!processResult.success) {
+      await sendTextMessage(
+        from,
+        formatErrorForWhatsApp(
+          processResult.error || "Sorry, I couldn't process your file."
+        )
+      )
+      return
+    }
+
+    if (
+      processResult.extractedEvents &&
+      processResult.extractedEvents.length > 0
+    ) {
+      const result = {
+        events: processResult.extractedEvents,
+        overallConfidence: "high" as const,
+        warnings: [] as string[],
+        fileCount: 1,
+      }
+
+      const userId = await getUserIdFromWhatsApp(from)
+      await storePendingEvents({
+        userId: userId || from,
+        modality: MODALITY,
+        result,
+        userTimezone: "UTC",
+        fileNames: ["document"],
+      })
+
+      const formattedEvents = formatEventsForConfirmation(
+        result.events,
+        MODALITY
+      )
+      await sendTextMessage(
+        from,
+        `${formattedEvents}\n\nWould you like me to add these to your calendar? Reply "yes" to confirm or "no" to cancel.`
+      )
+      return
+    }
+
+    if (!processResult.content) {
+      await sendTextMessage(
+        from,
+        "Sorry, I couldn't extract any content from your file."
+      )
+      return
+    }
+
+    const files: FileContent[] = [processResult.content]
+    const extractionResult = await extractEventsFromFiles({
+      files,
+      userTimezone: "UTC",
+      additionalContext: `Document from WhatsApp user ${contactName || from}`,
+    })
+
+    const extractionFailed = !extractionResult.success
+    const extractedResult = extractionResult.result
+    if (extractionFailed || !extractedResult) {
+      await sendTextMessage(
+        from,
+        formatErrorForWhatsApp(
+          extractionResult.error ||
+            "Sorry, I couldn't find any events in your file."
+        )
+      )
+      return
+    }
+
+    if (extractedResult.events.length === 0) {
+      await sendTextMessage(
+        from,
+        "I analyzed your file but couldn't find any events. Make sure it contains schedule information with dates and times."
+      )
+      return
+    }
+
+    const userId = await getUserIdFromWhatsApp(from)
+    await storePendingEvents({
+      userId: userId || from,
+      modality: MODALITY,
+      result: extractedResult,
+      userTimezone: "UTC",
+      fileNames: ["document"],
+    })
+
+    const formattedEvents = formatEventsForConfirmation(
+      extractedResult.events,
+      MODALITY
+    )
+
+    await sendTextMessage(
+      from,
+      `${formattedEvents}\n\nWould you like me to add these to your calendar? Reply "yes" to confirm or "no" to cancel.`
+    )
+
+    logger.info(
+      `WhatsApp: Found ${extractedResult.events.length} events for user ${from}`
+    )
+  } catch (error) {
+    logger.error(`WhatsApp: Error processing document from ${from}: ${error}`)
+    await sendTextMessage(
+      from,
+      formatErrorForWhatsApp(
+        "Sorry, I encountered an error processing your file."
+      )
+    )
+  }
+}
+
+const handleOCRConfirmation = async (
+  from: string,
+  action: "confirm" | "cancel",
+  userEmail?: string
+): Promise<boolean> => {
+  const userId = await getUserIdFromWhatsApp(from)
+  const pendingOCR = await getPendingEvents(userId || from, MODALITY)
+
+  if (!pendingOCR) {
+    return false
+  }
+
+  if (action === "cancel") {
+    await executeConfirmation({
+      userId: userId || from,
+      modality: MODALITY,
+      action: "cancel",
+      userEmail: userEmail || "",
+    })
+    await sendTextMessage(from, "Operation cancelled.")
+    return true
+  }
+
+  const result = await executeConfirmation({
+    userId: userId || from,
+    modality: MODALITY,
+    action: "confirm_all",
+    userEmail: userEmail || "",
+  })
+
+  if (!result.success) {
+    const errorMsg =
+      result.errors.length > 0 ? result.errors.join(", ") : "Unknown error"
+    await sendTextMessage(
+      from,
+      formatErrorForWhatsApp(`Sorry, I couldn't add the events: ${errorMsg}`)
+    )
+    return true
+  }
+
+  if (result.createdCount === 0) {
+    await sendTextMessage(from, "No events were added.")
+    return true
+  }
+
+  const eventText = result.createdCount === 1 ? "event" : "events"
+  await sendTextMessage(
+    from,
+    `✅ Successfully added ${result.createdCount} ${eventText} to your calendar!`
+  )
+
+  return true
+}
+
+const hasPendingOCREvents = async (from: string): Promise<boolean> => {
+  const userId = await getUserIdFromWhatsApp(from)
+  const pending = await getPendingEvents(userId || from, MODALITY)
+  return pending !== null
+}
+
 export const handleIncomingMessage = async (
   message: WhatsAppIncomingMessage,
   contact?: WhatsAppContact
@@ -426,7 +655,10 @@ export const handleIncomingMessage = async (
   }
 
   if (resolution.user.user_id && resolution.email) {
-    const access = await checkUserAccess(resolution.user.user_id, resolution.email)
+    const access = await checkUserAccess(
+      resolution.user.user_id,
+      resolution.email
+    )
     if (!access.has_access && access.credits_remaining <= 0) {
       await markAsRead(message.id)
       const upgradeUrl = "https://askally.ai/pricing"
@@ -447,6 +679,28 @@ export const handleIncomingMessage = async (
         await sendTextMessage(phoneNumber, msgLimit.message ?? "")
         return
       }
+
+      const hasPendingOCR = await hasPendingOCREvents(phoneNumber)
+      if (hasPendingOCR && processed.text) {
+        const lowerText = processed.text.toLowerCase()
+        const isConfirm =
+          lowerText === "yes" || lowerText === "confirm" || lowerText === "y"
+        const isCancel =
+          lowerText === "no" || lowerText === "cancel" || lowerText === "n"
+
+        if (isConfirm || isCancel) {
+          await markAsRead(message.id)
+          const handled = await handleOCRConfirmation(
+            phoneNumber,
+            isConfirm ? "confirm" : "cancel",
+            resolution.email
+          )
+          if (handled) {
+            return
+          }
+        }
+      }
+
       await handleTextMessage(processed, false, resolution.email)
       break
     }
@@ -473,12 +727,15 @@ export const handleIncomingMessage = async (
     }
 
     case "image":
-    case "video":
     case "document":
+      await handleDocumentMessage(processed, resolution.email)
+      break
+
+    case "video":
       await markAsRead(message.id)
       await sendTextMessage(
         phoneNumber,
-        "I received your file, but I can currently only process text and voice messages. Please describe what you need help with."
+        "I received your video, but I can currently only process text, voice, images, and documents. Please describe what you need help with."
       )
       break
 

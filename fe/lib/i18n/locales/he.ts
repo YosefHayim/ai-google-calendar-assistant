@@ -342,6 +342,14 @@ export const he: TranslationShape = {
     refresh: 'רענן',
     analyzing: 'מנתח את היומן שלך...',
 
+    tabs: {
+      overview: 'סקירה',
+      patterns: 'דפוסים',
+      time: 'זמן',
+      calendars: 'יומנים',
+      health: 'בריאות',
+    },
+
     calendarFilter: {
       filterByCalendar: 'סנן לפי יומן',
       allCalendars: 'כל היומנים',
@@ -494,6 +502,7 @@ export const he: TranslationShape = {
     title: 'שחזור פערים',
     description: 'גלה זמן לא מתועד ביומן שלך',
     analyzing: 'מנתח את היומן שלך...',
+    refresh: 'רענן',
 
     // Header
     header: {

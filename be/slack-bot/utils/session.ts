@@ -8,6 +8,7 @@ export type SlackSessionData = {
   firstName?: string
   username?: string
   codeLang?: SupportedLocale
+  timezone?: string
   messageCount: number
   lastProcessedTs?: string
   isProcessing: boolean

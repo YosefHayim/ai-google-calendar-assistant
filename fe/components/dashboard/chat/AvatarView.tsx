@@ -17,6 +17,7 @@ interface AvatarViewProps {
   isSpeaking: boolean
   speakingMessageId: string | null
   isLoading: boolean
+  isTyping?: boolean
   onResend: (text: string) => void
   onEditAndResend: (messageId: string, newText: string) => void
   onSpeak: (text: string, messageId?: string) => void
@@ -29,6 +30,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   isSpeaking,
   speakingMessageId,
   isLoading,
+  isTyping,
   onResend,
   onEditAndResend,
   onSpeak,
@@ -75,17 +77,18 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   }
 
   return (
-    <div className="absolute inset-0 z-10  dark:bg-secondary flex flex-col md:flex-row items-center justify-center p-4">
+    <div className="absolute inset-0 z-10 dark:bg-secondary flex flex-col items-center p-4 overflow-hidden">
       <div
         className={cn(
-          'flex flex-col items-center justify-center transition-all duration-700 w-full',
-          hasConversation ? 'md:w-1/2' : 'w-full',
+          'flex flex-col items-center justify-center transition-all duration-700 w-full shrink-0',
+          hasConversation ? 'h-[35%] min-h-[180px]' : 'flex-1',
         )}
       >
         <AssistantAvatar
           isRecording={isRecording}
           isSpeaking={isSpeaking}
           isLoading={isLoading}
+          isTyping={isTyping}
           compact={hasConversation}
         />
       </div>
@@ -96,7 +99,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="hidden md:flex flex-col w-1/2 h-[70%] items-center justify-center"
+            className="flex flex-col flex-1 w-full items-center justify-center"
           >
             <EmptyState
               icon={<MessageSquare />}
@@ -108,12 +111,12 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
         )}
         {hasConversation && (
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="hidden md:flex flex-col w-1/2 h-[70%] border-l px-8 py-4 overflow-y-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="flex flex-col w-full flex-1 border-t px-4 sm:px-8 py-4 overflow-y-auto"
           >
-            <div className="flex items-center gap-2 mb-6 text-muted-foreground font-bold text-xs uppercase tracking-widest">
+            <div className="flex items-center gap-2 mb-4 text-muted-foreground font-bold text-xs uppercase tracking-widest">
               <MessageSquare className="w-3.5 h-3.5" /> Live Context
             </div>
             <div className="flex-1 space-y-2">
@@ -121,7 +124,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                 const isEditing = editingMessageId === msg.id
 
                 return (
-                  <div key={msg.id} className="animate-in fade-in slide-in-from-right-2 duration-300 flex flex-col">
+                  <div key={msg.id} className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col">
                     {isEditing ? (
                       <div className="flex flex-col gap-2 ml-auto mr-0 max-w-[90%] w-full">
                         <textarea

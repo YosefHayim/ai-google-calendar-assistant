@@ -102,3 +102,13 @@ export type { FeatureFlag, CreateFeatureFlagInput, UpdateFeatureFlagInput } from
 
 // Storage hooks
 export { useUploadAvatar, useUploadAttachment, useDeleteFile, useGetFileUrl, useListUserFiles } from './storage'
+
+// Contacts hooks
+export {
+  useContacts,
+  useSearchContacts,
+  useContactStats,
+  useUpdateContact,
+  useDeleteContact,
+  useSyncContacts,
+} from './contacts'

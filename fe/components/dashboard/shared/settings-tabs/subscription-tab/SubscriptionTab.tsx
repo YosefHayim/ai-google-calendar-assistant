@@ -73,17 +73,16 @@ export const SubscriptionTab: React.FC = () => {
             await redirectToBillingPortal()
           } catch (error) {
             if (isNoBillingInfoError(error)) {
-              toast.info(t('toast.alreadyOnFreePlan'))
+              toast.info(t('billing.toast.alreadyOnFreePlan'))
             } else {
-              toast.error(t('toast.billingPortalOpenFailed'))
+              toast.error(t('billing.toast.billingPortalOpenFailed'))
             }
           }
           return
         }
 
         const canUpgradeExisting =
-          access?.subscription?.isLinkedToProvider === true &&
-          access?.subscription_status === 'active'
+          access?.subscription?.isLinkedToProvider === true && access?.subscription_status === 'active'
 
         if (canUpgradeExisting) {
           await upgradeSubscription({
@@ -100,7 +99,7 @@ export const SubscriptionTab: React.FC = () => {
       }
     } catch (error) {
       console.error('Checkout error:', error)
-      toast.error(t('toast.checkoutProcessFailed'))
+      toast.error(t('billing.toast.checkoutProcessFailed'))
     } finally {
       setActionLoading(null)
     }
@@ -112,7 +111,7 @@ export const SubscriptionTab: React.FC = () => {
       await redirectToBillingPortal()
     } catch (error) {
       if (isNoBillingInfoError(error)) {
-        toast.info(t('toast.redirectingToCheckout'))
+        toast.info(t('billing.toast.redirectingToCheckout'))
         await redirectToCheckout({ planSlug: 'pro', interval: 'monthly' })
       } else {
         toast.error(t('toast.billingPortalOpenFailed'))

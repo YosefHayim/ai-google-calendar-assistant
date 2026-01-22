@@ -2,7 +2,7 @@
 
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES, MAX_IMAGE_SIZE_MB, MAX_INPUT_LENGTH } from './utils/constants'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUp, ImagePlus, Mic, Pause, Trash2, X } from 'lucide-react'
+import { ArrowUp, Mic, Paperclip, Pause, Trash2, X } from 'lucide-react'
 import type { ChatInputProps, ImageFile } from './types'
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -16,6 +16,7 @@ import { fileToBase64 } from './utils/file-utils'
 import { getTextDirection } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useAutoResizeTextarea } from './hooks/useAutoResizeTextarea'
+import { useFeatureFlags } from '@/hooks/useFeatureFlags'
 import { useTranslation } from 'react-i18next'
 import { validateInputLength } from '@/lib/security/sanitize'
 
@@ -38,11 +39,15 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
       onInterimResult,
       onCancel,
       onImagesChange,
+      shouldUseOCR,
+      onOCRFilesSelected,
+      isOCRUploading,
     },
     externalRef,
   ) => {
     const { t } = useTranslation()
-    const isDisabled = isLoading && !onCancel
+    const { voiceInput, imageUpload } = useFeatureFlags()
+    const isDisabled = (isLoading || isOCRUploading) && !onCancel
     const inputDirection = useMemo(() => getTextDirection(input), [input])
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
@@ -93,7 +98,50 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     const handleImageSelect = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files
-        if (!files || !onImagesChange) return
+        if (!files) return
+
+        const allFiles = Array.from(files)
+
+        if (shouldUseOCR && onOCRFilesSelected && shouldUseOCR(allFiles)) {
+          try {
+            const ocrFiles: ImageFile[] = await Promise.all(
+              allFiles
+                .filter((file) => {
+                  if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) return false
+                  if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+                    toast.error(t('toast.imageTooLarge', { size: MAX_IMAGE_SIZE_MB }))
+                    return false
+                  }
+                  return true
+                })
+                .map(async (file) => {
+                  const preview = URL.createObjectURL(file)
+                  const base64 = await fileToBase64(file)
+                  return {
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+                    file,
+                    preview,
+                    base64,
+                  }
+                }),
+            )
+
+            if (ocrFiles.length > 0) {
+              onOCRFilesSelected(ocrFiles)
+              ocrFiles.forEach((f) => URL.revokeObjectURL(f.preview))
+            }
+          } catch (error) {
+            console.error('Failed to process OCR files:', error)
+            toast.error(t('toast.imageProcessingFailed'))
+          }
+          event.target.value = ''
+          return
+        }
+
+        if (!onImagesChange) {
+          event.target.value = ''
+          return
+        }
 
         const remainingSlots = MAX_IMAGES - images.length
         if (remainingSlots === 0) {
@@ -102,7 +150,6 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           return
         }
 
-        const allFiles = Array.from(files)
         if (allFiles.length > remainingSlots) {
           toast.error(t('toast.maxImagesAllowed', { count: MAX_IMAGES }))
         }
@@ -136,7 +183,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
         }
         event.target.value = ''
       },
-      [t, images, onImagesChange],
+      [t, images, onImagesChange, shouldUseOCR, onOCRFilesSelected],
     )
 
     const removeImage = useCallback(
@@ -334,39 +381,43 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
 
               <div className="flex items-end p-1.5 sm:p-2 gap-1 sm:gap-2">
                 <div className="flex flex-col gap-1 pb-0.5">
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => fileInputRef.current?.click()}
-                    className={cn(
-                      'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
-                      'text-muted-foreground hover:text-foreground',
-                      'hover:bg-secondary dark:hover:bg-secondary',
-                      (isDisabled || !canAddMoreImages) && 'opacity-40 cursor-not-allowed',
-                    )}
-                    disabled={isDisabled || !canAddMoreImages}
-                    title={canAddMoreImages ? 'Add images' : `Max ${MAX_IMAGES} images`}
-                  >
-                    <ImagePlus className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </motion.button>
+                  {imageUpload && (
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={cn(
+                        'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
+                        'text-muted-foreground hover:text-foreground',
+                        'hover:bg-secondary dark:hover:bg-secondary',
+                        (isDisabled || !canAddMoreImages) && 'opacity-40 cursor-not-allowed',
+                      )}
+                      disabled={isDisabled || !canAddMoreImages}
+                      title={canAddMoreImages ? 'Add files' : `Max ${MAX_IMAGES} files`}
+                    >
+                      <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </motion.button>
+                  )}
 
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={onToggleRecording}
-                    className={cn(
-                      'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
-                      isRecording
-                        ? 'text-destructive bg-destructive/5'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary dark:hover:bg-secondary',
-                      (isDisabled || !speechRecognitionSupported) && 'opacity-40 cursor-not-allowed',
-                    )}
-                    disabled={isDisabled || !speechRecognitionSupported}
-                  >
-                    <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </motion.button>
+                  {voiceInput && (
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={onToggleRecording}
+                      className={cn(
+                        'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
+                        isRecording
+                          ? 'text-destructive bg-destructive/5'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary dark:hover:bg-secondary',
+                        (isDisabled || !speechRecognitionSupported) && 'opacity-40 cursor-not-allowed',
+                      )}
+                      disabled={isDisabled || !speechRecognitionSupported}
+                    >
+                      <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </motion.button>
+                  )}
                 </div>
 
                 <div className="flex-1 relative min-w-0">

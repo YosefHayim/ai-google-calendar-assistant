@@ -1,4 +1,6 @@
 export type { HandlerContext } from "@/shared/types"
+export type { SearchContactsResult } from "./contact-handlers"
+export { searchContactsHandler } from "./contact-handlers"
 export type {
   UpdateUserBrainParams,
   UpdateUserBrainResult,

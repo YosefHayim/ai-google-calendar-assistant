@@ -1,4 +1,5 @@
 import type { EventQueryParams, GapQueryParams } from '@/types/api'
+import type { GetContactsParams, SearchContactsParams } from '@/types/contacts'
 
 /**
  * Centralized Query Keys Factory
@@ -78,6 +79,17 @@ export const queryKeys = {
   timezones: {
     all: ['timezones'] as const,
     list: () => [...queryKeys.timezones.all, 'list'] as const,
+  },
+
+  // Contacts queries
+  contacts: {
+    all: ['contacts'] as const,
+    lists: () => [...queryKeys.contacts.all, 'list'] as const,
+    list: (params?: GetContactsParams) => [...queryKeys.contacts.lists(), params ?? {}] as const,
+    search: (params?: SearchContactsParams) => [...queryKeys.contacts.all, 'search', params ?? {}] as const,
+    stats: () => [...queryKeys.contacts.all, 'stats'] as const,
+    miningStatus: () => [...queryKeys.contacts.all, 'mining-status'] as const,
+    detail: (id: string) => [...queryKeys.contacts.all, 'detail', id] as const,
   },
 } as const
 

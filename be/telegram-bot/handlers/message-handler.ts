@@ -1,9 +1,12 @@
 import type { Bot } from "grammy"
 import { InputFile } from "grammy"
-import type { ImageContent } from "@/shared/llm"
-import { generateSpeechForTelegram } from "@/domains/analytics/utils"
-import { transcribeAudio } from "@/domains/analytics/utils"
+import {
+  generateSpeechForTelegram,
+  transcribeAudio,
+} from "@/domains/analytics/utils"
 import { logger } from "@/lib/logger"
+import type { ImageContent } from "@/shared/llm"
+import { executeConfirmation, getPendingEvents } from "@/shared/ocr"
 import { getTranslatorFromLanguageCode } from "../i18n"
 import {
   CANCEL_RESPONSES,
@@ -48,6 +51,10 @@ import {
   handleWebsiteCommand,
   handleWeekCommand,
 } from "../utils/commands"
+import {
+  isOCRSupportedDocument,
+  processDocument,
+} from "../utils/document-handler"
 import { processPhoto } from "../utils/image-handler"
 import {
   handleAgentRequest,
@@ -61,6 +68,8 @@ const MessageAction = {
   CANCEL: "cancel",
   OTHER: "other",
 } as const
+
+const LOG_PREVIEW_LENGTH = 50
 
 type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction]
 
@@ -115,6 +124,71 @@ const handlePendingConfirmation = async (
       break
     }
   }
+}
+
+const handlePendingOCRConfirmation = async (
+  ctx: GlobalContext,
+  text: string
+): Promise<boolean> => {
+  const userId = ctx.from?.id?.toString()
+  if (!userId) {
+    return false
+  }
+
+  const pendingOCR = await getPendingEvents(userId, "telegram")
+  if (!pendingOCR) {
+    return false
+  }
+
+  const action = classifyConfirmationResponse(text)
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+
+  if (action === MessageAction.OTHER) {
+    await ctx.reply(
+      "You have pending calendar events to confirm. Reply <b>yes</b> to add them or <b>no</b> to cancel.",
+      { parse_mode: "HTML" }
+    )
+    return true
+  }
+
+  if (action === MessageAction.CANCEL) {
+    await executeConfirmation({
+      userId,
+      modality: "telegram",
+      action: "cancel",
+      userEmail: ctx.session.email,
+    })
+    await ctx.reply(t("common.operationCancelled"))
+    return true
+  }
+
+  const result = await executeConfirmation({
+    userId,
+    modality: "telegram",
+    action: "confirm_all",
+    userEmail: ctx.session.email,
+  })
+
+  if (!result.success) {
+    const errorMsg =
+      result.errors.length > 0
+        ? result.errors.join(", ")
+        : "Unknown error occurred"
+    await ctx.reply(`Sorry, I couldn't add the events: ${errorMsg}`)
+    return true
+  }
+
+  if (result.createdCount === 0) {
+    await ctx.reply(t("common.operationCancelled"))
+    return true
+  }
+
+  const eventText = result.createdCount === 1 ? "event" : "events"
+  await ctx.reply(
+    `✅ Successfully added ${result.createdCount} ${eventText} to your calendar!`
+  )
+
+  return true
 }
 
 type CommandHandler = (ctx: GlobalContext) => Promise<void>
@@ -230,6 +304,11 @@ const handleSessionStates = async (
 
   if (ctx.session.pendingConfirmation) {
     await handlePendingConfirmation(ctx, text)
+    return true
+  }
+
+  const ocrHandled = await handlePendingOCRConfirmation(ctx, text)
+  if (ocrHandled) {
     return true
   }
 
@@ -366,7 +445,7 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
     }
 
     logger.info(
-      `TG Voice: Transcribed ${audioBuffer.length} bytes to "${transcription.text.substring(0, 50)}..." for user ${telegramUserId}`
+      `TG Voice: Transcribed ${audioBuffer.length} bytes to "${transcription.text.substring(0, LOG_PREVIEW_LENGTH)}..." for user ${telegramUserId}`
     )
 
     // Stop typing before passing to agent (agent handler will start its own)
@@ -478,6 +557,61 @@ export const registerMessageHandler = (bot: Bot<GlobalContext>): void => {
       await handleFreeTextMessage(ctx, text, { images })
     } catch (error) {
       logger.error(`TG Photo: Error processing photo: ${error}`)
+      await ctx.reply(t("errors.processingError"))
+    } finally {
+      stopTyping()
+    }
+  })
+
+  bot.on("message:document", async (ctx) => {
+    const msgId = ctx.message.message_id
+    const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+
+    if (isDuplicateMessage(ctx, msgId)) {
+      return
+    }
+
+    const document = ctx.message.document
+    if (!document) {
+      return
+    }
+
+    if (!isOCRSupportedDocument(document)) {
+      await ctx.reply(
+        "I can process PDFs, ICS calendar files, Excel spreadsheets (xlsx/xls), CSV files, and images (jpg, png, webp, gif) to extract calendar events.\n\nPlease send a supported file type."
+      )
+      return
+    }
+
+    const userId = ctx.from?.id?.toString()
+    if (!userId) {
+      await ctx.reply(t("errors.processingError"))
+      return
+    }
+
+    const stopTyping = startTypingIndicator(ctx)
+
+    try {
+      const timezone = ctx.session.googleTokens?.timezone || "UTC"
+      const result = await processDocument(ctx.api, document, {
+        userId,
+        userTimezone: timezone,
+      })
+
+      stopTyping()
+
+      if (!result.success) {
+        await ctx.reply(result.message)
+        return
+      }
+
+      await ctx.reply(result.message, { parse_mode: "HTML" })
+
+      logger.info(
+        `TG Document: Found ${result.eventsCount} events for user ${userId}`
+      )
+    } catch (error) {
+      logger.error(`TG Document: Error processing document: ${error}`)
       await ctx.reply(t("errors.processingError"))
     } finally {
       stopTyping()

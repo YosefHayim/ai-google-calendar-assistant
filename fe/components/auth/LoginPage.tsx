@@ -19,15 +19,15 @@ const LoginPage: React.FC = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const posthog = usePostHog()
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuthContext()
+  const { isAuthenticated, isLoading: isAuthLoading, isLoggingOut } = useAuthContext()
   const error = searchParams?.get('error')
   const [isLoading, setIsLoading] = React.useState(false)
 
   useEffect(() => {
-    if (!isAuthLoading && isAuthenticated) {
+    if (!isAuthLoading && !isLoggingOut && isAuthenticated) {
       router.push('/dashboard')
     }
-  }, [isAuthenticated, isAuthLoading, router])
+  }, [isAuthenticated, isAuthLoading, isLoggingOut, router])
 
   const handleGoogleLogin = () => {
     setIsLoading(true)
@@ -54,7 +54,7 @@ const LoginPage: React.FC = () => {
         </Link>
 
         <div className="w-full max-w-md bg-background/95 dark:bg-secondary/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
-          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-foreground dark:text-primary-foreground">
+          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-foreground dark:text-primary-foreground overflow-hidden">
             {t('login.title')}
           </h1>
           <p className="text-muted-foreground dark:text-muted-foreground mb-8 text-lg font-medium">

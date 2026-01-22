@@ -448,6 +448,14 @@ export const fr: TranslationShape = {
       noEvents: 'Aucun événement récent',
       viewAll: 'Voir tout',
     },
+
+    tabs: {
+      overview: 'Aperçu',
+      patterns: 'Motifs',
+      time: 'Temps',
+      calendars: 'Calendriers',
+      health: 'Santé',
+    },
   },
 
   chat: {
@@ -489,6 +497,7 @@ export const fr: TranslationShape = {
     title: 'Récupération des créneaux',
     description: 'Découvrez le temps non suivi dans votre agenda',
     analyzing: 'Analyse de votre agenda...',
+    refresh: 'Actualiser',
 
     header: {
       found: '{{count}} créneaux trouvés',

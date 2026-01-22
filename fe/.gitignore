@@ -43,3 +43,4 @@ tsconfig.tsbuildinfo
 *storybook.log
 storybook-static
 coverage
+ci-failure-report.md

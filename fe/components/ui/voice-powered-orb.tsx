@@ -15,6 +15,8 @@ interface VoicePoweredOrbProps {
   maxRotationSpeed?: number
   maxHoverIntensity?: number
   isLoading?: boolean
+  isSpeaking?: boolean
+  isTyping?: boolean
   onVoiceDetected?: (detected: boolean) => void
 }
 
@@ -22,10 +24,12 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
   className,
   hue = 0,
   enableVoiceControl = true,
-  voiceSensitivity = 2.5, // Increased sensitivity for better correspondence
+  voiceSensitivity = 2.5,
   maxRotationSpeed = 1.2,
-  maxHoverIntensity = 0.8, // Increased for clearer visual feedback
+  maxHoverIntensity = 0.8,
   isLoading = false,
+  isSpeaking = false,
+  isTyping = false,
   onVoiceDetected,
 }) => {
   const ctnDom = useRef<HTMLDivElement>(null)
@@ -38,11 +42,22 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
   const smoothedAudioLevel = useRef<number>(0)
   const targetAudioLevel = useRef<number>(0)
   const isLoadingRef = useRef<boolean>(isLoading)
+  const isSpeakingRef = useRef<boolean>(isSpeaking)
+  const isTypingRef = useRef<boolean>(isTyping)
+  const speakingPhase = useRef<number>(0)
+  const typingPhase = useRef<number>(0)
 
-  // Keep isLoadingRef in sync with prop
   useEffect(() => {
     isLoadingRef.current = isLoading
   }, [isLoading])
+
+  useEffect(() => {
+    isSpeakingRef.current = isSpeaking
+  }, [isSpeaking])
+
+  useEffect(() => {
+    isTypingRef.current = isTyping
+  }, [isTyping])
 
   const vert = /* glsl */ `
     precision highp float;
@@ -371,6 +386,24 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
           targetAudioLevel.current = Math.min(rms * voiceSensitivity, 1.2)
 
           if (onVoiceDetected) onVoiceDetected(targetAudioLevel.current > 0.05)
+        }
+
+        // Add speaking animation (pulsing effect when TTS is playing)
+        if (isSpeakingRef.current) {
+          speakingPhase.current += dt * 8 // Fast oscillation for speaking
+          const speakingIntensity = (Math.sin(speakingPhase.current) + 1) * 0.3 + 0.4 // Range 0.4-1.0
+          targetAudioLevel.current = Math.max(targetAudioLevel.current, speakingIntensity)
+        } else {
+          speakingPhase.current = 0
+        }
+
+        // Add typing animation (subtle pulse when user types)
+        if (isTypingRef.current) {
+          typingPhase.current += dt * 4 // Slower oscillation for typing
+          const typingIntensity = (Math.sin(typingPhase.current) + 1) * 0.15 + 0.1 // Range 0.1-0.4
+          targetAudioLevel.current = Math.max(targetAudioLevel.current, typingIntensity)
+        } else {
+          typingPhase.current = 0
         }
 
         // Correspondence: Smooth lerp but fast enough to feel real-time

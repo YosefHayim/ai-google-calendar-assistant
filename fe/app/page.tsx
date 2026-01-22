@@ -29,18 +29,18 @@ const HomePage = React.memo(function HomePage() {
 
   return (
     <MarketingLayout>
-      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative min-h-[100dvh] sm:min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 grid-background opacity-50" />
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4 sm:mb-6 px-2">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4 sm:mb-6 px-2">
             {t('home.title')}
             <br />
             <span className="text-primary">{t('home.titleHighlight')}</span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground dark:text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto font-medium px-4 sm:px-0">
+          <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-muted-foreground dark:text-muted-foreground mb-6 sm:mb-12 max-w-2xl mx-auto font-medium px-2 sm:px-0">
             {t('home.subtitle')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2 sm:px-0">
             <Link href="/register" className="w-full sm:w-auto">
               <InteractiveHoverButton
                 text={t('home.getStartedFree')}
@@ -56,7 +56,7 @@ const HomePage = React.memo(function HomePage() {
               </Button>
             </Link>
           </div>
-          <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-muted-foreground dark:text-muted-foreground px-4">
+          <div className="mt-4 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-muted-foreground dark:text-muted-foreground px-2">
             <span className="text-xs sm:text-sm font-medium">{t('home.availableIn')}</span>
             <a
               href={SOCIAL_LINKS.TELEGRAM_BOT}

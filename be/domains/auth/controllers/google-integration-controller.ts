@@ -22,6 +22,7 @@ import { logger } from "@/lib/logger"
 import { msToIso } from "@/lib/date/timestamp-utils"
 import { sendWelcomeEmail } from "@/domains/notifications/services/notification-dispatcher"
 import { syncUserCalendarsAfterOAuth } from "@/domains/calendar/utils/sync-calendars-after-oauth"
+import { mineContactsInBackground } from "@/domains/contacts/services/contact-mining-service"
 
 const TRIAL_DURATION_DAYS = 14
 
@@ -316,6 +317,13 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
 
       if (tokens.access_token) {
         syncUserCalendarsAfterOAuth(
+          userData.id,
+          normalizedEmail,
+          tokens.access_token,
+          tokens.refresh_token ?? undefined
+        )
+
+        mineContactsInBackground(
           userData.id,
           normalizedEmail,
           tokens.access_token,

@@ -48,6 +48,7 @@ export const mockUserRecord: Database["public"]["Tables"]["users"]["Row"] = {
   credits_remaining: 0,
   usage_reset_at: null,
   trial_end_date: null,
+  contact_mining_enabled: true,
 }
 
 /**

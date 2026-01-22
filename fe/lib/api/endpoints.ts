@@ -578,6 +578,83 @@ export const ENDPOINTS = {
   // ============================================
 
   TIMEZONES_LIST: '/api/timezones',
+
+  // ============================================
+  // OCR ENDPOINTS
+  // ============================================
+
+  OCR_UPLOAD: '/api/chat/ocr/upload',
+  OCR_CONFIRM: '/api/chat/ocr/confirm',
+  OCR_PENDING: '/api/chat/ocr/pending',
+
+  // ============================================
+  // CONTACTS ENDPOINTS
+  // ============================================
+
+  /**
+   * List contacts with pagination
+   * Methods: GET
+   * Query params: page, limit, sortBy, sortOrder, includeHidden
+   */
+  CONTACTS: '/api/contacts',
+
+  /**
+   * Search contacts by query
+   * Methods: GET
+   * Query params: q (query string), limit
+   */
+  CONTACTS_SEARCH: '/api/contacts/search',
+
+  /**
+   * Get contact statistics and analytics
+   * Methods: GET
+   */
+  CONTACTS_STATS: '/api/contacts/stats',
+
+  /**
+   * Get contact mining status
+   * Methods: GET
+   */
+  CONTACTS_MINING_STATUS: '/api/contacts/mining-status',
+
+  /**
+   * Set contact mining status (enable/disable)
+   * Methods: PUT
+   */
+  CONTACTS_MINING_STATUS_UPDATE: '/api/contacts/mining-status',
+
+  /**
+   * Trigger contact sync/mining
+   * Methods: POST
+   */
+  CONTACTS_SYNC: '/api/contacts/sync',
+
+  /**
+   * Trigger async contact sync/mining
+   * Methods: POST
+   */
+  CONTACTS_SYNC_ASYNC: '/api/contacts/sync/async',
+
+  /**
+   * Get single contact by ID
+   * Methods: GET
+   * @param id - Contact ID
+   */
+  CONTACTS_BY_ID: (id: string) => `/api/contacts/${id}`,
+
+  /**
+   * Update contact by ID
+   * Methods: PATCH
+   * @param id - Contact ID
+   */
+  CONTACTS_UPDATE: (id: string) => `/api/contacts/${id}`,
+
+  /**
+   * Delete contact by ID
+   * Methods: DELETE
+   * @param id - Contact ID
+   */
+  CONTACTS_DELETE: (id: string) => `/api/contacts/${id}`,
 } as const
 
 export type EndpointsType = typeof ENDPOINTS

@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import React, { useMemo, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatDate, formatDuration } from '@/lib/formatUtils'
+import type { DateRange } from 'react-day-picker'
+import { subDays } from 'date-fns'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -23,7 +25,20 @@ import { useGaps } from '@/hooks/queries/gaps/useGaps'
 const GapsDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'gaps' | 'analytics' | 'settings'>('gaps')
 
-  const { data: gapsData, isLoading, isError, error, refetch } = useGaps()
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 7),
+    to: new Date(),
+  })
+
+  const queryParams = useMemo(() => {
+    if (!date?.from || !date?.to) return undefined
+    return {
+      startDate: date.from.toISOString(),
+      endDate: date.to.toISOString(),
+    }
+  }, [date])
+
+  const { data: gapsData, isLoading, isError, error, refetch, isFetching } = useGaps(queryParams)
   const { fillGap, skipGap, dismissAllGaps } = useGapMutations()
 
   const gaps = gapsData?.gaps ?? []
@@ -119,7 +134,9 @@ const GapsDashboard: React.FC = () => {
         analyzedRange={analyzedRange}
         totalGaps={totalCount}
         onRefresh={() => refetch()}
-        isRefreshing={false}
+        isRefreshing={isFetching}
+        date={date}
+        setDate={setDate}
       />
 
       {/* Overview Stats */}

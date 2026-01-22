@@ -444,6 +444,14 @@ export const ru: TranslationShape = {
       noEvents: 'Нет недавних событий',
       viewAll: 'Показать все',
     },
+
+    tabs: {
+      overview: 'Обзор',
+      patterns: 'Шаблоны',
+      time: 'Время',
+      calendars: 'Календари',
+      health: 'Здоровье',
+    },
   },
 
   chat: {
@@ -485,6 +493,7 @@ export const ru: TranslationShape = {
     title: 'Восстановление пробелов',
     description: 'Обнаружьте неотмеченное время в вашем календаре',
     analyzing: 'Анализ календаря...',
+    refresh: 'Обновить',
 
     header: {
       found: 'Найдено {{count}} пробелов',

@@ -9,10 +9,17 @@ interface AssistantAvatarProps {
   isRecording: boolean
   isSpeaking: boolean
   isLoading: boolean
+  isTyping?: boolean
   compact?: boolean
 }
 
-export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, isSpeaking, isLoading, compact }) => {
+export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({
+  isRecording,
+  isSpeaking,
+  isLoading,
+  isTyping,
+  compact,
+}) => {
   return (
     <div
       className={cn(
@@ -38,6 +45,8 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, i
           <VoicePoweredOrb
             enableVoiceControl={isRecording || isSpeaking}
             isLoading={isLoading}
+            isSpeaking={isSpeaking}
+            isTyping={isTyping}
             className="w-full h-full rounded-full"
             maxRotationSpeed={1.0}
             voiceSensitivity={1.5}

@@ -43,6 +43,32 @@ export const eventTimeSchema = z
 
 export const makeEventTime = () => eventTimeSchema
 
+const MAX_ATTENDEES = 100
+
+export const attendeeSchema = z.object({
+  email: z.string().email({ message: "Invalid attendee email address" }),
+  displayName: z.coerce
+    .string()
+    .optional()
+    .describe("Display name for the attendee"),
+  optional: z.coerce
+    .boolean()
+    .optional()
+    .describe("Whether the attendee is optional"),
+  responseStatus: z
+    .enum(["needsAction", "declined", "tentative", "accepted"])
+    .optional()
+    .describe("The attendee response status"),
+})
+
+export const attendeesSchema = z
+  .array(attendeeSchema)
+  .max(MAX_ATTENDEES, `Maximum ${MAX_ATTENDEES} attendees allowed`)
+  .optional()
+  .describe(
+    "List of attendees to invite. Use when user wants to invite people to the event."
+  )
+
 export const getEventSchema = z
   .object({
     timeMin: z.coerce
@@ -94,6 +120,7 @@ export const insertEventSchema = z
       .optional(),
     start: eventTimeSchema,
     end: eventTimeSchema,
+    attendees: attendeesSchema,
     addMeetLink: z.coerce
       .boolean({
         description:
@@ -148,6 +175,7 @@ export const updateEventSchema = z
       .default(null),
     start: eventTimeSchema.transform(cleanEventTime).nullable().default(null),
     end: eventTimeSchema.transform(cleanEventTime).nullable().default(null),
+    attendees: attendeesSchema,
     addMeetLink: z.coerce
       .boolean({
         description:

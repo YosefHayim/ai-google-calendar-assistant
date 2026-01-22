@@ -47,9 +47,12 @@ export function useEnabledFeatureFlags(options?: QueryHookOptions) {
   return useQuery({
     queryKey: featureFlagKeys.enabled(),
     queryFn: () => featureFlagsService.getEnabledFlags(),
-    staleTime: options?.staleTime ?? 5 * 60 * 1000,
+    staleTime: options?.staleTime ?? 60 * 1000,
+    gcTime: 2 * 60 * 1000,
     enabled: options?.enabled ?? true,
-    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    refetchInterval: 5 * 60 * 1000,
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   })

@@ -80,6 +80,9 @@ function formatEventData(eventLike: Partial<Event>): Event {
   if (eventLike.reminders) {
     event.reminders = eventLike.reminders
   }
+  if (eventLike.attendees && eventLike.attendees.length > 0) {
+    event.attendees = eventLike.attendees
+  }
 
   return event
 }
@@ -247,6 +250,15 @@ export async function insertEventHandler(
     end: convertEventTime(params.end),
   }
 
+  if (params.attendees && params.attendees.length > 0) {
+    eventLike.attendees = params.attendees.map((a) => ({
+      email: a.email,
+      displayName: a.displayName || undefined,
+      optional: a.optional || false,
+      responseStatus: a.responseStatus || "needsAction",
+    }))
+  }
+
   const eventWithTimezone = await applyDefaultTimezoneIfNeeded(eventLike, email)
   const eventData = formatEventData(eventWithTimezone)
   const calendarId = params.calendarId ?? "primary"
@@ -325,6 +337,15 @@ export async function updateEventHandler(
       email
     )
     updateData.end = endWithTz.end
+  }
+
+  if (params.attendees && params.attendees.length > 0) {
+    updateData.attendees = params.attendees.map((a) => ({
+      email: a.email,
+      displayName: a.displayName || undefined,
+      optional: a.optional || false,
+      responseStatus: a.responseStatus || "needsAction",
+    }))
   }
 
   const calendarId = params.calendarId ?? "primary"

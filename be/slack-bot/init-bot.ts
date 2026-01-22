@@ -12,7 +12,7 @@ import {
   handleAppMention,
   handleSlackMessage,
 } from "./handlers/message-handler"
-import { handleFileShared } from "./handlers/voice-handler"
+import { handleFileShared } from "./handlers/file-handler"
 import { getWorkspaceToken } from "./services/oauth-service"
 
 let app: App | null = null

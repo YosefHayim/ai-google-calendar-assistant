@@ -1,19 +1,20 @@
 import type { NextFunction, Request, Response } from "express"
 import { Router } from "express"
 import { STATUS_RESPONSE } from "@/config/constants"
+import { googleTokenRefresh } from "@/domains/auth/middleware/google-token-refresh"
+import { googleTokenValidation } from "@/domains/auth/middleware/google-token-validation"
+import { subscriptionGuard } from "@/domains/auth/middleware/subscription-guard"
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
+import { ocrController } from "@/domains/calendar/controllers/ocr-controller"
 import { chatController } from "@/domains/chat/controllers/chat-controller"
 import { chatStreamController } from "@/domains/chat/controllers/chat-stream-controller"
 import { geminiStreamController } from "@/domains/chat/controllers/gemini-stream-controller"
-import { googleTokenRefresh } from "@/domains/auth/middleware/google-token-refresh"
-import { googleTokenValidation } from "@/domains/auth/middleware/google-token-validation"
+import { logger } from "@/lib/logger"
 import {
   aiChatBurstLimiter,
   aiChatRateLimiter,
 } from "@/middlewares/rate-limiter"
-import { subscriptionGuard } from "@/domains/auth/middleware/subscription-guard"
-import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
 import { sendR } from "@/utils"
-import { logger } from "@/lib/logger"
 
 const router = Router()
 
@@ -461,5 +462,13 @@ router.get(
   supabaseAuth(),
   chatController.getShareStatus
 )
+
+// ============== OCR FILE UPLOAD ROUTES ==============
+// POST /ocr/upload - Upload files for OCR event extraction
+router.post("/ocr/upload", withGoogleAuth, ocrController.uploadForExtraction)
+// POST /ocr/confirm - Confirm or cancel pending OCR events
+router.post("/ocr/confirm", withGoogleAuth, ocrController.confirmEvents)
+// GET /ocr/pending - Get pending OCR events
+router.get("/ocr/pending", supabaseAuth(), ocrController.getPendingOCREvents)
 
 export default router
