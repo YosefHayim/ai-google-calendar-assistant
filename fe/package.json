@@ -15,6 +15,9 @@
   "scripts": {
     "build": "next build",
     "analyze": "ANALYZE=true next build --webpack",
+    "ci:local": "bash scripts/ci-local.sh",
+    "ci:lint": "eslint . && npx tsc --noEmit",
+    "ci:test": "NODE_ENV=test bun test",
     "redis": "redis-server",
     "dev": "next dev --port 4000 --webpack",
     "format": "prettier --write .",

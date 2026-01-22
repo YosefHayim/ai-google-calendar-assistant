@@ -7,6 +7,9 @@
   "scripts": {
     "backup:flags": "bun scripts/backup-feature-flags.ts",
     "build": "tsc && tsc-alias",
+    "ci:local": "bash scripts/ci-local.sh",
+    "ci:lint": "bunx biome check . && bunx tsc --noEmit",
+    "ci:test": "TEST_ENV=true bun run jest --passWithNoTests",
     "db:seed:flags": "bun scripts/seed-feature-flags.ts",
     "check": "npx ultracite check",
     "dev": "bun --watch app.ts",
