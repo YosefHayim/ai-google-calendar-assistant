@@ -122,7 +122,7 @@ export function DashboardUIProvider({ children }: { children: React.ReactNode })
     closeSettings()
     await logout()
     queryClient.clear()
-    router.push('/login')
+    router.replace('/login')
   }, [closeSettings, logout, queryClient, router])
 
   const value: DashboardUIContextValue = {

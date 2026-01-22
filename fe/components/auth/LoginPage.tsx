@@ -19,15 +19,15 @@ const LoginPage: React.FC = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const posthog = usePostHog()
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuthContext()
+  const { isAuthenticated, isLoading: isAuthLoading, isLoggingOut } = useAuthContext()
   const error = searchParams?.get('error')
   const [isLoading, setIsLoading] = React.useState(false)
 
   useEffect(() => {
-    if (!isAuthLoading && isAuthenticated) {
+    if (!isAuthLoading && !isLoggingOut && isAuthenticated) {
       router.push('/dashboard')
     }
-  }, [isAuthenticated, isAuthLoading, router])
+  }, [isAuthenticated, isAuthLoading, isLoggingOut, router])
 
   const handleGoogleLogin = () => {
     setIsLoading(true)
