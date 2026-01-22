@@ -12,15 +12,13 @@ export function translate(
   language: string | null | undefined,
   variables: Record<string, string | number> = {}
 ): string {
-  // Normalize language code and fallback to English if not supported
   const normalizedLang = (language?.toLowerCase() ||
     "en") as SupportedBackendLanguage
   const translations =
     backendTranslations[normalizedLang] || backendTranslations.en
 
-  let message = translations[key] || backendTranslations.en[key]
+  let message: string = translations[key] || backendTranslations.en[key]
 
-  // Interpolate variables
   for (const [variable, value] of Object.entries(variables)) {
     message = message.replace(new RegExp(`{{${variable}}}`, "g"), String(value))
   }
