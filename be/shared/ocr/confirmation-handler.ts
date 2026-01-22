@@ -1,6 +1,3 @@
-import { redis } from "@/infrastructure/redis/redis"
-import { logger } from "@/lib/logger"
-import { insertEventHandler } from "@/shared/tools/handlers"
 import type {
   ConfirmationAction,
   ExtractedEvent,
@@ -8,7 +5,11 @@ import type {
   Modality,
   PendingOCREvents,
 } from "./types"
+
 import { PENDING_EVENTS_TTL_SECONDS } from "./types"
+import { insertEventHandler } from "@/shared/tools/handlers"
+import { logger } from "@/lib/logger"
+import { redisClient } from "@/infrastructure/redis/redis"
 
 const LOG_PREFIX = "[OCRConfirmation]"
 const PENDING_KEY_PREFIX = "ocr:pending"
@@ -42,7 +43,7 @@ export const storePendingEvents = async (
     createdAt: now,
   }
 
-  await redis.setex(key, PENDING_EVENTS_TTL_SECONDS, JSON.stringify(pending))
+  await redisClient.setex(key, PENDING_EVENTS_TTL_SECONDS, JSON.stringify(pending))
 
   logger.info(
     `${LOG_PREFIX} Stored ${result.events.length} pending events for user ${userId}`
@@ -56,7 +57,7 @@ export const getPendingEvents = async (
   modality: Modality
 ): Promise<PendingOCREvents | null> => {
   const key = buildPendingKey(userId, modality)
-  const data = await redis.get(key)
+  const data = await redisClient.get(key)
 
   if (!data) {
     return null
@@ -66,7 +67,7 @@ export const getPendingEvents = async (
     const pending = JSON.parse(data) as PendingOCREvents
 
     if (pending.expiresAt < Date.now()) {
-      await redis.del(key)
+      await redisClient.del(key)
       return null
     }
 
@@ -82,7 +83,7 @@ export const clearPendingEvents = async (
   modality: Modality
 ): Promise<void> => {
   const key = buildPendingKey(userId, modality)
-  await redis.del(key)
+  await redisClient.del(key)
   logger.info(`${LOG_PREFIX} Cleared pending events for user ${userId}`)
 }
 
@@ -131,6 +132,15 @@ const selectEventsToCreate = (
   return null
 }
 
+const convertAttendeesToFormat = (
+  attendees: string[] | undefined
+): Array<{ email: string }> | undefined => {
+  if (!attendees || attendees.length === 0) {
+    return undefined
+  }
+  return attendees.map((email) => ({ email }))
+}
+
 const createSingleEvent = async (
   event: ExtractedEvent,
   email: string,
@@ -139,23 +149,50 @@ const createSingleEvent = async (
   try {
     const insertResult = await insertEventHandler(
       {
+        calendarId: null,
         summary: event.title,
-        description: event.description,
-        startTime: event.startTime,
-        endTime: event.endTime,
-        location: event.location,
-        attendees: event.attendees,
-        recurrence: event.recurrence ? [event.recurrence] : undefined,
+        description: event.description ?? null,
+        location: event.location ?? null,
+        start: {
+          date: event.isAllDay ? event.startTime.split("T")[0] : null,
+          dateTime: event.isAllDay ? null : event.startTime,
+          timeZone: null,
+        },
+        end: {
+          date: event.isAllDay
+            ? (event.endTime ?? event.startTime).split("T")[0]
+            : null,
+          dateTime: event.isAllDay ? null : (event.endTime ?? event.startTime),
+          timeZone: null,
+        },
+        attendees: convertAttendeesToFormat(event.attendees),
+        addMeetLink: false,
       },
       { email }
     )
 
-    if (insertResult.success && insertResult.event) {
+    const insertSuccess =
+      insertResult !== null &&
+      typeof insertResult === "object" &&
+      "success" in insertResult &&
+      insertResult.success
+    const hasEvent =
+      insertResult !== null &&
+      typeof insertResult === "object" &&
+      "event" in insertResult &&
+      insertResult.event !== null
+
+    if (insertSuccess && hasEvent) {
       results.createdCount++
+      const createdEvent = (insertResult as { event: { id?: string } }).event
+      const eventId =
+        typeof createdEvent === "object" && createdEvent !== null && "id" in createdEvent
+          ? (createdEvent.id as string)
+          : undefined
       results.createdEvents.push({
         id: event.id,
         title: event.title,
-        googleEventId: insertResult.event.id,
+        googleEventId: eventId,
       })
     } else {
       results.failedCount++

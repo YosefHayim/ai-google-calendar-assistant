@@ -774,6 +774,45 @@ export type Database = {
           },
         ]
       }
+      slack_users: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          id: string
+          is_linked: boolean
+          last_activity_at: string | null
+          slack_team_id: string | null
+          slack_user_id: string
+          slack_username: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          is_linked?: boolean
+          last_activity_at?: string | null
+          slack_team_id?: string | null
+          slack_user_id: string
+          slack_username?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          is_linked?: boolean
+          last_activity_at?: string | null
+          slack_team_id?: string | null
+          slack_user_id?: string
+          slack_username?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       team_members: {
         Row: {
           id: string
@@ -1021,10 +1060,93 @@ export type Database = {
           },
         ]
       }
+      user_contacts: {
+        Row: {
+          common_summaries: string[] | null
+          created_at: string | null
+          display_name: string | null
+          email: string
+          event_types: string[] | null
+          first_seen_at: string
+          id: string
+          is_attendee_count: number | null
+          is_favorite: boolean | null
+          is_hidden: boolean | null
+          is_organizer_count: number | null
+          last_seen_at: string
+          meeting_count: number
+          metadata: Json | null
+          total_duration_minutes: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          common_summaries?: string[] | null
+          created_at?: string | null
+          display_name?: string | null
+          email: string
+          event_types?: string[] | null
+          first_seen_at?: string
+          id?: string
+          is_attendee_count?: number | null
+          is_favorite?: boolean | null
+          is_hidden?: boolean | null
+          is_organizer_count?: number | null
+          last_seen_at?: string
+          meeting_count?: number
+          metadata?: Json | null
+          total_duration_minutes?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          common_summaries?: string[] | null
+          created_at?: string | null
+          display_name?: string | null
+          email?: string
+          event_types?: string[] | null
+          first_seen_at?: string
+          id?: string
+          is_attendee_count?: number | null
+          is_favorite?: boolean | null
+          is_hidden?: boolean | null
+          is_organizer_count?: number | null
+          last_seen_at?: string
+          meeting_count?: number
+          metadata?: Json | null
+          total_duration_minutes?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_contacts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_contacts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_contacts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_conversation_stats"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       users: {
         Row: {
           ai_interactions_used: number | null
           avatar_url: string | null
+          contact_mining_enabled: boolean | null
           created_at: string
           credits_remaining: number | null
           deactivated_at: string | null
@@ -1047,6 +1169,7 @@ export type Database = {
         Insert: {
           ai_interactions_used?: number | null
           avatar_url?: string | null
+          contact_mining_enabled?: boolean | null
           created_at?: string
           credits_remaining?: number | null
           deactivated_at?: string | null
@@ -1069,6 +1192,7 @@ export type Database = {
         Update: {
           ai_interactions_used?: number | null
           avatar_url?: string | null
+          contact_mining_enabled?: boolean | null
           created_at?: string
           credits_remaining?: number | null
           deactivated_at?: string | null

@@ -332,10 +332,16 @@ async function upsertContactBatch(
 
   const existingEmails = new Set(existingContacts?.map((c) => c.email) ?? [])
 
-  const { error } = await SUPABASE.from("user_contacts").upsert(batch, {
-    onConflict: "user_id,email",
-    ignoreDuplicates: false,
-  })
+  const { error } = await SUPABASE.from("user_contacts").upsert(
+    batch.map((c) => ({
+      ...c,
+      metadata: c.metadata as unknown as Record<string, never> | null,
+    })),
+    {
+      onConflict: "user_id,email",
+      ignoreDuplicates: false,
+    }
+  )
 
   if (error) {
     logger.error("[ContactMining] Error upserting contacts batch:", error)

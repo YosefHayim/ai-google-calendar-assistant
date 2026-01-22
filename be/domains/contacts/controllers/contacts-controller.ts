@@ -95,7 +95,7 @@ const getOne = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Contact ID is required")
   }
 
-  const contact = await getContactById(userId, contactId)
+  const contact = await getContactById(userId, String(contactId))
   if (!contact) {
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Contact not found")
   }
@@ -125,7 +125,7 @@ const update = reqResAsyncHandler(async (req: Request, res: Response) => {
     )
   }
 
-  const updated = await updateContact(userId, contactId, parseResult.data)
+  const updated = await updateContact(userId, String(contactId), parseResult.data)
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Contact updated", updated)
 })
 
@@ -141,7 +141,7 @@ const remove = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Contact ID is required")
   }
 
-  await deleteContact(userId, contactId)
+  await deleteContact(userId, String(contactId))
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Contact deleted")
 })
 
@@ -156,8 +156,8 @@ const syncContacts = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found")
   }
 
-  const accessToken = req.googleTokens?.accessToken
-  const refreshToken = req.googleTokens?.refreshToken
+  const accessToken = req.tokenData?.access_token
+  const refreshToken = req.tokenData?.refresh_token
 
   if (!accessToken) {
     return sendR(
@@ -171,7 +171,7 @@ const syncContacts = reqResAsyncHandler(async (req: Request, res: Response) => {
     userId,
     email,
     accessToken,
-    refreshToken
+    refreshToken ?? undefined
   )
 
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Contact sync completed", result)
@@ -189,8 +189,8 @@ const syncContactsAsync = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found")
     }
 
-    const accessToken = req.googleTokens?.accessToken
-    const refreshToken = req.googleTokens?.refreshToken
+    const accessToken = req.tokenData?.access_token
+    const refreshToken = req.tokenData?.refresh_token
 
     if (!accessToken) {
       return sendR(
@@ -200,7 +200,7 @@ const syncContactsAsync = reqResAsyncHandler(
       )
     }
 
-    mineContactsInBackground(userId, email, accessToken, refreshToken)
+    mineContactsInBackground(userId, email, accessToken, refreshToken ?? undefined)
 
     return sendR(
       res,
