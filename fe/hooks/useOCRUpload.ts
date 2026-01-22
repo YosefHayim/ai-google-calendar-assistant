@@ -40,24 +40,14 @@ export function useOCRUpload() {
     error: null,
   })
 
-  /**
-   * Determines if a set of files should use OCR processing
-   * Returns true if ANY file is a non-image type (PDF, ICS, spreadsheet)
-   */
   const shouldUseOCR = useCallback((files: File[]): boolean => {
     return files.some((file) => OCR_ONLY_MIME_TYPES.includes(file.type as SupportedMimeType))
   }, [])
 
-  /**
-   * Checks if a single file is an image
-   */
   const isImageFile = useCallback((file: File): boolean => {
     return IMAGE_MIME_TYPES.includes(file.type as SupportedMimeType)
   }, [])
 
-  /**
-   * Classifies files into images (for vision AI) and OCR files (for extraction)
-   */
   const classifyFiles = useCallback(
     (files: File[]): { imageFiles: File[]; ocrFiles: File[] } => {
       const imageFiles: File[] = []
@@ -76,9 +66,6 @@ export function useOCRUpload() {
     [isImageFile],
   )
 
-  /**
-   * Upload files for OCR event extraction
-   */
   const uploadForExtraction = useCallback(
     async (filesWithBase64: FileWithBase64[]): Promise<boolean> => {
       if (filesWithBase64.length === 0) return false
@@ -164,9 +151,6 @@ export function useOCRUpload() {
     [posthog],
   )
 
-  /**
-   * Confirm pending events (create them in Google Calendar)
-   */
   const confirmEvents = useCallback(async (): Promise<boolean> => {
     if (state.pendingEvents.length === 0) return false
 
@@ -233,9 +217,6 @@ export function useOCRUpload() {
     }
   }, [state.pendingEvents.length, posthog])
 
-  /**
-   * Cancel pending events (discard without creating)
-   */
   const cancelPendingEvents = useCallback(async (): Promise<void> => {
     try {
       posthog?.capture('ocr_cancel', {
@@ -256,7 +237,6 @@ export function useOCRUpload() {
         description: 'The extracted events have been discarded.',
       })
     } catch {
-      // Even if API call fails, clear local state
       setState({
         isUploading: false,
         isConfirming: false,
@@ -267,29 +247,18 @@ export function useOCRUpload() {
     }
   }, [state.pendingEvents.length, posthog])
 
-  /**
-   * Clear any errors
-   */
   const clearError = useCallback(() => {
     setState((prev) => ({ ...prev, error: null }))
   }, [])
 
-  /**
-   * Check if there are pending events
-   */
   const hasPendingEvents = state.pendingEvents.length > 0
 
   return {
-    // State
     ...state,
     hasPendingEvents,
-
-    // Classification utilities
     shouldUseOCR,
     isImageFile,
     classifyFiles,
-
-    // Actions
     uploadForExtraction,
     confirmEvents,
     cancelPendingEvents,

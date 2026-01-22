@@ -39,12 +39,15 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
       onInterimResult,
       onCancel,
       onImagesChange,
+      shouldUseOCR,
+      onOCRFilesSelected,
+      isOCRUploading,
     },
     externalRef,
   ) => {
     const { t } = useTranslation()
     const { voiceInput, imageUpload } = useFeatureFlags()
-    const isDisabled = isLoading && !onCancel
+    const isDisabled = (isLoading || isOCRUploading) && !onCancel
     const inputDirection = useMemo(() => getTextDirection(input), [input])
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
@@ -95,7 +98,50 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     const handleImageSelect = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files
-        if (!files || !onImagesChange) return
+        if (!files) return
+
+        const allFiles = Array.from(files)
+
+        if (shouldUseOCR && onOCRFilesSelected && shouldUseOCR(allFiles)) {
+          try {
+            const ocrFiles: ImageFile[] = await Promise.all(
+              allFiles
+                .filter((file) => {
+                  if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) return false
+                  if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+                    toast.error(t('toast.imageTooLarge', { size: MAX_IMAGE_SIZE_MB }))
+                    return false
+                  }
+                  return true
+                })
+                .map(async (file) => {
+                  const preview = URL.createObjectURL(file)
+                  const base64 = await fileToBase64(file)
+                  return {
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+                    file,
+                    preview,
+                    base64,
+                  }
+                }),
+            )
+
+            if (ocrFiles.length > 0) {
+              onOCRFilesSelected(ocrFiles)
+              ocrFiles.forEach((f) => URL.revokeObjectURL(f.preview))
+            }
+          } catch (error) {
+            console.error('Failed to process OCR files:', error)
+            toast.error(t('toast.imageProcessingFailed'))
+          }
+          event.target.value = ''
+          return
+        }
+
+        if (!onImagesChange) {
+          event.target.value = ''
+          return
+        }
 
         const remainingSlots = MAX_IMAGES - images.length
         if (remainingSlots === 0) {
@@ -104,7 +150,6 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           return
         }
 
-        const allFiles = Array.from(files)
         if (allFiles.length > remainingSlots) {
           toast.error(t('toast.maxImagesAllowed', { count: MAX_IMAGES }))
         }
@@ -138,7 +183,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
         }
         event.target.value = ''
       },
-      [t, images, onImagesChange],
+      [t, images, onImagesChange, shouldUseOCR, onOCRFilesSelected],
     )
 
     const removeImage = useCallback(

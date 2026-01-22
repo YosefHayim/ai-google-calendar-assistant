@@ -488,8 +488,8 @@ export const handleDocumentMessage = async (
     })
 
     const extractionFailed = !extractionResult.success
-    const noResult = !extractionResult.result
-    if (extractionFailed || noResult) {
+    const extractedResult = extractionResult.result
+    if (extractionFailed || !extractedResult) {
       await sendTextMessage(
         from,
         formatErrorForWhatsApp(
@@ -500,7 +500,7 @@ export const handleDocumentMessage = async (
       return
     }
 
-    if (extractionResult.result.events.length === 0) {
+    if (extractedResult.events.length === 0) {
       await sendTextMessage(
         from,
         "I analyzed your file but couldn't find any events. Make sure it contains schedule information with dates and times."
@@ -512,13 +512,13 @@ export const handleDocumentMessage = async (
     await storePendingEvents({
       userId: userId || from,
       modality: MODALITY,
-      result: extractionResult.result,
+      result: extractedResult,
       userTimezone: "UTC",
       fileNames: ["document"],
     })
 
     const formattedEvents = formatEventsForConfirmation(
-      extractionResult.result.events,
+      extractedResult.events,
       MODALITY
     )
 
@@ -528,7 +528,7 @@ export const handleDocumentMessage = async (
     )
 
     logger.info(
-      `WhatsApp: Found ${extractionResult.result.events.length} events for user ${from}`
+      `WhatsApp: Found ${extractedResult.events.length} events for user ${from}`
     )
   } catch (error) {
     logger.error(`WhatsApp: Error processing document from ${from}: ${error}`)

@@ -25,7 +25,7 @@ export function useUpdateContact(options?: MutationHookOptions<Contact, UpdateCo
       options?.onError?.(error, variables)
     },
     onSettled: (data, error, variables) => {
-      options?.onSettled?.(data?.data, error, variables)
+      options?.onSettled?.(data?.data ?? undefined, error, variables)
     },
   })
 

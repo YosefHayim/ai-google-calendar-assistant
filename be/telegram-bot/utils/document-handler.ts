@@ -194,8 +194,8 @@ export const processDocument = async (
   })
 
   const extractionFailed = !extractionResult.success
-  const noExtractionResult = !extractionResult.result
-  if (extractionFailed || noExtractionResult) {
+  const extractedResult = extractionResult.result
+  if (extractionFailed || !extractedResult) {
     const errorDetail =
       extractionResult.error || "The file might not contain calendar data."
     return {
@@ -204,7 +204,7 @@ export const processDocument = async (
     }
   }
 
-  if (extractionResult.result.events.length === 0) {
+  if (extractedResult.events.length === 0) {
     return {
       success: false,
       message: `I analyzed ${filename} but couldn't find any events. Make sure the file contains schedule information with dates and times.`,
@@ -214,13 +214,13 @@ export const processDocument = async (
   const pendingKey = await storePendingEvents({
     userId,
     modality: MODALITY,
-    result: extractionResult.result,
+    result: extractedResult,
     userTimezone,
     fileNames: [filename],
   })
 
   const formattedEvents = formatEventsForConfirmation(
-    extractionResult.result.events,
+    extractedResult.events,
     MODALITY
   )
 
@@ -228,8 +228,8 @@ export const processDocument = async (
     success: true,
     message: `${formattedEvents}\n\nWould you like me to add these to your calendar? Reply "yes" to confirm or "no" to cancel.`,
     pendingKey,
-    eventsCount: extractionResult.result.events.length,
-    result: extractionResult.result,
+    eventsCount: extractedResult.events.length,
+    result: extractedResult,
   }
 }
 
@@ -339,8 +339,8 @@ export const processMultipleDocuments = async (
   })
 
   const multiExtractionFailed = !extractionResult.success
-  const noMultiExtractionResult = !extractionResult.result
-  if (multiExtractionFailed || noMultiExtractionResult) {
+  const extractedResult = extractionResult.result
+  if (multiExtractionFailed || !extractedResult) {
     const errorDetail = extractionResult.error || ""
     return {
       success: false,
@@ -348,7 +348,7 @@ export const processMultipleDocuments = async (
     }
   }
 
-  if (extractionResult.result.events.length === 0) {
+  if (extractedResult.events.length === 0) {
     return {
       success: false,
       message:
@@ -359,13 +359,13 @@ export const processMultipleDocuments = async (
   const pendingKey = await storePendingEvents({
     userId,
     modality: MODALITY,
-    result: extractionResult.result,
+    result: extractedResult,
     userTimezone,
     fileNames,
   })
 
   const formattedEvents = formatEventsForConfirmation(
-    extractionResult.result.events,
+    extractedResult.events,
     MODALITY
   )
 
@@ -379,7 +379,7 @@ export const processMultipleDocuments = async (
     success: true,
     message,
     pendingKey,
-    eventsCount: extractionResult.result.events.length,
-    result: extractionResult.result,
+    eventsCount: extractedResult.events.length,
+    result: extractedResult,
   }
 }

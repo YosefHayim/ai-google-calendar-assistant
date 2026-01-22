@@ -6,14 +6,17 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { ActiveTab } from './types'
 import { AvatarView } from '../AvatarView'
 import { ChatView } from '../ChatView'
+import { EventConfirmationCard } from '../EventConfirmationCard'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Message } from '@/types'
+import type { SupportedMimeType } from '@/services/ocr-service'
 import { ViewSwitcher } from '../ViewSwitcher'
 import { queryKeys } from '@/lib/query'
 import { toast } from 'sonner'
 import { useAudioPlayback } from './useAudioPlayback'
 import { useChatContext } from '@/contexts/ChatContext'
 import { useMutedSpeechDetection } from '@/hooks/useMutedSpeechDetection'
+import { useOCRUpload } from '@/hooks/useOCRUpload'
 import { usePostHog } from 'posthog-js/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
@@ -41,6 +44,17 @@ export function ChatInterface() {
   const [images, setImages] = useState<ImageFile[]>([])
   const [activeTab, setActiveTab] = useState<ActiveTab>('chat')
   const [error, setError] = useState<string | null>(null)
+
+  const {
+    isUploading: isOCRUploading,
+    isConfirming: isOCRConfirming,
+    pendingEvents,
+    hasPendingEvents,
+    shouldUseOCR,
+    uploadForExtraction,
+    confirmEvents: confirmOCREvents,
+    cancelPendingEvents,
+  } = useOCRUpload()
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const avatarScrollRef = useRef<HTMLDivElement>(null)
@@ -265,9 +279,21 @@ export function ChatInterface() {
     onActivateMic: toggleRecording,
   })
 
+  const handleOCRFilesSelected = useCallback(
+    async (files: ImageFile[]) => {
+      const filesToProcess = files.map((f) => ({
+        file: f.file,
+        base64: f.base64 || '',
+        mimeType: f.file.type as SupportedMimeType,
+      }))
+      await uploadForExtraction(filesToProcess)
+    },
+    [uploadForExtraction],
+  )
+
   useEffect(() => {
     scrollToBottom()
-  }, [messages, isLoading, activeTab, streamingState.streamedText])
+  }, [messages, isLoading, activeTab, streamingState.streamedText, hasPendingEvents])
 
   const scrollToBottom = () => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -319,10 +345,21 @@ export function ChatInterface() {
           )}
         </div>
 
+        {hasPendingEvents && (
+          <div className="px-4 pb-2">
+            <EventConfirmationCard
+              events={pendingEvents}
+              onConfirm={confirmOCREvents}
+              onCancel={cancelPendingEvents}
+              isLoading={isOCRConfirming}
+            />
+          </div>
+        )}
+
         <ChatInput
           ref={textInputRef}
           input={input}
-          isLoading={isLoading}
+          isLoading={isLoading || isOCRUploading}
           isRecording={isRecording}
           speechRecognitionSupported={speechRecognitionSupported}
           speechRecognitionError={speechRecognitionError}
@@ -336,6 +373,9 @@ export function ChatInterface() {
           onCancelRecording={cancelRecording}
           onCancel={isLoading ? handleCancel : undefined}
           onImagesChange={setImages}
+          shouldUseOCR={shouldUseOCR}
+          onOCRFilesSelected={handleOCRFilesSelected}
+          isOCRUploading={isOCRUploading}
           data-onboarding="chat-input"
         />
       </div>

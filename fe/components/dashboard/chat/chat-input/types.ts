@@ -31,4 +31,7 @@ export interface ChatInputProps {
   onInterimResult?: (text: string) => void
   onCancel?: () => void
   onImagesChange?: (images: ImageFile[]) => void
+  shouldUseOCR?: (files: File[]) => boolean
+  onOCRFilesSelected?: (files: ImageFile[]) => void
+  isOCRUploading?: boolean
 }

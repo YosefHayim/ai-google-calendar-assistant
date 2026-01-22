@@ -283,8 +283,8 @@ const processOCRFile = async (params: OCRFileParams): Promise<void> => {
   })
 
   const extractionFailed = !extractionResult.success
-  const noExtractionResult = !extractionResult.result
-  if (extractionFailed || noExtractionResult) {
+  const extractedResult = extractionResult.result
+  if (extractionFailed || !extractedResult) {
     const errorDetail =
       extractionResult.error || "The file might not contain calendar data."
     await sendMessage(
@@ -295,7 +295,7 @@ const processOCRFile = async (params: OCRFileParams): Promise<void> => {
     return
   }
 
-  if (extractionResult.result.events.length === 0) {
+  if (extractedResult.events.length === 0) {
     await sendMessage(
       client,
       channelId,
@@ -307,13 +307,13 @@ const processOCRFile = async (params: OCRFileParams): Promise<void> => {
   await storePendingEvents({
     userId,
     modality: MODALITY,
-    result: extractionResult.result,
+    result: extractedResult,
     userTimezone: timezone,
     fileNames: [filename],
   })
 
   const formattedEvents = formatEventsForConfirmation(
-    extractionResult.result.events,
+    extractedResult.events,
     MODALITY
   )
 
@@ -324,7 +324,7 @@ const processOCRFile = async (params: OCRFileParams): Promise<void> => {
   )
 
   logger.info(
-    `Slack Bot: Found ${extractionResult.result.events.length} events for user ${userId}`
+    `Slack Bot: Found ${extractedResult.events.length} events for user ${userId}`
   )
 }
 

@@ -18,7 +18,7 @@ export function useSyncContacts(options?: MutationHookOptions<SyncResult, void>)
       options?.onError?.(error, variables)
     },
     onSettled: (data, error, variables) => {
-      options?.onSettled?.(data?.data, error, variables)
+      options?.onSettled?.(data?.data ?? undefined, error, variables)
     },
   })
 
