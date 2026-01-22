@@ -235,7 +235,7 @@ const getEventAnalytics = reqResAsyncHandler(
       })
     )
 
-    const userLanguage = req.user?.language_code
+    const userLanguage = (req.user as { locale?: string })?.locale
     const dateLocale = getDateLocale(userLanguage)
 
     const dateRange = req.query.timeMin

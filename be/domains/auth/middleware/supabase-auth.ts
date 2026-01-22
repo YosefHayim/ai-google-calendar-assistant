@@ -67,7 +67,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
 
       if (validation.user) {
         const { data: dbUser } = await SUPABASE.from("users")
-          .select("id, status, language_code")
+          .select("id, status, locale")
           .eq("id", validation.user.id)
           .single()
 
@@ -97,7 +97,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
 
         req.user = {
           ...validation.user,
-          language_code: dbUser.language_code,
+          locale: dbUser.locale,
         }
         return next()
       }
@@ -154,16 +154,14 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
 
         // Log successful refresh with email for debugging
 
-        // Get user language_code from database
         const { data: refreshedDbUser } = await SUPABASE.from("users")
-          .select("language_code")
+          .select("locale")
           .eq("id", user.id)
           .single()
 
-        // Set user on request object for downstream middleware
         req.user = {
           ...user,
-          language_code: refreshedDbUser?.language_code,
+          locale: refreshedDbUser?.locale,
         }
 
         // Update current request for downstream use
