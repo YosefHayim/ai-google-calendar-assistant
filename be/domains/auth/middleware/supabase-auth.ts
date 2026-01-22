@@ -67,7 +67,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
 
       if (validation.user) {
         const { data: dbUser } = await SUPABASE.from("users")
-          .select("id, status")
+          .select("id, status, language_code")
           .eq("id", validation.user.id)
           .single()
 
@@ -95,7 +95,10 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
           )
         }
 
-        req.user = validation.user
+        req.user = {
+          ...validation.user,
+          language_code: dbUser.language_code,
+        }
         return next()
       }
 
@@ -151,8 +154,17 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
 
         // Log successful refresh with email for debugging
 
+        // Get user language_code from database
+        const { data: refreshedDbUser } = await SUPABASE.from("users")
+          .select("language_code")
+          .eq("id", user.id)
+          .single()
+
         // Set user on request object for downstream middleware
-        req.user = user
+        req.user = {
+          ...user,
+          language_code: refreshedDbUser?.language_code,
+        }
 
         // Update current request for downstream use
         req.headers.authorization = `Bearer ${newAccessToken}`

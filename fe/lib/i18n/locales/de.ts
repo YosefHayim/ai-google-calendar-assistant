@@ -445,6 +445,14 @@ export const de: TranslationShape = {
       noEvents: 'Keine aktuellen Termine',
       viewAll: 'Alle anzeigen',
     },
+
+    tabs: {
+      overview: 'Übersicht',
+      patterns: 'Muster',
+      time: 'Zeit',
+      calendars: 'Kalender',
+      health: 'Gesundheit',
+    },
   },
 
   chat: {
@@ -486,6 +494,7 @@ export const de: TranslationShape = {
     title: 'Lückenwiederherstellung',
     description: 'Entdecken Sie ungenutzte Zeit in Ihrem Kalender',
     analyzing: 'Analysiere Ihren Kalender...',
+    refresh: 'Aktualisieren',
 
     header: {
       found: '{{count}} Lücken gefunden',

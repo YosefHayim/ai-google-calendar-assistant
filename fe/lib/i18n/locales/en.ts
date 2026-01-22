@@ -359,6 +359,15 @@ export const en = {
     refresh: 'Refresh',
     analyzing: 'Analyzing your calendar...',
 
+    // Navigation tabs
+    tabs: {
+      overview: 'Overview',
+      patterns: 'Patterns',
+      time: 'Time',
+      calendars: 'Calendars',
+      health: 'Health',
+    },
+
     // Calendar filter
     calendarFilter: {
       filterByCalendar: 'Filter by Calendar',
@@ -513,6 +522,7 @@ export const en = {
     title: 'Gap Recovery',
     description: 'Discover untracked time in your calendar',
     analyzing: 'Analyzing your calendar...',
+    refresh: 'Refresh',
 
     // Header
     header: {

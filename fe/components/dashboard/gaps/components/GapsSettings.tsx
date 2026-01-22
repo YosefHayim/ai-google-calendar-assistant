@@ -91,7 +91,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                   <p className="text-xs text-muted-foreground">Automatically analyze calendar for gaps</p>
                 </div>
                 <Switch
-                  checked={settings.autoGapAnalysis}
+                  checked={settings.autoGapAnalysis ?? false}
                   onCheckedChange={() => {
                     // Handle toggle
                   }}
@@ -106,7 +106,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                   <Input
                     id="minGap"
                     type="number"
-                    value={settings.minGapThreshold}
+                    value={settings.minGapThreshold ?? 30}
                     onChange={() => {
                       // Handle change
                     }}
@@ -121,7 +121,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                   <Input
                     id="maxGap"
                     type="number"
-                    value={settings.maxGapThreshold}
+                    value={settings.maxGapThreshold ?? 240}
                     onChange={() => {
                       // Handle change
                     }}
@@ -138,7 +138,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                 <Input
                   id="lookback"
                   type="number"
-                  value={settings.lookbackDays}
+                  value={settings.lookbackDays ?? 7}
                   onChange={() => {
                     // Handle change
                   }}
@@ -164,7 +164,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Minimum Confidence</Label>
-                <Select value={settings.minConfidenceThreshold.toString()}>
+                <Select value={settings.minConfidenceThreshold?.toString() ?? '0.5'}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -184,7 +184,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                   {DAYS_OF_WEEK.map((day) => (
                     <Badge
                       key={day.value}
-                      variant={settings.ignoredDays.includes(day.value) ? 'default' : 'secondary'}
+                      variant={settings.ignoredDays?.includes(day.value) ? 'default' : 'secondary'}
                       className="cursor-pointer text-xs"
                       onClick={() => {
                         // Handle day toggle
@@ -215,8 +215,8 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                 <div>
                   <Label className="text-sm font-medium">Included Calendars</Label>
                   <div className="mt-2 space-y-2">
-                    {settings.includedCalendars.length > 0 ? (
-                      settings.includedCalendars.map((calendarId) => (
+                    {(settings.includedCalendars?.length ?? 0) > 0 ? (
+                      settings.includedCalendars?.map((calendarId) => (
                         <Badge key={calendarId} variant="secondary" className="mr-2">
                           {calendarId}
                         </Badge>
@@ -227,11 +227,11 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                   </div>
                 </div>
 
-                {settings.excludedCalendars.length > 0 && (
+                {(settings.excludedCalendars?.length ?? 0) > 0 && (
                   <div>
                     <Label className="text-sm font-medium">Excluded Calendars</Label>
                     <div className="mt-2 space-y-2">
-                      {settings.excludedCalendars.map((calendarId) => (
+                      {settings.excludedCalendars?.map((calendarId) => (
                         <Badge key={calendarId} variant="outline" className="mr-2">
                           {calendarId}
                         </Badge>
@@ -261,15 +261,15 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                     <Label className="text-sm font-medium">Language Setup Complete</Label>
                     <p className="text-xs text-muted-foreground">Multi-language gap detection enabled</p>
                   </div>
-                  <Badge variant={settings.languageSetupComplete ? 'default' : 'secondary'}>
-                    {settings.languageSetupComplete ? 'Complete' : 'Pending'}
+                  <Badge variant={(settings.languageSetupComplete ?? false) ? 'default' : 'secondary'}>
+                    {(settings.languageSetupComplete ?? false) ? 'Complete' : 'Pending'}
                   </Badge>
                 </div>
 
                 <div>
                   <Label className="text-sm font-medium">Supported Languages</Label>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {settings.eventLanguages.map((lang) => (
+                    {(settings.eventLanguages ?? []).map((lang) => (
                       <Badge key={lang} variant="outline" className="text-xs">
                         {lang}
                       </Badge>

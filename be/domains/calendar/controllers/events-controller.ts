@@ -1,10 +1,15 @@
-import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config"
 import type { Request, Response } from "express"
+import { generateInsightsWithRetry } from "@/ai-agents/insights-generator"
+import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config"
+import {
+  calculateInsightsMetrics,
+  quickAddWithOrchestrator,
+} from "@/domains/analytics/utils"
+import { getEvents } from "@/domains/calendar/utils/get-events"
 import {
   applyReschedule,
   findRescheduleSuggestions,
 } from "@/domains/calendar/utils/reschedule"
-import { eventsHandler, formatDate } from "@/utils"
 import {
   getCachedEvents,
   invalidateEventsCache,
@@ -15,11 +20,8 @@ import {
   setCachedInsights,
 } from "@/lib/cache/insights-cache"
 import { reqResAsyncHandler, sendR } from "@/lib/http"
-
-import { calculateInsightsMetrics } from "@/domains/analytics/utils"
-import { generateInsightsWithRetry } from "@/ai-agents/insights-generator"
-import { getEvents } from "@/domains/calendar/utils/get-events"
-import { quickAddWithOrchestrator } from "@/domains/analytics/utils"
+import { getDateLocale, translate } from "@/lib/i18n/translate"
+import { eventsHandler, formatDate } from "@/utils"
 
 /**
  * Get event by event ID
@@ -233,15 +235,31 @@ const getEventAnalytics = reqResAsyncHandler(
       })
     )
 
-    sendR(
-      res,
-      STATUS_RESPONSE.SUCCESS,
-      `${totalEventsFound} events retrieved successfully from ${totalNumberOfCalendars} calendars ${
-        req.query.timeMin &&
-        `from ${formatDate(new Date(req.query.timeMin as string), true)} to ${formatDate(new Date(req.query.timeMax as string), true)}`
-      }`,
-      { allEvents }
-    )
+    const userLanguage = req.user?.language_code
+    const dateLocale = getDateLocale(userLanguage)
+
+    const dateRange = req.query.timeMin
+      ? translate("eventsRetrievedDateRange", userLanguage, {
+          start: formatDate(
+            new Date(req.query.timeMin as string),
+            true,
+            dateLocale
+          ),
+          end: formatDate(
+            new Date(req.query.timeMax as string),
+            true,
+            dateLocale
+          ),
+        })
+      : ""
+
+    const message = translate("eventsRetrieved", userLanguage, {
+      count: totalEventsFound,
+      calendars: totalNumberOfCalendars,
+      dateRange,
+    })
+
+    sendR(res, STATUS_RESPONSE.SUCCESS, message, { allEvents })
   }
 )
 

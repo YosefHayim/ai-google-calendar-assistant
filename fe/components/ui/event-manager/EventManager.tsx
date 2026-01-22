@@ -139,14 +139,21 @@ export function EventManager({
     (direction: 'prev' | 'next') => {
       setCurrentDate((prev) => {
         const newDate = new Date(prev)
-        if (view === 'year') {
-          newDate.setFullYear(prev.getFullYear() + (direction === 'next' ? 1 : -1))
-        } else if (view === 'month') {
-          newDate.setMonth(prev.getMonth() + (direction === 'next' ? 1 : -1))
-        } else if (view === 'week') {
-          newDate.setDate(prev.getDate() + (direction === 'next' ? 7 : -7))
-        } else if (view === 'day') {
-          newDate.setDate(prev.getDate() + (direction === 'next' ? 1 : -1))
+        const delta = direction === 'next' ? 1 : -1
+        switch (view) {
+          case 'year':
+            newDate.setFullYear(prev.getFullYear() + delta)
+            break
+          case 'month':
+          case 'list':
+            newDate.setMonth(prev.getMonth() + delta)
+            break
+          case 'week':
+            newDate.setDate(prev.getDate() + delta * 7)
+            break
+          case 'day':
+            newDate.setDate(prev.getDate() + delta)
+            break
         }
         return newDate
       })

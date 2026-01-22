@@ -19,7 +19,9 @@ export type UpdateCalendarCategoriesProps = {
   defaultReminders: calendar_v3.Schema$EventReminder[] | undefined
 }
 
-export type AuthedRequest = Request & { user: User }
+export type AuthedRequest = Request & {
+  user: User & { language_code?: string | null }
+}
 
 export type GoogleIdTokenPayloadProps = {
   iss: string

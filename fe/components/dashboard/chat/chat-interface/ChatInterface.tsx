@@ -323,6 +323,7 @@ export function ChatInterface() {
               isSpeaking={isSpeaking}
               speakingMessageId={speakingMessageId}
               isLoading={isLoading}
+              isTyping={input.trim().length > 0}
               onResend={handleResend}
               onEditAndResend={handleEditAndResend}
               onSpeak={speakText}
