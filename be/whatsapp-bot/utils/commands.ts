@@ -13,6 +13,7 @@ import {
 import {
   type AllyBrainPreference,
   getAllyBrainForWhatsApp,
+  getLanguagePreferenceForWhatsApp,
   updateAllyBrainForWhatsApp,
   updateLanguagePreferenceForWhatsApp,
 } from "./ally-brain"
@@ -234,6 +235,8 @@ const handleAgentCommand = async (
   }
 
   try {
+    const languageCode = await getLanguagePreferenceForWhatsApp(from)
+
     const conversationContext = await whatsAppConversation.addMessageToContext(
       from,
       contactName,
@@ -269,7 +272,7 @@ const handleAgentCommand = async (
       fullContext,
       {
         allyBrain,
-        languageCode: "en",
+        languageCode,
       }
     )
 
@@ -849,17 +852,16 @@ const buildWarningsSection = (access: WhatsAppUserAccess): string => {
     )
   }
 
-  if (
-    access.interactions_remaining !== null &&
-    access.interactions_used > 0
-  ) {
+  if (access.interactions_remaining !== null && access.interactions_used > 0) {
     const totalInteractions =
       access.interactions_used + access.interactions_remaining
     const usagePercent = Math.round(
       (access.interactions_used / totalInteractions) * PERCENT_MULTIPLIER
     )
     if (usagePercent >= USAGE_WARNING_PERCENT) {
-      warnings.push(`⚠️ You've used ${usagePercent}% of your monthly interactions.`)
+      warnings.push(
+        `⚠️ You've used ${usagePercent}% of your monthly interactions.`
+      )
     }
   }
 
