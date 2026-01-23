@@ -426,7 +426,7 @@ const executeOtpVerification = async (
   const hasGoogleCalendar = !!oauthToken
   const finalStep = hasGoogleCalendar ? "complete" : "google_auth"
 
-  const { data: updatedUser, error: updateError } = await SUPABASE.from(
+  const { data: updatedUsers, error: updateError } = await SUPABASE.from(
     "whatsapp_users"
   )
     .update({
@@ -437,17 +437,35 @@ const executeOtpVerification = async (
     })
     .eq("whatsapp_phone", phoneNumber)
     .select("id, is_linked, user_id, onboarding_step")
-    .single()
 
-  if (updateError || !updatedUser) {
+  if (updateError) {
     logger.error(
-      `WhatsApp: Failed to link account for ${phoneNumber}: ${updateError?.message || "No rows updated"}`
+      `WhatsApp: Failed to link account for ${phoneNumber}: ${updateError.message}`
     )
     await sendTextMessage(
       phoneNumber,
       "Sorry, something went wrong linking your account. Please try again."
     )
     return { handled: true }
+  }
+
+  const updatedUser = updatedUsers?.[0]
+  if (!updatedUser) {
+    logger.error(
+      `WhatsApp: No whatsapp_users row found for ${phoneNumber} during linking. ` +
+        `Rows returned: ${updatedUsers?.length ?? 0}`
+    )
+    await sendTextMessage(
+      phoneNumber,
+      "Sorry, we couldn't find your account. Please start over by saying 'hi'."
+    )
+    return { handled: true }
+  }
+
+  if (updatedUsers && updatedUsers.length > 1) {
+    logger.warn(
+      `WhatsApp: Multiple rows (${updatedUsers.length}) found for ${phoneNumber} - using first`
+    )
   }
 
   const isFullyLinked = updatedUser.is_linked && updatedUser.user_id
