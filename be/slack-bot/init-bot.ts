@@ -175,9 +175,6 @@ export const initSlackBot = (): ExpressReceiver | null => {
     return slackReceiver
   } catch (error) {
     logger.error(`Slack Bot: Failed to initialize: ${error}`)
-    if (env.isProd) {
-      throw error
-    }
     return null
   }
 }
