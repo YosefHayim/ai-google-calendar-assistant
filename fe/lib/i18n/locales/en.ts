@@ -336,6 +336,10 @@ export const en = {
     testimonialsSubtitle:
       'Join thousands of leaders who have automated their scheduling to protect their most valuable work hours.',
     testimonialsBadge: 'Verified Efficiency',
+    error: {
+      title: 'Unable to load pricing',
+      description: "We couldn't fetch the latest pricing information. Please try again later.",
+    },
   },
 
   // Login Page

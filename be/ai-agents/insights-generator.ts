@@ -1,9 +1,9 @@
-import type { InsightsMetrics } from "@/domains/analytics/utils"
-import { MODELS } from "@/config"
 import OpenAI from "openai"
-import { env } from "@/config/env"
-import { logger } from "@/lib/logger"
 import { z } from "zod"
+import { MODELS } from "@/config/constants/ai"
+import { env } from "@/config/env"
+import type { InsightsMetrics } from "@/domains/analytics/utils"
+import { logger } from "@/lib/logger"
 
 // ============================================================================
 // CONSTANTS

@@ -390,6 +390,10 @@ export const ar: TranslationShape = {
     testimonialsTitle: 'المعيار للتنفيذ الاستراتيجي',
     testimonialsSubtitle: 'انضم لآلاف القادة الذين أتمتوا جدولتهم لحماية ساعات عملهم الأكثر قيمة.',
     testimonialsBadge: 'كفاءة موثقة',
+    error: {
+      title: 'تعذر تحميل الأسعار',
+      description: 'لم نتمكن من جلب أحدث معلومات التسعير. يرجى المحاولة مرة أخرى لاحقاً.',
+    },
   },
 
   login: {

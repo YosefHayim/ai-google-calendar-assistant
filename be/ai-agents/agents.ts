@@ -1,5 +1,5 @@
 import { Agent } from "@openai/agents"
-import { CURRENT_MODEL, MODELS } from "@/config"
+import { CURRENT_MODEL, MODELS } from "@/config/constants/ai"
 import { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions"
 import { AGENT_INSTRUCTIONS } from "./agents-instructions"
 import { calendarSafetyGuardrail } from "./guardrails"

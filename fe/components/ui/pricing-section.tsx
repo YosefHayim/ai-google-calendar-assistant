@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { PricingCard, type PricingTier } from '@/components/ui/pricing-card'
 import { Tab } from '@/components/ui/pricing-tab'
 
@@ -14,6 +14,10 @@ interface PricingSectionProps {
 
 export function PricingSection({ title, subtitle, tiers, frequencies, currentPlanSlug }: PricingSectionProps) {
   const [selectedFrequency, setSelectedFrequency] = useState(frequencies[0])
+
+  const isPerUse = selectedFrequency === 'per use'
+
+  const visibleTiers = useMemo(() => (isPerUse ? tiers.filter((tier) => tier.highlighted) : tiers), [tiers, isPerUse])
 
   return (
     <section className="flex flex-col items-center gap-10 py-10 w-full">
@@ -35,8 +39,12 @@ export function PricingSection({ title, subtitle, tiers, frequencies, currentPla
         </div>
       </div>
 
-      <div className="grid w-full max-w-5xl gap-6 sm:grid-cols-2 xl:grid-cols-3 px-2">
-        {tiers.map((tier) => (
+      <div
+        className={`grid w-full gap-6 px-2 ${
+          isPerUse ? 'max-w-md grid-cols-1' : 'max-w-5xl sm:grid-cols-2 xl:grid-cols-3'
+        }`}
+      >
+        {visibleTiers.map((tier) => (
           <PricingCard
             key={tier.name}
             tier={tier}

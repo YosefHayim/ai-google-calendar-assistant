@@ -323,6 +323,10 @@ export const fr: TranslationShape = {
     testimonialsSubtitle:
       'Rejoignez des milliers de leaders qui ont automatisé leur planification pour protéger leurs heures de travail.',
     testimonialsBadge: 'Efficacité vérifiée',
+    error: {
+      title: 'Impossible de charger les tarifs',
+      description: "Nous n'avons pas pu récupérer les dernières informations tarifaires. Veuillez réessayer plus tard.",
+    },
   },
 
   login: {

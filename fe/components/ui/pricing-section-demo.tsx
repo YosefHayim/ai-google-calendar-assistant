@@ -1,6 +1,6 @@
 'use client'
 
-import { PAYMENT_FREQUENCIES, TIERS } from '@/lib/constants/plans'
+import { PAYMENT_FREQUENCIES } from '@/lib/constants/plans'
 import { usePlans, useSubscriptionStatus } from '@/hooks/queries/billing'
 
 import { AlertCircle } from 'lucide-react'
@@ -8,11 +8,11 @@ import { HandWrittenTitleDemo } from '@/components/ui/hand-writing-text-demo'
 import type { Plan } from '@/services/payment-service'
 import { PricingSection } from '@/components/ui/pricing-section'
 import type { PricingTier } from '@/lib/constants/plans'
-import React from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuthContext } from '@/contexts/AuthContext'
+import { useTranslation } from 'react-i18next'
 
-export { PAYMENT_FREQUENCIES, TIERS }
+export { PAYMENT_FREQUENCIES }
 
 function PricingSkeleton() {
   return (
@@ -40,17 +40,17 @@ function PricingSkeleton() {
 }
 
 function PricingError() {
+  const { t } = useTranslation()
+
   return (
     <div className="w-full max-w-md mx-auto text-center py-12">
       <div className="flex justify-center mb-4">
         <AlertCircle className="h-12 w-12 text-primary" />
       </div>
       <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground mb-2">
-        Unable to load pricing
+        {t('pricing.error.title')}
       </h3>
-      <p className="text-muted-foreground mb-4">
-        We couldn&apos;t fetch the latest pricing information. Showing default plans below.
-      </p>
+      <p className="text-muted-foreground mb-4">{t('pricing.error.description')}</p>
     </div>
   )
 }
@@ -82,17 +82,8 @@ export function PricingSectionDemo() {
   const { isAuthenticated } = useAuthContext()
   const { data: subscriptionStatus } = useSubscriptionStatus({ enabled: isAuthenticated })
 
-  const currentPlanSlug = React.useMemo(() => {
-    if (!subscriptionStatus?.plan_slug) return null
-    return subscriptionStatus.plan_slug
-  }, [subscriptionStatus])
-
-  const tiers = React.useMemo(() => {
-    if (!plans || plans.length === 0) {
-      return TIERS
-    }
-    return transformPlansToTiers(plans)
-  }, [plans])
+  const currentPlanSlug = subscriptionStatus?.plan_slug ?? null
+  const tiers = plans && plans.length > 0 ? transformPlansToTiers(plans) : []
 
   return (
     <div className="relative flex flex-col justify-center items-center w-full min-h-[600px]">
@@ -102,17 +93,16 @@ export function PricingSectionDemo() {
       <HandWrittenTitleDemo />
       {isLoading ? (
         <PricingSkeleton />
+      ) : isError || tiers.length === 0 ? (
+        <PricingError />
       ) : (
-        <>
-          {isError && <PricingError />}
-          <PricingSection
-            title=""
-            subtitle=""
-            frequencies={PAYMENT_FREQUENCIES}
-            tiers={tiers}
-            currentPlanSlug={currentPlanSlug}
-          />
-        </>
+        <PricingSection
+          title=""
+          subtitle=""
+          frequencies={PAYMENT_FREQUENCIES}
+          tiers={tiers}
+          currentPlanSlug={currentPlanSlug}
+        />
       )}
     </div>
   )

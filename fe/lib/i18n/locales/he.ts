@@ -317,6 +317,10 @@ export const he: TranslationShape = {
     testimonialsTitle: 'הסטנדרט לביצוע אסטרטגי',
     testimonialsSubtitle: 'הצטרף לאלפי מנהיגים שהאוטמו את התזמון שלהם כדי להגן על שעות העבודה היקרות ביותר שלהם.',
     testimonialsBadge: 'יעילות מאומתת',
+    error: {
+      title: 'לא ניתן לטעון את המחירים',
+      description: 'לא הצלחנו לקבל את פרטי התמחור העדכניים. אנא נסה שוב מאוחר יותר.',
+    },
   },
 
   // Login Page

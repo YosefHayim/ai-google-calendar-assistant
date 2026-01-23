@@ -409,6 +409,10 @@ export const de: TranslationShape = {
     testimonialsSubtitle:
       'Schließen Sie sich Tausenden von Führungskräften an, die ihre Planung automatisiert haben, um ihre wertvollste Arbeitszeit zu schützen.',
     testimonialsBadge: 'Verifizierte Effizienz',
+    error: {
+      title: 'Preise konnten nicht geladen werden',
+      description: 'Wir konnten die aktuellen Preisinformationen nicht abrufen. Bitte versuchen Sie es später erneut.',
+    },
   },
 
   login: {
