@@ -17,7 +17,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
   const [hoveredData, setHoveredData] = useState<{ day: string; hours: number; x: number; y: number } | null>(null)
 
   // Ally Brand Primary Color Hex
-  const PRIMARY_COLOR = '#f26306'
+  const PRIMARY_COLOR = 'hsl(var(--primary))'
 
   if (!data || data.length === 0) {
     return <div ref={containerRef} className="w-full h-full" />
@@ -138,7 +138,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
               cy={hoveredData.y}
               r="5"
               fill={PRIMARY_COLOR}
-              className="stroke-white dark:stroke-zinc-900"
+              className="stroke-white dark:stroke-secondary"
               strokeWidth="2"
             />
           </g>

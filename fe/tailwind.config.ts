@@ -118,6 +118,6 @@ const config: Config = {
       },
     },
   },
-plugins: [typography, animate],
+  plugins: [typography, animate],
 }
 export default config

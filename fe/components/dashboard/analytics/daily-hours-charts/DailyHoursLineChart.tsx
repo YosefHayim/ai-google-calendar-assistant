@@ -41,7 +41,7 @@ export const DailyHoursLineChart: React.FC<DailyHoursLineChartProps> = ({ data, 
           }
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
+        <CartesianGrid strokeDasharray="3 3" className="stroke-muted dark:stroke-muted" />
         <XAxis
           dataKey="formattedDate"
           tickLine={false}

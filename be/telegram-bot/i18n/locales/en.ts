@@ -372,6 +372,8 @@ export const en = {
     "Unable to process the image. Please try again with a different image.",
   "errors.tooManyImages":
     "You can send up to {{max}} images at once. Some images were skipped.",
+  "errors.requestRejected":
+    "Your request was flagged for safety review. Please rephrase your request.",
 
   "common.confirm": "Confirm",
   "common.cancel": "Cancel",
@@ -482,6 +484,52 @@ export const en = {
   "commands.reschedule.cancelledText": "No changes were made to your calendar.",
   "commands.reschedule.keepOriginal": "Keep Original",
   "botMenu.reschedule": "Smart reschedule",
+
+  // Subscription command
+  "commands.subscription.header": "Your Subscription",
+  "commands.subscription.noUser": "Could not identify user.",
+  "commands.subscription.sections.status.title": "Plan Status",
+  "commands.subscription.planName": "Plan",
+  "commands.subscription.status": "Status",
+  "commands.subscription.statusActive": "Active",
+  "commands.subscription.statusTrial": "Trial",
+  "commands.subscription.statusExpired": "Expired",
+  "commands.subscription.statusCancelled": "Cancelled",
+  "commands.subscription.trialDaysLeft": "Trial Days Left",
+  "commands.subscription.trialEndsOn": "Trial Ends",
+  "commands.subscription.sections.usage.title": "Usage This Period",
+  "commands.subscription.interactionsUsed": "Interactions Used",
+  "commands.subscription.interactionsRemaining": "Interactions Remaining",
+  "commands.subscription.creditsRemaining": "Credits Remaining",
+  "commands.subscription.unlimited": "Unlimited",
+  "commands.subscription.upgrade": "Upgrade Now",
+  "commands.subscription.manageBilling": "Manage Billing",
+  "commands.subscription.freeTier": "Free",
+  "commands.subscription.footerTip":
+    "Upgrade for more interactions and premium features.",
+  "commands.subscription.trialWarning":
+    "Your trial ends in {{days}} days. Upgrade to continue using Ally.",
+  "commands.subscription.usageWarning":
+    "You've used {{percent}}% of your monthly interactions.",
+  "commands.subscription.error": "Unable to fetch subscription details.",
+  "botMenu.subscription": "View subscription",
+
+  "subscription.trialEndedHeader": "Trial Ended",
+  "subscription.accessRequired": "Subscription Required",
+  "subscription.trialEndedDescription":
+    "Your 14-day free trial has ended. Upgrade to continue using Ally.",
+  "subscription.accessRequiredDescription":
+    "You need an active subscription to continue using Ally.",
+  "subscription.interactionsUsed": "Interactions Used",
+  "subscription.creditsRemaining": "Credits",
+  "subscription.upgradePrompt":
+    "Upgrade to Pro or Executive to unlock unlimited interactions and premium features.",
+  "subscription.upgradeButton": "Upgrade Now",
+  "subscription.viewPlansButton": "View Plans",
+  "subscription.trialEnded":
+    "Your 14-day free trial has ended.\n\nUpgrade to Pro or Executive to continue using Ally:\n{{upgradeUrl}}",
+  "subscription.required":
+    "You need an active subscription to use Ally.\n\nStart your free trial or upgrade:\n{{upgradeUrl}}",
 } as const
 
 export type TranslationKey = keyof typeof en

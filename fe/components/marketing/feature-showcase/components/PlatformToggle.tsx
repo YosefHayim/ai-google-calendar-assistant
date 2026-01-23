@@ -20,7 +20,7 @@ export const PlatformToggle = ({ platform, onToggle }: PlatformToggleProps) => (
           'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
           platform === 'telegram'
             ? 'text-white'
-            : 'text-zinc-600 dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200',
+            : 'text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-muted-foreground',
         )}
       >
         {platform === 'telegram' && (
@@ -39,7 +39,7 @@ export const PlatformToggle = ({ platform, onToggle }: PlatformToggleProps) => (
           'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
           platform === 'slack'
             ? 'text-white'
-            : 'text-zinc-600 dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200',
+            : 'text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-muted-foreground',
         )}
       >
         {platform === 'slack' && (
@@ -58,7 +58,7 @@ export const PlatformToggle = ({ platform, onToggle }: PlatformToggleProps) => (
           'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
           platform === 'whatsapp'
             ? 'text-white'
-            : 'text-zinc-600 dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200',
+            : 'text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-muted-foreground',
         )}
       >
         {platform === 'whatsapp' && (

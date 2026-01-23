@@ -82,11 +82,15 @@ export const TimeAllocationDonutChart: React.FC<TimeAllocationDonutChartProps> =
                     <tspan
                       x={viewBox.cx}
                       y={viewBox.cy}
-                      className="fill-zinc-900 dark:fill-zinc-100 text-3xl font-bold"
+                      className="fill-foreground dark:fill-foreground text-3xl font-bold"
                     >
                       {formatHours(totalHours)}
                     </tspan>
-                    <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className="fill-zinc-500 text-xs font-medium">
+                    <tspan
+                      x={viewBox.cx}
+                      y={(viewBox.cy || 0) + 24}
+                      className="fill-muted-foreground text-xs font-medium"
+                    >
                       Tracked
                     </tspan>
                   </text>

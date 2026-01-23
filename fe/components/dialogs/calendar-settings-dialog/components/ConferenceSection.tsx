@@ -20,7 +20,7 @@ export function ConferenceSection({ allowedTypes }: ConferenceSectionProps) {
     >
       <div className="space-y-1">
         {allowedTypes.map((type, index) => (
-          <div key={index} className="text-sm text-zinc-600 dark:text-muted-foreground capitalize">
+          <div key={index} className="text-sm text-muted-foreground dark:text-muted-foreground capitalize">
             {type.replace(/([A-Z])/g, ' $1').trim()}
           </div>
         ))}

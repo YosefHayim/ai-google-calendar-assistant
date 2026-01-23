@@ -113,7 +113,7 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
+                  className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground flex-shrink-0"
                 >
                   <Info size={14} className="sm:hidden" />
                   <Info size={16} className="hidden sm:block" />
@@ -122,7 +122,7 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
               <HoverCardContent>
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">{t('analytics.charts.weeklyPattern')}</h4>
-                  <p className="text-xs text-zinc-600 dark:text-muted-foreground">
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                     {t('analytics.charts.weeklyPatternTooltip')}
                   </p>
                 </div>

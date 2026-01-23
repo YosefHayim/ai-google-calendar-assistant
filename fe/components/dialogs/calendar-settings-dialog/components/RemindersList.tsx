@@ -25,7 +25,7 @@ export function RemindersList({ reminders }: RemindersListProps) {
     >
       <div className="space-y-1">
         {reminders.map((reminder, index) => (
-          <div key={index} className="text-sm text-zinc-600 dark:text-muted-foreground">
+          <div key={index} className="text-sm text-muted-foreground dark:text-muted-foreground">
             <span className="capitalize">{reminder.method}</span>
             {reminder.minutes !== undefined && (
               <span className="text-muted-foreground dark:text-muted-foreground">

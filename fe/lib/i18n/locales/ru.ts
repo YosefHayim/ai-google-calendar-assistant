@@ -22,6 +22,8 @@ export const ru: TranslationShape = {
     comingSoon: 'Скоро',
     online: 'Онлайн',
     offline: 'Офлайн',
+    event: 'событие',
+    events: 'события',
   },
 
   auth: {
@@ -245,6 +247,75 @@ export const ru: TranslationShape = {
     },
   },
 
+  support: {
+    modal: {
+      title: 'Связаться с поддержкой',
+      submitSuccessTitle: 'Заявка отправлена',
+      submitSuccessDescription: 'Мы свяжемся с вами как можно скорее.',
+      ticketNumber: 'Ваш номер заявки',
+      close: 'Закрыть',
+      submitAnother: 'Отправить ещё',
+      describeIssue: 'Опишите вашу проблему...',
+      whatAllyUnderstood: 'Что понял Ally',
+      messageWillAppear: 'Ваше сообщение появится здесь...',
+      sending: 'Отправка...',
+      sendToSupport: 'Отправить в поддержку',
+      type: 'Печатать',
+      speak: 'Говорить',
+      pleaseDescribeIssue: 'Пожалуйста, опишите вашу проблему',
+      ticketSubmitted: 'Заявка в поддержку успешно отправлена',
+      submitError: 'Произошла ошибка при отправке вашей заявки',
+    },
+  },
+
+  allySidebar: {
+    initialMessage: 'Привет! Я Ally, ваш ИИ-ассистент. Как я могу помочь оптимизировать ваш календарь сегодня?',
+    responseMessage: 'Я понял! Позвольте мне проанализировать ваш календарь и предложить оптимизации.',
+    quickActions: {
+      optimizeSchedule: 'Оптимизировать расписание',
+      findFreeTime: 'Найти свободное время',
+      rescheduleMeeting: 'Перенести встречу',
+    },
+    placeholder: 'Спросите Ally о чём угодно...',
+    poweredBy: 'Работает на Ally AI',
+    support: 'Поддержка',
+    cancelVoiceRecording: 'Отменить голосовую запись',
+    sendMessage: 'Отправить сообщение',
+    toggleVoiceInput: 'Переключить голосовой ввод',
+  },
+
+  chatError: {
+    upgradeNow: 'Обновить сейчас',
+  },
+
+  eventConfirmation: {
+    foundEvents: 'Найдено {{count}} {{eventText}} для добавления',
+    allDay: 'Весь день',
+    cancel: 'Отмена',
+    addEvents: 'Добавить {{eventText}}',
+  },
+
+  rescheduleDialog: {
+    title: 'Умная перепланировка',
+    description: 'Найти лучшее время для перепланировки',
+    preferredTimeOfDay: 'Предпочтительное время дня',
+    timeOptions: {
+      any: 'В любое время',
+      morning: 'Утро',
+      afternoon: 'День',
+      evening: 'Вечер',
+    },
+    current: 'Текущее:',
+    findingOptimalTimes: 'Поиск оптимального времени...',
+    failedToLoadSuggestions: 'Не удалось загрузить предложения',
+    tryAgain: 'Попробовать снова',
+    noAvailableSlots: 'Не найдено доступных слотов в ближайшие 7 дней.',
+    tryDifferentTimePreference: 'Попробуйте другие предпочтения по времени.',
+    cancel: 'Отмена',
+    rescheduling: 'Перепланировка...',
+    reschedule: 'Перепланировать',
+  },
+
   pricing: {
     testimonialsTitle: 'Стандарт для стратегического исполнения',
     testimonialsSubtitle:
@@ -321,6 +392,7 @@ export const ru: TranslationShape = {
     logout: 'Выйти',
     chatWithAlly: 'Чат с Ally',
     minimize: 'Свернуть',
+    toggleSidebar: 'Переключить боковую панель',
     // User Footer items
     upgradeToPro: 'Обновить до Pro',
     billing: 'Оплата',
@@ -470,6 +542,8 @@ export const ru: TranslationShape = {
       avatar: '2D',
       threeDee: '3D',
       threeDeeComingSoon: '3D (Скоро)',
+      chatView: 'Вид чата',
+      avatarView: '2D вид аватара',
     },
 
     actions: {
@@ -486,6 +560,14 @@ export const ru: TranslationShape = {
       badge: 'ИИ',
       online: 'Онлайн',
       chatWith: 'Чат с Ally',
+    },
+
+    avatarView: {
+      startConversation: 'Начать разговор',
+      speakOrType: 'Говорите или печатайте для начала',
+      liveContext: 'Живой контекст',
+      cancelEdit: 'Отменить редактирование',
+      confirmEdit: 'Подтвердить редактирование',
     },
   },
 
@@ -545,6 +627,57 @@ export const ru: TranslationShape = {
       create: 'Создать событие',
     },
 
+    tabs: {
+      gaps: 'Пробелы',
+      analytics: 'Аналитика',
+      settings: 'Настройки',
+    },
+
+    stats: {
+      totalGaps: 'Всего пробелов',
+      potentialOpportunities: 'Потенциальные возможности',
+      highConfidence: 'Высокая уверенность',
+      ofTotal: '{{percent}}% от общего',
+      potentialHours: 'Потенциальные часы',
+      availableForScheduling: 'Доступно для планирования',
+      avgGapSize: 'Средний размер пробела',
+      averageGapDuration: 'Средняя продолжительность пробела',
+    },
+
+    analytics: {
+      totalPotentialHours: 'Всего потенциальных часов',
+      availableForScheduling: 'Доступно для планирования',
+      averageGap: 'Средний пробел',
+      typicalGapSize: 'Типичный размер пробела',
+      largestGap: 'Самый большой пробел',
+      bestOpportunity: 'Лучшая возможность',
+      analysisPeriod: 'Период анализа',
+      to: 'до',
+      confidenceDistribution: 'Распределение уверенности',
+      confidenceDescription: 'Насколько уверен наш ИИ в каждом предложении по пробелу',
+      highConfidence: 'Высокая уверенность',
+      mediumConfidence: 'Средняя уверенность',
+      lowConfidence: 'Низкая уверенность',
+      durationDistribution: 'Распределение по длительности',
+      durationDescription: 'Разбивка размеров пробелов по длительности',
+      lessThanOneHour: '< 1 часа',
+      oneToTwoHours: '1-2 часа',
+      twoOrMoreHours: '2+ часов',
+      analysisSettings: 'Настройки анализа',
+      settingsDescription: 'Текущая конфигурация для обнаружения пробелов',
+      minGap: 'Мин. пробел:',
+      maxGap: 'Макс. пробел:',
+      lookback: 'Ретроспектива:',
+      autoAnalysis: 'Авто-анализ:',
+      enabled: 'Включено',
+      disabled: 'Отключено',
+      calendars: 'Календари:',
+      calendarsIncluded: '{{count}} включено',
+      languages: 'Языки:',
+      languagesSupported: '{{count}} поддерживается',
+      days: 'дней',
+    },
+
     subtitle: 'Обнаружьте возможности планирования в вашем календаре',
     potentialGaps: 'потенциальных пробелов обнаружено',
     analyzingPeriod: 'Период анализа:',
@@ -554,6 +687,7 @@ export const ru: TranslationShape = {
       createEvent: 'Создать событие',
       skipping: 'Пропуск...',
       skipGap: 'Пропустить пробел',
+      dismissAllGaps: 'Отклонить все пробелы',
     },
   },
 
@@ -595,6 +729,10 @@ export const ru: TranslationShape = {
   },
 
   dialogs: {
+    confirm: {
+      confirm: 'Подтвердить',
+      cancel: 'Отмена',
+    },
     eventDetails: {
       title: 'Детали события',
       noDescription: 'Нет описания',
@@ -638,13 +776,40 @@ export const ru: TranslationShape = {
     },
     createCalendar: {
       title: 'Создать новый календарь',
+      subtitle: 'Введите название для вашего нового календаря. Он будет добавлен в ваш аккаунт Google Календаря.',
       name: 'Название календаря',
-      namePlaceholder: 'Введите название календаря',
+      namePlaceholder: 'например: Рабочие проекты, Личные цели, Фитнес',
       description: 'Описание',
       descriptionPlaceholder: 'Добавить описание...',
       color: 'Цвет',
       creating: 'Создание...',
       create: 'Создать календарь',
+    },
+    quickEvent: {
+      title: 'Быстрое добавление',
+      description: 'Добавьте событие в календарь на естественном языке или голосом',
+      placeholder: 'Опишите ваше событие на естественном языке...',
+      examples: 'Примеры:',
+      example1: 'Встреча с Иваном завтра в 15:00',
+      example2: 'Обед в кафе Рома в пятницу в 12:30 на 1 час',
+      example3: 'Стендап команды каждый понедельник в 9:00',
+      recording: 'Запись... Нажмите на микрофон для остановки',
+      pressEnter: 'Нажмите Enter для обработки',
+      processing: 'Обработка...',
+      createEvent: 'Создать событие',
+      ally: 'Ally',
+      yourAIAssistant: 'Ваш ИИ-ассистент',
+      listening: 'Слушаю... Нажмите снова для остановки.',
+      listeningToYou: 'Слушаю, что вы сказали...',
+      understanding: 'Понимаю ваш запрос...',
+      eventAdded: 'Событие добавлено в ваш календарь!',
+      conflictDetected: 'Это конфликтует с существующими событиями.',
+      creatingAnyway: 'Всё равно создаю событие...',
+      failedTranscribe: 'Не удалось расшифровать аудио. Пожалуйста, попробуйте снова.',
+      couldNotTranscribe: 'Не удалось расшифровать аудио.',
+      failedCreate: 'Не удалось создать событие.',
+      unexpectedConflict: 'Неожиданный конфликт',
+      allowMicrophone: 'Пожалуйста, разрешите доступ к микрофону для голосового ввода.',
     },
   },
 
@@ -667,6 +832,8 @@ export const ru: TranslationShape = {
     next: 'Далее',
     previous: 'Назад',
     finish: 'Завершить',
+    startAudit: 'Начать аудит',
+    allyProtocol: 'Протокол Ally',
     steps: {
       welcome: {
         title: 'Добро пожаловать в Ally',
@@ -676,6 +843,22 @@ export const ru: TranslationShape = {
         audioText:
           'Добро пожаловать в Ally, вашего ИИ-помощника по календарю! Я здесь, чтобы помочь вам легко управлять своим расписанием. Позвольте мне провести вас по системе.',
       },
+      assistant: {
+        title: 'Ваш командный центр',
+        content: 'Это основной интерфейс чата. Делегируйте задачи, планируйте встречи или запрашивайте сводки здесь.',
+      },
+      analytics: {
+        title: 'Аналитика производительности',
+        content: 'Отслеживайте соотношение глубокой работы и смотрите, сколько времени Ally возвращает вам.',
+      },
+      integrations: {
+        title: 'Бесшовная связность',
+        content: 'Подключите Ally к WhatsApp, Telegram и вашим источникам календаря для централизации операций.',
+      },
+      settings: {
+        title: 'Конфиденциальность и контроль',
+        content: 'Управляйте настройками контекстной памяти и предпочтениями безопасности аккаунта здесь.',
+      },
       chat: {
         title: 'Общайтесь с Ally',
         description: 'Планирование на естественном языке',
@@ -683,14 +866,6 @@ export const ru: TranslationShape = {
           'Просто набирайте или говорите естественно. Говорите такие вещи как "Запланировать встречу с Джоном завтра в 14:00" или "Что у меня на следующей неделе?" Ally понимает контекст и обрабатывает сложные запросы.',
         audioText:
           'Интерфейс чата - ваш основной способ взаимодействия со мной. Просто набирайте естественно, как будто пишете сообщение другу. Говорите такие вещи как "Запланировать обед с Сарой завтра" или "Какие у меня встречи на этой неделе?"',
-      },
-      analytics: {
-        title: 'Отслеживайте свое время',
-        description: 'Аналитика вашего расписания',
-        content:
-          'Просматривайте детальную аналитику о том, как вы проводите время. Понимайте свои паттерны встреч, находите возможности для оптимизации и поддерживайте здоровый баланс между работой и жизнью.',
-        audioText:
-          'Панель аналитики дает вам мощные инсайты о том, как вы проводите время. Отслеживайте паттерны встреч, идентифицируйте загруженные периоды и оптимизируйте свое расписание для лучшей продуктивности.',
       },
       gaps: {
         title: 'Восстановите потерянное время',
@@ -997,286 +1172,298 @@ export const ru: TranslationShape = {
       refundButton: 'Запросить возврат',
       nevermindButton: 'Отмена',
     },
+  },
 
-    // Toast messages
-    toast: {
-      // General settings
-      timezoneUpdated: 'Часовой пояс обновлен',
-      timezoneUpdateFailed: 'Не удалось обновить часовой пояс',
-      timeFormatUpdated: 'Формат времени обновлен',
-      timeFormatUpdateFailed: 'Не удалось обновить формат времени',
-      realTimeLocationEnabled: 'Местоположение в реальном времени включено',
-      realTimeLocationDisabled: 'Местоположение в реальном времени отключено',
-      locationEnableFailed: 'Не удалось включить местоположение',
-      locationDisableFailed: 'Не удалось отключить местоположение',
-      locationAccessDenied: 'Доступ к местоположению отклонен',
-      locationAccessDeniedDescription: 'Пожалуйста, включите доступ к местоположению в настройках браузера.',
-
-      // Integrations
-      crossPlatformSyncEnabled: 'Кроссплатформенная синхронизация включена',
-      crossPlatformSyncDisabled: 'Кроссплатформенная синхронизация отключена',
-      integrationUpdateFailed: 'Не удалось обновить настройки',
-
-      // Assistant settings
-      voiceInputError: 'Ошибка голосового ввода',
-      customInstructionsSaved: 'Пользовательские инструкции сохранены',
-      instructionsSaveFailed: 'Не удалось сохранить инструкции',
-      contextualSchedulingEnabled: 'Контекстное планирование включено',
-      contextualSchedulingDisabled: 'Контекстное планирование отключено',
-      memoryManagementUpdateFailed: 'Не удалось обновить настройки',
-
-      // Chat
-      allyResponded: 'Ally ответила',
-      memoryUpdated: 'Память обновлена',
-      regeneratingResponse: 'Повторная генерация ответа...',
-
-      // Gaps
-      gapsSettingsSaved: 'Настройки успешно сохранены',
-      gapsSettingsSaveFailed: 'Не удалось сохранить настройки',
-
-      // Conversations
-      titleUpdated: 'Заголовок успешно обновлен',
-      titleUpdateFailed: 'Не удалось обновить заголовок',
-      shareLinkCopied: 'Ссылка на общий доступ скопирована в буфер обмена',
-      shareLinkCreateFailed: 'Не удалось создать ссылку на общий доступ',
-      conversationPinned: 'Беседа успешно закреплена',
-      conversationUnpinned: 'Беседа успешно откреплена',
-      conversationPinFailed: 'Не удалось изменить статус закрепления беседы',
-
-      // Archived conversations
-      conversationRestored: 'Беседа успешно восстановлена',
-      conversationRestoreFailed: 'Не удалось восстановить беседу',
-      allConversationsRestored: 'Все заархивированные беседы успешно восстановлены',
-      conversationsRestoreFailed: 'Не удалось восстановить беседы',
-
-      // Settings modal
-      googleCalendarDisconnected: 'Google Calendar отключен',
-      googleCalendarDisconnectFailed: 'Не удалось отключить Google Calendar',
-      conversationsDeleted: 'Беседы удалены',
-      conversationsDeleteFailed: 'Не удалось удалить беседы',
-      memoryCleared: 'Память очищена',
-      memoryClearFailed: 'Не удалось сбросить память',
-      accountDeleted: 'Аккаунт успешно удален',
-      accountDeleteFailed: 'Не удалось удалить аккаунт',
-
-      // Quick event
-      microphoneAccessDenied: 'Доступ к микрофону отклонен',
-      eventCreated: 'Событие успешно создано',
-
-      // Notifications
-      reminderPreferencesSaved: 'Настройки напоминаний сохранены',
-      reminderPreferencesSaveFailed: 'Не удалось сохранить настройки напоминаний',
-      soundNotificationsEnabled: 'Звуковые уведомления включены',
-      soundNotificationsDisabled: 'Звуковые уведомления отключены',
-      browserNotificationPermissionDenied: 'Разрешение на уведомления браузера отклонено',
-      browserNotificationsEnabled: 'Уведомления браузера включены',
-      notificationPreferencesSaved: 'Настройки уведомлений сохранены',
-      notificationPreferencesSaveFailed: 'Не удалось сохранить настройки уведомлений',
-
-      // Daily briefing
-      dailyBriefingPreferencesSaved: 'Настройки ежедневного брифинга сохранены',
-      dailyBriefingPreferencesSaveFailed: 'Не удалось сохранить настройки ежедневного брифинга',
-
-      // Voice settings
-      voiceResponseEnabled: 'Голосовые ответы включены',
-      voiceResponseDisabled: 'Голосовые ответы отключены',
-      voicePreferenceUpdateFailed: 'Не удалось обновить настройки голоса',
-      voiceChanged: 'Голос изменен на {{voice}}',
-      voiceUpdateFailed: 'Не удалось обновить голос',
-      playbackSpeedChanged: 'Скорость воспроизведения изменена на {{speed}}x',
-      playbackSpeedUpdateFailed: 'Не удалось обновить скорость воспроизведения',
-      voicePreviewFailed: 'Не удалось воспроизвести предварительный просмотр голоса',
-
-      // Messages
-      messageCopied: 'Сообщение скопировано в буфер обмена',
-      messageCopyFailed: 'Не удалось скопировать сообщение',
-
-      // Audio playback
-      audioStopped: 'Аудио остановлено',
-      audioPlaying: 'Воспроизведение аудио...',
-      audioPlayFailed: 'Не удалось воспроизвести аудио',
-
-      // Date range picker
-      dateRangeApplied: 'Диапазон дат применен',
-      dateRangeSelectBoth: 'Пожалуйста, выберите дату начала и окончания',
-
-      // Calendar creation
-      calendarNameRequired: 'Пожалуйста, введите название календаря',
-      calendarCreated: 'Календарь успешно создан!',
-      calendarCreateFailed: 'Не удалось создать календарь',
-      calendarCreateFailedGeneric: 'Не удалось создать календарь. Пожалуйста, попробуйте еще раз.',
-
-      // Waiting list
-      waitingListWelcome: 'Добро пожаловать в список ожидания!',
-      waitingListError: 'Ошибка',
-      waitingList: {
-        limitedEarlyAccess: 'Ограниченный ранний доступ',
-        titlePart1: 'Ваш календарь',
-        titlePart2: 'слушает.',
-        subtitle:
-          'Просто скажите это. Ally планирует это. Через голос, чат, Telegram и WhatsApp. Без форм. Без трения. Только вы и ваше время, наконец, работают вместе.',
-        namePlaceholder: 'Ваше имя (необязательно)',
-        emailPlaceholder: 'Электронная почта',
-        joining: 'Присоединение...',
-        getEarlyAccess: 'Получить ранний доступ',
-        positionMessage: 'Вы #{{position}} в списке ожидания!',
-        footerText:
-          'Присоединяйтесь к более чем 2,000 профессионалам, возвращающим свое время. Мы уведомим вас, как только вы будете в очереди.',
-        footerTitle: 'Будущее планирования',
-        trustIndicators: {
-          security: 'Безопасность корпоративного уровня',
-          speed: 'Ответ менее секунды',
-          timeSaved: 'Экономит 5+ часов в неделю',
-        },
-        platforms: {
-          voice: 'Голос',
-          chat: 'Веб-чат',
-          telegram: 'Telegram',
-          whatsapp: 'WhatsApp',
-        },
-      },
-
-      // Admin
-      userImpersonationFailed: 'Не удалось войти под видом пользователя',
-      userSessionsRevoked: 'Сессии пользователя отозваны',
-      userSessionsRevokeFailed: 'Не удалось отозвать сессии',
-
-      // Broadcast
-      broadcastTitleRequired: 'Требуются заголовок и сообщение',
-      broadcastSent: 'Рассылка отправлена {{count}} пользователям',
-      broadcastSendFailed: 'Не удалось отправить рассылку',
-
-      // Billing
-      alreadyOnFreePlan: 'Вы уже на бесплатном плане',
-      billingPortalOpenFailed: 'Не удалось открыть портал оплаты',
-      checkoutProcessFailed: 'Не удалось обработать оплату. Пожалуйста, попробуйте еще раз.',
-      redirectingToCheckout: 'Перенаправление на оплату для настройки биллинга...',
-
-      // Voice preview
-      voicePreviewError: 'Не удалось воспроизвести предварительный просмотр голоса',
-
-      // Chat input
-      maxImagesAllowed: 'Максимум {{count}} изображений разрешено',
-      imageProcessingFailed: 'Не удалось обработать изображения',
-      unsupportedImageType: 'Неподдерживаемый тип изображения: {{type}}',
-      imageTooLarge: 'Изображение слишком большое (макс. {{size}}MB)',
-      pastedImagesProcessingFailed: 'Не удалось обработать вставленные изображения',
-    },
-
-    // UI Text
-    ui: {
-      // Common UI elements
-      stop: 'Стоп',
-      voice: 'Голос',
-      time: 'Время',
-      organizer: 'Организатор',
-      created: 'Создано',
-      transactionId: 'ID транзакции',
-      noInvoiceAvailable: 'Счет недоступен',
-      noTransactionsYet: 'Транзакций пока нет',
-      date: 'Дата',
-      description: 'Описание',
-      amount: 'Сумма',
-      status: 'Статус',
-      invoice: 'Счет',
-      totalGaps: 'Всего пробелов',
-      highConfidence: 'Высокая уверенность',
-      potentialHours: 'Потенциальные часы',
-      avgGapSize: 'Средний размер пробела',
-      analysisPeriod: 'Период анализа',
-      chat: 'Чат',
-      gaps: 'Пробелы',
-      analytics: 'Аналитика',
-      settings: 'Настройки',
-      after: 'После:',
-      before: 'До:',
-      fillGap: 'Заполнить пробел событием',
-      eventTitle: 'Название события *',
-      skipThisGap: 'Пропустить этот пробел',
-      reason: 'Причина (необязательно)',
-      integrations: 'Интеграции',
-      telegram: 'Telegram',
-      whatsapp: 'WhatsApp',
-      slack: 'Slack',
-      googleCalendar: 'Google Calendar',
-      failedToLoadCalendarData: 'Не удалось загрузить данные календаря.',
-      noActiveCalendarSourcesFound: 'Активные источники календаря не найдены.',
-      connectWhatsApp: 'Подключить WhatsApp',
-      neuralLinks: 'Нейронные связи',
-      executiveGradeAI:
-        'AI-ассистент исполнительного уровня, разработанный для владельцев бизнеса для защиты их глубокого рабочего времени. От бесплатного исследовательского доступа к неограниченной исполнительной власти. Построен на протоколе Ally Neural.',
-      systemOnline: 'Все системы работают',
-      systemOffline: 'Система недоступна',
-      systemChecking: 'Проверка статуса...',
-      chatOnTelegram: 'Чат с Ally в Telegram',
-      checkingServices: 'Проверка сервисов...',
-      serverUnreachable: 'Сервер недоступен',
-      serverOnline: 'Сервер онлайн',
-      uptime: 'Время работы',
-      websockets: 'WebSockets',
-      connections: 'подключений',
-      privacyPolicy: 'Политика конфиденциальности',
-      termsOfService: 'Условия использования',
-      product: 'Продукт',
-      pricing: 'Цены',
-      executivePower: 'Исполнительная власть',
-      company: 'Компания',
-      aboutUs: 'О нас',
-      careers: 'Карьера',
-      resources: 'Ресурсы',
-      blog: 'Журнал изменений',
-      changeLog: 'Журнал изменений',
-    },
+  // Toast messages
+  toast: {
+    // General settings
+    timezoneUpdated: 'Часовой пояс обновлен',
+    timezoneUpdateFailed: 'Не удалось обновить часовой пояс',
+    timeFormatUpdated: 'Формат времени обновлен',
+    timeFormatUpdateFailed: 'Не удалось обновить формат времени',
+    realTimeLocationEnabled: 'Местоположение в реальном времени включено',
+    realTimeLocationDisabled: 'Местоположение в реальном времени отключено',
+    locationEnableFailed: 'Не удалось включить местоположение',
+    locationDisableFailed: 'Не удалось отключить местоположение',
+    locationAccessDenied: 'Доступ к местоположению отклонен',
+    locationAccessDeniedDescription: 'Пожалуйста, включите доступ к местоположению в настройках браузера.',
 
     // Integrations
-    integrations: {
-      title: 'Интеграции',
-      description: 'Подключайте и управляйте своим исполнительным рабочим пространством.',
-      telegram: {
-        title: 'Telegram',
-        description: 'Взаимодействуйте с Ally напрямую через вашего Telegram-бота.',
-        settings: 'Настройки',
+    crossPlatformSyncEnabled: 'Кроссплатформенная синхронизация включена',
+    crossPlatformSyncDisabled: 'Кроссплатформенная синхронизация отключена',
+    integrationUpdateFailed: 'Не удалось обновить настройки',
+
+    // Assistant settings
+    voiceInputError: 'Ошибка голосового ввода',
+    customInstructionsSaved: 'Пользовательские инструкции сохранены',
+    instructionsSaveFailed: 'Не удалось сохранить инструкции',
+    contextualSchedulingEnabled: 'Контекстное планирование включено',
+    contextualSchedulingDisabled: 'Контекстное планирование отключено',
+    memoryManagementUpdateFailed: 'Не удалось обновить настройки',
+
+    // Chat
+    allyResponded: 'Ally ответила',
+    memoryUpdated: 'Память обновлена',
+    regeneratingResponse: 'Повторная генерация ответа...',
+
+    // Gaps
+    gapsSettingsSaved: 'Настройки успешно сохранены',
+    gapsSettingsSaveFailed: 'Не удалось сохранить настройки',
+
+    // Conversations
+    titleUpdated: 'Заголовок успешно обновлен',
+    titleUpdateFailed: 'Не удалось обновить заголовок',
+    shareLinkCopied: 'Ссылка на общий доступ скопирована в буфер обмена',
+    shareLinkCreateFailed: 'Не удалось создать ссылку на общий доступ',
+    conversationPinned: 'Беседа успешно закреплена',
+    conversationUnpinned: 'Беседа успешно откреплена',
+    conversationPinFailed: 'Не удалось изменить статус закрепления беседы',
+
+    // Archived conversations
+    conversationRestored: 'Беседа успешно восстановлена',
+    conversationRestoreFailed: 'Не удалось восстановить беседу',
+    allConversationsRestored: 'Все заархивированные беседы успешно восстановлены',
+    conversationsRestoreFailed: 'Не удалось восстановить беседы',
+
+    // Settings modal
+    googleCalendarDisconnected: 'Google Calendar отключен',
+    googleCalendarDisconnectFailed: 'Не удалось отключить Google Calendar',
+    conversationsDeleted: 'Беседы удалены',
+    conversationsDeleteFailed: 'Не удалось удалить беседы',
+    memoryCleared: 'Память очищена',
+    memoryClearFailed: 'Не удалось сбросить память',
+    accountDeleted: 'Аккаунт успешно удален',
+    accountDeleteFailed: 'Не удалось удалить аккаунт',
+
+    // Quick event
+    microphoneAccessDenied: 'Доступ к микрофону отклонен',
+    eventCreated: 'Событие успешно создано',
+
+    // Notifications
+    reminderPreferencesSaved: 'Настройки напоминаний сохранены',
+    reminderPreferencesSaveFailed: 'Не удалось сохранить настройки напоминаний',
+    soundNotificationsEnabled: 'Звуковые уведомления включены',
+    soundNotificationsDisabled: 'Звуковые уведомления отключены',
+    browserNotificationPermissionDenied: 'Разрешение на уведомления браузера отклонено',
+    browserNotificationsEnabled: 'Уведомления браузера включены',
+    notificationPreferencesSaved: 'Настройки уведомлений сохранены',
+    notificationPreferencesSaveFailed: 'Не удалось сохранить настройки уведомлений',
+
+    // Daily briefing
+    dailyBriefingPreferencesSaved: 'Настройки ежедневного брифинга сохранены',
+    dailyBriefingPreferencesSaveFailed: 'Не удалось сохранить настройки ежедневного брифинга',
+
+    // Voice settings
+    voiceResponseEnabled: 'Голосовые ответы включены',
+    voiceResponseDisabled: 'Голосовые ответы отключены',
+    voicePreferenceUpdateFailed: 'Не удалось обновить настройки голоса',
+    voiceChanged: 'Голос изменен на {{voice}}',
+    voiceUpdateFailed: 'Не удалось обновить голос',
+    playbackSpeedChanged: 'Скорость воспроизведения изменена на {{speed}}x',
+    playbackSpeedUpdateFailed: 'Не удалось обновить скорость воспроизведения',
+    voicePreviewFailed: 'Не удалось воспроизвести предварительный просмотр голоса',
+
+    // Messages
+    messageCopied: 'Сообщение скопировано в буфер обмена',
+    messageCopyFailed: 'Не удалось скопировать сообщение',
+
+    // Audio playback
+    audioStopped: 'Аудио остановлено',
+    audioPlaying: 'Воспроизведение аудио...',
+    audioPlayFailed: 'Не удалось воспроизвести аудио',
+
+    // Date range picker
+    dateRangeApplied: 'Диапазон дат применен',
+    dateRangeSelectBoth: 'Пожалуйста, выберите дату начала и окончания',
+
+    // Calendar creation
+    calendarNameRequired: 'Пожалуйста, введите название календаря',
+    calendarCreated: 'Календарь успешно создан!',
+    calendarCreateFailed: 'Не удалось создать календарь',
+    calendarCreateFailedGeneric: 'Не удалось создать календарь. Пожалуйста, попробуйте еще раз.',
+
+    // Waiting list
+    waitingListWelcome: 'Добро пожаловать в список ожидания!',
+    waitingListError: 'Ошибка',
+    waitingList: {
+      limitedEarlyAccess: 'Ограниченный ранний доступ',
+      titlePart1: 'Ваш календарь',
+      titlePart2: 'слушает.',
+      subtitle:
+        'Просто скажите это. Ally планирует это. Через голос, чат, Telegram и WhatsApp. Без форм. Без трения. Только вы и ваше время, наконец, работают вместе.',
+      namePlaceholder: 'Ваше имя (необязательно)',
+      emailPlaceholder: 'Электронная почта',
+      joining: 'Присоединение...',
+      getEarlyAccess: 'Получить ранний доступ',
+      positionMessage: 'Вы #{{position}} в списке ожидания!',
+      footerText:
+        'Присоединяйтесь к более чем 2,000 профессионалам, возвращающим свое время. Мы уведомим вас, как только вы будете в очереди.',
+      footerTitle: 'Будущее планирования',
+      trustIndicators: {
+        security: 'Безопасность корпоративного уровня',
+        speed: 'Ответ менее секунды',
+        timeSaved: 'Экономит 5+ часов в неделю',
       },
-      whatsapp: {
-        title: 'WhatsApp',
-        description: 'Синхронизируйте Ally с WhatsApp для безопасной ретрансляции сообщений.',
-        connect: 'Подключить',
+      platforms: {
+        voice: 'Голос',
+        chat: 'Веб-чат',
+        telegram: 'Telegram',
+        whatsapp: 'WhatsApp',
       },
-      slack: {
-        title: 'Slack',
-        description: 'Добавьте Ally в свое Slack рабочее пространство для управления командным календарем.',
-      },
-      googleCalendar: {
-        title: 'Google Calendar',
-        failedToLoad: 'Не удалось загрузить данные календаря.',
-        noSources: 'Активные источники календаря не найдены.',
-      },
-      status: {
-        connected: 'Подключено',
-        disconnected: 'Отключено',
-      },
-      connectWhatsApp: 'Подключить WhatsApp',
-      refresh: 'Обновить',
     },
 
     // Admin
-    admin: {
-      grantCredits: {
-        title: 'Предоставить кредиты',
-        description: 'Добавить кредиты к аккаунту {{user}}',
-        creditAmount: 'Сумма кредитов',
-        creditPlaceholder: 'Введите количество кредитов',
-        currentBalance: 'Текущий баланс: {{count}} кредитов',
-        reasonLabel: 'Причина (необязательно)',
-        reasonPlaceholder: 'например, Компенсация за проблему сервиса, рекламный бонус...',
-        auditNote: 'Это будет записано для аудита',
-        cancel: 'Отмена',
-        granting: 'Предоставление...',
-        grantCredits: 'Предоставить кредиты',
-        invalidAmount: 'Пожалуйста, введите корректную сумму кредитов',
-        success: '{{count}} кредитов успешно предоставлено {{email}}',
-        failed: 'Не удалось предоставить кредиты: {{error}}',
-      },
+    userImpersonationFailed: 'Не удалось войти под видом пользователя',
+    userSessionsRevoked: 'Сессии пользователя отозваны',
+    userSessionsRevokeFailed: 'Не удалось отозвать сессии',
+
+    // Broadcast
+    broadcastTitleRequired: 'Требуются заголовок и сообщение',
+    broadcastSent: 'Рассылка отправлена {{count}} пользователям',
+    broadcastSendFailed: 'Не удалось отправить рассылку',
+
+    // Billing
+    alreadyOnFreePlan: 'Вы уже на бесплатном плане',
+    billingPortalOpenFailed: 'Не удалось открыть портал оплаты',
+    checkoutProcessFailed: 'Не удалось обработать оплату. Пожалуйста, попробуйте еще раз.',
+    redirectingToCheckout: 'Перенаправление на оплату для настройки биллинга...',
+
+    // Voice preview
+    voicePreviewError: 'Не удалось воспроизвести предварительный просмотр голоса',
+
+    // Chat input
+    maxImagesAllowed: 'Максимум {{count}} изображений разрешено',
+    imageProcessingFailed: 'Не удалось обработать изображения',
+    unsupportedImageType: 'Неподдерживаемый тип изображения: {{type}}',
+    imageTooLarge: 'Изображение слишком большое (макс. {{size}}MB)',
+    pastedImagesProcessingFailed: 'Не удалось обработать вставленные изображения',
+  },
+
+  // UI Text
+  ui: {
+    // Common UI elements
+    stop: 'Стоп',
+    voice: 'Голос',
+    time: 'Время',
+    organizer: 'Организатор',
+    created: 'Создано',
+    transactionId: 'ID транзакции',
+    noInvoiceAvailable: 'Счет недоступен',
+    noTransactionsYet: 'Транзакций пока нет',
+    date: 'Дата',
+    description: 'Описание',
+    amount: 'Сумма',
+    status: 'Статус',
+    invoice: 'Счет',
+    totalGaps: 'Всего пробелов',
+    highConfidence: 'Высокая уверенность',
+    potentialHours: 'Потенциальные часы',
+    avgGapSize: 'Средний размер пробела',
+    analysisPeriod: 'Период анализа',
+    chat: 'Чат',
+    gaps: 'Пробелы',
+    analytics: 'Аналитика',
+    settings: 'Настройки',
+    after: 'После:',
+    before: 'До:',
+    fillGap: 'Заполнить пробел событием',
+    eventTitle: 'Название события *',
+    skipThisGap: 'Пропустить этот пробел',
+    reason: 'Причина (необязательно)',
+    integrations: 'Интеграции',
+    telegram: 'Telegram',
+    whatsapp: 'WhatsApp',
+    slack: 'Slack',
+    googleCalendar: 'Google Calendar',
+    failedToLoadCalendarData: 'Не удалось загрузить данные календаря.',
+    noActiveCalendarSourcesFound: 'Активные источники календаря не найдены.',
+    connectWhatsApp: 'Подключить WhatsApp',
+    neuralLinks: 'Нейронные связи',
+    executiveGradeAI:
+      'AI-ассистент исполнительного уровня, разработанный для владельцев бизнеса для защиты их глубокого рабочего времени. От бесплатного исследовательского доступа к неограниченной исполнительной власти. Построен на протоколе Ally Neural.',
+    systemOnline: 'Все системы работают',
+    systemOffline: 'Система недоступна',
+    systemChecking: 'Проверка статуса...',
+    chatOnTelegram: 'Чат с Ally в Telegram',
+    checkingServices: 'Проверка сервисов...',
+    serverUnreachable: 'Сервер недоступен',
+    serverOnline: 'Сервер онлайн',
+    uptime: 'Время работы',
+    websockets: 'WebSockets',
+    connections: 'подключений',
+    privacyPolicy: 'Политика конфиденциальности',
+    termsOfService: 'Условия использования',
+    product: 'Продукт',
+    pricing: 'Цены',
+    executivePower: 'Исполнительная власть',
+    company: 'Компания',
+    aboutUs: 'О нас',
+    careers: 'Карьера',
+    resources: 'Ресурсы',
+    blog: 'Журнал изменений',
+    changeLog: 'Журнал изменений',
+  },
+
+  // Integrations
+  integrations: {
+    title: 'Интеграции',
+    description: 'Подключайте и управляйте своим исполнительным рабочим пространством.',
+    telegram: {
+      title: 'Telegram',
+      description: 'Взаимодействуйте с Ally напрямую через вашего Telegram-бота.',
+      settings: 'Настройки',
+    },
+    whatsapp: {
+      title: 'WhatsApp',
+      description: 'Синхронизируйте Ally с WhatsApp для безопасной ретрансляции сообщений.',
+      connect: 'Подключить',
+    },
+    slack: {
+      title: 'Slack',
+      description: 'Добавьте Ally в свое Slack рабочее пространство для управления командным календарем.',
+      addToSlack: 'Добавить в Slack',
+      refresh: 'Обновить',
+    },
+    googleCalendar: {
+      title: 'Google Calendar',
+      description: 'Синхронизируйте ваши календари с Ally для бесшовного планирования и разрешения конфликтов.',
+      failedToLoad: 'Не удалось загрузить данные календаря.',
+      noSources: 'Активные источники календаря не найдены.',
+      fetchingCalendars: 'Получение календарей...',
+      syncedSources: 'Синхронизированные источники',
+      manage: 'Управлять',
+      tryAgain: 'Попробовать снова',
+      apiActive: 'API активен',
+      unnamed: 'Безымянный календарь',
+    },
+    status: {
+      connected: 'Подключено',
+      disconnected: 'Отключено',
+      notConnected: 'Не подключено',
+    },
+    connectWhatsApp: 'Подключить WhatsApp',
+    whatsappModalDescription: 'Чтобы подключить WhatsApp, следуйте инструкциям в вашей консоли Ally Node.',
+    openConsole: 'Открыть консоль',
+    refresh: 'Обновить',
+  },
+
+  // Admin
+  admin: {
+    grantCredits: {
+      title: 'Предоставить кредиты',
+      description: 'Добавить кредиты к аккаунту {{user}}',
+      creditAmount: 'Сумма кредитов',
+      creditPlaceholder: 'Введите количество кредитов',
+      currentBalance: 'Текущий баланс: {{count}} кредитов',
+      reasonLabel: 'Причина (необязательно)',
+      reasonPlaceholder: 'например, Компенсация за проблему сервиса, рекламный бонус...',
+      auditNote: 'Это будет записано для аудита',
+      cancel: 'Отмена',
+      granting: 'Предоставление...',
+      grantCredits: 'Предоставить кредиты',
+      invalidAmount: 'Пожалуйста, введите корректную сумму кредитов',
+      success: '{{count}} кредитов успешно предоставлено {{email}}',
+      failed: 'Не удалось предоставить кредиты: {{error}}',
     },
   },
 } as const

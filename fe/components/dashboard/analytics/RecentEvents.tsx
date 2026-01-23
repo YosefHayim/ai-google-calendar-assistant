@@ -64,7 +64,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
+                className="h-6 w-6 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground flex-shrink-0"
               >
                 <Info size={16} />
               </Button>
@@ -72,7 +72,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
             <HoverCardContent>
               <div className="space-y-2">
                 <h4 className="font-semibold text-sm">Recent Events</h4>
-                <p className="text-xs text-zinc-600 dark:text-muted-foreground">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                   A real-time feed of your most recent calendar events and activities. Click on any item to view
                   detailed information about the event.
                 </p>
@@ -92,7 +92,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
             return isHorizontal ? (
               <div
                 key={i}
-                className="hover:border-zinc-400 dark:hover:border-zinc-600 flex flex-col gap-2 sm:gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-lg p-3 sm:p-4 transition-colors"
+                className="hover:border-muted dark:hover:border-muted flex flex-col gap-2 sm:gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-lg p-3 sm:p-4 transition-colors"
                 data-calendar-id={activity.calendarId || ''}
                 onClick={() => onActivityClick(activity)}
               >
@@ -110,7 +110,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
                   </div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground font-bold uppercase">{activity.time}</p>
                 </div>
-                <p className="text-xs sm:text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-2">
+                <p className="text-xs sm:text-sm font-semibold text-foreground dark:text-muted-foreground line-clamp-2">
                   {activity.action}
                 </p>
                 {activity.calendarName && (
@@ -140,7 +140,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
                   <Icon size={16} style={{ color: activity.calendarColor || '#6366f1' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">
+                  <p className="text-sm font-semibold text-foreground dark:text-muted-foreground line-clamp-1">
                     {activity.action}
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">

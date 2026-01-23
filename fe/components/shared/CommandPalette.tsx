@@ -239,7 +239,7 @@ export function CommandPalette() {
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-secondary dark:aria-selected:bg-secondary"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-foreground dark:text-muted-foreground aria-selected:bg-secondary dark:aria-selected:bg-secondary"
                   >
                     <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}
@@ -258,9 +258,9 @@ export function CommandPalette() {
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-secondary dark:aria-selected:bg-secondary"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-foreground dark:text-muted-foreground aria-selected:bg-secondary dark:aria-selected:bg-secondary"
                   >
-                    <span className="text-purple-500">{cmd.icon}</span>
+                    <span className="text-accent">{cmd.icon}</span>
                     {cmd.label}
                   </Command.Item>
                 ))}
@@ -277,7 +277,7 @@ export function CommandPalette() {
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-secondary dark:aria-selected:bg-secondary"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-foreground dark:text-muted-foreground aria-selected:bg-secondary dark:aria-selected:bg-secondary"
                   >
                     <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}
@@ -296,7 +296,7 @@ export function CommandPalette() {
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-secondary dark:aria-selected:bg-secondary"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-foreground dark:text-muted-foreground aria-selected:bg-secondary dark:aria-selected:bg-secondary"
                   >
                     <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}

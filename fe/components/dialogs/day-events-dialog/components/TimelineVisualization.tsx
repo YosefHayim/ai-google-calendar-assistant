@@ -16,10 +16,10 @@ export function TimelineVisualization({ events, calendarMap }: TimelineVisualiza
   return (
     <div className="px-6 py-4 border-b border ">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs font-medium text-zinc-600 dark:text-muted-foreground">Day Overview</span>
+        <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground">Day Overview</span>
       </div>
       <div className="relative h-8 bg-secondary dark:bg-secondary rounded-md overflow-hidden">
-        <div className="absolute inset-y-0 left-0 bg-emerald-100 dark:bg-emerald-900/30" style={{ width: '100%' }} />
+        <div className="absolute inset-y-0 left-0 bg-primary/10 dark:bg-primary/30" style={{ width: '100%' }} />
         {events.map((event, index) => {
           if (!event.start?.dateTime || !event.end?.dateTime) return null
           const start = new Date(event.start.dateTime)

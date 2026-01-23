@@ -66,10 +66,10 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
       <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border ">
         <DialogHeader>
           <DialogTitle className="text-lg font-medium text-foreground dark:text-primary-foreground">
-            Create New Calendar
+            {t('dialogs.createCalendar.title')}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground dark:text-muted-foreground">
-            Enter a name for your new calendar. It will be added to your Google Calendar account.
+            {t('dialogs.createCalendar.subtitle')}
           </DialogDescription>
         </DialogHeader>
 
@@ -78,7 +78,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
             type="text"
             value={calendarPrompt}
             onChange={(e) => setCalendarPrompt(e.target.value)}
-            placeholder="e.g., Work Projects, Personal Goals, Fitness"
+            placeholder={t('dialogs.createCalendar.namePlaceholder')}
             className="w-full p-3 rounded-md border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent placeholder:text-muted-foreground"
             disabled={isCreatingCalendar}
             autoFocus
@@ -91,19 +91,16 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
           />
         </div>
 
-        {/* Using a grid layout here to match your original design 
-          where buttons took up 50% width each 
-        */}
         <DialogFooter className="sm:justify-between sm:space-x-0 w-full grid grid-cols-2 gap-2 items-center">
           <Button variant="outline" onClick={handleClose} disabled={isCreatingCalendar} className="w-full">
-            Cancel
+            {t('common.cancel')}
           </Button>
           <InteractiveHoverButton
             className="w-full"
-            text="Create Calendar"
+            text={t('dialogs.createCalendar.create')}
             Icon={<Plus size={12} />}
             onClick={handleCreate}
-            loadingText="Creating..."
+            loadingText={t('dialogs.createCalendar.creating')}
             isLoading={isCreatingCalendar}
           />
         </DialogFooter>

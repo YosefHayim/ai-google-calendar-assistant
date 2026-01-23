@@ -172,20 +172,20 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
   const percentage = Math.round((totalScore / maxScore) * 100)
 
   const getOverallStatus = (score: number): { label: string; color: string; bgColor: string } => {
-    if (score >= 80) return { label: 'Excellent', color: 'text-emerald-500', bgColor: 'stroke-emerald-500' }
-    if (score >= 60) return { label: 'Good', color: 'text-sky-500', bgColor: 'stroke-sky-500' }
+    if (score >= 80) return { label: 'Excellent', color: 'text-primary', bgColor: 'stroke-primary' }
+    if (score >= 60) return { label: 'Good', color: 'text-accent', bgColor: 'stroke-accent' }
     if (score >= 40) return { label: 'Fair', color: 'text-primary', bgColor: 'stroke-primary' }
-    return { label: 'Needs Work', color: 'text-rose-500', bgColor: 'stroke-rose-500' }
+    return { label: 'Needs Work', color: 'text-destructive', bgColor: 'stroke-destructive' }
   }
 
   const getStatusIcon = (status: 'good' | 'warning' | 'bad') => {
     switch (status) {
       case 'good':
-        return <CheckCircle className="w-4 h-4 text-emerald-500" />
+        return <CheckCircle className="w-4 h-4 text-primary" />
       case 'warning':
         return <AlertTriangle className="w-4 h-4 text-primary" />
       case 'bad':
-        return <AlertTriangle className="w-4 h-4 text-rose-500" />
+        return <AlertTriangle className="w-4 h-4 text-destructive" />
     }
   }
 
@@ -224,7 +224,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
               fill="none"
               stroke="currentColor"
               strokeWidth="6"
-              className="text-zinc-200 dark:text-zinc-800"
+              className="text-muted-foreground dark:text-muted-foreground"
             />
             <circle
               cx="50"
@@ -249,7 +249,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
               fill="none"
               stroke="currentColor"
               strokeWidth="8"
-              className="text-zinc-200 dark:text-zinc-800"
+              className="text-muted-foreground dark:text-muted-foreground"
             />
             <circle
               cx="64"
@@ -287,7 +287,9 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
             <factor.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 truncate">{factor.label}</span>
+                <span className="text-xs sm:text-sm text-foreground dark:text-muted-foreground truncate">
+                  {factor.label}
+                </span>
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                   <span className="text-xs sm:text-sm font-medium text-foreground dark:text-primary-foreground">
                     {factor.score}/{factor.maxScore}
@@ -299,10 +301,10 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${
                     factor.status === 'good'
-                      ? 'bg-emerald-500'
+                      ? 'bg-primary'
                       : factor.status === 'warning'
                         ? 'bg-primary'
-                        : 'bg-rose-500'
+                        : 'bg-destructive'
                   }`}
                   style={{ width: `${(factor.score / factor.maxScore) * 100}%` }}
                 />

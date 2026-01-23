@@ -66,9 +66,9 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
   }
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'bg-green-500'
-    if (confidence >= 0.6) return 'bg-yellow-500'
-    return 'bg-red-500'
+    if (confidence >= 0.8) return 'bg-primary'
+    if (confidence >= 0.6) return 'bg-secondary'
+    return 'bg-destructive'
   }
 
   const getConfidenceLabel = (confidence: number) => {

@@ -10,13 +10,13 @@ export const WebChatView = () => (
   <div className="h-full flex flex-col bg-muted dark:bg-secondary">
     <div className="p-4 bg-background dark:bg-secondary border-b ">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
           <AllyLogo className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
           <div className="font-medium text-sm text-foreground dark:text-white">Ally Assistant</div>
-          <div className="text-xs text-emerald-500 flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="text-xs text-primary flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             Ready to help
           </div>
         </div>
@@ -36,12 +36,12 @@ export const WebChatView = () => (
         className="flex justify-start"
       >
         <div className="bg-background dark:bg-secondary  px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[85%]">
-          <p className="text-zinc-700 dark:text-zinc-300 mb-2">
+          <p className="text-foreground dark:text-muted-foreground mb-2">
             Tomorrow you have <strong>3 meetings</strong> scheduled:
           </p>
           <div className="space-y-1.5">
             {SCHEDULE_ITEMS.map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs text-zinc-600 dark:text-muted-foreground">
+              <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground dark:text-muted-foreground">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                 {item}
               </div>

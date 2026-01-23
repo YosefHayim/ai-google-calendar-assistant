@@ -56,7 +56,6 @@ export const webhookSignatureMiddleware = (
 ): void => {
   const appSecret = env.integrations.whatsapp.appSecret
 
-  // Skip verification if app secret is not configured (development mode)
   if (!appSecret) {
     logger.warn(
       "WhatsApp: App secret not configured, skipping signature verification"
@@ -73,7 +72,6 @@ export const webhookSignatureMiddleware = (
     return
   }
 
-  // Get raw body - requires express.raw() middleware
   const rawBody = req.body
 
   if (!(rawBody && rawBody instanceof Buffer)) {

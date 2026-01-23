@@ -14,17 +14,17 @@ interface TimeDistributionChartProps {
 }
 
 const TIME_PERIODS = [
-  { key: 'morning', label: 'Morning', range: '6am - 12pm', color: '#fbbf24' },
-  { key: 'afternoon', label: 'Afternoon', range: '12pm - 6pm', color: '#38bdf8' },
-  { key: 'evening', label: 'Evening', range: '6pm - 10pm', color: '#818cf8' },
-  { key: 'night', label: 'Night', range: '10pm - 6am', color: '#64748b' },
+  { key: 'morning', label: 'Morning', range: '6am - 12pm', color: 'hsl(var(--secondary))' },
+  { key: 'afternoon', label: 'Afternoon', range: '12pm - 6pm', color: 'hsl(var(--accent))' },
+  { key: 'evening', label: 'Evening', range: '6pm - 10pm', color: 'hsl(var(--primary))' },
+  { key: 'night', label: 'Night', range: '10pm - 6am', color: 'hsl(var(--muted))' },
 ] as const
 
 const chartConfig = {
-  morning: { label: 'Morning', color: '#fbbf24' },
-  afternoon: { label: 'Afternoon', color: '#38bdf8' },
-  evening: { label: 'Evening', color: '#818cf8' },
-  night: { label: 'Night', color: '#64748b' },
+  morning: { label: 'Morning', color: 'hsl(var(--secondary))' },
+  afternoon: { label: 'Afternoon', color: 'hsl(var(--accent))' },
+  evening: { label: 'Evening', color: 'hsl(var(--primary))' },
+  night: { label: 'Night', color: 'hsl(var(--muted))' },
 }
 
 const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isLoading = false }) => {
@@ -76,7 +76,7 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
       </p>
 
       {!hasData ? (
-        <div className="h-[160px] flex items-center justify-center text-muted-foreground dark:text-zinc-600">
+        <div className="h-[160px] flex items-center justify-center text-muted-foreground dark:text-muted-foreground">
           No events in this period
         </div>
       ) : (
@@ -138,7 +138,7 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
             <div key={period.key} className="flex items-center gap-2 text-sm">
               <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: period.color }} />
               <div className="flex-1 min-w-0">
-                <span className="text-zinc-700 dark:text-zinc-300 truncate">{period.label}</span>
+                <span className="text-foreground dark:text-muted-foreground truncate">{period.label}</span>
                 <span className="text-muted-foreground dark:text-muted-foreground ml-1">
                   {count} ({percentage}%)
                 </span>

@@ -26,7 +26,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
   }
 
   const displayName = calendar.summary || calendar.id.split('@')[0]
-  const calendarColor = calendar.backgroundColor || '#6366f1'
+  const calendarColor = calendar.backgroundColor || 'hsl(var(--primary))'
   const calendarEntry = calendar as ExtendedCalendarEntry
 
   return (
@@ -59,7 +59,9 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
               tooltipTitle="Unique Calendar Identifier"
               tooltipDescription="A unique ID assigned by Google Calendar to identify this calendar. Used internally for API calls and syncing."
             >
-              <p className="text-sm text-zinc-600 dark:text-muted-foreground font-mono break-all">{calendar.id}</p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground font-mono break-all">
+                {calendar.id}
+              </p>
             </InfoSection>
 
             {calendar.summary && (
@@ -68,7 +70,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Name"
                 tooltipDescription="The display name of this calendar as shown in Google Calendar."
               >
-                <p className="text-sm text-zinc-600 dark:text-muted-foreground">{calendar.summary}</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{calendar.summary}</p>
               </InfoSection>
             )}
 
@@ -78,7 +80,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Description"
                 tooltipDescription="A user-defined description explaining the purpose or content of this calendar."
               >
-                <p className="text-sm text-zinc-600 dark:text-muted-foreground">{calendar.description}</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{calendar.description}</p>
               </InfoSection>
             )}
 
@@ -88,7 +90,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Location"
                 tooltipDescription="The geographic location associated with this calendar. Useful for region-specific calendars."
               >
-                <p className="text-sm text-zinc-600 dark:text-muted-foreground">{calendarEntry.location}</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{calendarEntry.location}</p>
               </InfoSection>
             )}
 
@@ -98,7 +100,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Timezone"
                 tooltipDescription="The default timezone for events in this calendar. All-day events and recurring events use this timezone."
               >
-                <p className="text-sm text-zinc-600 dark:text-muted-foreground">{calendar.timeZone}</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{calendar.timeZone}</p>
               </InfoSection>
             )}
 
@@ -108,7 +110,9 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Your Access Level"
                 tooltipDescription="Your permission level: Owner (full control), Writer (edit events), Reader (view only), or FreeBusyReader (availability only)."
               >
-                <p className="text-sm text-zinc-600 dark:text-muted-foreground capitalize">{calendar.accessRole}</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground capitalize">
+                  {calendar.accessRole}
+                </p>
               </InfoSection>
             )}
 

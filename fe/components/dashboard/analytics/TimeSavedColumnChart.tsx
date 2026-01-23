@@ -19,7 +19,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   // Ally Brand Primary Color Hex
-  const PRIMARY_COLOR = '#f26306'
+  const PRIMARY_COLOR = 'hsl(var(--primary))'
 
   if (!data || data.length === 0) {
     return <div ref={containerRef} className="w-full h-full" />
@@ -60,7 +60,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
               y2={y}
               stroke="currentColor"
               strokeWidth="0.5"
-              className="text-zinc-200 dark:text-zinc-800"
+              className="text-muted-foreground dark:text-muted-foreground"
               opacity={0.5}
             />
           )
@@ -154,7 +154,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
                   <span className="text-sm font-bold text-white">{formatHours(point.hours)} saved</span>
                 </div>
                 <div className="pt-1 border-t border-border">
-                  <span className="text-xs text-zinc-300 dark:text-muted-foreground">
+                  <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                     Available Hours Left:{' '}
                     <span className="font-bold text-white">{formatHours(availableHoursLeft)}</span>
                   </span>

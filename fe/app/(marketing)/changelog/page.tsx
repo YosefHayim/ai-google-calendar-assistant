@@ -44,6 +44,47 @@ const BADGE_STYLES: Record<ChangeType, { variant: 'default' | 'secondary' | 'out
 
 const CHANGELOG_DATA: ChangelogEntry[] = [
   {
+    version: '1.0.144',
+    date: 'January 23, 2026',
+    changes: [
+      {
+        type: 'feature',
+        title: 'Support Ticket System',
+        description:
+          'Complete support infrastructure with user-facing components. New SupportModal for creating and managing support tickets with full internationalization support.',
+        icon: MessageSquare,
+      },
+      {
+        type: 'feature',
+        title: 'DPO Safety Integration',
+        description:
+          'Frontend components updated for Dynamic Prompt Optimization. Enhanced analytics dashboard and feature showcase with safety monitoring capabilities.',
+        icon: Shield,
+      },
+      {
+        type: 'improvement',
+        title: 'Component Styling & Accessibility',
+        description:
+          'Updated component styles for improved consistency and accessibility. Enhanced visual hierarchy and responsive design across dashboard components.',
+        icon: Sparkles,
+      },
+      {
+        type: 'improvement',
+        title: 'Enhanced Internationalization',
+        description:
+          'Improved user language support and calendar event handling with better locale detection and timezone support across all languages.',
+        icon: Sparkles,
+      },
+      {
+        type: 'fix',
+        title: 'Authentication & UI Fixes',
+        description:
+          'Resolved logout redirect race condition and improved component consistency. Enhanced user experience with better error handling.',
+        icon: Bug,
+      },
+    ],
+  },
+  {
     version: '1.0.143',
     date: 'January 21, 2026',
     changes: [

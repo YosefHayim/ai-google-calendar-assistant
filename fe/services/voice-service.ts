@@ -17,7 +17,6 @@ export type TranscriptionResponse = {
   text: string
 }
 
-
 // ============================================
 // Simple transcription function (used by useSpeechRecognition hook)
 // ============================================

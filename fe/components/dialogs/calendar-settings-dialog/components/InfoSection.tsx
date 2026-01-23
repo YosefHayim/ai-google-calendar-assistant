@@ -15,12 +15,12 @@ interface InfoSectionProps {
 export function InfoSection({ title, tooltipTitle, tooltipDescription, icon, children }: InfoSectionProps) {
   return (
     <div>
-      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+      <h4 className="text-sm font-semibold text-foreground dark:text-muted-foreground mb-2 flex items-center gap-1.5">
         {icon}
         {title}
         <HoverCard>
           <HoverCardTrigger asChild>
-            <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+            <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground cursor-help" />
           </HoverCardTrigger>
           <HoverCardContent className="w-64 text-xs">
             <p className="font-medium mb-1">{tooltipTitle}</p>

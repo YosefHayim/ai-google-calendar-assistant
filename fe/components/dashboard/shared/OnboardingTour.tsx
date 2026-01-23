@@ -2,62 +2,72 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 
 interface Step {
   id: string
   targetId: string
-  title: string
-  content: string
+  titleKey: string
+  contentKey: string
   position: 'top' | 'bottom' | 'left' | 'right' | 'center'
 }
 
-const TOUR_STEPS: Step[] = [
+const TOUR_STEP_CONFIGS: Step[] = [
   {
     id: 'welcome',
     targetId: 'root',
-    title: 'Welcome to Ally',
-    content: "I'm your private AI secretary. Let's take 30 seconds to show you how I can create leverage in your day.",
+    titleKey: 'onboarding.steps.welcome.title',
+    contentKey: 'onboarding.steps.welcome.content',
     position: 'center',
   },
   {
     id: 'assistant',
     targetId: 'tour-assistant',
-    title: 'Your Command Center',
-    content: 'This is the primary chat interface. Delegate tasks, schedule meetings, or ask for summaries here.',
+    titleKey: 'onboarding.steps.assistant.title',
+    contentKey: 'onboarding.steps.assistant.content',
     position: 'right',
   },
   {
     id: 'analytics',
     targetId: 'tour-analytics',
-    title: 'Performance Intelligence',
-    content: 'Track your Deep Work ratio and see exactly how much time Ally is reclaiming for you.',
+    titleKey: 'onboarding.steps.analytics.title',
+    contentKey: 'onboarding.steps.analytics.content',
     position: 'right',
   },
   {
     id: 'integrations',
     targetId: 'tour-integrations',
-    title: 'Seamless Connectivity',
-    content: 'Connect Ally to WhatsApp, Telegram, and your Calendar sources to centralize your operations.',
+    titleKey: 'onboarding.steps.integrations.title',
+    contentKey: 'onboarding.steps.integrations.content',
     position: 'right',
   },
   {
     id: 'settings',
     targetId: 'tour-settings',
-    title: 'Privacy & Control',
-    content: 'Manage your contextual memory settings and account security preferences here.',
+    titleKey: 'onboarding.steps.settings.title',
+    contentKey: 'onboarding.steps.settings.content',
     position: 'right',
   },
 ]
 
 export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+  const { t } = useTranslation()
   const [currentStep, setCurrentStep] = useState(0)
   const [spotlightRect, setSpotlightRect] = useState<DOMRect | null>(null)
   const [isMobile, setIsMobile] = useState(false)
 
-  const step = TOUR_STEPS[currentStep]
+  const stepConfig = TOUR_STEP_CONFIGS[currentStep]
+  const step = useMemo(
+    () => ({
+      ...stepConfig,
+      title: t(stepConfig.titleKey),
+      content: t(stepConfig.contentKey),
+    }),
+    [stepConfig, t],
+  )
 
   useEffect(() => {
     const checkMobile = () => {
@@ -69,16 +79,15 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
   }, [])
 
   const updateSpotlight = useCallback(() => {
-    // CRITICAL: Disable spotlight (highlights) on mobile entirely
-    if (isMobile || step.position === 'center') {
+    if (isMobile || stepConfig.position === 'center') {
       setSpotlightRect(null)
       return
     }
-    const element = document.getElementById(step.targetId)
+    const element = document.getElementById(stepConfig.targetId)
     if (element) {
       setSpotlightRect(element.getBoundingClientRect())
     }
-  }, [isMobile, step.position, step.targetId])
+  }, [isMobile, stepConfig.position, stepConfig.targetId])
 
   useEffect(() => {
     updateSpotlight()
@@ -92,7 +101,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
   }, [currentStep, updateSpotlight])
 
   const next = () => {
-    if (currentStep < TOUR_STEPS.length - 1) {
+    if (currentStep < TOUR_STEP_CONFIGS.length - 1) {
       setCurrentStep(currentStep + 1)
     } else {
       onComplete()
@@ -123,24 +132,24 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
       {/* Floating Card */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={step.id}
+          key={stepConfig.id}
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{
             opacity: 1,
-            y: isMobile || step.position === 'center' || !spotlightRect ? '-50%' : 0,
-            x: isMobile || step.position === 'center' || !spotlightRect ? '-50%' : 0,
+            y: isMobile || stepConfig.position === 'center' || !spotlightRect ? '-50%' : 0,
+            x: isMobile || stepConfig.position === 'center' || !spotlightRect ? '-50%' : 0,
             scale: 1,
           }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           className={`fixed pointer-events-auto w-[92%] max-w-80 bg-background dark:bg-secondary rounded-2xl shadow-2xl p-6 flex flex-col gap-4 ${
-            isMobile || step.position === 'center' || !spotlightRect ? 'top-1/2 left-1/2' : 'absolute'
+            isMobile || stepConfig.position === 'center' || !spotlightRect ? 'top-1/2 left-1/2' : 'absolute'
           }`}
           style={
-            !isMobile && step.position !== 'center' && spotlightRect
+            !isMobile && stepConfig.position !== 'center' && spotlightRect
               ? {
-                  left: step.position === 'right' ? spotlightRect.right + 24 : spotlightRect.left,
-                  top: step.position === 'right' ? spotlightRect.top : spotlightRect.bottom + 24,
+                  left: stepConfig.position === 'right' ? spotlightRect.right + 24 : spotlightRect.left,
+                  top: stepConfig.position === 'right' ? spotlightRect.top : spotlightRect.bottom + 24,
                 }
               : undefined
           }
@@ -148,7 +157,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-primary">
               <Sparkles size={16} />
-              <span className="text-xs font-bold uppercase tracking-widest">Ally Protocol</span>
+              <span className="text-xs font-bold uppercase tracking-widest">{t('onboarding.allyProtocol')}</span>
             </div>
             <Button
               variant="ghost"
@@ -171,7 +180,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
 
           <div className="flex items-center justify-between mt-4">
             <div className="flex gap-1.5">
-              {TOUR_STEPS.map((_, i) => (
+              {TOUR_STEP_CONFIGS.map((_, i) => (
                 <div
                   key={i}
                   className={`h-1 rounded-full transition-all duration-300 ${
@@ -182,13 +191,13 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
             </div>
             <div className="flex gap-2">
               {currentStep > 0 && (
-                <Button variant="secondary" size="icon" onClick={prev} aria-label="Previous step">
+                <Button variant="secondary" size="icon" onClick={prev} aria-label={t('onboarding.previous')}>
                   <ChevronLeft size={16} />
                 </Button>
               )}
               <Button onClick={next} className="shadow-lg shadow-primary/20 font-bold">
-                {currentStep === TOUR_STEPS.length - 1 ? 'Start Audit' : 'Next'}
-                {currentStep < TOUR_STEPS.length - 1 && <ChevronRight size={16} />}
+                {currentStep === TOUR_STEP_CONFIGS.length - 1 ? t('onboarding.startAudit') : t('onboarding.next')}
+                {currentStep < TOUR_STEP_CONFIGS.length - 1 && <ChevronRight size={16} />}
               </Button>
             </div>
           </div>

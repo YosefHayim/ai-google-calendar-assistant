@@ -117,7 +117,7 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="h-6 w-6 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground"
                 >
                   <Info size={16} />
                 </Button>
@@ -125,7 +125,7 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
               <HoverCardContent>
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">{t('analytics.charts.dailyHours')}</h4>
-                  <p className="text-xs text-zinc-600 dark:text-muted-foreground">
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                     {t('analytics.charts.dailyHoursTooltip', { hours: CALENDAR_CONSTANTS.WAKING_HOURS_PER_DAY })}
                   </p>
                 </div>

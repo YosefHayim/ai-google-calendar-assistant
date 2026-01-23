@@ -1,8 +1,11 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents"
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import { runDPO } from "@/ai-agents/dpo"
 import { activateAgent } from "@/domains/analytics/utils"
+import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
 import { logger } from "@/lib/logger"
 import { unifiedContextStore } from "@/shared/context"
+import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import {
   sendButtonMessage as sendInteractiveButtons,
   sendListMessage as sendInteractiveList,
@@ -11,6 +14,7 @@ import {
 import {
   type AllyBrainPreference,
   getAllyBrainForWhatsApp,
+  getLanguagePreferenceForWhatsApp,
   updateAllyBrainForWhatsApp,
   updateLanguagePreferenceForWhatsApp,
 } from "./ally-brain"
@@ -122,6 +126,7 @@ const SIMPLE_COMMANDS = [
   "website",
   "exit",
   "aboutme",
+  "subscription",
 ]
 
 export const parseCommand = (
@@ -192,6 +197,8 @@ export const handleCommand = async (
       return await handleExitCommand(ctx)
     case "aboutme":
       return await handleAboutMeCommand(ctx)
+    case "subscription":
+      return await handleSubscriptionCommand(ctx)
     default:
       return { handled: false }
   }
@@ -229,6 +236,8 @@ const handleAgentCommand = async (
   }
 
   try {
+    const languageCode = await getLanguagePreferenceForWhatsApp(from)
+
     const conversationContext = await whatsAppConversation.addMessageToContext(
       from,
       contactName,
@@ -264,20 +273,42 @@ const handleAgentCommand = async (
       fullContext,
       {
         allyBrain,
-        languageCode: "en",
+        languageCode,
       }
     )
 
-    const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
-      email,
-      session: userId
-        ? {
-            userId,
-            agentName: ORCHESTRATOR_AGENT.name,
-            taskId: from,
-          }
-        : undefined,
+    const dpoResult = await runDPO({
+      userId: userId || `whatsapp-${from}`,
+      agentId: ORCHESTRATOR_AGENT.name,
+      userQuery: agentCmd.prompt,
+      basePrompt: prompt,
+      isShadowRun: false,
     })
+
+    if (dpoResult.wasRejected) {
+      logger.warn(`WhatsApp: DPO rejected command for ${from}`, {
+        reason: dpoResult.judgeOutput?.reasoning,
+      })
+      const rejectMsg =
+        "Your request was flagged for safety review. Please rephrase your request."
+      await sendTextMessage(from, rejectMsg)
+      return { handled: true, response: rejectMsg }
+    }
+
+    const result = await activateAgent(
+      ORCHESTRATOR_AGENT,
+      dpoResult.effectivePrompt,
+      {
+        email,
+        session: userId
+          ? {
+              userId,
+              agentName: ORCHESTRATOR_AGENT.name,
+              taskId: from,
+            }
+          : undefined,
+      }
+    )
 
     const finalOutput = result.finalOutput || ""
 
@@ -315,43 +346,46 @@ const handleHelpCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
-  const helpText = `✨ *How Ally Helps*
+  const helpText = `✨ *${t("commands.help.header")}*
 
-Your private AI secretary for calendar mastery.
+${t("commands.help.description")}
 
-📅 *View Your Schedule*
-• today - Today's schedule
-• tomorrow - Tomorrow's agenda
-• week - Week at a glance
-• month - Monthly overview
-• free - Find open slots
-• busy - View commitments
+📅 *${t("commands.help.sections.viewSchedule.title")}*
+• today - ${t("botMenu.today")}
+• tomorrow - ${t("botMenu.tomorrow")}
+• week - ${t("botMenu.week")}
+• month - ${t("botMenu.month")}
+• free - ${t("botMenu.free")}
+• busy - ${t("botMenu.busy")}
 
-⚡ *Manage Events*
-• create - Schedule something
-• update - Reschedule or edit
-• delete - Cancel an event
-• search - Search calendar
+⚡ *${t("commands.help.sections.manageEvents.title")}*
+• create - ${t("botMenu.create")}
+• update - ${t("botMenu.update")}
+• delete - ${t("botMenu.delete")}
+• search - ${t("botMenu.search")}
 
-📊 *Time Insights*
-• analytics - Understand your time
-• calendars - Your calendars
-• aboutme - What I know about you
+📊 *${t("commands.help.sections.timeInsights.title")}*
+• analytics - ${t("botMenu.analytics")}
+• calendars - ${t("botMenu.calendars")}
+• aboutme - ${t("botMenu.aboutme")}
 
-🧠 *Personalization*
-• brain - Teach Ally your preferences
-• settings - Ally settings
-• language - Change language
+🧠 *${t("commands.help.sections.personalization.title")}*
+• brain - ${t("botMenu.brain")}
+• settings - ${t("botMenu.settings")}
+• language - ${t("botMenu.language")}
 
-🛠️ *Settings & More*
-• status - Check connection
-• feedback - Give feedback
-• website - Open web dashboard
-• exit - End conversation
+🛠️ *${t("commands.help.sections.settings.title")}*
+• status - ${t("botMenu.status")}
+• subscription - ${t("botMenu.subscription")}
+• feedback - ${t("botMenu.feedback")}
+• website - ${t("botMenu.website")}
+• exit - ${t("botMenu.exit")}
 
-💬 Or just message me naturally!
-_"Schedule a call with Sarah tomorrow at 2pm"_`
+💬 ${t("commands.help.naturalLanguageTip")}
+_${t("commands.help.footerTip")}_`
 
   await sendTextMessage(from, helpText)
   return { handled: true, response: helpText }
@@ -361,20 +395,22 @@ const handleStartCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
-  const startText = `👋 *Welcome to Ally*
+  const startText = `👋 *${t("commands.start.header")}*
 
-I'm your private AI secretary for Google Calendar. Tell me what you need in plain language - I'll handle the rest.
+${t("commands.start.welcomeText")}
 
-🚀 *Get Started*
-• Just message me naturally
-• Or type *help* to see what I can do
+🚀 *${t("commands.start.sections.getStarted.title")}*
+• ${t("commands.start.sections.getStarted.items.0")}
+• ${t("commands.start.sections.getStarted.items.1")}
 
-📅 *Try saying*
-• "What's on my schedule today?"
-• "Block 2 hours for deep work tomorrow"
+📅 *${t("commands.start.sections.trySaying.title")}*
+• ${t("commands.start.sections.trySaying.items.0")}
+• ${t("commands.start.sections.trySaying.items.1")}
 
-Let's reclaim your time ✨`
+${t("commands.start.footer")} ✨`
 
   await sendTextMessage(from, startText)
   return { handled: true, response: startText }
@@ -384,28 +420,30 @@ const handleCreateCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
-  const text = `✨ *Schedule Something*
+  const text = `✨ *${t("commands.create.header")}*
 
-Just describe what you need - I understand natural language:
+${t("commands.create.text")}
 
-📅 *Events & Meetings*
-• "Call with Sarah tomorrow at 2pm"
-• "Team sync every Monday at 9am"
-• "Lunch with investor on Friday at noon"
+📅 *${t("commands.create.sections.eventsMeetings.title")}*
+• ${t("commands.create.sections.eventsMeetings.items.0")}
+• ${t("commands.create.sections.eventsMeetings.items.1")}
+• ${t("commands.create.sections.eventsMeetings.items.2")}
 
-🧠 *Focus & Deep Work*
-• "Block 3 hours for deep work tomorrow morning"
-• "Reserve Friday afternoon for strategy"
+🧠 *${t("commands.create.sections.focusDeepWork.title")}*
+• ${t("commands.create.sections.focusDeepWork.items.0")}
+• ${t("commands.create.sections.focusDeepWork.items.1")}
 
-⏱️ *With Duration*
-• "2-hour workshop on Wednesday at 10am"
-• "Quick 15-min check-in at 4pm"
+⏱️ *${t("commands.create.sections.withDuration.title")}*
+• ${t("commands.create.sections.withDuration.items.0")}
+• ${t("commands.create.sections.withDuration.items.1")}
 
-🎯 *Specific Calendar*
-• "Add to Work: Client call Friday 2pm"
+🎯 *${t("commands.create.sections.specificCalendar.title")}*
+• ${t("commands.create.sections.specificCalendar.items.0")}
 
-_Describe your event and I'll handle the rest._`
+_${t("commands.create.footerTip")}_`
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
@@ -415,26 +453,28 @@ const handleUpdateCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
-  const text = `✏️ *Reschedule or Edit*
+  const text = `✏️ *${t("commands.update.header")}*
 
-Modify any event on your calendar:
+${t("commands.update.text")}
 
-🕐 *Reschedule*
-• "Move my 2pm meeting to 4pm"
-• "Push the dentist to next week"
-• "Shift Friday lunch to 1pm"
+🕐 *${t("commands.update.sections.reschedule.title")}*
+• ${t("commands.update.sections.reschedule.items.0")}
+• ${t("commands.update.sections.reschedule.items.1")}
+• ${t("commands.update.sections.reschedule.items.2")}
 
-📝 *Edit Details*
-• "Rename team meeting to Sprint Review"
-• "Add Zoom link to tomorrow's call"
-• "Update the project meeting description"
+📝 *${t("commands.update.sections.editDetails.title")}*
+• ${t("commands.update.sections.editDetails.items.0")}
+• ${t("commands.update.sections.editDetails.items.1")}
+• ${t("commands.update.sections.editDetails.items.2")}
 
-⏱️ *Adjust Duration*
-• "Make standup 30 minutes instead of 15"
-• "Extend tomorrow's workshop by 1 hour"
+⏱️ *${t("commands.update.sections.adjustDuration.title")}*
+• ${t("commands.update.sections.adjustDuration.items.0")}
+• ${t("commands.update.sections.adjustDuration.items.1")}
 
-_Just tell me what to change._`
+_${t("commands.update.footerTip")}_`
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
@@ -444,25 +484,27 @@ const handleDeleteCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
-  const text = `🗑️ *Cancel an Event*
+  const text = `🗑️ *${t("commands.delete.header")}*
 
-Remove events from your calendar:
+${t("commands.delete.text")}
 
-❌ *Cancel by Name*
-• "Cancel my 3pm meeting"
-• "Remove lunch with John tomorrow"
-• "Delete the dentist appointment"
+❌ *${t("commands.delete.sections.cancelByName.title")}*
+• ${t("commands.delete.sections.cancelByName.items.0")}
+• ${t("commands.delete.sections.cancelByName.items.1")}
+• ${t("commands.delete.sections.cancelByName.items.2")}
 
-📅 *Clear Multiple*
-• "Clear Friday afternoon"
-• "Remove all meetings tomorrow"
+📅 *${t("commands.delete.sections.clearMultiple.title")}*
+• ${t("commands.delete.sections.clearMultiple.items.0")}
+• ${t("commands.delete.sections.clearMultiple.items.1")}
 
-🔄 *Recurring Events*
-• "Skip this week's standup"
-• "Cancel all future team meetings"
+🔄 *${t("commands.delete.sections.recurringEvents.title")}*
+• ${t("commands.delete.sections.recurringEvents.items.0")}
+• ${t("commands.delete.sections.recurringEvents.items.1")}
 
-⚠️ _I'll confirm before removing anything_`
+⚠️ _${t("commands.delete.footerWarning")}_`
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
@@ -472,22 +514,24 @@ const handleSearchCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
-  const text = `🔍 *Search Calendar*
+  const text = `🔍 *${t("commands.search.header")}*
 
-Find any event on your calendar:
+${t("commands.search.text")}
 
-📝 *Search by Keyword*
-• "Find meetings with John"
-• "Search for dentist"
-• "Show all standups"
-• "Find events about Project Alpha"
+📝 *${t("commands.search.sections.searchByKeyword.title")}*
+• ${t("commands.search.sections.searchByKeyword.items.0")}
+• ${t("commands.search.sections.searchByKeyword.items.1")}
+• ${t("commands.search.sections.searchByKeyword.items.2")}
+• ${t("commands.search.sections.searchByKeyword.items.3")}
 
-🗓️ *Filter by Date*
-• "Find meetings next week"
-• "Search calls in December"
+🗓️ *${t("commands.search.sections.filterByDate.title")}*
+• ${t("commands.search.sections.filterByDate.items.0")}
+• ${t("commands.search.sections.filterByDate.items.1")}
 
-_Just describe what you're looking for._`
+_${t("commands.search.footerTip")}_`
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
@@ -614,16 +658,19 @@ const handleSettingsCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from, email } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
-  const text = `⚙️ *Ally Settings*
+  const notConnected = email || t("commands.settings.connectedAsText")
+  const text = `⚙️ *${t("commands.settings.header")}*
 
-*Connected as:* ${email || "Not connected"}
+*${t("commands.settings.connectedAsText")}* ${notConnected}
 
-Select an option:
-• *brain* - Manage AI preferences
-• *language* - Change language
-• *status* - Check connection
-• *website* - Open web dashboard`
+${t("commands.settings.footerText")}
+• *brain* - ${t("botMenu.brain")}
+• *language* - ${t("botMenu.language")}
+• *status* - ${t("botMenu.status")}
+• *website* - ${t("botMenu.website")}`
 
   await sendInteractiveButtons(from, text, [
     { id: "cmd_brain", title: "🧠 Brain" },
@@ -638,23 +685,26 @@ const handleLanguageCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
-  const text = `🌐 *Language Settings*
+  const currentLangDisplay = t(`commands.language.languages.${languageCode}`)
+  const text = `🌐 *${t("commands.language.header")}*
 
-*Current language:* English
+*${t("commands.language.currentLanguageText")}* ${currentLangDisplay}
 
-Select your preferred language:`
+${t("commands.language.selectPrompt")}`
 
-  await sendInteractiveList(from, text, "Select Language", [
+  await sendInteractiveList(from, text, t("commands.language.selectPrompt"), [
     {
-      title: "Languages",
+      title: t("commands.language.header"),
       rows: [
-        { id: "lang_en", title: "English", description: "English (Default)" },
-        { id: "lang_he", title: "עברית", description: "Hebrew" },
-        { id: "lang_ar", title: "العربية", description: "Arabic" },
-        { id: "lang_fr", title: "Français", description: "French" },
-        { id: "lang_de", title: "Deutsch", description: "German" },
-        { id: "lang_ru", title: "Русский", description: "Russian" },
+        { id: "lang_en", title: "English", description: t("commands.language.languages.en") },
+        { id: "lang_he", title: "עברית", description: t("commands.language.languages.he") },
+        { id: "lang_ar", title: "العربية", description: t("commands.language.languages.ar") },
+        { id: "lang_fr", title: "Français", description: t("commands.language.languages.fr") },
+        { id: "lang_de", title: "Deutsch", description: t("commands.language.languages.de") },
+        { id: "lang_ru", title: "Русский", description: t("commands.language.languages.ru") },
       ],
     },
   ])
@@ -667,31 +717,30 @@ const handleFeedbackCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
   if (!feedback.trim()) {
-    const text = `💬 *Share Your Feedback*
+    const text = `💬 *${t("commands.feedback.header")}*
 
-Your input shapes how Ally evolves. You can:
+${t("commands.feedback.text")}
 
-• Tell us what's working well
-• Report any issues you've hit
-• Suggest features you'd love to see
+• ${t("commands.feedback.options.0")}
+• ${t("commands.feedback.options.1")}
+• ${t("commands.feedback.options.2")}
 
-_Just type your feedback after the command:_
-feedback Your message here
+_${t("commands.feedback.instructionText")}_
 
-Thanks for helping us build something great ✨`
+${t("commands.feedback.footer")} ✨`
     await sendTextMessage(from, text)
     return { handled: true, response: text }
   }
 
   logger.info(`WhatsApp: Feedback from ${from}: ${feedback}`)
 
-  const text = `💬 *Thanks for your feedback!*
+  const text = `💬 *${t("commands.feedback.header")}*
 
-Your input helps us make Ally better. The team will review your message.
-
-We appreciate you taking the time to share your thoughts ✨`
+${t("commands.feedback.footer")} ✨`
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
@@ -701,20 +750,16 @@ const handleWebsiteCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
   const baseUrl = process.env.FE_BASE_URL || "https://askally.ai"
 
-  const text = `🌐 *Open Web Dashboard*
+  const text = `🌐 *${t("commands.website.header")}*
 
-Access all of Ally's features in your browser:
+${t("commands.website.text")}
 
-${baseUrl}
-
-Features available on web:
-• Full calendar view and analytics
-• Advanced settings and preferences
-• Conversation history
-• Team features`
+${baseUrl}`
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
@@ -724,14 +769,16 @@ const handleExitCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
   pendingSessions.delete(from)
 
-  const text = `👋 *Until next time*
+  const text = `👋 *${t("commands.exit.header")}*
 
-Your conversation has been cleared. I'm here whenever you need me - just send a message to pick up where we left off.
+${t("commands.exit.text")}
 
-Go get things done ✨`
+${t("commands.exit.footer")} ✨`
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
@@ -741,20 +788,190 @@ const handleAboutMeCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from, email } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
   const allyBrain = await getAllyBrainForWhatsApp(from)
 
-  const text = `👤 *What I Know About You*
+  const statusText = allyBrain?.enabled
+    ? t("commands.brain.statusEnabled")
+    : t("commands.brain.statusDisabled")
+  const instructionsText = allyBrain?.instructions
+    ? `_"${allyBrain.instructions}"_`
+    : `_${t("commands.brain.noInstructions")}_`
 
-*Email:* ${email || "Not connected"}
+  const text = `👤 *${t("commands.aboutme.header")}*
 
-*Custom Instructions:* ${allyBrain?.enabled ? "Enabled" : "Disabled"}
-${allyBrain?.instructions ? `_"${allyBrain.instructions}"_` : "_No custom instructions set_"}
+*Email:* ${email || t("commands.settings.connectedAsText")}
 
-💡 _I learn more about you with each interaction. Use /brain to teach me your preferences._`
+*${t("commands.brain.currentInstructions")}:* ${statusText}
+${instructionsText}
+
+💡 _${t("commands.aboutme.footerTip")}_`
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
+}
+
+const UPGRADE_URL = "https://askally.ai/pricing"
+const BILLING_URL = "https://askally.ai/dashboard/billing"
+const TRIAL_WARNING_DAYS = 3
+const USAGE_WARNING_PERCENT = 80
+const PERCENT_MULTIPLIER = 100
+
+type WhatsAppUserAccess = Awaited<ReturnType<typeof checkUserAccess>>
+type TranslateFunction = (
+  key: string,
+  options?: Record<string, unknown>
+) => string
+
+const getWhatsAppStatusText = (
+  subscriptionStatus: string | null,
+  trialDaysLeft: number | null,
+  t: TranslateFunction
+): string => {
+  if (trialDaysLeft !== null && trialDaysLeft > 0) {
+    return t("commands.subscription.statusTrial")
+  }
+  if (subscriptionStatus === "active") {
+    return t("commands.subscription.statusActive")
+  }
+  if (subscriptionStatus === "cancelled") {
+    return t("commands.subscription.statusCancelled")
+  }
+  return t("commands.subscription.statusExpired")
+}
+
+const buildTrialSection = (
+  access: WhatsAppUserAccess,
+  t: TranslateFunction
+): string => {
+  if (access.trial_days_left === null || access.trial_days_left <= 0) {
+    return ""
+  }
+
+  let section = `\n• ${t("commands.subscription.trialDaysLeft")}: *${access.trial_days_left}*`
+  if (access.trial_end_date) {
+    const endDate = new Date(access.trial_end_date).toLocaleDateString()
+    section += `\n• ${t("commands.subscription.trialEndsOn")}: ${endDate}`
+  }
+  return section
+}
+
+const buildUsageSection = (
+  access: WhatsAppUserAccess,
+  t: TranslateFunction
+): string => {
+  let section = `\n• ${t("commands.subscription.interactionsUsed")}: *${access.interactions_used}*`
+
+  if (access.interactions_remaining !== null) {
+    section += `\n• ${t("commands.subscription.interactionsRemaining")}: *${access.interactions_remaining}*`
+  } else {
+    section += `\n• ${t("commands.subscription.interactionsRemaining")}: ${t("commands.subscription.unlimited")}`
+  }
+
+  section += `\n• ${t("commands.subscription.creditsRemaining")}: *${access.credits_remaining}*`
+  return section
+}
+
+const buildWarningsSection = (
+  access: WhatsAppUserAccess,
+  t: TranslateFunction
+): string => {
+  const warnings: string[] = []
+
+  const hasTrialWarning =
+    access.trial_days_left !== null &&
+    access.trial_days_left <= TRIAL_WARNING_DAYS &&
+    access.trial_days_left > 0
+
+  if (hasTrialWarning) {
+    warnings.push(
+      t("commands.subscription.trialWarning", { days: access.trial_days_left })
+    )
+  }
+
+  if (access.interactions_remaining !== null && access.interactions_used > 0) {
+    const totalInteractions =
+      access.interactions_used + access.interactions_remaining
+    const usagePercent = Math.round(
+      (access.interactions_used / totalInteractions) * PERCENT_MULTIPLIER
+    )
+    if (usagePercent >= USAGE_WARNING_PERCENT) {
+      warnings.push(
+        t("commands.subscription.usageWarning", { percent: usagePercent })
+      )
+    }
+  }
+
+  return warnings.length > 0 ? `\n\n${warnings.join("\n\n")}` : ""
+}
+
+const buildLinksSection = (
+  access: WhatsAppUserAccess,
+  t: TranslateFunction
+): string => {
+  let section = "\n\n🔗 *Links*"
+
+  if (!access.has_access || access.subscription_status !== "active") {
+    section += `\n• ${t("commands.subscription.upgrade")}: ${UPGRADE_URL}`
+  }
+  section += `\n• ${t("commands.subscription.manageBilling")}: ${BILLING_URL}`
+  return section
+}
+
+const handleSubscriptionCommand = async (
+  ctx: CommandContext
+): Promise<CommandResult> => {
+  const { from, email } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
+
+  if (!email) {
+    const text = `💳 *${t("commands.subscription.header")}*
+
+${t("commands.subscription.noUser")}
+
+${t("commands.subscription.manageBilling")}: ${BILLING_URL}`
+    await sendTextMessage(from, text)
+    return { handled: true, response: text }
+  }
+
+  try {
+    const userId = await getUserIdFromWhatsApp(from)
+    const access = await checkUserAccess(userId || `whatsapp-${from}`, email)
+
+    const planName = access.plan_name || t("commands.subscription.freeTier")
+    const statusText = getWhatsAppStatusText(
+      access.subscription_status,
+      access.trial_days_left,
+      t
+    )
+
+    let text = `💳 *${t("commands.subscription.header")}*
+
+📊 *${t("commands.subscription.sections.status.title")}*
+• ${t("commands.subscription.planName")}: *${planName}*
+• ${t("commands.subscription.status")}: ${statusText}`
+
+    text += buildTrialSection(access, t)
+    text += `\n\n📈 *${t("commands.subscription.sections.usage.title")}*`
+    text += buildUsageSection(access, t)
+    text += buildWarningsSection(access, t)
+    text += buildLinksSection(access, t)
+
+    await sendTextMessage(from, text)
+    return { handled: true, response: text }
+  } catch (error) {
+    logger.error(`WhatsApp: Subscription command error for ${from}: ${error}`)
+    const text = `💳 *${t("commands.subscription.header")}*
+
+${t("commands.subscription.error")}
+
+${t("commands.subscription.manageBilling")}: ${BILLING_URL}`
+    await sendTextMessage(from, text)
+    return { handled: true, response: text }
+  }
 }
 
 export const handleInteractiveReply = async (

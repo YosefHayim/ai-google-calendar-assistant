@@ -97,7 +97,7 @@ const WaitingList: React.FC = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="mb-8"
         >
-            <Badge
+          <Badge
             variant="outline"
             className="px-4 py-1.5 text-xs uppercase tracking-widest border-primary/30 text-primary bg-primary/5 dark:bg-primary/10 backdrop-blur-sm"
           >
@@ -137,7 +137,7 @@ const WaitingList: React.FC = () => {
                 {/* Subtle glow on hover */}
                 <div className="absolute inset-0 rounded-xl bg-primary/0 group-hover:bg-primary/5 blur-xl transition-all duration-300 pointer-events-none" />
               </div>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground dark:text-zinc-600 font-medium group-hover:text-zinc-600 dark:group-hover:text-muted-foreground transition-colors duration-300">
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground font-medium group-hover:text-muted-foreground dark:group-hover:text-muted-foreground transition-colors duration-300">
                 {t(`waitingList.platforms.${platform.key}`)}
               </span>
             </motion.div>
@@ -178,16 +178,12 @@ const WaitingList: React.FC = () => {
               transition={{ duration: 0.3 }}
               className="mt-6 p-4 rounded-lg bg-primary/10 border-primary/20"
             >
-              <p className="text-center text-primary font-medium">
-                {t('waitingList.positionMessage', { position })}
-              </p>
+              <p className="text-center text-primary font-medium">{t('waitingList.positionMessage', { position })}</p>
             </motion.div>
           )}
         </form>
 
-        <p className="mt-6 text-xs text-muted-foreground font-medium">
-          {t('waitingList.footerText')}
-        </p>
+        <p className="mt-6 text-xs text-muted-foreground font-medium">{t('waitingList.footerText')}</p>
 
         {/* Trust Indicators */}
         <motion.div
@@ -214,7 +210,7 @@ const WaitingList: React.FC = () => {
       </div>
 
       {/* Subtle bottom detail */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-xs uppercase tracking-widest text-zinc-300 dark:text-zinc-800 font-bold select-none">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-xs uppercase tracking-widest text-muted-foreground dark:text-muted-foreground font-bold select-none">
         {t('waitingList.footerTitle')}
       </div>
     </div>

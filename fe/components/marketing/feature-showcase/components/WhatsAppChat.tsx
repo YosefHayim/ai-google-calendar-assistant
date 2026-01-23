@@ -15,7 +15,7 @@ interface WhatsAppChatProps {
 export const WhatsAppChat = ({ messages }: WhatsAppChatProps) => (
   <div className="h-full flex flex-col bg-[#111B21]">
     <div className="bg-[#202C33] px-4 py-3 flex items-center gap-3">
-      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center">
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
         <AllyLogo className="w-6 h-6 text-white" />
       </div>
       <div className="flex-1">

@@ -274,7 +274,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     return (
       <div
         id="tour-chat-input"
-        className="sticky bottom-0 left-0 right-0 p-3 sm:p-4 z-20 bg-gradient-to-t from-white dark:from-zinc-950 via-white/80 dark:via-zinc-950/80 to-transparent"
+        className="sticky bottom-0 left-0 right-0 p-3 sm:p-4 z-20 bg-gradient-to-t from-background dark:from-background via-background/80 dark:via-background/80 to-transparent"
       >
         <AnimatePresence mode="popLayout">
           {images.length > 0 && (

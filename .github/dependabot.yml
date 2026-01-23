@@ -3,6 +3,7 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/be"
+    target-branch: "dev"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -40,6 +41,7 @@ updates:
 
   - package-ecosystem: "npm"
     directory: "/fe"
+    target-branch: "dev"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -86,6 +88,7 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "dev"
     schedule:
       interval: "weekly"
       day: "monday"

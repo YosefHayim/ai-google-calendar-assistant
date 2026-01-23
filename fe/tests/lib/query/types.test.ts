@@ -5,23 +5,17 @@ import { extractApiError } from '@/lib/query/types'
 describe('extractApiError', () => {
   describe('AxiosError handling', () => {
     it('should extract error from AxiosError with response', () => {
-      const axiosError = new AxiosError(
-        'Request failed',
-        'ERR_BAD_REQUEST',
-        undefined,
-        undefined,
-        {
-          status: 400,
-          statusText: 'Bad Request',
-          headers: new AxiosHeaders(),
-          config: { headers: new AxiosHeaders() },
-          data: {
-            message: 'Invalid email format',
-            code: 'VALIDATION_ERROR',
-            details: { field: 'email', reason: 'invalid format' },
-          },
-        }
-      )
+      const axiosError = new AxiosError('Request failed', 'ERR_BAD_REQUEST', undefined, undefined, {
+        status: 400,
+        statusText: 'Bad Request',
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+        data: {
+          message: 'Invalid email format',
+          code: 'VALIDATION_ERROR',
+          details: { field: 'email', reason: 'invalid format' },
+        },
+      })
 
       const result = extractApiError(axiosError)
 
@@ -32,19 +26,13 @@ describe('extractApiError', () => {
     })
 
     it('should handle AxiosError with 401 unauthorized', () => {
-      const axiosError = new AxiosError(
-        'Unauthorized',
-        'ERR_BAD_REQUEST',
-        undefined,
-        undefined,
-        {
-          status: 401,
-          statusText: 'Unauthorized',
-          headers: new AxiosHeaders(),
-          config: { headers: new AxiosHeaders() },
-          data: { message: 'Invalid token' },
-        }
-      )
+      const axiosError = new AxiosError('Unauthorized', 'ERR_BAD_REQUEST', undefined, undefined, {
+        status: 401,
+        statusText: 'Unauthorized',
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+        data: { message: 'Invalid token' },
+      })
 
       const result = extractApiError(axiosError)
 
@@ -53,19 +41,13 @@ describe('extractApiError', () => {
     })
 
     it('should handle AxiosError with 404 not found', () => {
-      const axiosError = new AxiosError(
-        'Not Found',
-        'ERR_BAD_REQUEST',
-        undefined,
-        undefined,
-        {
-          status: 404,
-          statusText: 'Not Found',
-          headers: new AxiosHeaders(),
-          config: { headers: new AxiosHeaders() },
-          data: { message: 'Resource not found' },
-        }
-      )
+      const axiosError = new AxiosError('Not Found', 'ERR_BAD_REQUEST', undefined, undefined, {
+        status: 404,
+        statusText: 'Not Found',
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+        data: { message: 'Resource not found' },
+      })
 
       const result = extractApiError(axiosError)
 
@@ -74,19 +56,13 @@ describe('extractApiError', () => {
     })
 
     it('should handle AxiosError with 500 server error', () => {
-      const axiosError = new AxiosError(
-        'Internal Server Error',
-        'ERR_BAD_RESPONSE',
-        undefined,
-        undefined,
-        {
-          status: 500,
-          statusText: 'Internal Server Error',
-          headers: new AxiosHeaders(),
-          config: { headers: new AxiosHeaders() },
-          data: { message: 'Something went wrong' },
-        }
-      )
+      const axiosError = new AxiosError('Internal Server Error', 'ERR_BAD_RESPONSE', undefined, undefined, {
+        status: 500,
+        statusText: 'Internal Server Error',
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+        data: { message: 'Something went wrong' },
+      })
 
       const result = extractApiError(axiosError)
 
@@ -95,19 +71,13 @@ describe('extractApiError', () => {
     })
 
     it('should use error.message when response.data.message is missing', () => {
-      const axiosError = new AxiosError(
-        'Network Error',
-        'ERR_NETWORK',
-        undefined,
-        undefined,
-        {
-          status: 503,
-          statusText: 'Service Unavailable',
-          headers: new AxiosHeaders(),
-          config: { headers: new AxiosHeaders() },
-          data: {},
-        }
-      )
+      const axiosError = new AxiosError('Network Error', 'ERR_NETWORK', undefined, undefined, {
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+        data: {},
+      })
 
       const result = extractApiError(axiosError)
 
@@ -125,19 +95,13 @@ describe('extractApiError', () => {
     })
 
     it('should fallback to generic message when all messages are undefined', () => {
-      const axiosError = new AxiosError(
-        undefined as unknown as string,
-        'ERR_NETWORK',
-        undefined,
-        undefined,
-        {
-          status: 502,
-          statusText: 'Bad Gateway',
-          headers: new AxiosHeaders(),
-          config: { headers: new AxiosHeaders() },
-          data: null,
-        }
-      )
+      const axiosError = new AxiosError(undefined as unknown as string, 'ERR_NETWORK', undefined, undefined, {
+        status: 502,
+        statusText: 'Bad Gateway',
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+        data: null,
+      })
 
       const result = extractApiError(axiosError)
 
@@ -218,19 +182,13 @@ describe('extractApiError', () => {
 
   describe('edge cases', () => {
     it('should handle AxiosError with null response data', () => {
-      const axiosError = new AxiosError(
-        'Request failed',
-        'ERR_BAD_REQUEST',
-        undefined,
-        undefined,
-        {
-          status: 400,
-          statusText: 'Bad Request',
-          headers: new AxiosHeaders(),
-          config: { headers: new AxiosHeaders() },
-          data: null,
-        }
-      )
+      const axiosError = new AxiosError('Request failed', 'ERR_BAD_REQUEST', undefined, undefined, {
+        status: 400,
+        statusText: 'Bad Request',
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+        data: null,
+      })
 
       const result = extractApiError(axiosError)
 
@@ -239,19 +197,13 @@ describe('extractApiError', () => {
     })
 
     it('should handle AxiosError with empty string message', () => {
-      const axiosError = new AxiosError(
-        '',
-        'ERR_BAD_REQUEST',
-        undefined,
-        undefined,
-        {
-          status: 422,
-          statusText: 'Unprocessable Entity',
-          headers: new AxiosHeaders(),
-          config: { headers: new AxiosHeaders() },
-          data: { message: '' },
-        }
-      )
+      const axiosError = new AxiosError('', 'ERR_BAD_REQUEST', undefined, undefined, {
+        status: 422,
+        statusText: 'Unprocessable Entity',
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+        data: { message: '' },
+      })
 
       const result = extractApiError(axiosError)
 

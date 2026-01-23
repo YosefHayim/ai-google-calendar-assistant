@@ -33,7 +33,7 @@ export function EventListItem({ event, calendarColor, onEventClick }: EventListI
             <CalendarDays size={16} style={{ color: calendarColor }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">
+            <p className="text-sm font-semibold text-foreground dark:text-muted-foreground line-clamp-1">
               {event.summary || 'N/A'}
             </p>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -52,7 +52,7 @@ export function EventListItem({ event, calendarColor, onEventClick }: EventListI
                   <span className="text-xs font-bold px-1.5 py-0.5">
                     <span className="text-xs font-bold text-muted-foreground dark:text-muted-foreground">
                       {event.status === 'confirmed' ? (
-                        <CircleCheckBig size={12} className="text-green-600" />
+                        <CircleCheckBig size={12} className="text-primary" />
                       ) : (
                         <CircleX size={12} className="text-destructive" />
                       )}
@@ -74,7 +74,7 @@ export function EventListItem({ event, calendarColor, onEventClick }: EventListI
           <h4 className="font-semibold text-sm text-foreground dark:text-primary-foreground">
             {event.summary || 'No Title'}
           </h4>
-          <div className="space-y-2 text-xs text-zinc-600 dark:text-muted-foreground">
+          <div className="space-y-2 text-xs text-muted-foreground dark:text-muted-foreground">
             <div className="flex items-center gap-2">
               <Clock size={16} />
               <span>{eventTime}</span>
@@ -101,7 +101,7 @@ export function EventListItem({ event, calendarColor, onEventClick }: EventListI
                 </span>
                 <span>
                   {event.status === 'confirmed' ? (
-                    <CircleCheckBig size={12} className="text-green-600" />
+                    <CircleCheckBig size={12} className="text-primary" />
                   ) : event.status === 'tentative' ? (
                     <CircleX size={12} className="text-destructive" />
                   ) : (

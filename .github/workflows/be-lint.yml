@@ -53,6 +53,15 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
 
+      - name: Verify npm lockfile is in sync
+        run: |
+          # Check if package-lock.json is in sync with package.json
+          # This prevents Docker build failures with npm ci
+          npm ci --dry-run 2>&1 || {
+            echo "::error::package-lock.json is out of sync with package.json. Run 'npm install' locally and commit the updated lockfile."
+            exit 1
+          }
+
       - name: Biome lint
         run: bunx biome check .
         continue-on-error: true

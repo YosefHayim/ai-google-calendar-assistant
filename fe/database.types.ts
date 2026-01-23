@@ -876,6 +876,63 @@ export type Database = {
         }
         Relationships: []
       }
+      support_tickets: {
+        Row: {
+          attachments: Json | null
+          category: Database['public']['Enums']['support_ticket_category']
+          created_at: string
+          description: string
+          id: string
+          metadata: Json | null
+          priority: Database['public']['Enums']['support_ticket_priority']
+          resolved_at: string | null
+          resolved_by: string | null
+          status: Database['public']['Enums']['support_ticket_status']
+          subject: string
+          ticket_number: string
+          updated_at: string
+          user_email: string
+          user_id: string | null
+          user_name: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          category?: Database['public']['Enums']['support_ticket_category']
+          created_at?: string
+          description: string
+          id?: string
+          metadata?: Json | null
+          priority?: Database['public']['Enums']['support_ticket_priority']
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database['public']['Enums']['support_ticket_status']
+          subject: string
+          ticket_number: string
+          updated_at?: string
+          user_email: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          category?: Database['public']['Enums']['support_ticket_category']
+          created_at?: string
+          description?: string
+          id?: string
+          metadata?: Json | null
+          priority?: Database['public']['Enums']['support_ticket_priority']
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database['public']['Enums']['support_ticket_status']
+          subject?: string
+          ticket_number?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
       team_members: {
         Row: {
           id: string
@@ -1732,6 +1789,9 @@ export type Database = {
       message_role: 'user' | 'assistant' | 'system' | 'tool'
       oauth_provider: 'google' | 'github' | 'telegram' | 'whatsapp'
       optimization_outcome: 'PASS' | 'OPTIMIZED' | 'REJECTED'
+      support_ticket_category: 'bug' | 'feature_request' | 'question' | 'feedback' | 'other'
+      support_ticket_priority: 'low' | 'medium' | 'high' | 'urgent'
+      support_ticket_status: 'open' | 'in_progress' | 'resolved' | 'closed'
       user_intent_category:
         | 'scheduling'
         | 'deletion'
@@ -1880,6 +1940,9 @@ export const Constants = {
       message_role: ['user', 'assistant', 'system', 'tool'],
       oauth_provider: ['google', 'github', 'telegram', 'whatsapp'],
       optimization_outcome: ['PASS', 'OPTIMIZED', 'REJECTED'],
+      support_ticket_category: ['bug', 'feature_request', 'question', 'feedback', 'other'],
+      support_ticket_priority: ['low', 'medium', 'high', 'urgent'],
+      support_ticket_status: ['open', 'in_progress', 'resolved', 'closed'],
       user_intent_category: [
         'scheduling',
         'deletion',

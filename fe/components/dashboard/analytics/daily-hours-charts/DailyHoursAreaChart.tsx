@@ -47,7 +47,7 @@ export const DailyHoursAreaChart: React.FC<DailyHoursAreaChartProps> = ({ data, 
             <stop offset="95%" stopColor="#f26306" stopOpacity={0.05} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
+        <CartesianGrid strokeDasharray="3 3" className="stroke-muted dark:stroke-muted" />
         <XAxis
           dataKey="formattedDate"
           tickLine={false}

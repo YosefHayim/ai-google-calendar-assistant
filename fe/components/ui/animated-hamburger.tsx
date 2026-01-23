@@ -63,25 +63,22 @@ export const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, on
           duration: 0.5,
         }}
       >
-        {/* Top Bar */}
         <motion.span
-          className="absolute left-0 w-full bg-secondary dark:bg-secondary rounded-full"
+          className="absolute left-0 w-full bg-foreground dark:bg-foreground rounded-full"
           style={{ height: barHeight }}
           variants={topBarVariants}
           transition={{ duration: 0.2 }}
         />
 
-        {/* Middle Bar */}
         <motion.span
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-full bg-secondary dark:bg-secondary rounded-full"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-full bg-foreground dark:bg-foreground rounded-full"
           style={{ height: barHeight }}
           variants={middleBarVariants}
           transition={{ duration: 0.1 }}
         />
 
-        {/* Bottom Bar */}
         <motion.span
-          className="absolute left-0 w-full bg-secondary dark:bg-secondary rounded-full"
+          className="absolute left-0 w-full bg-foreground dark:bg-foreground rounded-full"
           style={{ height: barHeight }}
           variants={bottomBarVariants}
           transition={{

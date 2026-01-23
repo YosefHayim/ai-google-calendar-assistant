@@ -28,7 +28,7 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+              className="h-6 w-6 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground"
             >
               <Info size={16} />
             </Button>
@@ -36,7 +36,7 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
           <HoverCardContent>
             <div className="space-y-2">
               <h4 className="font-semibold text-sm">Performance Intelligence</h4>
-              <p className="text-xs text-zinc-600 dark:text-muted-foreground">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 AI-powered insights about your productivity patterns, focus velocity, and schedule optimization
                 opportunities.
               </p>

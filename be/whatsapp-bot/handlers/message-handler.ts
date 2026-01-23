@@ -1,5 +1,6 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents"
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import { runDPO } from "@/ai-agents/dpo"
 import {
   activateAgent,
   generateSpeechForTelegram,
@@ -196,15 +197,38 @@ const processNaturalLanguageMessage = async (
       languageCode,
     })
 
-    const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
-      session: userId
-        ? {
-            userId,
-            agentName: ORCHESTRATOR_AGENT.name,
-            taskId: from,
-          }
-        : undefined,
+    const dpoResult = await runDPO({
+      userId: userId || `whatsapp-${from}`,
+      agentId: ORCHESTRATOR_AGENT.name,
+      userQuery: text,
+      basePrompt: prompt,
+      isShadowRun: false,
     })
+
+    if (dpoResult.wasRejected) {
+      logger.warn(`WhatsApp: DPO rejected request for user ${from}`, {
+        reason: dpoResult.judgeOutput?.reasoning,
+      })
+      await sendTextMessage(
+        from,
+        "Your request was flagged for safety review. Please rephrase your request."
+      )
+      return
+    }
+
+    const result = await activateAgent(
+      ORCHESTRATOR_AGENT,
+      dpoResult.effectivePrompt,
+      {
+        session: userId
+          ? {
+              userId,
+              agentName: ORCHESTRATOR_AGENT.name,
+              taskId: from,
+            }
+          : undefined,
+      }
+    )
     const finalOutput = result.finalOutput || ""
 
     if (finalOutput) {

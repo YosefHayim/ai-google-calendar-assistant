@@ -1,10 +1,11 @@
 'use client'
 
+import { CategoryFilterDropdown, ColorFilterDropdown, TagFilterDropdown } from './FilterDropdowns'
 import { Search, X } from 'lucide-react'
+
+import type { AvailableFilters } from '../types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import type { AvailableFilters } from '../types'
-import { ColorFilterDropdown, TagFilterDropdown, CategoryFilterDropdown } from './FilterDropdowns'
 
 interface FilterControlsProps {
   searchQuery: string
@@ -119,7 +120,7 @@ function MobileFilters({
 }: FilterSectionProps) {
   return (
     <div className="sm:hidden -mx-4 px-4">
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide flex-wrap">
         {availableFilters.colors.length > 0 && (
           <ColorFilterDropdown
             colors={availableFilters.colors}

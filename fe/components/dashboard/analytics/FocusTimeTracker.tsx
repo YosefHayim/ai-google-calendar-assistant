@@ -46,8 +46,8 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
       value: data.averageFocusBlockLength,
       suffix: 'hrs',
       description: 'Average duration per block',
-      color: 'text-sky-500',
-      bgColor: 'bg-sky-100 dark:bg-sky-900/30',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10 dark:bg-accent/30',
     },
     {
       icon: TrendingUp,
@@ -55,8 +55,8 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
       value: data.longestFocusBlock,
       suffix: 'hrs',
       description: 'Best focus session',
-      color: 'text-emerald-500',
-      bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10 dark:bg-primary/30',
     },
     {
       icon: Target,
@@ -64,16 +64,16 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
       value: data.focusTimePercentage,
       suffix: '%',
       description: 'Of total waking hours',
-      color: 'text-indigo-500',
-      bgColor: 'bg-indigo-100 dark:bg-indigo-900/30',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10 dark:bg-accent/30',
     },
   ]
 
   const getFocusQuality = (percentage: number): { label: string; color: string } => {
-    if (percentage >= 70) return { label: 'Excellent', color: 'text-emerald-500' }
-    if (percentage >= 50) return { label: 'Good', color: 'text-sky-500' }
-    if (percentage >= 30) return { label: 'Fair', color: 'text-primary' }
-    return { label: 'Needs Improvement', color: 'text-rose-500' }
+    if (percentage >= 70) return { label: 'Excellent', color: 'text-primary' }
+    if (percentage >= 50) return { label: 'Good', color: 'text-accent' }
+    if (percentage >= 30) return { label: 'Fair', color: 'text-secondary' }
+    return { label: 'Needs Improvement', color: 'text-destructive' }
   }
 
   const quality = getFocusQuality(data.focusTimePercentage)
@@ -108,7 +108,7 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">
+                <span className="text-xs sm:text-sm font-medium text-foreground dark:text-muted-foreground truncate">
                   {stat.label}
                 </span>
                 <span className="text-base sm:text-lg font-bold text-foreground dark:text-primary-foreground flex-shrink-0">
@@ -130,13 +130,13 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
       <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border ">
         <div className="flex items-center justify-between text-[10px] sm:text-xs mb-1.5 sm:mb-2 gap-2">
           <span className="text-muted-foreground dark:text-muted-foreground truncate">Focus vs Meeting Time</span>
-          <span className="font-medium text-zinc-700 dark:text-zinc-300 flex-shrink-0">
+          <span className="font-medium text-foreground dark:text-muted-foreground flex-shrink-0">
             {data.focusTimePercentage}% focus
           </span>
         </div>
         <div className="h-1.5 sm:h-2 bg-accent dark:bg-secondary rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-accent to-accent rounded-full transition-all duration-500"
             style={{ width: `${Math.min(100, data.focusTimePercentage)}%` }}
           />
         </div>

@@ -35,7 +35,7 @@ export const FEATURES: FeatureItem[] = [
     description:
       "The world's most popular messenger, now your executive command line. Private, fast, and always accessible.",
     icon: WhatsAppIcon,
-    color: 'text-emerald-500',
+    color: 'text-primary',
     content: <WhatsAppContent />,
   },
   {
@@ -43,7 +43,7 @@ export const FEATURES: FeatureItem[] = [
     title: 'Executive Digests',
     description: 'Turns hour-long transcripts into 5-minute actionable summaries and next steps.',
     icon: NotebookTabs,
-    color: 'text-amber-500',
+    color: 'text-secondary',
     content: <SummariesContent />,
   },
   {
@@ -51,7 +51,7 @@ export const FEATURES: FeatureItem[] = [
     title: 'Proactive Logistics',
     description: 'Monitors flights and car services, adjusting your schedule in real-time for delays.',
     icon: Plane,
-    color: 'text-sky-500',
+    color: 'text-accent',
     content: <LogisticsContent />,
   },
   {
@@ -67,7 +67,7 @@ export const FEATURES: FeatureItem[] = [
     title: 'Conflict Arbitrator',
     description: 'Ally identifies calendar overlaps and proactively suggests logical resolutions.',
     icon: AlertCircle,
-    color: 'text-rose-500',
+    color: 'text-destructive',
     content: <ConflictContent />,
   },
   {
@@ -75,7 +75,7 @@ export const FEATURES: FeatureItem[] = [
     title: 'Voice-to-Action',
     description: 'Record commands on the go. Ally executes complex tasks from simple audio.',
     icon: Mic,
-    color: 'text-emerald-500',
+    color: 'text-primary',
     content: <VoiceContent />,
   },
   {

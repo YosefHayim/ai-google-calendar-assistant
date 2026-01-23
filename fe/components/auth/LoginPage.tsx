@@ -61,8 +61,8 @@ const LoginPage: React.FC = () => {
             {t('login.subtitle')}
           </p>
           {error && (
-            <div className="mb-6 p-4 bg-destructive/5 dark:bg-red-900/20 border-destructive/20 -red-800 rounded-lg">
-              <p className="text-destructive dark:text-red-400 text-sm font-medium">
+            <div className="mb-6 p-4 bg-destructive/5 dark:bg-destructive/20 border-destructive/20 dark:border-destructive rounded-lg">
+              <p className="text-destructive dark:text-destructive text-sm font-medium">
                 {error === 'no_token' && t('login.errors.noToken')}
                 {error === 'callback_failed' && t('login.errors.callbackFailed')}
                 {error === 'session_expired' &&

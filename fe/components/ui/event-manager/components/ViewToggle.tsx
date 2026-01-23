@@ -1,8 +1,9 @@
 'use client'
 
 import { Calendar, CalendarRange, Clock, Grid3x3, List } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
+import { Button } from '@/components/ui/button'
 import type { ViewType } from '../types'
 
 interface ViewToggleProps {
@@ -13,7 +14,7 @@ interface ViewToggleProps {
 export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   return (
     <>
-      <div className="sm:hidden">
+      <div className="sm:hidden w-full sm:w-auto">
         <Select value={view} onValueChange={(value: ViewType) => onViewChange(value)}>
           <SelectTrigger className="w-full">
             <SelectValue />

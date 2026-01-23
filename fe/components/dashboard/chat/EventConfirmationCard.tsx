@@ -1,6 +1,7 @@
 'use client'
 
 import { Calendar, Check, Clock, MapPin, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -29,26 +30,9 @@ type EventConfirmationCardProps = {
 }
 
 const confidenceColors = {
-  high: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  low: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-}
-
-const formatEventTime = (startTime: string, endTime?: string, isAllDay?: boolean): string => {
-  if (isAllDay) {
-    return 'All day'
-  }
-
-  const start = new Date(startTime)
-  const startStr = formatDate(start, 'TIME')
-
-  if (endTime) {
-    const end = new Date(endTime)
-    const endStr = formatDate(end, 'TIME')
-    return `${startStr} - ${endStr}`
-  }
-
-  return startStr
+  high: 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary',
+  medium: 'bg-secondary/10 text-secondary-foreground dark:bg-secondary/20 dark:text-secondary-foreground',
+  low: 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive',
 }
 
 const formatEventDate = (startTime: string): string => {
@@ -63,15 +47,33 @@ export const EventConfirmationCard = ({
   isLoading = false,
   className,
 }: EventConfirmationCardProps) => {
+  const { t } = useTranslation()
   const eventCount = events.length
-  const eventText = eventCount === 1 ? 'event' : 'events'
+
+  const formatEventTime = (startTime: string, endTime?: string, isAllDay?: boolean): string => {
+    if (isAllDay) {
+      return t('eventConfirmation.allDay')
+    }
+
+    const start = new Date(startTime)
+    const startStr = formatDate(start, 'TIME')
+
+    if (endTime) {
+      const end = new Date(endTime)
+      const endStr = formatDate(end, 'TIME')
+      return `${startStr} - ${endStr}`
+    }
+
+    return startStr
+  }
+  const eventText = eventCount === 1 ? t('common.event') : t('common.events')
 
   return (
     <Card className={cn('w-full max-w-lg border-primary/20', className)}>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <Calendar className="h-5 w-5 text-primary" />
-          Found {eventCount} {eventText} to add
+          {t('eventConfirmation.foundEvents', { count: eventCount, eventText })}
         </CardTitle>
       </CardHeader>
 
@@ -112,11 +114,11 @@ export const EventConfirmationCard = ({
       <CardFooter className="flex gap-2 pt-3">
         <Button variant="outline" onClick={onCancel} disabled={isLoading} className="flex-1">
           <X className="h-4 w-4 mr-1" />
-          Cancel
+          {t('eventConfirmation.cancel')}
         </Button>
         <Button onClick={onConfirm} disabled={isLoading} className="flex-1">
           <Check className="h-4 w-4 mr-1" />
-          Add {eventText}
+          {t('eventConfirmation.addEvents', { eventText })}
         </Button>
       </CardFooter>
     </Card>

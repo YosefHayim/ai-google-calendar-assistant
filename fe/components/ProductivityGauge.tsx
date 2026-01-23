@@ -16,7 +16,7 @@ const ProductivityGauge: React.FC<ProductivityGaugeProps> = ({ score }) => {
       <div className="relative w-40 h-40">
         <svg className="w-full h-full" viewBox="0 0 140 140">
           <circle
-            className="text-zinc-200 dark:text-zinc-800"
+            className="text-muted-foreground dark:text-muted-foreground"
             stroke="currentColor"
             strokeWidth="10"
             fill="transparent"

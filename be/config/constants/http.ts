@@ -44,6 +44,7 @@ export enum ROUTES {
   TIMEZONES = "/api/timezones",
   STORAGE = "/api/storage",
   CONTACTS = "/api/contacts",
+  SUPPORT = "/api/support",
 }
 
 export enum PROVIDERS {

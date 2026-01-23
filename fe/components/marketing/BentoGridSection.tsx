@@ -59,7 +59,7 @@ const BentoGridSection = React.memo(() => {
               maxDays={12}
             />
           </div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-100 dark:from-zinc-800/50 to-transparent opacity-40"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-background dark:from-background/50 to-transparent opacity-40"></div>
         </div>
       ),
       className: 'md:col-start-2 md:col-end-4 md:row-start-1 md:row-end-2',
@@ -102,7 +102,7 @@ const BentoGridSection = React.memo(() => {
       cta: t('bento.features.secure.cta'),
       background: (
         <div className="absolute inset-0 flex items-end justify-end p-4">
-          <Lock className="w-32 h-32 text-primary-foreground dark:text-zinc-800/40 -mr-8 -mb-8" />
+          <Lock className="w-32 h-32 text-primary-foreground dark:text-muted-foreground/40 -mr-8 -mb-8" />
         </div>
       ),
       className: 'md:col-start-3 md:col-end-4 md:row-start-3 md:row-end-4',

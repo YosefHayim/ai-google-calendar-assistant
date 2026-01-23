@@ -3,7 +3,7 @@
 import type { AIAllySidebarProps, ChatMessage, QuickAction } from './types'
 import { AllyOrbButton, ChatHeader, MessageBubble, QuickActionsBar, TypingIndicator } from './components'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUp, Mic, X } from 'lucide-react'
+import { ArrowUp, HelpCircle, Mic, X } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
@@ -11,12 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
-
-const QUICK_ACTIONS: QuickAction[] = [
-  { label: 'Optimize schedule', emoji: '📅' },
-  { label: 'Find free time', emoji: '🔍' },
-  { label: 'Reschedule meeting', emoji: '🔄' },
-]
+import { SupportModal } from '@/components/dialogs/SupportModal'
+import { useTranslation } from 'react-i18next'
 
 const INITIAL_MESSAGE: ChatMessage = {
   id: Date.now(),
@@ -25,9 +21,24 @@ const INITIAL_MESSAGE: ChatMessage = {
 }
 
 export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
+  const { t } = useTranslation()
+
+  const QUICK_ACTIONS: QuickAction[] = [
+    { label: t('allySidebar.quickActions.optimizeSchedule'), emoji: '📅' },
+    { label: t('allySidebar.quickActions.findFreeTime'), emoji: '🔍' },
+    { label: t('allySidebar.quickActions.rescheduleMeeting'), emoji: '🔄' },
+  ]
+
+  const INITIAL_MESSAGE: ChatMessage = {
+    id: Date.now(),
+    text: t('allySidebar.initialMessage'),
+    isUser: false,
+  }
+
   const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -49,7 +60,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
         ...prev,
         {
           id: Date.now(),
-          text: 'I understand! Let me analyze your calendar and suggest some optimizations.',
+          text: t('allySidebar.responseMessage'),
           isUser: false,
         },
       ])
@@ -113,7 +124,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
           >
             <ChatHeader onClose={onClose} onMinimize={onClose} />
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-64 max-h-80 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-64 max-h-80 scrollbar-thin scrollbar-thumb-muted dark:scrollbar-thumb-muted scrollbar-track-transparent">
               {messages.map((message, index) => (
                 <MessageBubble key={message.id} message={message} index={index} />
               ))}
@@ -143,7 +154,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     size="icon"
                     onClick={cancelRecording}
                     className="absolute top-2 right-2 h-7 w-7 text-muted-foreground"
-                    aria-label="Cancel voice recording"
+                    aria-label={t('allySidebar.cancelVoiceRecording')}
                   >
                     <X size={16} />
                   </Button>
@@ -163,7 +174,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     onClick={toggleRecording}
                     className="h-10 w-10 flex-shrink-0 text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground"
                     disabled={!speechRecognitionSupported}
-                    aria-label="Toggle voice input"
+                    aria-label={t('allySidebar.toggleVoiceInput')}
                   >
                     <Mic className="w-5 h-5" />
                   </Button>
@@ -173,7 +184,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Ask Ally anything..."
+                    placeholder={t('allySidebar.placeholder')}
                     className="flex-1 h-10 bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm"
                   />
 
@@ -187,20 +198,32 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                         ? 'bg-secondary dark:bg-secondary text-primary-foreground hover:bg-secondary dark:hover:bg-accent'
                         : 'bg-secondary dark:bg-secondary text-muted-foreground',
                     )}
-                    aria-label="Send message"
+                    aria-label={t('allySidebar.sendMessage')}
                   >
                     <ArrowUp className="w-5 h-5" />
                   </Button>
                 </form>
               )}
 
-              <p className="text-center text-xs text-muted-foreground dark:text-muted-foreground mt-2 font-medium">
-                Powered by Ally AI
-              </p>
+              <div className="flex items-center justify-center gap-2 mt-2">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground font-medium">
+                  {t('allySidebar.poweredBy')}
+                </p>
+                <span className="text-muted-foreground">·</span>
+                <button
+                  onClick={() => setIsSupportModalOpen(true)}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                >
+                  <HelpCircle className="w-3 h-3" />
+                  {t('allySidebar.support')}
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SupportModal isOpen={isSupportModalOpen} onClose={() => setIsSupportModalOpen(false)} />
     </div>
   )
 }

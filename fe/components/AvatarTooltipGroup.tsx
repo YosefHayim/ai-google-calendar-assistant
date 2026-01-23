@@ -30,15 +30,15 @@ const TooltipAvatar: React.FC<AvatarProps & { index: number }> = ({ src, name, f
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 5, scale: 0.95 }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-secondary dark:bg-background text-white dark:text-foreground text-xs font-bold rounded shadow-xl whitespace-nowrap z-50 pointer-events-none"
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover dark:bg-popover text-popover-foreground dark:text-popover-foreground text-xs font-bold rounded shadow-xl whitespace-nowrap z-50 pointer-events-none"
           >
             {name}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-900 -t-white" />
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-popover dark:border-t-popover" />
           </motion.div>
         )}
       </AnimatePresence>
       <div
-        className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white -zinc-950 bg-secondary dark:bg-secondary transition-transform hover:scale-110 hover:z-10 cursor-pointer"
+        className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white dark:border-muted-foreground bg-secondary dark:bg-secondary transition-transform hover:scale-110 hover:z-10 cursor-pointer"
         style={{ marginLeft: index === 0 ? 0 : '-12px' }}
       >
         {src ? (
@@ -71,7 +71,7 @@ const AvatarTooltipGroup = () => {
         <div className="ml-4 flex flex-col items-start">
           <div className="flex items-center gap-0.5 mb-0.5">
             {[...Array(5)].map((_, index) => (
-              <Star key={index} className="size-3.5 fill-amber-400 text-amber-400" />
+              <Star key={index} className="size-3.5 fill-primary text-primary" />
             ))}
           </div>
           <p className="text-xs text-left font-medium text-muted-foreground dark:text-muted-foreground leading-none">

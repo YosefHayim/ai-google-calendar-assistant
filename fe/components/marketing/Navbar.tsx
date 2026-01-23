@@ -52,11 +52,16 @@ function getUserInfo(user: User | CustomUser | null) {
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { t } = useTranslation()
   const { isAuthenticated, user, isLoading } = useAuthContext()
   const { name, initials, avatarUrl } = getUserInfo(user)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,8 +96,8 @@ const Navbar = () => {
           isScrolled ? 'py-3 bg-background/80 backdrop-blur-md border-b border shadow-sm' : 'py-6 bg-transparent'
         }`}
       >
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
+        <div className="container mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
+          <Link href="/" className="flex items-center gap-2 group flex-wrap">
             <div className="w-8 h-8 bg-foreground dark:bg-background rounded-md flex items-center justify-center text-background dark:text-foreground shadow-sm group-hover:scale-110 transition-transform">
               <AllyLogo className="w-5 h-5" />
             </div>
@@ -128,7 +133,7 @@ const Navbar = () => {
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 max-w-[120px] truncate">
+                  <span className="text-sm font-medium text-foreground dark:text-muted-foreground max-w-[120px] truncate">
                     {name}
                   </span>
                 </div>
@@ -154,8 +159,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Toggle Section */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className={`flex items-center gap-2 md:hidden flex-wrap ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
             {isAuthenticated && !isLoading && (
               <Avatar className="h-7 w-7">
                 <AvatarImage src={avatarUrl} alt={name} />
@@ -203,7 +207,7 @@ const Navbar = () => {
                 </Link>
               </div>
 
-              <div className="flex flex-col gap-6 flex-1">
+              <div className="flex flex-col gap-6 flex-1 overflow-hidden">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
@@ -219,7 +223,7 @@ const Navbar = () => {
               </div>
 
               {/* Social Icons added above the separator */}
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-4 mb-6 flex-wrap">
                 <a
                   href="https://discord.gg"
                   target="_blank"
@@ -256,7 +260,7 @@ const Navbar = () => {
                 </a>
               </div>
 
-              <div className="flex flex-col gap-4 pt-8 border-t border-zinc-100 ">
+              <div className="flex flex-col gap-4 pt-8 border-t border-border ">
                 {isAuthenticated && !isLoading ? (
                   <>
                     <div className="flex items-center gap-3 mb-2">
@@ -280,7 +284,7 @@ const Navbar = () => {
                         setIsMobileMenuOpen(false)
                         router.push('/dashboard')
                       }}
-                      className="w-full h-14 text-lg gap-2"
+                      className="w-full h-14 text-lg gap-2 overflow-hidden"
                     >
                       {t('navbar.dashboard', 'Dashboard')}
                       <ArrowRight className="h-5 w-5" />

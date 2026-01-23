@@ -80,7 +80,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
         }
 
         setState('transcribing')
-        setAllyMessage('Listening to what you said...')
+        setAllyMessage(t('dialogs.quickEvent.listeningToYou'))
 
         const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
 
@@ -92,23 +92,23 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
             setAllyMessage('')
           } else {
             setState('error')
-            setAllyMessage(result.message || 'Could not transcribe audio.')
+            setAllyMessage(result.message || t('dialogs.quickEvent.couldNotTranscribe'))
           }
         } catch {
           setState('error')
-          setAllyMessage('Failed to transcribe audio. Please try again.')
+          setAllyMessage(t('dialogs.quickEvent.failedTranscribe'))
         }
       }
 
       mediaRecorder.start()
       setState('recording')
-      setAllyMessage('Listening... Click again to stop.')
+      setAllyMessage(t('dialogs.quickEvent.listening'))
     } catch {
       toast.error(t('toast.microphoneAccessDenied'), {
-        description: 'Please allow microphone access to use voice input.',
+        description: t('dialogs.quickEvent.allowMicrophone'),
       })
     }
-  }, [])
+  }, [t])
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
@@ -129,14 +129,14 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       if (!inputText.trim() || inputText.length < MIN_TEXT_LENGTH) return
 
       setState('parsing')
-      setAllyMessage('Understanding your request...')
+      setAllyMessage(t('dialogs.quickEvent.understanding'))
 
       const response = await eventsService.quickAdd({ text: inputText, forceCreate: false })
 
       if (response.success) {
         const data = response.data
         setState('success')
-        setAllyMessage('Event added to your calendar!')
+        setAllyMessage(t('dialogs.quickEvent.eventAdded'))
         setParsedEvent(data.parsed ?? null)
         setCalendarName(data.calendarName ?? '')
         setEventUrl(data.eventUrl ?? '')
@@ -148,24 +148,24 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
         setParsedEvent(conflictData.parsed ?? null)
         setConflicts(conflictData.conflicts ?? [])
         setCalendarName(conflictData.calendarName ?? '')
-        setAllyMessage('This conflicts with existing events.')
+        setAllyMessage(t('dialogs.quickEvent.conflictDetected'))
       } else {
         setState('error')
-        setAllyMessage(response.error || 'Failed to create event.')
+        setAllyMessage(response.error || t('dialogs.quickEvent.failedCreate'))
       }
     },
-    [onEventCreated],
+    [onEventCreated, t],
   )
 
   const handleForceCreate = useCallback(async () => {
     setState('creating')
-    setAllyMessage('Creating event anyway...')
+    setAllyMessage(t('dialogs.quickEvent.creatingAnyway'))
 
     const response = await eventsService.quickAdd({ text, forceCreate: true })
 
     if (response.success) {
       setState('success')
-      setAllyMessage('Event added to your calendar!')
+      setAllyMessage(t('dialogs.quickEvent.eventAdded'))
       setParsedEvent(response.data.parsed ?? null)
       setCalendarName(response.data.calendarName ?? '')
       setEventUrl(response.data.eventUrl ?? '')
@@ -173,10 +173,10 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       onEventCreated?.()
     } else {
       setState('error')
-      const errorMsg = response.requiresConfirmation ? 'Unexpected conflict' : response.error
-      setAllyMessage(errorMsg || 'Failed to create event.')
+      const errorMsg = response.requiresConfirmation ? t('dialogs.quickEvent.unexpectedConflict') : response.error
+      setAllyMessage(errorMsg || t('dialogs.quickEvent.failedCreate'))
     }
-  }, [text, onEventCreated])
+  }, [text, onEventCreated, t])
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
@@ -209,15 +209,17 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl w-[95vw] sm:w-full p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border ">
         <DialogHeader className="sr-only">
-          <DialogTitle>Quick Add Event</DialogTitle>
-          <DialogDescription>Add an event to your calendar using natural language or voice</DialogDescription>
+          <DialogTitle>{t('dialogs.quickEvent.title')}</DialogTitle>
+          <DialogDescription>{t('dialogs.quickEvent.description')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col sm:flex-row min-h-[400px] sm:min-h-[500px]">
           <div className="flex-1 p-4 sm:p-6 flex flex-col border-r sm:border-r">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Quick Add Event</h3>
+              <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">
+                {t('dialogs.quickEvent.title')}
+              </h3>
             </div>
 
             <div className="relative flex-1">
@@ -225,12 +227,12 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
                 value={text}
                 onChange={handleTextChange}
                 onKeyDown={handleKeyDown}
-                placeholder={`Describe your event in natural language...
+                placeholder={`${t('dialogs.quickEvent.placeholder')}
 
-Examples:
-• Meeting with John tomorrow at 3pm
-• Lunch at Cafe Roma on Friday 12:30pm for 1 hour
-• Team standup every Monday at 9am`}
+${t('dialogs.quickEvent.examples')}
+• ${t('dialogs.quickEvent.example1')}
+• ${t('dialogs.quickEvent.example2')}
+• ${t('dialogs.quickEvent.example3')}`}
                 className="w-full h-full resize-none bg-muted dark:bg-secondary rounded-lg p-4 pr-12 text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 disabled={isDisabled}
               />
@@ -252,7 +254,7 @@ Examples:
 
             <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <p className="text-xs text-muted-foreground">
-                {state === 'recording' ? 'Recording... Click mic to stop' : 'Press Enter to process'}
+                {state === 'recording' ? t('dialogs.quickEvent.recording') : t('dialogs.quickEvent.pressEnter')}
               </p>
               <Button
                 onClick={() => processText(text)}
@@ -264,12 +266,12 @@ Examples:
                 {state === 'parsing' || state === 'transcribing' ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
+                    {t('dialogs.quickEvent.processing')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Create Event
+                    {t('dialogs.quickEvent.createEvent')}
                   </>
                 )}
               </Button>
@@ -282,8 +284,10 @@ Examples:
                 <AllyLogo className="w-6 h-6 text-white dark:text-foreground" />
               </div>
               <div>
-                <h4 className="font-semibold text-foreground dark:text-primary-foreground">Ally</h4>
-                <p className="text-xs text-muted-foreground">Your AI Assistant</p>
+                <h4 className="font-semibold text-foreground dark:text-primary-foreground">
+                  {t('dialogs.quickEvent.ally')}
+                </h4>
+                <p className="text-xs text-muted-foreground">{t('dialogs.quickEvent.yourAIAssistant')}</p>
               </div>
             </div>
 

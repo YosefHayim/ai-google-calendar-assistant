@@ -25,7 +25,7 @@ export const SlackChat = ({ messages }: SlackChatProps) => (
     </div>
 
     <div className="bg-[#222529] px-4 py-2 border-b border-[#313338] flex items-center gap-2">
-      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+      <div className="w-2 h-2 rounded-full bg-primary" />
       <span className="text-xs text-[#B9BBBE]">Ally is online</span>
     </div>
 
@@ -40,7 +40,7 @@ export const SlackChat = ({ messages }: SlackChatProps) => (
         >
           {msg.type === 'user' ? (
             <>
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-accent flex items-center justify-center flex-shrink-0">
                 <User className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
@@ -50,8 +50,8 @@ export const SlackChat = ({ messages }: SlackChatProps) => (
                 </div>
                 {msg.isVoice ? (
                   <div className="flex items-center gap-2 bg-[#2B2D31] rounded-lg p-2 w-fit">
-                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                      <Mic className="w-4 h-4 text-indigo-400" />
+                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
+                      <Mic className="w-4 h-4 text-accent" />
                     </div>
                     <VoiceWaveform />
                     <span className="text-xs text-[#72767D]">0:03</span>
@@ -63,7 +63,7 @@ export const SlackChat = ({ messages }: SlackChatProps) => (
             </>
           ) : (
             <>
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
                 <AllyLogo className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">

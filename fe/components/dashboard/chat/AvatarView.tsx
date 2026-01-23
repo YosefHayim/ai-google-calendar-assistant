@@ -10,6 +10,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Message } from '@/types'
 import { MessageActions } from './MessageActions'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface AvatarViewProps {
   messages: Message[]
@@ -36,6 +37,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   onSpeak,
   avatarScrollRef,
 }) => {
+  const { t } = useTranslation()
   const hasConversation = messages.length > 1
   const isEmpty = messages.length === 0
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
@@ -103,8 +105,8 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
           >
             <EmptyState
               icon={<MessageSquare />}
-              title="Start a conversation"
-              description="Speak or type to interact with Ally and manage your calendar."
+              title={t('chat.avatarView.startConversation')}
+              description={t('chat.avatarView.speakOrType')}
               size="lg"
             />
           </motion.div>
@@ -117,7 +119,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             className="flex flex-col w-full flex-1 border-t px-4 sm:px-8 py-4 overflow-y-auto"
           >
             <div className="flex items-center gap-2 mb-4 text-muted-foreground font-bold text-xs uppercase tracking-widest">
-              <MessageSquare className="w-3.5 h-3.5" /> Live Context
+              <MessageSquare className="w-3.5 h-3.5" /> {t('chat.avatarView.liveContext')}
             </div>
             <div className="flex-1 space-y-2">
               {messages.map((msg) => {
@@ -141,11 +143,16 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                             size="icon"
                             onClick={handleCancelEdit}
                             className="h-7 w-7"
-                            title="Cancel (Esc)"
+                            title={t('chat.avatarView.cancelEdit')}
                           >
                             <X size={14} />
                           </Button>
-                          <Button size="icon" onClick={handleConfirmEdit} className="h-7 w-7" title="Confirm (Enter)">
+                          <Button
+                            size="icon"
+                            onClick={handleConfirmEdit}
+                            className="h-7 w-7"
+                            title={t('chat.avatarView.confirmEdit')}
+                          >
                             <Check size={14} />
                           </Button>
                         </div>
