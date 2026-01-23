@@ -124,8 +124,6 @@ jest.mock("@/ai-agents/agents", () => ({
   ORCHESTRATOR_AGENT: mockAIAgent,
 }))
 
-jest.mock("@/services/email-service", () => mockEmailService)
-
 jest.mock("socket.io", () => ({
   Server: jest.fn().mockImplementation(() => mockWebSocket),
 }))
@@ -133,8 +131,6 @@ jest.mock("socket.io", () => ({
 jest.mock("@/telegram-bot/init-bot", () => ({
   getBot: () => mockTelegramBot,
 }))
-
-jest.mock("@/voice-service", () => mockVoiceService)
 
 describe("End-to-End User Journey Integration", () => {
   beforeEach(() => {
