@@ -33,7 +33,7 @@ export const InputView: React.FC<InputViewProps> = ({ state }) => (
   >
     <div
       className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
-        state === 'recording' ? 'bg-destructive/10 dark:bg-red-900/30' : 'bg-accent dark:bg-secondary'
+        state === 'recording' ? 'bg-destructive/10 dark:bg-destructive/30' : 'bg-accent dark:bg-secondary'
       }`}
     >
       {state === 'recording' ? (
@@ -82,7 +82,7 @@ export const ConfirmView: React.FC<ConfirmViewProps> = ({ event, calendarName, m
     exit={{ opacity: 0, y: -10 }}
     className="flex-1 flex flex-col"
   >
-    <p className="text-sm text-zinc-600 dark:text-zinc-300 mb-4">{message}</p>
+    <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4">{message}</p>
     <EventPreview event={event} calendarName={calendarName} />
     <Button onClick={onConfirm} className="w-full bg-primary hover:bg-primary-hover text-white">
       <Check className="w-4 h-4 mr-2" />
@@ -115,20 +115,20 @@ export const ConflictView: React.FC<ConflictViewProps> = ({
     exit={{ opacity: 0, y: -10 }}
     className="flex-1 flex flex-col"
   >
-    <p className="text-sm text-amber-700 dark:text-amber-400 mb-3">{message}</p>
+    <p className="text-sm text-secondary dark:text-secondary mb-3">{message}</p>
     <EventPreview event={event} calendarName={calendarName} />
     {conflicts.length > 0 && (
-      <div className="mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded border-amber-200 -amber-800">
-        <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">Conflicts with:</p>
+      <div className="mb-3 p-2 bg-secondary/5 dark:bg-secondary/20 rounded border-secondary/20 dark:border-secondary">
+        <p className="text-xs font-medium text-secondary dark:text-secondary mb-1">Conflicts with:</p>
         {conflicts.slice(0, 3).map((c) => (
-          <p key={c.id} className="text-xs text-amber-700 dark:text-amber-400">
+          <p key={c.id} className="text-xs text-secondary dark:text-secondary">
             • {c.summary}
           </p>
         ))}
       </div>
     )}
     <div className="space-y-2">
-      <Button onClick={onConfirm} className="w-full bg-amber-500 hover:bg-amber-600 text-white">
+      <Button onClick={onConfirm} className="w-full bg-secondary hover:bg-secondary text-white">
         Create Anyway
       </Button>
       <Button onClick={onCancel} variant="outline" className="w-full">
@@ -153,10 +153,10 @@ export const SuccessView: React.FC<SuccessViewProps> = ({ message, calendarName,
     exit={{ opacity: 0, scale: 0.9 }}
     className="flex-1 flex flex-col items-center justify-center text-center"
   >
-    <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
-      <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
+    <div className="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/30 flex items-center justify-center mb-4">
+      <Check className="w-8 h-8 text-primary dark:text-primary" />
     </div>
-    <p className="text-sm font-medium text-green-600 dark:text-green-400">{message}</p>
+    <p className="text-sm font-medium text-primary dark:text-primary">{message}</p>
     {calendarName && <p className="text-xs text-muted-foreground mt-1">Added to {calendarName}</p>}
     {eventUrl && (
       <a
@@ -188,10 +188,10 @@ export const ErrorView: React.FC<ErrorViewProps> = ({ message, onRetry }) => (
     exit={{ opacity: 0, y: -10 }}
     className="flex-1 flex flex-col items-center justify-center text-center"
   >
-    <div className="w-16 h-16 rounded-full bg-destructive/10 dark:bg-red-900/30 flex items-center justify-center mb-4">
-      <AlertCircle className="w-8 h-8 text-destructive dark:text-red-400" />
+    <div className="w-16 h-16 rounded-full bg-destructive/10 dark:bg-destructive/30 flex items-center justify-center mb-4">
+      <AlertCircle className="w-8 h-8 text-destructive dark:text-destructive" />
     </div>
-    <p className="text-sm text-destructive dark:text-red-400 mb-4">{message}</p>
+    <p className="text-sm text-destructive dark:text-destructive mb-4">{message}</p>
     <Button onClick={onRetry} variant="outline" size="sm">
       Try Again
     </Button>

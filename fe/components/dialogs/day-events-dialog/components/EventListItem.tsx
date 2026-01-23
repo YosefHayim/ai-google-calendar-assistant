@@ -52,7 +52,7 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
                   <span className="text-xs font-bold text-muted-foreground dark:text-muted-foreground">•</span>
                   <span className="text-xs font-bold px-1.5 py-0.5">
                     {event.status === 'confirmed' ? (
-                      <CircleCheckBig size={12} className="text-green-600" />
+                      <CircleCheckBig size={12} className="text-primary" />
                     ) : (
                       <CircleX size={12} className="text-destructive" />
                     )}

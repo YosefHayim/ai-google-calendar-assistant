@@ -49,7 +49,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       case 'destructive':
         return 'bg-destructive hover:bg-destructive text-white'
       case 'warning':
-        return 'bg-orange-500 hover:bg-orange-600 text-white'
+        return 'bg-secondary hover:bg-secondary text-white'
       default:
         return ''
     }

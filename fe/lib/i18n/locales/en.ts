@@ -276,14 +276,6 @@ export const en = {
     },
   },
 
-  // Common Dialogs
-  dialogs: {
-    confirm: {
-      confirm: 'Confirm',
-      cancel: 'Cancel',
-    },
-  },
-
   // AI Ally Sidebar
   allySidebar: {
     initialMessage: "Hey! I'm Ally, your AI assistant. How can I help optimize your calendar today?",
@@ -583,6 +575,15 @@ export const en = {
       avatarView: '2D Avatar View',
     },
 
+    // Avatar view
+    avatarView: {
+      startConversation: 'Start a conversation',
+      speakOrType: 'Speak or type to interact with Ally and manage your calendar.',
+      liveContext: 'Live Context',
+      cancelEdit: 'Cancel (Esc)',
+      confirmEdit: 'Confirm (Enter)',
+    },
+
     // Message actions
     actions: {
       resend: 'Reset / Re-trigger',
@@ -617,6 +618,25 @@ export const en = {
       dismissAll: 'Dismiss All',
     },
 
+    // Tabs
+    tabs: {
+      gaps: 'Gaps',
+      analytics: 'Analytics',
+      settings: 'Settings',
+    },
+
+    // Stats
+    stats: {
+      totalGaps: 'Total Gaps',
+      potentialOpportunities: 'Potential opportunities',
+      highConfidence: 'High Confidence',
+      ofTotal: '{{percent}}% of total',
+      potentialHours: 'Potential Hours',
+      availableForScheduling: 'Available for scheduling',
+      avgGapSize: 'Avg Gap Size',
+      averageGapDuration: 'Average gap duration',
+    },
+
     // States
     states: {
       loading: 'Analyzing your calendar...',
@@ -626,8 +646,9 @@ export const en = {
         retry: 'Retry',
       },
       empty: {
-        title: 'All Caught Up!',
-        description: 'Your calendar looks well-organized. Ally will notify you when new time gaps are detected.',
+        title: 'No gaps found',
+        description:
+          'Your calendar looks well-scheduled! No significant time gaps were detected in the analyzed period.',
       },
     },
 
@@ -674,6 +695,42 @@ export const en = {
       createEvent: 'Create Event',
       skipping: 'Skipping...',
       skipGap: 'Skip Gap',
+      dismissAllGaps: 'Dismiss All Gaps',
+    },
+
+    // Analytics
+    analytics: {
+      totalPotentialHours: 'Total Potential Hours',
+      availableForScheduling: 'Available for scheduling',
+      averageGap: 'Average Gap',
+      typicalGapSize: 'Typical gap size',
+      largestGap: 'Largest Gap',
+      bestOpportunity: 'Best opportunity',
+      analysisPeriod: 'Analysis Period',
+      to: 'to',
+      confidenceDistribution: 'Confidence Distribution',
+      confidenceDescription: 'How confident our AI is about each gap suggestion',
+      highConfidence: 'High Confidence',
+      mediumConfidence: 'Medium Confidence',
+      lowConfidence: 'Low Confidence',
+      durationDistribution: 'Duration Distribution',
+      durationDescription: 'Breakdown of gap sizes by duration',
+      lessThanOneHour: '< 1 hour',
+      oneToTwoHours: '1-2 hours',
+      twoOrMoreHours: '2+ hours',
+      analysisSettings: 'Analysis Settings',
+      settingsDescription: 'Current configuration for gap detection',
+      minGap: 'Min Gap:',
+      maxGap: 'Max Gap:',
+      lookback: 'Lookback:',
+      autoAnalysis: 'Auto Analysis:',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      calendars: 'Calendars:',
+      calendarsIncluded: '{{count}} included',
+      languages: 'Languages:',
+      languagesSupported: '{{count}} supported',
+      days: 'days',
     },
   },
 
@@ -717,6 +774,10 @@ export const en = {
 
   // Dialogs
   dialogs: {
+    confirm: {
+      confirm: 'Confirm',
+      cancel: 'Cancel',
+    },
     eventDetails: {
       title: 'Event Details',
       noDescription: 'No description',
@@ -790,14 +851,32 @@ export const en = {
     next: 'Next',
     previous: 'Previous',
     finish: 'Finish',
+    startAudit: 'Start Audit',
+    allyProtocol: 'Ally Protocol',
     steps: {
       welcome: {
         title: 'Welcome to Ally',
         description: 'Your AI-powered calendar assistant',
         content:
-          'Ally helps you manage your calendar effortlessly using natural language. Just tell Ally what you need, and it handles the rest.',
+          "I'm your private AI secretary. Let's take 30 seconds to show you how I can create leverage in your day.",
         audioText:
           "Welcome to Ally, your AI-powered calendar assistant! I'm here to help you manage your schedule effortlessly. Let me show you around.",
+      },
+      assistant: {
+        title: 'Your Command Center',
+        content: 'This is the primary chat interface. Delegate tasks, schedule meetings, or ask for summaries here.',
+      },
+      analytics: {
+        title: 'Performance Intelligence',
+        content: 'Track your Deep Work ratio and see exactly how much time Ally is reclaiming for you.',
+      },
+      integrations: {
+        title: 'Seamless Connectivity',
+        content: 'Connect Ally to WhatsApp, Telegram, and your Calendar sources to centralize your operations.',
+      },
+      settings: {
+        title: 'Privacy & Control',
+        content: 'Manage your contextual memory settings and account security preferences here.',
       },
       chat: {
         title: 'Chat with Ally',
@@ -806,14 +885,6 @@ export const en = {
           'Simply type or speak naturally. Say things like "Schedule a meeting with John tomorrow at 2pm" or "What do I have next week?" Ally understands context and handles complex requests.',
         audioText:
           'The chat interface is your main way to interact with me. Just type naturally, like you would text a friend. Say things like "Schedule lunch with Sarah tomorrow" or "What meetings do I have this week?"',
-      },
-      analytics: {
-        title: 'Track Your Time',
-        description: 'Insights into your schedule',
-        content:
-          'View detailed analytics about how you spend your time. Understand your meeting patterns, find opportunities to optimize, and maintain a healthy work-life balance.',
-        audioText:
-          'The analytics dashboard gives you powerful insights into how you spend your time. Track meeting patterns, identify busy periods, and optimize your schedule for better productivity.',
       },
       gaps: {
         title: 'Recover Lost Time',
@@ -1396,17 +1467,29 @@ export const en = {
     slack: {
       title: 'Slack',
       description: 'Add Ally to your Slack workspace for team calendar management.',
+      addToSlack: 'Add to Slack',
+      refresh: 'Refresh',
     },
     googleCalendar: {
       title: 'Google Calendar',
+      description: 'Sync your calendars with Ally for seamless scheduling and conflict resolution.',
       failedToLoad: 'Failed to load calendar data.',
       noSources: 'No active calendar sources found.',
+      fetchingCalendars: 'Fetching Calendars...',
+      syncedSources: 'Synced Sources',
+      manage: 'Manage',
+      tryAgain: 'Try again',
+      apiActive: 'API Active',
+      unnamed: 'Unnamed Calendar',
     },
     status: {
       connected: 'Connected',
       disconnected: 'Disconnected',
+      notConnected: 'Not connected',
     },
     connectWhatsApp: 'Connect WhatsApp',
+    whatsappModalDescription: 'To connect WhatsApp, please follow the instructions in your Ally Node console.',
+    openConsole: 'Open Console',
     refresh: 'Refresh',
   },
 

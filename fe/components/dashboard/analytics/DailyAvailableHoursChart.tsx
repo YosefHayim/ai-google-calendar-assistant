@@ -69,7 +69,7 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="h-6 w-6 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground"
                 >
                   <Info size={16} />
                 </Button>
@@ -77,7 +77,7 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
               <HoverCardContent>
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">Daily Available Hours</h4>
-                  <p className="text-xs text-zinc-600 dark:text-muted-foreground">
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                     Shows your available hours remaining each day after scheduled events. Based on{' '}
                     {CALENDAR_CONSTANTS.WAKING_HOURS_PER_DAY} waking hours per day (assuming ~8 hours of sleep), minus
                     time spent in calendar events.
@@ -115,7 +115,7 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
               right: 12,
             }}
           >
-            <CartesianGrid vertical={false} className="stroke-zinc-200 dark:stroke-zinc-800" />
+            <CartesianGrid vertical={false} className="stroke-muted dark:stroke-muted" />
             <XAxis
               dataKey="formattedDate"
               tickLine={false}
@@ -128,7 +128,7 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  className="w-[180px] bg-secondary dark:bg-secondary text-white border-zinc-700"
+                  className="w-[180px] bg-secondary dark:bg-secondary text-white border-muted"
                   nameKey="hours"
                   labelFormatter={(value, payload) => {
                     if (payload && payload[0]) {

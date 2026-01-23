@@ -310,7 +310,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   step="100"
                   value={customAmount}
                   onChange={(e) => setCustomAmount(parseInt(e.target.value))}
-                  className="absolute w-full h-1 bg-background/10 rounded-full appearance-none cursor-pointer accent-amber-400 z-10"
+                  className="absolute w-full h-1 bg-background/10 rounded-full appearance-none cursor-pointer accent-secondary z-10"
                 />
                 <motion.div
                   className="absolute h-1 bg-primary rounded-full pointer-events-none origin-left"
@@ -358,8 +358,8 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
             className={cn(
               'w-full z-10 font-bold h-12 flex items-center justify-center rounded-lg border-2',
               isHighlighted
-                ? 'bg-green-500/20 text-green-100 border-green-500/30 dark:bg-green-500/20 dark:text-green-200'
-                : 'bg-green-500/10 text-green-700 border-green-500/30 dark:bg-green-500/10 dark:text-green-400',
+                ? 'bg-primary/20 text-primary-foreground border-primary/30 dark:bg-primary/20 dark:text-primary-foreground'
+                : 'bg-primary/10 text-primary border-primary/30 dark:bg-primary/10 dark:text-primary',
             )}
           >
             <BadgeCheck className="w-5 h-5 mr-2" />

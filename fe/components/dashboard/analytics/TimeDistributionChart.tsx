@@ -76,7 +76,7 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
       </p>
 
       {!hasData ? (
-        <div className="h-[160px] flex items-center justify-center text-muted-foreground dark:text-zinc-600">
+        <div className="h-[160px] flex items-center justify-center text-muted-foreground dark:text-muted-foreground">
           No events in this period
         </div>
       ) : (
@@ -138,7 +138,7 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
             <div key={period.key} className="flex items-center gap-2 text-sm">
               <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: period.color }} />
               <div className="flex-1 min-w-0">
-                <span className="text-zinc-700 dark:text-zinc-300 truncate">{period.label}</span>
+                <span className="text-foreground dark:text-muted-foreground truncate">{period.label}</span>
                 <span className="text-muted-foreground dark:text-muted-foreground ml-1">
                   {count} ({percentage}%)
                 </span>

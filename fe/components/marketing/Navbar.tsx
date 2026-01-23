@@ -52,11 +52,16 @@ function getUserInfo(user: User | CustomUser | null) {
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { t } = useTranslation()
   const { isAuthenticated, user, isLoading } = useAuthContext()
   const { name, initials, avatarUrl } = getUserInfo(user)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -128,7 +133,7 @@ const Navbar = () => {
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 max-w-[120px] truncate">
+                  <span className="text-sm font-medium text-foreground dark:text-muted-foreground max-w-[120px] truncate">
                     {name}
                   </span>
                 </div>
@@ -154,8 +159,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Toggle Section */}
-          <div className="flex items-center gap-2 md:hidden flex-wrap">
+          <div className={`flex items-center gap-2 md:hidden flex-wrap ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
             {isAuthenticated && !isLoading && (
               <Avatar className="h-7 w-7">
                 <AvatarImage src={avatarUrl} alt={name} />
@@ -256,7 +260,7 @@ const Navbar = () => {
                 </a>
               </div>
 
-              <div className="flex flex-col gap-4 pt-8 border-t border-zinc-100 ">
+              <div className="flex flex-col gap-4 pt-8 border-t border-border ">
                 {isAuthenticated && !isLoading ? (
                   <>
                     <div className="flex items-center gap-3 mb-2">

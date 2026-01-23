@@ -229,9 +229,9 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                             <span
                               className={`text-xs px-1.5 py-0.5 rounded capitalize ${
                                 attendee.responseStatus === 'accepted'
-                                  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                  ? 'bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary'
                                   : attendee.responseStatus === 'declined'
-                                    ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                                    ? 'bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive'
                                     : 'bg-accent text-muted-foreground'
                               }`}
                             >

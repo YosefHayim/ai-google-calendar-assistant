@@ -68,7 +68,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
           onClick={onCreateCalendar}
           size="icon"
           variant={'ghost'}
-          className="h-7 w-7 sm:h-8 sm:w-8 rounded-md border-dashed border-zinc-300 -zinc-700 text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary/30 hover:text-foreground dark:hover:text-primary-foreground transition-all active:scale-[0.98] flex-shrink-0"
+          className="h-7 w-7 sm:h-8 sm:w-8 rounded-md border-dashed border-muted dark:border-muted text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary/30 hover:text-foreground dark:hover:text-primary-foreground transition-all active:scale-[0.98] flex-shrink-0"
         >
           <Plus size={12} className="sm:hidden" />
           <Plus size={14} className="hidden sm:block" />
@@ -95,10 +95,10 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
                   className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shadow-sm group-hover:scale-125 transition-transform flex-shrink-0"
                   style={{ backgroundColor: color }}
                 />
-                <span className="flex-1 text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">
+                <span className="flex-1 text-xs sm:text-sm font-bold text-foreground dark:text-muted-foreground truncate">
                   {displayName}
                 </span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 rounded border-emerald-200 -emerald-800 uppercase tracking-tighter flex-shrink-0">
+                <span className="font-bold text-primary dark:text-primary bg-primary/10 dark:bg-primary/30 rounded border-primary/20 dark:border-primary uppercase tracking-tighter flex-shrink-0">
                   <CheckCircle size={10} className="sm:hidden" />
                   <CheckCircle size={12} className="hidden sm:block" />
                 </span>

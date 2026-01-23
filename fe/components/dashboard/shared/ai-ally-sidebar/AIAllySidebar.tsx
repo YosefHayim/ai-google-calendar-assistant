@@ -124,7 +124,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
           >
             <ChatHeader onClose={onClose} onMinimize={onClose} />
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-64 max-h-80 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-64 max-h-80 scrollbar-thin scrollbar-thumb-muted dark:scrollbar-thumb-muted scrollbar-track-transparent">
               {messages.map((message, index) => (
                 <MessageBubble key={message.id} message={message} index={index} />
               ))}

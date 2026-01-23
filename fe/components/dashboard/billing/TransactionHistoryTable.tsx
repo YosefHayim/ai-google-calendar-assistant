@@ -24,7 +24,8 @@ const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Chec
   pending: {
     label: 'Pending',
     icon: Clock,
-    className: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 -yellow-800',
+    className:
+      'bg-secondary/10 dark:bg-secondary/30 text-secondary-foreground dark:text-secondary-foreground border-secondary/20 dark:border-secondary/80',
   },
   failed: {
     label: 'Failed',

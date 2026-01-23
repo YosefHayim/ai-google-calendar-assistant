@@ -46,13 +46,13 @@ export const FeatureShowcase = React.memo(function FeatureShowcase() {
         <div className="relative" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
           <button
             onClick={prevSlide}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all "
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-muted-foreground dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all "
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all "
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-muted-foreground dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all "
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
@@ -159,7 +159,7 @@ export const FeatureShowcase = React.memo(function FeatureShowcase() {
               <button
                 key={index}
                 onClick={() => setActiveIndex(index)}
-                className="h-2 rounded-full overflow-hidden bg-accent dark:bg-zinc-700 transition-all duration-300"
+                className="h-2 rounded-full overflow-hidden bg-accent dark:bg-secondary transition-all duration-300"
                 style={{ width: index === activeIndex ? 48 : 12 }}
               >
                 <motion.div

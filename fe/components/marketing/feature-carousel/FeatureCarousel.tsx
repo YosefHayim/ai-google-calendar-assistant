@@ -96,7 +96,9 @@ export function FeatureCarousel() {
                   onClick={() => setActive(i)}
                   className={cn(
                     'h-1.5 p-0 rounded-full transition-all duration-500 mb-2 min-w-0',
-                    i === active ? 'w-8 bg-primary hover:bg-primary' : 'w-2 bg-accent -zinc-700 hover:bg-zinc-300',
+                    i === active
+                      ? 'w-8 bg-primary hover:bg-primary'
+                      : 'w-2 bg-accent dark:bg-secondary hover:bg-secondary',
                   )}
                 />
               ))}

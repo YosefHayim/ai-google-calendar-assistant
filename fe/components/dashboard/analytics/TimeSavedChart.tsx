@@ -138,7 +138,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
               cy={hoveredData.y}
               r="5"
               fill={PRIMARY_COLOR}
-              className="stroke-white dark:stroke-zinc-900"
+              className="stroke-white dark:stroke-secondary"
               strokeWidth="2"
             />
           </g>

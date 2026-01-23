@@ -14,7 +14,7 @@ const PREFERENCES = [
 export const WebBrainView = () => (
   <div className="h-full p-4 bg-muted dark:bg-secondary">
     <div className="flex items-center gap-3 mb-4">
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
         <Brain className="w-5 h-5 text-white" />
       </div>
       <div>
@@ -33,7 +33,7 @@ export const WebBrainView = () => (
         >
           <div className="flex items-center gap-3">
             <pref.icon className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-zinc-600 dark:text-muted-foreground">{pref.label}</span>
+            <span className="text-sm text-muted-foreground dark:text-muted-foreground">{pref.label}</span>
           </div>
           <span className="text-sm font-medium text-foreground dark:text-white">{pref.value}</span>
         </motion.div>

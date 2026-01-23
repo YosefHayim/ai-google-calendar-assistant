@@ -55,7 +55,7 @@ export const ChatError: React.FC<ChatErrorProps> = ({ error, className }) => {
     return (
       <div className={cn('flex justify-center mb-4 sm:mb-6 px-4', className)}>
         <div className="w-full max-w-2xl">
-          <div className="bg-gradient-to-r from-primary/10 via-orange-500/10 to-red-500/10 border border-primary/20 dark:border-primary/30 rounded-lg p-4 sm:p-6">
+          <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-destructive/10 border border-primary/20 dark:border-primary/30 rounded-lg p-4 sm:p-6">
             <div className="flex items-start gap-3 sm:gap-4">
               <div className="flex-shrink-0 mt-0.5">
                 <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20">
@@ -79,7 +79,7 @@ export const ChatError: React.FC<ChatErrorProps> = ({ error, className }) => {
                 <Button
                   onClick={handleUpgrade}
                   size="sm"
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium shadow-sm mt-2 sm:mt-3"
+                  className="bg-gradient-to-r from-secondary to-destructive hover:from-secondary hover:to-destructive text-white font-medium shadow-sm mt-2 sm:mt-3"
                 >
                   {t('chatError.upgradeNow')}
                   <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
@@ -95,7 +95,7 @@ export const ChatError: React.FC<ChatErrorProps> = ({ error, className }) => {
   // Fallback for other errors
   return (
     <div className={cn('flex justify-center mb-4 sm:mb-6 px-4', className)}>
-      <div className="bg-destructive/5 dark:bg-red-900/20 border border-destructive/20 dark:border-red-800/30 text-destructive dark:text-red-400 px-3 sm:px-4 py-2 sm:py-3 rounded-md flex items-center gap-2 text-xs sm:text-sm max-w-2xl">
+      <div className="bg-destructive/5 dark:bg-destructive/20 border border-destructive/20 dark:border-destructive/30 text-destructive dark:text-destructive px-3 sm:px-4 py-2 sm:py-3 rounded-md flex items-center gap-2 text-xs sm:text-sm max-w-2xl">
         <AlertCircle size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
         <span className="break-words">{errorMessage}</span>
       </div>

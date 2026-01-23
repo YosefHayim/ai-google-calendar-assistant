@@ -64,7 +64,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-accent dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-accent dark:bg-secondary flex items-center justify-center overflow-hidden">
                 {user.avatar_url ? (
                   <Image
                     src={user.avatar_url}
@@ -94,7 +94,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
                 size="sm"
                 onClick={handleImpersonate}
                 disabled={isImpersonating || user.role === 'admin'}
-                className="text-amber-700 border-amber-300 hover:bg-amber-50"
+                className="text-secondary border-secondary hover:bg-secondary/5"
               >
                 {isImpersonating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Eye className="w-4 h-4 mr-2" />}
                 View as User
@@ -104,7 +104,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
                 size="sm"
                 onClick={handleRevokeSessions}
                 disabled={isRevokingSessions}
-                className="text-destructive border-red-300 hover:bg-destructive/5"
+                className="text-destructive border-destructive hover:bg-destructive/5"
               >
                 {isRevokingSessions ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -206,20 +206,21 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
 
 function StatusBadge({ status }: { status: UserStatus }) {
   const variants: Record<UserStatus, string> = {
-    active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    inactive: 'bg-secondary text-gray-800 dark:bg-gray-900/30 dark:text-muted-foreground',
-    suspended: 'bg-destructive/10 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-    pending_verification: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+    active: 'bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary',
+    inactive: 'bg-secondary text-secondary-foreground dark:bg-secondary/30 dark:text-muted-foreground',
+    suspended: 'bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive',
+    pending_verification:
+      'bg-secondary/10 text-secondary-foreground dark:bg-secondary/30 dark:text-secondary-foreground',
   }
   return <Badge className={variants[status]}>{status.replace('_', ' ')}</Badge>
 }
 
 function RoleBadge({ role }: { role: UserRole }) {
   const variants: Record<UserRole, string> = {
-    admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-    moderator: 'bg-primary/10 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-    support: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
-    user: 'bg-secondary text-zinc-800 dark:bg-secondary/30 dark:text-muted-foreground',
+    admin: 'bg-accent/10 text-accent-foreground dark:bg-accent/30 dark:text-accent-foreground',
+    moderator: 'bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary',
+    support: 'bg-secondary/10 text-secondary-foreground dark:bg-secondary/30 dark:text-secondary-foreground',
+    user: 'bg-secondary text-secondary-foreground dark:bg-secondary/30 dark:text-muted-foreground',
   }
   return <Badge className={variants[role]}>{role}</Badge>
 }

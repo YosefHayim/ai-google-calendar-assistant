@@ -25,7 +25,7 @@ const typeConfig: Record<BroadcastType, { icon: React.ReactNode; color: string; 
   },
   warning: {
     icon: <AlertTriangle className="w-4 h-4" />,
-    color: 'text-amber-500',
+    color: 'text-secondary',
     label: 'Warning',
   },
   critical: {
@@ -100,7 +100,7 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
                     </span>
                   </SelectItem>
                   <SelectItem value="warning">
-                    <span className="flex items-center gap-2 text-amber-500">
+                    <span className="flex items-center gap-2 text-secondary">
                       <AlertTriangle className="w-4 h-4" /> Warning
                     </span>
                   </SelectItem>
@@ -155,17 +155,17 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
           <div
             className={`p-4 rounded-lg border ${
               type === 'info'
-                ? 'bg-primary/5 border-primary/20 dark:bg-blue-950/30 -blue-800'
+                ? 'bg-primary/5 border-primary/20 dark:bg-primary/30 dark:border-primary'
                 : type === 'warning'
-                  ? 'bg-amber-50 border-amber-200 dark:bg-amber-950/30 -amber-800'
-                  : 'bg-destructive/5 border-destructive/20 dark:bg-red-950/30 -red-800'
+                  ? 'bg-secondary/5 border-secondary/20 dark:bg-secondary/30 dark:border-secondary'
+                  : 'bg-destructive/5 border-destructive/20 dark:bg-destructive/30 dark:border-destructive'
             }`}
           >
             <div className="flex items-start gap-3">
               <span className={typeConfig[type].color}>{typeConfig[type].icon}</span>
               <div>
                 <p className="font-medium text-sm text-foreground dark:text-white">{title || 'Preview Title'}</p>
-                <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                   {message || 'Preview message will appear here'}
                 </p>
               </div>

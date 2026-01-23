@@ -21,8 +21,10 @@ import { Progress } from '@/components/ui/progress'
 import { motion } from 'framer-motion'
 import { useGapMutations } from '@/hooks/queries/gaps/useGapMutations'
 import { useGaps } from '@/hooks/queries/gaps/useGaps'
+import { useTranslation } from 'react-i18next'
 
 const GapsDashboard: React.FC = () => {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<'gaps' | 'analytics' | 'settings'>('gaps')
 
   const [date, setDate] = useState<DateRange | undefined>({
@@ -148,48 +150,50 @@ const GapsDashboard: React.FC = () => {
       >
         <Card className="p-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Gaps</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('gaps.stats.totalGaps')}</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalGaps}</div>
-            <p className="text-xs text-muted-foreground">Potential opportunities</p>
+            <p className="text-xs text-muted-foreground">{t('gaps.stats.potentialOpportunities')}</p>
           </CardContent>
         </Card>
 
         <Card className="p-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">High Confidence</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('gaps.stats.highConfidence')}</CardTitle>
             <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.highConfidenceGaps}</div>
             <p className="text-xs text-muted-foreground">
-              {analytics.totalGaps > 0 ? Math.round((analytics.highConfidenceGaps / analytics.totalGaps) * 100) : 0}% of
-              total
+              {t('gaps.stats.ofTotal', {
+                percent:
+                  analytics.totalGaps > 0 ? Math.round((analytics.highConfidenceGaps / analytics.totalGaps) * 100) : 0,
+              })}
             </p>
           </CardContent>
         </Card>
 
         <Card className="p-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Potential Hours</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('gaps.stats.potentialHours')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalPotentialHours}h</div>
-            <p className="text-xs text-muted-foreground">Available for scheduling</p>
+            <p className="text-xs text-muted-foreground">{t('gaps.stats.availableForScheduling')}</p>
           </CardContent>
         </Card>
 
         <Card className="p-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Gap Size</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('gaps.stats.avgGapSize')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.averageGapSize}h</div>
-            <p className="text-xs text-muted-foreground">Average gap duration</p>
+            <p className="text-xs text-muted-foreground">{t('gaps.stats.averageGapDuration')}</p>
           </CardContent>
         </Card>
       </motion.div>
@@ -199,15 +203,15 @@ const GapsDashboard: React.FC = () => {
         <TabsList className="grid w-full grid-cols-3 h-10 sm:h-11 mb-4">
           <TabsTrigger value="gaps" className="text-xs sm:text-sm gap-1 sm:gap-2">
             <Target className="h-4 w-4" />
-            <span className="hidden xs:inline">Gaps</span>
+            <span className="hidden xs:inline">{t('gaps.tabs.gaps')}</span>
           </TabsTrigger>
           <TabsTrigger value="analytics" className="text-xs sm:text-sm gap-1 sm:gap-2">
             <TrendingUp className="h-4 w-4" />
-            <span className="hidden xs:inline">Analytics</span>
+            <span className="hidden xs:inline">{t('gaps.tabs.analytics')}</span>
           </TabsTrigger>
           <TabsTrigger value="settings" className="text-xs sm:text-sm gap-1 sm:gap-2">
             <Settings className="h-4 w-4" />
-            <span className="hidden xs:inline">Settings</span>
+            <span className="hidden xs:inline">{t('gaps.tabs.settings')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -216,8 +220,8 @@ const GapsDashboard: React.FC = () => {
             <Card className="p-8">
               <EmptyState
                 icon={<CalendarDays />}
-                title="No gaps found"
-                description="Your calendar looks well-scheduled! No significant time gaps were detected in the analyzed period."
+                title={t('gaps.states.empty.title')}
+                description={t('gaps.states.empty.description')}
                 size="lg"
               />
             </Card>
@@ -250,7 +254,7 @@ const GapsDashboard: React.FC = () => {
                 className="gap-2"
               >
                 <AlertTriangle className="h-4 w-4" />
-                Dismiss All Gaps
+                {t('gaps.actions.dismissAllGaps')}
               </Button>
             </div>
           )}

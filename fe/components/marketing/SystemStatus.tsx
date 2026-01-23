@@ -50,9 +50,9 @@ function ServiceIndicator({
   const isDisabled = status === 'disabled'
 
   const getStatusColor = () => {
-    if (isHealthy) return 'text-emerald-600 dark:text-emerald-400'
+    if (isHealthy) return 'text-primary dark:text-primary'
     if (isDisabled) return 'text-muted-foreground dark:text-muted-foreground'
-    return 'text-destructive dark:text-red-400'
+    return 'text-destructive dark:text-destructive'
   }
 
   return (
@@ -112,15 +112,15 @@ export function SystemStatus() {
   }
 
   const getStatusDotColor = () => {
-    if (isChecking) return 'bg-amber-500 dark:bg-amber-400'
-    if (isOnline) return 'bg-emerald-500 dark:bg-emerald-400'
-    return 'bg-destructive dark:bg-red-400'
+    if (isChecking) return 'bg-secondary dark:bg-secondary'
+    if (isOnline) return 'bg-primary dark:bg-primary'
+    return 'bg-destructive dark:bg-destructive'
   }
 
   const getStatusTextColor = () => {
-    if (isChecking) return 'text-amber-700 dark:text-amber-400'
-    if (isOnline) return 'text-emerald-600 dark:text-emerald-400'
-    return 'text-destructive dark:text-red-400'
+    if (isChecking) return 'text-secondary dark:text-secondary'
+    if (isOnline) return 'text-primary dark:text-primary'
+    return 'text-destructive dark:text-destructive'
   }
 
   return (
@@ -140,17 +140,15 @@ export function SystemStatus() {
         </TooltipTrigger>
         <TooltipContent side="top" className="p-3 max-w-xs bg-background dark:bg-secondary " sideOffset={8}>
           {isChecking ? (
-            <p className="text-xs text-zinc-600 dark:text-muted-foreground">{t('footer.checkingServices')}</p>
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground">{t('footer.checkingServices')}</p>
           ) : !isOnline || !healthData ? (
-            <p className="text-xs text-destructive dark:text-red-400">{t('footer.serverUnreachable')}</p>
+            <p className="text-xs text-destructive dark:text-destructive">{t('footer.serverUnreachable')}</p>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-1.5">
-                  <Server className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                    {t('footer.serverOnline')}
-                  </span>
+                  <Server className="w-3 h-3 text-primary dark:text-primary" />
+                  <span className="text-xs font-medium text-primary dark:text-primary">{t('footer.serverOnline')}</span>
                 </div>
                 <span className="text-[10px] text-muted-foreground dark:text-muted-foreground">
                   {t('footer.uptime')}: {formatUptime(healthData.uptime)}

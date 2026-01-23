@@ -102,15 +102,15 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
         <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border">
           <DialogHeader>
             <DialogTitle className="text-lg font-medium text-foreground dark:text-primary-foreground flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-emerald-500" />
+              <CheckCircle className="h-5 w-5 text-primary" />
               {t('support.modal.submitSuccessTitle')}
             </DialogTitle>
           </DialogHeader>
 
           <div className="py-8">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="rounded-full bg-emerald-500/10 p-4">
-                <CheckCircle className="h-12 w-12 text-emerald-500" />
+              <div className="rounded-full bg-primary/10 p-4">
+                <CheckCircle className="h-12 w-12 text-primary" />
               </div>
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">{t('support.modal.submitSuccessDescription')}</p>

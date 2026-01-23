@@ -277,7 +277,7 @@ export function ConversationListSection() {
                           className="cursor-pointer"
                         >
                           {copiedId === conversation.id ? (
-                            <Check className="w-4 h-4 mr-2 text-green-600" />
+                            <Check className="w-4 h-4 mr-2 text-primary" />
                           ) : sharingId === conversation.id ? (
                             <Copy className="w-4 h-4 mr-2 animate-pulse" />
                           ) : (

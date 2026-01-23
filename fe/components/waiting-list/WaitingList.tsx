@@ -137,7 +137,7 @@ const WaitingList: React.FC = () => {
                 {/* Subtle glow on hover */}
                 <div className="absolute inset-0 rounded-xl bg-primary/0 group-hover:bg-primary/5 blur-xl transition-all duration-300 pointer-events-none" />
               </div>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground dark:text-zinc-600 font-medium group-hover:text-zinc-600 dark:group-hover:text-muted-foreground transition-colors duration-300">
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground dark:text-muted-foreground font-medium group-hover:text-muted-foreground dark:group-hover:text-muted-foreground transition-colors duration-300">
                 {t(`waitingList.platforms.${platform.key}`)}
               </span>
             </motion.div>
@@ -210,7 +210,7 @@ const WaitingList: React.FC = () => {
       </div>
 
       {/* Subtle bottom detail */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-xs uppercase tracking-widest text-zinc-300 dark:text-zinc-800 font-bold select-none">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-xs uppercase tracking-widest text-muted-foreground dark:text-muted-foreground font-bold select-none">
         {t('waitingList.footerTitle')}
       </div>
     </div>

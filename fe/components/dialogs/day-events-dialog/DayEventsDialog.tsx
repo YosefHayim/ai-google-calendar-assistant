@@ -134,7 +134,7 @@ export function DayEventsDialog({
               {inputValue && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground"
                 >
                   <X size={14} />
                 </button>
@@ -144,7 +144,7 @@ export function DayEventsDialog({
         )}
 
         <div className="flex-1 overflow-y-auto p-6 pt-4">
-          <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
+          <h4 className="text-sm font-semibold text-foreground dark:text-muted-foreground mb-3">
             {t('dialogs.dayEvents.eventsTitle', 'Events')}
           </h4>
           {isLoading ? (
@@ -153,7 +153,7 @@ export function DayEventsDialog({
             </div>
           ) : events.length === 0 ? (
             <EmptyState
-              icon={<CalendarDays size={50} className="text-emerald-500" />}
+              icon={<CalendarDays size={50} className="text-primary" />}
               title={t('dialogs.dayEvents.noEvents', 'No events scheduled')}
               description={t('dialogs.dayEvents.freeTime', 'You have {{hours}} hours of free time this day.', {
                 hours: availableHours.toFixed(1),

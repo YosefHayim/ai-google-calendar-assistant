@@ -23,11 +23,11 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
           <User size={16} />
           <span>{t('useCases.intelligentScheduling.userMessage')}</span>
         </div>
-        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start flex items-center gap-2 max-w-max mr-auto">
+        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-foreground dark:text-muted-foreground p-2 rounded-md rounded-bl-none self-start flex items-center gap-2 max-w-max mr-auto">
           <AllyLogo className="w-4 h-4" />
           <div className="flex flex-col">
             <span>{t('useCases.intelligentScheduling.allyResponse')}</span>
-            <div className="flex items-center gap-1 text-emerald-500">
+            <div className="flex items-center gap-1 text-primary">
               <Check size={16} />
               <span>{t('useCases.intelligentScheduling.confirmation')}</span>
             </div>
@@ -44,7 +44,7 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
         <div className="text-xs font-medium bg-secondary text-white dark:bg-secondary dark:text-foreground p-2 rounded-md rounded-br-none self-end max-w-max ml-auto">
           {t('useCases.focusProtection.userMessage')}
         </div>
-        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
+        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-secondary-foreground dark:text-secondary-foreground p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
           {t('useCases.focusProtection.allyResponse')}
           <span className="font-bold text-primary"> {t('useCases.focusProtection.focusModeActive')}</span>
         </div>
@@ -59,7 +59,7 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
         <div className="text-xs font-medium bg-destructive text-white p-2 rounded-md">
           {t('useCases.travelAgent.delayAlert')}
         </div>
-        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto flex items-center gap-2">
+        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-secondary-foreground dark:text-secondary-foreground p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto flex items-center gap-2">
           <AllyLogo className="w-4 h-4" />
           <span>{t('useCases.travelAgent.allyResponse')}</span>
         </div>
@@ -83,7 +83,7 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
           </div>
           <span>{t('useCases.voiceToAction.userMessage')}</span>
         </div>
-        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
+        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-secondary-foreground dark:text-secondary-foreground p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
           {t('useCases.voiceToAction.allyResponse')}
         </div>
       </div>

@@ -30,9 +30,9 @@ type EventConfirmationCardProps = {
 }
 
 const confidenceColors = {
-  high: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  low: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+  high: 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary',
+  medium: 'bg-secondary/10 text-secondary-foreground dark:bg-secondary/20 dark:text-secondary-foreground',
+  low: 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive',
 }
 
 const formatEventTime = (startTime: string, endTime?: string, isAllDay?: boolean): string => {

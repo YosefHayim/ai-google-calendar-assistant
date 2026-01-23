@@ -2,11 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import {
-  type ConversationListItem,
-  type ChatMessage,
-  startNewConversation as startNewConversationApi,
-} from '@/services/chat-service'
+import { type ConversationListItem, type ChatMessage } from '@/services/chat-service'
 import { Message } from '@/types'
 import { useConversations, useConversation, useDeleteConversationById } from '@/hooks/queries'
 import { queryKeys } from '@/lib/query'
@@ -115,12 +111,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     [queryClient],
   )
 
-  const startNewConversation = useCallback(async () => {
+  const startNewConversation = useCallback(() => {
     locallyCreatedConversationRef.current = null
     setMessages([])
     setSelectedConversationId(null)
     setIsPendingConversation(true)
-    await startNewConversationApi()
   }, [])
 
   const refreshConversations = useCallback(async () => {

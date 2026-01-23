@@ -64,10 +64,10 @@ export function SummariesContent() {
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Board Call Summary</span>
         </div>
         <ul className="space-y-2">
-          <li className="flex items-start gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-300">
+          <li className="flex items-start gap-2 text-xs font-medium text-muted-foreground dark:text-muted-foreground">
             <Check className="w-3 h-3 text-emerald-500 shrink-0" /> Approved Q4 budget
           </li>
-          <li className="flex items-start gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-300">
+          <li className="flex items-start gap-2 text-xs font-medium text-muted-foreground dark:text-muted-foreground">
             <Check className="w-3 h-3 text-emerald-500 shrink-0" /> Hiring for AI Ops leads
           </li>
         </ul>

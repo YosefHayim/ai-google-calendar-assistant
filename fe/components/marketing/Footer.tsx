@@ -107,7 +107,7 @@ const Footer = () => {
           ))}
         </div>
 
-        <div className="pt-10 border-t border-zinc-100  flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="pt-10 border-t border-border  flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-xs text-muted-foreground">© {currentYear} Ally Technologies Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <SystemStatus />
