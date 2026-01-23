@@ -108,7 +108,9 @@ router.get(
   supabaseAuth(),
   reqResAsyncHandler(async (req, res) => {
     const userId = req.user?.id
-    const ticketId = req.params.id
+    const ticketId = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id
 
     if (!userId) {
       return sendR(res, 401, "Authentication required")
