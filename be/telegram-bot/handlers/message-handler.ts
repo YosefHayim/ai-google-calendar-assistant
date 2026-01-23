@@ -44,6 +44,7 @@ import {
   handleSettingsCommand,
   handleStartCommand,
   handleStatusCommand,
+  handleSubscriptionCommand,
   handleTodayCommand,
   handleTomorrowCommand,
   handleUpdateCommand,
@@ -214,6 +215,7 @@ const SIMPLE_COMMANDS: Record<string, CommandHandler> = {
   [COMMANDS.ASVOICE]: handleAsVoiceCommand,
   [COMMANDS.WEBSITE]: handleWebsiteCommand,
   [COMMANDS.RESCHEDULE]: handleRescheduleCommand,
+  [COMMANDS.SUBSCRIPTION]: handleSubscriptionCommand,
 }
 
 type AgentCommand = {

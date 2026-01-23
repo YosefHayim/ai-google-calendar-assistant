@@ -1,4 +1,5 @@
 import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from "@slack/bolt"
+import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
 import { logger } from "@/lib/logger"
 import { handleSlackAuth } from "../middleware/auth-handler"
 import {
@@ -76,6 +77,7 @@ export const handleHelpCommand = async (args: CommandArgs): Promise<void> => {
     .bulletList([
       "`/ally status` - Check connection",
       "`/ally settings` - Ally settings",
+      "`/ally subscription` - View subscription",
       "`/ally feedback <message>` - Give feedback",
       "`/ally help` - Show this help",
     ])
@@ -594,6 +596,7 @@ export const handleSettingsCommand = async (
     .bulletList([
       "`/ally brain` - Manage AI preferences",
       "`/ally status` - Check connection status",
+      "`/ally subscription` - View subscription status",
       "`/ally feedback <message>` - Send feedback to the team",
     ])
     .build()
@@ -603,6 +606,170 @@ export const handleSettingsCommand = async (
     text: response.text,
     response_type: "ephemeral",
   })
+}
+
+const UPGRADE_URL = "https://askally.ai/pricing"
+const BILLING_URL = "https://askally.ai/dashboard/billing"
+const TRIAL_WARNING_DAYS = 3
+const USAGE_WARNING_PERCENT = 80
+const PERCENT_MULTIPLIER = 100
+
+type UserAccess = Awaited<ReturnType<typeof checkUserAccess>>
+
+const getSubscriptionStatusText = (
+  subscriptionStatus: string | null,
+  trialDaysLeft: number | null
+): string => {
+  if (trialDaysLeft !== null && trialDaysLeft > 0) {
+    return "Trial"
+  }
+  if (subscriptionStatus === "active") {
+    return "Active"
+  }
+  if (subscriptionStatus === "cancelled") {
+    return "Cancelled"
+  }
+  return "Expired"
+}
+
+const addTrialInfo = (
+  builder: SlackResponseBuilder,
+  access: UserAccess
+): void => {
+  if (access.trial_days_left === null || access.trial_days_left <= 0) {
+    return
+  }
+
+  builder.field("Trial Days Left", access.trial_days_left.toString())
+  if (access.trial_end_date) {
+    const endDate = new Date(access.trial_end_date).toLocaleDateString()
+    builder.field("Trial Ends", endDate)
+  }
+}
+
+const addUsageInfo = (
+  builder: SlackResponseBuilder,
+  access: UserAccess
+): void => {
+  builder.divider().section("*📈 Usage This Period*")
+  builder.field("Interactions Used", access.interactions_used.toString())
+
+  if (access.interactions_remaining !== null) {
+    builder.field(
+      "Interactions Remaining",
+      access.interactions_remaining.toString()
+    )
+  } else {
+    builder.field("Interactions Remaining", "Unlimited")
+  }
+
+  builder.field("Credits Remaining", access.credits_remaining.toString())
+}
+
+const collectWarnings = (access: UserAccess): string[] => {
+  const warnings: string[] = []
+
+  const hasTrialWarning =
+    access.trial_days_left !== null &&
+    access.trial_days_left <= TRIAL_WARNING_DAYS &&
+    access.trial_days_left > 0
+
+  if (hasTrialWarning) {
+    warnings.push(
+      `Your trial ends in ${access.trial_days_left} days. Upgrade to continue using Ally.`
+    )
+  }
+
+  if (
+    access.interactions_remaining !== null &&
+    access.interactions_used > 0
+  ) {
+    const totalInteractions =
+      access.interactions_used + access.interactions_remaining
+    const usagePercent = Math.round(
+      (access.interactions_used / totalInteractions) * PERCENT_MULTIPLIER
+    )
+    if (usagePercent >= USAGE_WARNING_PERCENT) {
+      warnings.push(`You've used ${usagePercent}% of your monthly interactions.`)
+    }
+  }
+
+  return warnings
+}
+
+const buildSubscriptionLinks = (access: UserAccess): string[] => {
+  const links: string[] = []
+  if (!access.has_access || access.subscription_status !== "active") {
+    links.push(`<${UPGRADE_URL}|🚀 Upgrade Now>`)
+  }
+  links.push(`<${BILLING_URL}|⚙️ Manage Billing>`)
+  return links
+}
+
+export const handleSubscriptionCommand = async (
+  args: CommandArgs
+): Promise<void> => {
+  const { command, client, respond } = args
+
+  const authResult = await handleSlackAuth(
+    client,
+    command.user_id,
+    command.team_id
+  )
+
+  if (authResult.needsAuth || !authResult.session.email) {
+    await respond({
+      text: authResult.authMessage || "Please authenticate first.",
+      response_type: "ephemeral",
+    })
+    return
+  }
+
+  const { email } = authResult.session
+
+  try {
+    const access = await checkUserAccess(command.user_id, email)
+
+    const planName = access.plan_name || "Free"
+    const statusText = getSubscriptionStatusText(
+      access.subscription_status,
+      access.trial_days_left
+    )
+
+    const builder = SlackResponseBuilder.create()
+      .header("💳", "Your Subscription")
+      .divider()
+      .section("*📊 Plan Status*")
+      .field("Plan", planName)
+      .field("Status", statusText)
+
+    addTrialInfo(builder, access)
+    addUsageInfo(builder, access)
+
+    const warnings = collectWarnings(access)
+    if (warnings.length > 0) {
+      builder.divider()
+      for (const warning of warnings) {
+        builder.warning(warning)
+      }
+    }
+
+    builder.divider()
+    builder.context(buildSubscriptionLinks(access))
+
+    const response = builder.build()
+    await respond({
+      blocks: response.blocks,
+      text: response.text,
+      response_type: "ephemeral",
+    })
+  } catch (error) {
+    logger.error(`Slack Bot: Subscription command error: ${error}`)
+    await respond({
+      text: "Sorry, I couldn't fetch your subscription details. Please try again.",
+      response_type: "ephemeral",
+    })
+  }
 }
 
 type RespondFn = CommandArgs["respond"]
@@ -790,6 +957,7 @@ const SIMPLE_COMMANDS: Record<string, SimpleCommandHandler> = {
   settings: handleSettingsCommand,
   analytics: handleAnalyticsCommand,
   calendars: handleCalendarsCommand,
+  subscription: handleSubscriptionCommand,
 }
 
 const PREFIX_COMMANDS: Array<{

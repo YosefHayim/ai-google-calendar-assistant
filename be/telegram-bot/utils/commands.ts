@@ -14,6 +14,7 @@ import { getVoicePreferenceForTelegram } from "./ally-brain"
 import { logger } from "@/lib/logger"
 import { resetSession } from "./session"
 import { telegramConversation } from "@/domains/chat/utils/conversation/TelegramConversationAdapter"
+import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
 
 /**
  * Get internal user ID from Telegram user ID.
@@ -1363,4 +1364,207 @@ export const handleRescheduleCancellation = async (
     .build()
 
   await ctx.reply(response.content, { parse_mode: "HTML" })
+}
+
+const UPGRADE_URL = "https://askally.ai/pricing"
+const BILLING_URL = "https://askally.ai/dashboard/billing"
+const TRIAL_WARNING_DAYS = 3
+const USAGE_WARNING_PERCENT = 80
+const PERCENT_MULTIPLIER = 100
+
+type UserAccess = Awaited<ReturnType<typeof checkUserAccess>>
+
+const getStatusTranslationKey = (
+  subscriptionStatus: string | null,
+  trialDaysLeft: number | null
+): string => {
+  if (trialDaysLeft !== null && trialDaysLeft > 0) {
+    return "commands.subscription.statusTrial"
+  }
+  if (subscriptionStatus === "active") {
+    return "commands.subscription.statusActive"
+  }
+  if (subscriptionStatus === "cancelled") {
+    return "commands.subscription.statusCancelled"
+  }
+  return "commands.subscription.statusExpired"
+}
+
+type BulletItem = { bullet: "dot"; text: string }
+
+const buildStatusItems = (
+  access: UserAccess,
+  t: (key: string) => string
+): BulletItem[] => {
+  const planName = access.plan_name || t("commands.subscription.freeTier")
+  const statusKey = getStatusTranslationKey(
+    access.subscription_status,
+    access.trial_days_left
+  )
+  const statusText = t(statusKey)
+
+  const items: BulletItem[] = [
+    {
+      bullet: "dot",
+      text: `${t("commands.subscription.planName")}: <b>${planName}</b>`,
+    },
+    {
+      bullet: "dot",
+      text: `${t("commands.subscription.status")}: ${statusText}`,
+    },
+  ]
+
+  if (access.trial_days_left !== null && access.trial_days_left > 0) {
+    items.push({
+      bullet: "dot",
+      text: `${t("commands.subscription.trialDaysLeft")}: <b>${access.trial_days_left}</b>`,
+    })
+    if (access.trial_end_date) {
+      const endDate = new Date(access.trial_end_date).toLocaleDateString()
+      items.push({
+        bullet: "dot",
+        text: `${t("commands.subscription.trialEndsOn")}: ${endDate}`,
+      })
+    }
+  }
+
+  return items
+}
+
+const buildUsageItems = (
+  access: UserAccess,
+  t: (key: string) => string
+): BulletItem[] => {
+  const items: BulletItem[] = [
+    {
+      bullet: "dot",
+      text: `${t("commands.subscription.interactionsUsed")}: <b>${access.interactions_used}</b>`,
+    },
+  ]
+
+  if (access.interactions_remaining !== null) {
+    items.push({
+      bullet: "dot",
+      text: `${t("commands.subscription.interactionsRemaining")}: <b>${access.interactions_remaining}</b>`,
+    })
+  } else {
+    items.push({
+      bullet: "dot",
+      text: `${t("commands.subscription.interactionsRemaining")}: ${t("commands.subscription.unlimited")}`,
+    })
+  }
+
+  items.push({
+    bullet: "dot",
+    text: `${t("commands.subscription.creditsRemaining")}: <b>${access.credits_remaining}</b>`,
+  })
+
+  return items
+}
+
+const addWarnings = (
+  builder: ReturnType<typeof ResponseBuilder.telegram>,
+  access: UserAccess,
+  t: (key: string) => string
+): void => {
+  const hasTrialWarning =
+    access.trial_days_left !== null &&
+    access.trial_days_left <= TRIAL_WARNING_DAYS &&
+    access.trial_days_left > 0
+
+  if (hasTrialWarning) {
+    builder.spacing()
+    builder.text(
+      `⚠️ ${t("commands.subscription.trialWarning").replace("{{days}}", String(access.trial_days_left))}`
+    )
+  }
+
+  if (
+    access.interactions_remaining !== null &&
+    access.interactions_used > 0
+  ) {
+    const totalInteractions =
+      access.interactions_used + access.interactions_remaining
+    const usagePercent = Math.round(
+      (access.interactions_used / totalInteractions) * PERCENT_MULTIPLIER
+    )
+    if (usagePercent >= USAGE_WARNING_PERCENT) {
+      builder.spacing()
+      builder.text(
+        `⚠️ ${t("commands.subscription.usageWarning").replace("{{percent}}", String(usagePercent))}`
+      )
+    }
+  }
+}
+
+const buildSubscriptionKeyboard = (
+  access: UserAccess,
+  t: (key: string) => string
+): InlineKeyboard => {
+  const keyboard = new InlineKeyboard()
+
+  if (!access.has_access || access.subscription_status !== "active") {
+    keyboard.url(`🚀 ${t("commands.subscription.upgrade")}`, UPGRADE_URL).row()
+  }
+
+  keyboard.url(`⚙️ ${t("commands.subscription.manageBilling")}`, BILLING_URL)
+
+  return keyboard
+}
+
+export const handleSubscriptionCommand = async (
+  ctx: GlobalContext
+): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const userId = ctx.session.userId
+  const email = ctx.session.email
+
+  if (!(userId && email)) {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("💳", t("commands.subscription.header"))
+      .text(t("commands.subscription.noUser"))
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+    return
+  }
+
+  try {
+    const access = await checkUserAccess(String(userId), email)
+
+    const builder = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("💳", t("commands.subscription.header"))
+
+    builder.section(
+      "📊",
+      t("commands.subscription.sections.status.title"),
+      buildStatusItems(access, t)
+    )
+
+    builder.section(
+      "📈",
+      t("commands.subscription.sections.usage.title"),
+      buildUsageItems(access, t)
+    )
+
+    addWarnings(builder, access, t)
+    builder.footer(t("commands.subscription.footerTip"))
+
+    const response = builder.build()
+    await ctx.reply(response.content, {
+      parse_mode: "HTML",
+      reply_markup: buildSubscriptionKeyboard(access, t),
+    })
+  } catch (error) {
+    logger.error(
+      `Telegram Bot: Failed to fetch subscription for ${ctx.session.email}: ${error}`
+    )
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("💳", t("commands.subscription.header"))
+      .text(t("commands.subscription.error"))
+      .build()
+    await ctx.reply(response.content, { parse_mode: "HTML" })
+  }
 }

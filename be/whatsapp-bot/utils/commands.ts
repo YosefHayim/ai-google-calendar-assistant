@@ -2,6 +2,7 @@ import { InputGuardrailTripwireTriggered } from "@openai/agents"
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
 import { runDPO } from "@/ai-agents/dpo"
 import { activateAgent } from "@/domains/analytics/utils"
+import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
 import { logger } from "@/lib/logger"
 import { unifiedContextStore } from "@/shared/context"
 import {
@@ -123,6 +124,7 @@ const SIMPLE_COMMANDS = [
   "website",
   "exit",
   "aboutme",
+  "subscription",
 ]
 
 export const parseCommand = (
@@ -193,6 +195,8 @@ export const handleCommand = async (
       return await handleExitCommand(ctx)
     case "aboutme":
       return await handleAboutMeCommand(ctx)
+    case "subscription":
+      return await handleSubscriptionCommand(ctx)
     default:
       return { handled: false }
   }
@@ -369,6 +373,7 @@ Your private AI secretary for calendar mastery.
 
 🛠️ *Settings & More*
 • status - Check connection
+• subscription - View subscription
 • feedback - Give feedback
 • website - Open web dashboard
 • exit - End conversation
@@ -778,6 +783,146 @@ ${allyBrain?.instructions ? `_"${allyBrain.instructions}"_` : "_No custom instru
 
   await sendTextMessage(from, text)
   return { handled: true, response: text }
+}
+
+const UPGRADE_URL = "https://askally.ai/pricing"
+const BILLING_URL = "https://askally.ai/dashboard/billing"
+const TRIAL_WARNING_DAYS = 3
+const USAGE_WARNING_PERCENT = 80
+const PERCENT_MULTIPLIER = 100
+
+type WhatsAppUserAccess = Awaited<ReturnType<typeof checkUserAccess>>
+
+const getWhatsAppStatusText = (
+  subscriptionStatus: string | null,
+  trialDaysLeft: number | null
+): string => {
+  if (trialDaysLeft !== null && trialDaysLeft > 0) {
+    return "Trial"
+  }
+  if (subscriptionStatus === "active") {
+    return "Active"
+  }
+  if (subscriptionStatus === "cancelled") {
+    return "Cancelled"
+  }
+  return "Expired"
+}
+
+const buildTrialSection = (access: WhatsAppUserAccess): string => {
+  if (access.trial_days_left === null || access.trial_days_left <= 0) {
+    return ""
+  }
+
+  let section = `\n• Trial Days Left: *${access.trial_days_left}*`
+  if (access.trial_end_date) {
+    const endDate = new Date(access.trial_end_date).toLocaleDateString()
+    section += `\n• Trial Ends: ${endDate}`
+  }
+  return section
+}
+
+const buildUsageSection = (access: WhatsAppUserAccess): string => {
+  let section = `\n• Interactions Used: *${access.interactions_used}*`
+
+  if (access.interactions_remaining !== null) {
+    section += `\n• Interactions Remaining: *${access.interactions_remaining}*`
+  } else {
+    section += "\n• Interactions Remaining: Unlimited"
+  }
+
+  section += `\n• Credits Remaining: *${access.credits_remaining}*`
+  return section
+}
+
+const buildWarningsSection = (access: WhatsAppUserAccess): string => {
+  const warnings: string[] = []
+
+  const hasTrialWarning =
+    access.trial_days_left !== null &&
+    access.trial_days_left <= TRIAL_WARNING_DAYS &&
+    access.trial_days_left > 0
+
+  if (hasTrialWarning) {
+    warnings.push(
+      `⚠️ Your trial ends in ${access.trial_days_left} days. Upgrade to continue using Ally.`
+    )
+  }
+
+  if (
+    access.interactions_remaining !== null &&
+    access.interactions_used > 0
+  ) {
+    const totalInteractions =
+      access.interactions_used + access.interactions_remaining
+    const usagePercent = Math.round(
+      (access.interactions_used / totalInteractions) * PERCENT_MULTIPLIER
+    )
+    if (usagePercent >= USAGE_WARNING_PERCENT) {
+      warnings.push(`⚠️ You've used ${usagePercent}% of your monthly interactions.`)
+    }
+  }
+
+  return warnings.length > 0 ? `\n\n${warnings.join("\n\n")}` : ""
+}
+
+const buildLinksSection = (access: WhatsAppUserAccess): string => {
+  let section = "\n\n🔗 *Links*"
+
+  if (!access.has_access || access.subscription_status !== "active") {
+    section += `\n• Upgrade: ${UPGRADE_URL}`
+  }
+  section += `\n• Manage Billing: ${BILLING_URL}`
+  return section
+}
+
+const handleSubscriptionCommand = async (
+  ctx: CommandContext
+): Promise<CommandResult> => {
+  const { from, email } = ctx
+
+  if (!email) {
+    const text = `💳 *Your Subscription*
+
+Please connect your account first to view subscription details.
+
+Visit ${BILLING_URL} to manage your account.`
+    await sendTextMessage(from, text)
+    return { handled: true, response: text }
+  }
+
+  try {
+    const userId = await getUserIdFromWhatsApp(from)
+    const access = await checkUserAccess(userId || `whatsapp-${from}`, email)
+
+    const planName = access.plan_name || "Free"
+    const statusText = getWhatsAppStatusText(
+      access.subscription_status,
+      access.trial_days_left
+    )
+
+    let text = `💳 *Your Subscription*
+
+📊 *Plan Status*
+• Plan: *${planName}*
+• Status: ${statusText}`
+
+    text += buildTrialSection(access)
+    text += "\n\n📈 *Usage This Period*"
+    text += buildUsageSection(access)
+    text += buildWarningsSection(access)
+    text += buildLinksSection(access)
+
+    await sendTextMessage(from, text)
+    return { handled: true, response: text }
+  } catch (error) {
+    logger.error(`WhatsApp: Subscription command error for ${from}: ${error}`)
+    const text = `💳 *Your Subscription*
+
+Sorry, I couldn't fetch your subscription details. Please try again or visit ${BILLING_URL}`
+    await sendTextMessage(from, text)
+    return { handled: true, response: text }
+  }
 }
 
 export const handleInteractiveReply = async (

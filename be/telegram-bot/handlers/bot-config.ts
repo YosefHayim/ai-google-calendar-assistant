@@ -119,6 +119,7 @@ export const BOT_COMMANDS = [
   { command: "exit", description: "End conversation" },
   { command: "website", description: "Open web dashboard" },
   { command: "reschedule", description: "Smart reschedule" },
+  { command: "subscription", description: "View subscription" },
 ]
 
 export const registerBotCommands = async (

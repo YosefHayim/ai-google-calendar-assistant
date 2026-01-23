@@ -440,4 +440,47 @@ export const he = {
   "commands.reschedule.cancelledText": "לא בוצעו שינויים ביומן שלך.",
   "commands.reschedule.keepOriginal": "השאר כמו שזה",
   "botMenu.reschedule": "תזמון מחדש חכם",
+
+  "commands.subscription.header": "המנוי שלך",
+  "commands.subscription.noUser": "לא ניתן לזהות משתמש.",
+  "commands.subscription.sections.status.title": "סטטוס תוכנית",
+  "commands.subscription.planName": "תוכנית",
+  "commands.subscription.status": "סטטוס",
+  "commands.subscription.statusActive": "פעיל",
+  "commands.subscription.statusTrial": "תקופת ניסיון",
+  "commands.subscription.statusExpired": "פג תוקף",
+  "commands.subscription.statusCancelled": "בוטל",
+  "commands.subscription.trialDaysLeft": "ימי ניסיון שנותרו",
+  "commands.subscription.trialEndsOn": "הניסיון מסתיים",
+  "commands.subscription.sections.usage.title": "שימוש בתקופה הנוכחית",
+  "commands.subscription.interactionsUsed": "אינטראקציות שנוצלו",
+  "commands.subscription.interactionsRemaining": "אינטראקציות שנותרו",
+  "commands.subscription.creditsRemaining": "קרדיטים שנותרו",
+  "commands.subscription.unlimited": "ללא הגבלה",
+  "commands.subscription.upgrade": "שדרג עכשיו",
+  "commands.subscription.manageBilling": "נהל חיוב",
+  "commands.subscription.freeTier": "חינם",
+  "commands.subscription.footerTip": "שדרג לקבלת יותר אינטראקציות ותכונות פרימיום.",
+  "commands.subscription.trialWarning":
+    "תקופת הניסיון שלך מסתיימת בעוד {{days}} ימים. שדרג כדי להמשיך להשתמש ב-Ally.",
+  "commands.subscription.usageWarning": "השתמשת ב-{{percent}}% מהאינטראקציות החודשיות שלך.",
+  "commands.subscription.error": "לא ניתן לשלוף פרטי מנוי.",
+  "botMenu.subscription": "צפה במנוי",
+
+  "subscription.trialEndedHeader": "תקופת הניסיון הסתיימה",
+  "subscription.accessRequired": "נדרש מנוי",
+  "subscription.trialEndedDescription":
+    "תקופת הניסיון של 14 ימים הסתיימה. שדרג כדי להמשיך להשתמש ב-Ally.",
+  "subscription.accessRequiredDescription":
+    "דרוש מנוי פעיל כדי להמשיך להשתמש ב-Ally.",
+  "subscription.interactionsUsed": "אינטראקציות שנוצלו",
+  "subscription.creditsRemaining": "קרדיטים",
+  "subscription.upgradePrompt":
+    "שדרג ל-Pro או Executive לקבלת אינטראקציות ללא הגבלה ותכונות פרימיום.",
+  "subscription.upgradeButton": "שדרג עכשיו",
+  "subscription.viewPlansButton": "צפה בתוכניות",
+  "subscription.trialEnded":
+    "תקופת הניסיון של 14 ימים הסתיימה.\n\nשדרג ל-Pro או Executive כדי להמשיך להשתמש ב-Ally:\n{{upgradeUrl}}",
+  "subscription.required":
+    "דרוש מנוי פעיל כדי להשתמש ב-Ally.\n\nהתחל את תקופת הניסיון שלך או שדרג:\n{{upgradeUrl}}",
 } as const

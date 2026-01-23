@@ -45,6 +45,9 @@ export const COMMANDS = {
 
   // Smart Features
   RESCHEDULE: "/reschedule",
+
+  // Billing
+  SUBSCRIPTION: "/subscription",
 } as const
 
 export const CONFIRM_RESPONSES = ["yes", "y", "confirm"] as const
