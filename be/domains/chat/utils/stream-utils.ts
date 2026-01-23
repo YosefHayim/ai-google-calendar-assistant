@@ -110,18 +110,34 @@ export async function saveConversationMessages(
     images,
   } = params
 
+  const LOG_PREVIEW_LEN = 50
+  logger.info(
+    `saveConversationMessages: userId=${userId}, isNew=${isNewConversation}, msgLen=${message?.length || 0}, respLen=${fullResponse?.length || 0}, convId=${conversationId || "null"}, msgPreview="${message?.slice(0, LOG_PREVIEW_LEN) || ""}", respPreview="${fullResponse?.slice(0, LOG_PREVIEW_LEN) || ""}"`
+  )
+
   if (!fullResponse) {
+    logger.warn("saveConversationMessages: no fullResponse, skipping save")
     return conversationId
   }
 
   if (isNewConversation) {
-    const result = await webConversation.createConversationWithMessages(
-      userId,
-      { role: "user", content: message, images },
-      { role: "assistant", content: fullResponse },
-      summarizeMessages
-    )
-    return result ? result.conversationId : conversationId
+    try {
+      const result = await webConversation.createConversationWithMessages(
+        userId,
+        { role: "user", content: message, images },
+        { role: "assistant", content: fullResponse },
+        summarizeMessages
+      )
+      logger.info(
+        `saveConversationMessages: createConversationWithMessages returned ${result ? result.conversationId : "null"}`
+      )
+      return result ? result.conversationId : conversationId
+    } catch (error) {
+      logger.error(
+        `saveConversationMessages: createConversationWithMessages threw error: ${error instanceof Error ? error.message : String(error)}`
+      )
+      throw error
+    }
   }
 
   if (conversationId) {

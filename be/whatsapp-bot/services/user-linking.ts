@@ -6,9 +6,15 @@
 import { env } from "@/config/env"
 
 import type { Database } from "@/database.types"
+import {
+  isRedisConnected,
+  redisClient,
+} from "@/infrastructure/redis/redis"
 import { SUPABASE } from "@/infrastructure/supabase/supabase"
 import { logger } from "@/lib/logger"
+import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import type { WhatsAppInteractiveContent } from "../types"
+import { getLanguagePreferenceForWhatsApp } from "../utils/ally-brain"
 import { detectLanguageFromPhone } from "../utils/language-detection"
 import { sendButtonMessage, sendTextMessage } from "./send-message"
 
@@ -18,7 +24,37 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const OTP_CLEANUP_REGEX = /[\s-]/g
 const OTP_FORMAT_REGEX = /^\d{6}$/
 
-const otpVerificationInProgress = new Set<string>()
+const ONBOARDING_LOCK_PREFIX = "wa:onboarding:lock:"
+const ONBOARDING_LOCK_TTL_SECONDS = 30
+
+const acquireOnboardingLock = async (phoneNumber: string): Promise<boolean> => {
+  if (!isRedisConnected()) {
+    logger.warn("WhatsApp: Redis not connected, skipping onboarding lock")
+    return true
+  }
+
+  try {
+    const key = `${ONBOARDING_LOCK_PREFIX}${phoneNumber}`
+    const result = await redisClient.set(key, "1", "EX", ONBOARDING_LOCK_TTL_SECONDS, "NX")
+    return result === "OK"
+  } catch (error) {
+    logger.error(`WhatsApp: Failed to acquire onboarding lock: ${error}`)
+    return true
+  }
+}
+
+const releaseOnboardingLock = async (phoneNumber: string): Promise<void> => {
+  if (!isRedisConnected()) {
+    return
+  }
+
+  try {
+    const key = `${ONBOARDING_LOCK_PREFIX}${phoneNumber}`
+    await redisClient.del(key)
+  } catch (error) {
+    logger.error(`WhatsApp: Failed to release onboarding lock: ${error}`)
+  }
+}
 
 type OnboardingStep =
   | "welcome"
@@ -305,63 +341,85 @@ const handleEmailInput = async (
 const resendOtp = async (
   phoneNumber: string
 ): Promise<{ handled: boolean; nextStep?: OnboardingStep }> => {
-  const { data: waUser } = await SUPABASE.from("whatsapp_users")
-    .select("pending_email")
-    .eq("whatsapp_phone", phoneNumber)
-    .single()
-
-  if (!waUser?.pending_email) {
-    await sendTextMessage(
-      phoneNumber,
-      "I don't have an email on file. Let's start over. What's your email?"
-    )
-    await updateOnboardingStep(phoneNumber, "email_input")
-    return { handled: true, nextStep: "email_input" }
-  }
-
-  const { error } = await SUPABASE.auth.signInWithOtp({
-    email: waUser.pending_email,
-    options: {
-      shouldCreateUser: true,
-    },
-  })
-
-  if (error) {
-    logger.error(
-      `WhatsApp: Failed to resend OTP to ${waUser.pending_email}: ${error.message}`
-    )
-    await sendTextMessage(
-      phoneNumber,
-      "Sorry, I couldn't resend the code. Please try again in a moment."
-    )
+  const lockAcquired = await acquireOnboardingLock(phoneNumber)
+  if (!lockAcquired) {
+    const languageCode = await getLanguagePreferenceForWhatsApp(phoneNumber)
+    const { t } = getTranslatorFromLanguageCode(languageCode)
+    await sendTextMessage(phoneNumber, t("errors.processingPreviousRequest"))
     return { handled: true }
   }
 
-  await sendTextMessage(
-    phoneNumber,
-    `I've sent a new verification code to *${waUser.pending_email}*.`
-  )
+  try {
+    const { data: waUser } = await SUPABASE.from("whatsapp_users")
+      .select("pending_email, is_linked, user_id")
+      .eq("whatsapp_phone", phoneNumber)
+      .single()
 
-  return { handled: true }
+    if (waUser?.is_linked && waUser?.user_id) {
+      await sendTextMessage(
+        phoneNumber,
+        "Your account is already verified! Try asking me about your calendar."
+      )
+      return { handled: true, nextStep: "complete" }
+    }
+
+    if (!waUser?.pending_email) {
+      await sendTextMessage(
+        phoneNumber,
+        "I don't have an email on file. Let's start over. What's your email?"
+      )
+      await updateOnboardingStep(phoneNumber, "email_input")
+      return { handled: true, nextStep: "email_input" }
+    }
+
+    const { error } = await SUPABASE.auth.signInWithOtp({
+      email: waUser.pending_email,
+      options: {
+        shouldCreateUser: true,
+      },
+    })
+
+    if (error) {
+      logger.error(
+        `WhatsApp: Failed to resend OTP to ${waUser.pending_email}: ${error.message}`
+      )
+      await sendTextMessage(
+        phoneNumber,
+        "Sorry, I couldn't resend the code. Please try again in a moment."
+      )
+      return { handled: true }
+    }
+
+    await sendTextMessage(
+      phoneNumber,
+      `I've sent a new verification code to *${waUser.pending_email}*.`
+    )
+
+    return { handled: true }
+  } finally {
+    await releaseOnboardingLock(phoneNumber)
+  }
 }
 
 const handleOtpVerification = async (
   phoneNumber: string,
   otp: string
 ): Promise<{ handled: boolean; nextStep?: OnboardingStep }> => {
-  if (otpVerificationInProgress.has(phoneNumber)) {
+  const lockAcquired = await acquireOnboardingLock(phoneNumber)
+  if (!lockAcquired) {
     logger.debug(
       `WhatsApp: OTP verification already in progress for ${phoneNumber}`
     )
+    const languageCode = await getLanguagePreferenceForWhatsApp(phoneNumber)
+    const { t } = getTranslatorFromLanguageCode(languageCode)
+    await sendTextMessage(phoneNumber, t("errors.processingPreviousRequest"))
     return { handled: true }
   }
-
-  otpVerificationInProgress.add(phoneNumber)
 
   try {
     return await executeOtpVerification(phoneNumber, otp)
   } finally {
-    otpVerificationInProgress.delete(phoneNumber)
+    await releaseOnboardingLock(phoneNumber)
   }
 }
 

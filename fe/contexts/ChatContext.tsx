@@ -103,8 +103,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       setMessages([])
       setSelectedConversationId(conversation.id)
       setIsPendingConversation(false)
-      // Invalidate the specific conversation query to ensure fresh data
-      queryClient.invalidateQueries({
+      // Reset the specific conversation query to clear cached data and force fresh fetch
+      // Using resetQueries instead of invalidateQueries ensures we don't show stale cached messages
+      queryClient.resetQueries({
         queryKey: queryKeys.conversations.detail(conversation.id),
       })
     },

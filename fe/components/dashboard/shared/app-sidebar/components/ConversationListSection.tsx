@@ -238,7 +238,8 @@ export function ConversationListSection() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">
+                      <p className="flex items-center gap-1.5 truncate text-sm font-medium">
+                        {conversation.pinned && <Pin className="h-3 w-3 shrink-0 fill-current text-muted-foreground" />}
                         <StreamingTitle
                           title={conversation.title}
                           isStreaming={streamingTitleConversationId === conversation.id}

@@ -286,12 +286,20 @@ export class WebConversationAdapter {
     assistantMessage: userAndAiMessageProps,
     summarizeFn: SummarizeFn
   ): Promise<{ conversationId: string; context: ConversationContext } | null> {
+    logger.info(
+      `createConversationWithMessages: userId=${userId}, userMsgLen=${userMessage.content?.length || 0}, assistantMsgLen=${assistantMessage.content?.length || 0}`
+    )
+
     const newState = await this.createConversationState(userId)
 
     if (!newState) {
       logger.warn(`Failed to create conversation for user ${userId}`)
       return null
     }
+
+    logger.info(
+      `createConversationWithMessages: created conversation ${newState.id}, adding user message`
+    )
 
     let context = await this.service.addMessageAndMaybeSummarize({
       stateId: newState.id,
@@ -301,6 +309,10 @@ export class WebConversationAdapter {
       summarizeFn,
     })
 
+    logger.info(
+      "createConversationWithMessages: added user message, adding assistant message"
+    )
+
     context = await this.service.addMessageAndMaybeSummarize({
       stateId: newState.id,
       userId,
@@ -308,6 +320,10 @@ export class WebConversationAdapter {
       message: assistantMessage,
       summarizeFn,
     })
+
+    logger.info(
+      `createConversationWithMessages: completed, conversation ${newState.id} has ${context.messages.length} messages in memory`
+    )
 
     return { conversationId: newState.id, context }
   }
