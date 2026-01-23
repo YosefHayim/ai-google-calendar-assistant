@@ -1,9 +1,8 @@
-import { STATUS_RESPONSE } from "@/config/constants/http"
-import { env } from "@/config/env"
 import express from "express"
-import { getBot } from "@/telegram-bot/init-bot"
-import { logger } from "@/lib/logger"
 import { webhookCallback } from "grammy"
+import { STATUS_RESPONSE } from "@/config/constants/http"
+import { logger } from "@/lib/logger"
+import { getBot, getBotStatus } from "@/telegram-bot/init-bot"
 
 const router = express.Router()
 
@@ -28,15 +27,13 @@ router.post("/webhook", async (req, res) => {
   }
 })
 
-// GET /health - Telegram bot health check
+// GET /health - Telegram bot health check with detailed diagnostics
 router.get("/health", (_req, res) => {
-  const bot = getBot()
-  const isEnabled = env.integrations.telegram.isEnabled
-  const useWebhook = env.integrations.telegram.useWebhook
+  const status = getBotStatus()
 
   res.status(STATUS_RESPONSE.SUCCESS).json({
-    status: bot && isEnabled ? "healthy" : "disabled",
-    mode: useWebhook ? "webhook" : "polling",
+    status: status.hasBot && status.isEnabled ? "healthy" : "disabled",
+    ...status,
   })
 })
 

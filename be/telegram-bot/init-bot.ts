@@ -32,6 +32,33 @@ const MAX_RETRY_TIME_MS = MINUTES_IN_RETRY * SECONDS_IN_MINUTE * MS_IN_SECOND
 export const getBot = (): Bot<GlobalContext> | null => bot
 
 /**
+ * Get diagnostic information about the Telegram bot status
+ * Used for debugging and health checks
+ */
+export const getBotStatus = (): {
+  isEnabled: boolean
+  isInitialized: boolean
+  hasBot: boolean
+  mode: "webhook" | "polling" | "disabled"
+  webhookUrl: string | null
+} => {
+  const { isEnabled, useWebhook } = env.integrations.telegram
+
+  let mode: "webhook" | "polling" | "disabled" = "disabled"
+  if (isEnabled) {
+    mode = useWebhook ? "webhook" : "polling"
+  }
+
+  return {
+    isEnabled,
+    isInitialized,
+    hasBot: bot !== null,
+    mode,
+    webhookUrl: useWebhook ? `${env.baseUrl}/api/telegram/webhook` : null,
+  }
+}
+
+/**
  * Initialize the bot instance with all middleware and handlers
  * This is called once at startup
  */

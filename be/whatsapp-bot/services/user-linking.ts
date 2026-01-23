@@ -3,13 +3,14 @@
  * Handles onboarding and account linking for WhatsApp users
  */
 
-import { sendButtonMessage, sendTextMessage } from "./send-message"
+import { env } from "@/config/env"
 
 import type { Database } from "@/database.types"
 import { SUPABASE } from "@/infrastructure/supabase/supabase"
-import type { WhatsAppInteractiveContent } from "../types"
-import { env } from "@/config/env"
 import { logger } from "@/lib/logger"
+import type { WhatsAppInteractiveContent } from "../types"
+import { detectLanguageFromPhone } from "../utils/language-detection"
+import { sendButtonMessage, sendTextMessage } from "./send-message"
 
 type WhatsAppUser = Database["public"]["Tables"]["whatsapp_users"]["Row"]
 
@@ -74,7 +75,7 @@ export const resolveWhatsAppUser = async (
     // PRIORITY: If user is fully linked with user_id, skip ALL onboarding
     // This prevents auth loops after successful OTP verification
     const isFullyLinked = existingUser.is_linked && existingUser.user_id
-    
+
     return {
       user: existingUser,
       isLinked: existingUser.is_linked ?? false,
@@ -84,7 +85,11 @@ export const resolveWhatsAppUser = async (
     }
   }
 
-  // Create new user
+  const detectedLanguage = detectLanguageFromPhone(phoneNumber)
+  logger.info(
+    `WhatsApp: Creating new user ${phoneNumber} with detected language: ${detectedLanguage}`
+  )
+
   const { data: newUser, error: insertError } = await SUPABASE.from(
     "whatsapp_users"
   )
@@ -95,7 +100,7 @@ export const resolveWhatsAppUser = async (
       onboarding_step: "welcome",
       first_message_at: new Date().toISOString(),
       last_activity_at: new Date().toISOString(),
-      language_code: "en",
+      language_code: detectedLanguage,
       message_count: 1,
     })
     .select()
@@ -345,7 +350,9 @@ const handleOtpVerification = async (
   otp: string
 ): Promise<{ handled: boolean; nextStep?: OnboardingStep }> => {
   if (otpVerificationInProgress.has(phoneNumber)) {
-    logger.debug(`WhatsApp: OTP verification already in progress for ${phoneNumber}`)
+    logger.debug(
+      `WhatsApp: OTP verification already in progress for ${phoneNumber}`
+    )
     return { handled: true }
   }
 
@@ -419,7 +426,9 @@ const executeOtpVerification = async (
   const hasGoogleCalendar = !!oauthToken
   const finalStep = hasGoogleCalendar ? "complete" : "google_auth"
 
-  const { error: updateError } = await SUPABASE.from("whatsapp_users")
+  const { data: updatedUser, error: updateError } = await SUPABASE.from(
+    "whatsapp_users"
+  )
     .update({
       user_id: authData.user.id,
       is_linked: true,
@@ -427,10 +436,24 @@ const executeOtpVerification = async (
       onboarding_step: finalStep,
     })
     .eq("whatsapp_phone", phoneNumber)
+    .select("id, is_linked, user_id, onboarding_step")
+    .single()
 
-  if (updateError) {
+  if (updateError || !updatedUser) {
     logger.error(
-      `WhatsApp: Failed to link account for ${phoneNumber}: ${updateError.message}`
+      `WhatsApp: Failed to link account for ${phoneNumber}: ${updateError?.message || "No rows updated"}`
+    )
+    await sendTextMessage(
+      phoneNumber,
+      "Sorry, something went wrong linking your account. Please try again."
+    )
+    return { handled: true }
+  }
+
+  const isFullyLinked = updatedUser.is_linked && updatedUser.user_id
+  if (!isFullyLinked) {
+    logger.error(
+      `WhatsApp: Update succeeded but state invalid for ${phoneNumber}: is_linked=${updatedUser.is_linked}, user_id=${updatedUser.user_id}`
     )
     await sendTextMessage(
       phoneNumber,
@@ -440,7 +463,7 @@ const executeOtpVerification = async (
   }
 
   logger.info(
-    `WhatsApp: Successfully linked ${phoneNumber} to user ${authData.user.id}, step: ${finalStep}`
+    `WhatsApp: Successfully linked ${phoneNumber} to user ${authData.user.id}, step: ${finalStep}, verified: is_linked=${updatedUser.is_linked}`
   )
 
   if (oauthToken) {
