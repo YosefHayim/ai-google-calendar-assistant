@@ -59,7 +59,7 @@ export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ 
             <stop offset="95%" stopColor="#6366f1" stopOpacity={0.1} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
+        <CartesianGrid strokeDasharray="3 3" className="stroke-muted dark:stroke-muted" />
         <XAxis
           dataKey="formattedDate"
           tickLine={false}
@@ -111,11 +111,11 @@ export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ 
             <div className="flex justify-center gap-6 text-xs mb-2">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#f26306' }} />
-                <span className="text-zinc-600 dark:text-muted-foreground">Available</span>
+                <span className="text-muted-foreground dark:text-muted-foreground">Available</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#6366f1' }} />
-                <span className="text-zinc-600 dark:text-muted-foreground">Scheduled</span>
+                <span className="text-muted-foreground dark:text-muted-foreground">Scheduled</span>
               </div>
             </div>
           )}

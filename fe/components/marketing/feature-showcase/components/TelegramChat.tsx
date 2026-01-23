@@ -15,13 +15,13 @@ interface TelegramChatProps {
 export const TelegramChat = ({ messages }: TelegramChatProps) => (
   <div className="h-full flex flex-col bg-[#0E1621]">
     <div className="bg-[#17212B] px-4 py-3 flex items-center gap-3 border-b border">
-      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
         <AllyLogo className="w-6 h-6 text-white" />
       </div>
       <div className="flex-1">
         <div className="text-white font-medium text-sm">Ally Assistant</div>
         <div className="text-[#6C7883] text-xs flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="w-2 h-2 rounded-full bg-primary" />
           online
         </div>
       </div>

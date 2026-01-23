@@ -267,13 +267,6 @@ export const fr: TranslationShape = {
     },
   },
 
-  dialogs: {
-    confirm: {
-      confirm: 'Confirmer',
-      cancel: 'Annuler',
-    },
-  },
-
   allySidebar: {
     initialMessage:
       "Salut ! Je suis Ally, votre assistant IA. Comment puis-je vous aider à optimiser votre calendrier aujourd'hui ?",
@@ -571,6 +564,14 @@ export const fr: TranslationShape = {
       online: 'En ligne',
       chatWith: 'Discuter avec Ally',
     },
+
+    avatarView: {
+      startConversation: 'Démarrer une conversation',
+      speakOrType: 'Parlez ou tapez pour commencer',
+      liveContext: 'Contexte en direct',
+      cancelEdit: 'Annuler la modification',
+      confirmEdit: 'Confirmer la modification',
+    },
   },
 
   gaps: {
@@ -630,6 +631,57 @@ export const fr: TranslationShape = {
       create: 'Créer événement',
     },
 
+    tabs: {
+      gaps: 'Créneaux',
+      analytics: 'Analyses',
+      settings: 'Paramètres',
+    },
+
+    stats: {
+      totalGaps: 'Total des créneaux',
+      potentialOpportunities: 'Opportunités potentielles',
+      highConfidence: 'Haute confiance',
+      ofTotal: '{{percent}}% du total',
+      potentialHours: 'Heures potentielles',
+      availableForScheduling: 'Disponible pour planification',
+      avgGapSize: 'Taille moyenne des créneaux',
+      averageGapDuration: 'Durée moyenne des créneaux',
+    },
+
+    analytics: {
+      totalPotentialHours: 'Total des heures potentielles',
+      availableForScheduling: 'Disponible pour planification',
+      averageGap: 'Créneau moyen',
+      typicalGapSize: 'Taille de créneau typique',
+      largestGap: 'Plus grand créneau',
+      bestOpportunity: 'Meilleure opportunité',
+      analysisPeriod: "Période d'analyse",
+      to: 'à',
+      confidenceDistribution: 'Distribution de confiance',
+      confidenceDescription: 'Niveau de confiance de notre IA pour chaque suggestion de créneau',
+      highConfidence: 'Haute confiance',
+      mediumConfidence: 'Confiance moyenne',
+      lowConfidence: 'Faible confiance',
+      durationDistribution: 'Distribution des durées',
+      durationDescription: 'Répartition des tailles de créneaux par durée',
+      lessThanOneHour: '< 1 heure',
+      oneToTwoHours: '1-2 heures',
+      twoOrMoreHours: '2+ heures',
+      analysisSettings: "Paramètres d'analyse",
+      settingsDescription: 'Configuration actuelle pour la détection des créneaux',
+      minGap: 'Min créneau :',
+      maxGap: 'Max créneau :',
+      lookback: 'Rétroviseur :',
+      autoAnalysis: 'Auto-analyse :',
+      enabled: 'Activé',
+      disabled: 'Désactivé',
+      calendars: 'Calendriers :',
+      calendarsIncluded: '{{count}} inclus',
+      languages: 'Langues :',
+      languagesSupported: '{{count}} supportées',
+      days: 'jours',
+    },
+
     subtitle: 'Découvrez les opportunités de planification dans votre calendrier',
     potentialGaps: 'écarts potentiels identifiés',
     analyzingPeriod: "Période d'analyse:",
@@ -639,6 +691,7 @@ export const fr: TranslationShape = {
       createEvent: 'Créer un événement',
       skipping: 'Ignorer...',
       skipGap: "Ignorer l'écart",
+      dismissAllGaps: 'Ignorer tous les créneaux',
     },
   },
 
@@ -680,6 +733,10 @@ export const fr: TranslationShape = {
   },
 
   dialogs: {
+    confirm: {
+      confirm: 'Confirmer',
+      cancel: 'Annuler',
+    },
     eventDetails: {
       title: "Détails de l'événement",
       noDescription: 'Aucune description',
@@ -723,13 +780,40 @@ export const fr: TranslationShape = {
     },
     createCalendar: {
       title: 'Créer un nouveau calendrier',
+      subtitle: 'Entrez un nom pour votre nouveau calendrier. Il sera ajouté à votre compte Google Agenda.',
       name: 'Nom du calendrier',
-      namePlaceholder: 'Entrez le nom du calendrier',
+      namePlaceholder: 'ex : Projets de travail, Objectifs personnels, Fitness',
       description: 'Description',
       descriptionPlaceholder: 'Ajouter une description...',
       color: 'Couleur',
       creating: 'Création...',
       create: 'Créer calendrier',
+    },
+    quickEvent: {
+      title: 'Ajout rapide',
+      description: 'Ajoutez un événement à votre calendrier en langage naturel ou par la voix',
+      placeholder: 'Décrivez votre événement en langage naturel...',
+      examples: 'Exemples :',
+      example1: 'Réunion avec Jean demain à 15h',
+      example2: 'Déjeuner au Café Roma vendredi à 12h30 pendant 1 heure',
+      example3: 'Stand-up équipe tous les lundis à 9h',
+      recording: 'Enregistrement... Cliquez sur le micro pour arrêter',
+      pressEnter: 'Appuyez sur Entrée pour traiter',
+      processing: 'Traitement...',
+      createEvent: 'Créer événement',
+      ally: 'Ally',
+      yourAIAssistant: 'Votre assistant IA',
+      listening: 'Écoute... Cliquez à nouveau pour arrêter.',
+      listeningToYou: 'Écoute de ce que vous avez dit...',
+      understanding: 'Compréhension de votre demande...',
+      eventAdded: 'Événement ajouté à votre calendrier !',
+      conflictDetected: 'Cela entre en conflit avec des événements existants.',
+      creatingAnyway: "Création de l'événement quand même...",
+      failedTranscribe: 'Échec de la transcription audio. Veuillez réessayer.',
+      couldNotTranscribe: "Impossible de transcrire l'audio.",
+      failedCreate: "Échec de la création de l'événement.",
+      unexpectedConflict: 'Conflit inattendu',
+      allowMicrophone: "Veuillez autoriser l'accès au microphone pour utiliser l'entrée vocale.",
     },
   },
 
@@ -752,6 +836,8 @@ export const fr: TranslationShape = {
     next: 'Suivant',
     previous: 'Précédent',
     finish: 'Terminer',
+    startAudit: "Démarrer l'audit",
+    allyProtocol: 'Protocole Ally',
     steps: {
       welcome: {
         title: 'Bienvenue sur Ally',
@@ -761,6 +847,23 @@ export const fr: TranslationShape = {
         audioText:
           "Bienvenue sur Ally, votre assistant d'agenda alimenté par IA ! Je suis là pour vous aider à gérer votre emploi du temps facilement. Laissez-moi vous faire faire le tour.",
       },
+      assistant: {
+        title: 'Votre centre de commande',
+        content:
+          "Ceci est l'interface de chat principale. Déléguez des tâches, planifiez des réunions ou demandez des résumés ici.",
+      },
+      analytics: {
+        title: 'Intelligence de performance',
+        content: 'Suivez votre ratio de travail profond et voyez exactement combien de temps Ally récupère pour vous.',
+      },
+      integrations: {
+        title: 'Connectivité transparente',
+        content: 'Connectez Ally à WhatsApp, Telegram et vos sources de calendrier pour centraliser vos opérations.',
+      },
+      settings: {
+        title: 'Confidentialité et contrôle',
+        content: 'Gérez vos paramètres de mémoire contextuelle et vos préférences de sécurité de compte ici.',
+      },
       chat: {
         title: 'Discutez avec Ally',
         description: 'Planification en langage naturel',
@@ -768,14 +871,6 @@ export const fr: TranslationShape = {
           'Tapez ou parlez simplement naturellement. Dites des choses comme "Planifier une réunion avec Jean demain à 14h" ou "Qu\'est-ce que j\'ai la semaine prochaine ?" Ally comprend le contexte et gère les demandes complexes.',
         audioText:
           'L\'interface de chat est votre principal moyen d\'interagir avec moi. Tapez simplement naturellement, comme si vous envoyiez un message à un ami. Dites des choses comme "Planifier un déjeuner avec Sarah demain" ou "Quels sont mes rendez-vous cette semaine ?"',
-      },
-      analytics: {
-        title: 'Suivez votre temps',
-        description: 'Insights sur votre emploi du temps',
-        content:
-          "Consultez des analyses détaillées sur la façon dont vous passez votre temps. Comprenez vos modèles de réunion, trouvez des opportunités d'optimisation et maintenez un équilibre sain entre vie professionnelle et vie privée.",
-        audioText:
-          "Le tableau de bord d'analyse vous donne des insights puissants sur la façon dont vous passez votre temps. Suivez les modèles de réunion, identifiez les périodes chargées et optimisez votre emploi du temps pour une meilleure productivité.",
       },
       gaps: {
         title: 'Récupérez le temps perdu',
@@ -1341,17 +1436,30 @@ export const fr: TranslationShape = {
     slack: {
       title: 'Slack',
       description: "Ajoutez Ally à votre espace de travail Slack pour la gestion d'agenda d'équipe.",
+      addToSlack: 'Ajouter à Slack',
+      refresh: 'Actualiser',
     },
     googleCalendar: {
       title: 'Google Calendar',
+      description:
+        'Synchronisez vos calendriers avec Ally pour une planification transparente et la résolution des conflits.',
       failedToLoad: 'Échec du chargement des données du calendrier.',
       noSources: 'Aucune source de calendrier active trouvée.',
+      fetchingCalendars: 'Récupération des calendriers...',
+      syncedSources: 'Sources synchronisées',
+      manage: 'Gérer',
+      tryAgain: 'Réessayer',
+      apiActive: 'API active',
+      unnamed: 'Calendrier sans nom',
     },
     status: {
       connected: 'Connecté',
       disconnected: 'Déconnecté',
+      notConnected: 'Non connecté',
     },
     connectWhatsApp: 'Connecter WhatsApp',
+    whatsappModalDescription: 'Pour connecter WhatsApp, veuillez suivre les instructions dans votre console Ally Node.',
+    openConsole: 'Ouvrir la console',
     refresh: 'Actualiser',
   },
 

@@ -33,7 +33,7 @@ export const WebAnalyticsView = () => (
             <span className="text-xs text-muted-foreground">{stat.label}</span>
           </div>
           <div className="text-lg font-bold text-foreground dark:text-white">{stat.value}</div>
-          <div className={cn('text-xs font-medium', stat.positive ? 'text-emerald-500' : 'text-destructive')}>
+          <div className={cn('text-xs font-medium', stat.positive ? 'text-primary' : 'text-destructive')}>
             {stat.change} vs last week
           </div>
         </motion.div>

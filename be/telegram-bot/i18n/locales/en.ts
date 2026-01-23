@@ -372,6 +372,8 @@ export const en = {
     "Unable to process the image. Please try again with a different image.",
   "errors.tooManyImages":
     "You can send up to {{max}} images at once. Some images were skipped.",
+  "errors.requestRejected":
+    "Your request was flagged for safety review. Please rephrase your request.",
 
   "common.confirm": "Confirm",
   "common.cancel": "Cancel",

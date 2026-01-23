@@ -1,5 +1,6 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents"
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import { runDPO } from "@/ai-agents/dpo"
 import { activateAgent } from "@/domains/analytics/utils"
 import { logger } from "@/lib/logger"
 import { unifiedContextStore } from "@/shared/context"
@@ -111,16 +112,35 @@ export const handleAgentRequest = async (
       allyBrain,
     })
 
-    const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
-      email,
-      session: userUuid
-        ? {
-            userId: userUuid,
-            agentName: ORCHESTRATOR_AGENT.name,
-            taskId: `slack-${slackUserId}`,
-          }
-        : undefined,
+    const dpoResult = await runDPO({
+      userId: userUuid || `slack-${slackUserId}`,
+      agentId: ORCHESTRATOR_AGENT.name,
+      userQuery: message,
+      basePrompt: prompt,
+      isShadowRun: false,
     })
+
+    if (dpoResult.wasRejected) {
+      logger.warn(`Slack Bot: DPO rejected request for user ${slackUserId}`, {
+        reason: dpoResult.judgeOutput?.reasoning,
+      })
+      return "Your request was flagged for safety review. Please rephrase your request."
+    }
+
+    const result = await activateAgent(
+      ORCHESTRATOR_AGENT,
+      dpoResult.effectivePrompt,
+      {
+        email,
+        session: userUuid
+          ? {
+              userId: userUuid,
+              agentName: ORCHESTRATOR_AGENT.name,
+              taskId: `slack-${slackUserId}`,
+            }
+          : undefined,
+      }
+    )
     const finalOutput = result.finalOutput || ""
 
     if (finalOutput) {
@@ -206,18 +226,40 @@ export const handleConfirmation = async (
     const userUuid = await slackConversation.getUserIdFromSlack(slackUserId)
 
     const timestamp = new Date().toISOString()
+    const confirmationMessage =
+      "User confirmed event creation despite conflicts."
     const prompt = `Current date and time is ${timestamp}. User with email ${email} confirmed the creation of event despite conflicts. Create the event now with these details: ${JSON.stringify(pending.eventData)}`
 
-    const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
-      email,
-      session: userUuid
-        ? {
-            userId: userUuid,
-            agentName: ORCHESTRATOR_AGENT.name,
-            taskId: `slack-${slackUserId}`,
-          }
-        : undefined,
+    const dpoResult = await runDPO({
+      userId: userUuid || `slack-${slackUserId}`,
+      agentId: ORCHESTRATOR_AGENT.name,
+      userQuery: confirmationMessage,
+      basePrompt: prompt,
+      isShadowRun: false,
     })
+
+    if (dpoResult.wasRejected) {
+      logger.warn(
+        `Slack Bot: DPO rejected confirmation for user ${slackUserId}`,
+        { reason: dpoResult.judgeOutput?.reasoning }
+      )
+      return "Your request was flagged for safety review. Please try again."
+    }
+
+    const result = await activateAgent(
+      ORCHESTRATOR_AGENT,
+      dpoResult.effectivePrompt,
+      {
+        email,
+        session: userUuid
+          ? {
+              userId: userUuid,
+              agentName: ORCHESTRATOR_AGENT.name,
+              taskId: `slack-${slackUserId}`,
+            }
+          : undefined,
+      }
+    )
     const finalOutput = result.finalOutput || ""
 
     return finalOutput || "Event created successfully."

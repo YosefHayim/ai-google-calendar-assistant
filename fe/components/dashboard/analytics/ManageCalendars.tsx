@@ -80,7 +80,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
           calendars.map((calendar) => {
             const calendarInfo = calendarMap.get(calendar.id)
             const displayName = calendar.summary || calendar.id.split('@')[0]
-            const color = calendar.backgroundColor || calendarInfo?.color || '#6366f1'
+            const color = calendar.backgroundColor || calendarInfo?.color || 'hsl(var(--primary))'
 
             return (
               <div

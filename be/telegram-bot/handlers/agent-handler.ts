@@ -1,9 +1,10 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents"
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
-import { unifiedContextStore } from "@/shared/context"
-import type { ImageContent } from "@/shared/llm"
+import { runDPO } from "@/ai-agents/dpo"
 import { activateAgent } from "@/domains/analytics/utils"
 import { logger } from "@/lib/logger"
+import { unifiedContextStore } from "@/shared/context"
+import type { ImageContent } from "@/shared/llm"
 import { getTranslatorFromLanguageCode } from "../i18n"
 import {
   buildAgentPromptWithContext,
@@ -94,7 +95,26 @@ export const handleAgentRequest = async (
       `Telegram Bot: Prompt length for user ${telegramUserId}: ${prompt.length} chars (context: ${fullContext.length}, message: ${message.length})`
     )
 
-    const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
+    const dpoResult = await runDPO({
+      userId: userUuid || `telegram-${telegramUserId}`,
+      agentId: ORCHESTRATOR_AGENT.name,
+      userQuery: message,
+      basePrompt: prompt,
+      isShadowRun: false,
+    })
+
+    if (dpoResult.wasRejected) {
+      logger.warn(
+        `Telegram Bot: DPO rejected request for user ${telegramUserId}`,
+        { reason: dpoResult.judgeOutput?.reasoning }
+      )
+      await ctx.reply(t("errors.requestRejected"), { parse_mode: "HTML" })
+      return
+    }
+
+    const effectivePrompt = dpoResult.effectivePrompt
+
+    const result = await activateAgent(ORCHESTRATOR_AGENT, effectivePrompt, {
       email: ctx.session.email,
       session: userUuid
         ? {
@@ -188,16 +208,37 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
       pending.eventData
     )
 
-    const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
-      email: ctx.session.email,
-      session: userUuid
-        ? {
-            userId: userUuid,
-            agentName: ORCHESTRATOR_AGENT.name,
-            taskId: chatId.toString(),
-          }
-        : undefined,
+    const dpoResult = await runDPO({
+      userId: userUuid || `telegram-${telegramUserId}`,
+      agentId: ORCHESTRATOR_AGENT.name,
+      userQuery: "User confirmed event creation despite conflicts.",
+      basePrompt: prompt,
+      isShadowRun: false,
     })
+
+    if (dpoResult.wasRejected) {
+      logger.warn(
+        `Telegram Bot: DPO rejected confirmation for user ${telegramUserId}`,
+        { reason: dpoResult.judgeOutput?.reasoning }
+      )
+      await ctx.reply(t("errors.requestRejected"), { parse_mode: "HTML" })
+      return
+    }
+
+    const result = await activateAgent(
+      ORCHESTRATOR_AGENT,
+      dpoResult.effectivePrompt,
+      {
+        email: ctx.session.email,
+        session: userUuid
+          ? {
+              userId: userUuid,
+              agentName: ORCHESTRATOR_AGENT.name,
+              taskId: chatId.toString(),
+            }
+          : undefined,
+      }
+    )
     const finalOutput = result.finalOutput || ""
 
     if (!finalOutput) {

@@ -68,7 +68,7 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
       <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-        <PolarGrid className="stroke-zinc-200 dark:stroke-zinc-700" gridType="polygon" />
+        <PolarGrid className="stroke-muted dark:stroke-muted" gridType="polygon" />
         <PolarAngleAxis
           dataKey="category"
           tick={({ x, y, payload, index }) => {

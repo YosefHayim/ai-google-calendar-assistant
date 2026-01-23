@@ -130,7 +130,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             ) : (
               <Button
                 onClick={handleSlackConnect}
-                className="w-full bg-[#4A154B] hover:bg-[#3a1039]"
+                className="w-full bg-accent hover:bg-accent/80"
                 disabled={isSlackLoading}
               >
                 {isSlackLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FaSlack className="w-4 h-4" />}
@@ -195,7 +195,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
                   <li key={cal.calendarId} className="flex items-center gap-3 text-sm">
                     <div
                       className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: cal.calendarColorForEvents || '#f26306' }}
+                      style={{ backgroundColor: cal.calendarColorForEvents || 'hsl(var(--primary))' }}
                     />
                     <span className="flex-1 font-medium text-foreground">
                       {cal.calendarName || t('integrations.googleCalendar.unnamed')}

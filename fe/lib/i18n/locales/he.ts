@@ -260,14 +260,6 @@ export const he: TranslationShape = {
     },
   },
 
-  // Common Dialogs
-  dialogs: {
-    confirm: {
-      confirm: 'אישור',
-      cancel: 'ביטול',
-    },
-  },
-
   // AI Ally Sidebar
   allySidebar: {
     initialMessage:
@@ -578,6 +570,14 @@ export const he: TranslationShape = {
       online: 'מחוברת',
       chatWith: 'שוחח עם אלי',
     },
+
+    avatarView: {
+      startConversation: 'התחל שיחה',
+      speakOrType: 'דבר או הקלד כדי להתחיל',
+      liveContext: 'הקשר חי',
+      cancelEdit: 'בטל עריכה',
+      confirmEdit: 'אשר עריכה',
+    },
   },
 
   // Gap Recovery
@@ -651,6 +651,55 @@ export const he: TranslationShape = {
       createEvent: 'צור אירוע',
       skipping: 'מדלג...',
       skipGap: 'דלג על פער',
+      dismissAllGaps: 'סגור את כל הפערים',
+    },
+    tabs: {
+      gaps: 'פערים',
+      analytics: 'אנליטיקה',
+      settings: 'הגדרות',
+    },
+    stats: {
+      totalGaps: 'סך הפערים',
+      potentialOpportunities: 'הזדמנויות פוטנציאליות',
+      highConfidence: 'ביטחון גבוה',
+      ofTotal: '{{percent}}% מהסך',
+      potentialHours: 'שעות פוטנציאליות',
+      availableForScheduling: 'זמין לתזמון',
+      avgGapSize: 'גודל פער ממוצע',
+      averageGapDuration: 'משך פער ממוצע',
+    },
+    analytics: {
+      totalPotentialHours: 'סך שעות פוטנציאליות',
+      availableForScheduling: 'זמין לתזמון',
+      averageGap: 'פער ממוצע',
+      typicalGapSize: 'גודל פער טיפוסי',
+      largestGap: 'הפער הגדול ביותר',
+      bestOpportunity: 'ההזדמנות הטובה ביותר',
+      analysisPeriod: 'תקופת ניתוח',
+      to: 'עד',
+      confidenceDistribution: 'התפלגות ביטחון',
+      confidenceDescription: 'עד כמה ה-AI שלנו בטוח בכל הצעת פער',
+      highConfidence: 'ביטחון גבוה',
+      mediumConfidence: 'ביטחון בינוני',
+      lowConfidence: 'ביטחון נמוך',
+      durationDistribution: 'התפלגות משך',
+      durationDescription: 'פירוט גדלי פערים לפי משך',
+      lessThanOneHour: '< שעה',
+      oneToTwoHours: '1-2 שעות',
+      twoOrMoreHours: '2+ שעות',
+      analysisSettings: 'הגדרות ניתוח',
+      settingsDescription: 'תצורה נוכחית לזיהוי פערים',
+      minGap: 'מינימום פער:',
+      maxGap: 'מקסימום פער:',
+      lookback: 'מבט לאחור:',
+      autoAnalysis: 'ניתוח אוטומטי:',
+      enabled: 'מופעל',
+      disabled: 'מושבת',
+      calendars: 'יומנים:',
+      calendarsIncluded: '{{count}} כלולים',
+      languages: 'שפות:',
+      languagesSupported: '{{count}} נתמכות',
+      days: 'ימים',
     },
   },
 
@@ -694,6 +743,10 @@ export const he: TranslationShape = {
 
   // Dialogs
   dialogs: {
+    confirm: {
+      confirm: 'אישור',
+      cancel: 'ביטול',
+    },
     eventDetails: {
       title: 'פרטי אירוע',
       noDescription: 'אין תיאור',
@@ -737,13 +790,40 @@ export const he: TranslationShape = {
     },
     createCalendar: {
       title: 'צור יומן חדש',
+      subtitle: 'הזן שם ליומן החדש שלך. הוא יתווסף לחשבון Google Calendar שלך.',
       name: 'שם היומן',
-      namePlaceholder: 'הזן שם יומן',
+      namePlaceholder: 'לדוגמה: פרויקטי עבודה, יעדים אישיים, כושר',
       description: 'תיאור',
       descriptionPlaceholder: 'הוסף תיאור...',
       color: 'צבע',
       creating: 'יוצר...',
       create: 'צור יומן',
+    },
+    quickEvent: {
+      title: 'הוספה מהירה',
+      description: 'הוסף אירוע ליומן שלך בשפה טבעית או בקול',
+      placeholder: 'תאר את האירוע שלך בשפה טבעית...',
+      examples: 'דוגמאות:',
+      example1: 'פגישה עם יוסי מחר ב-15:00',
+      example2: 'ארוחת צהריים בקפה רומא ביום שישי ב-12:30 לשעה',
+      example3: 'סטנדאפ צוות כל יום שני ב-9:00',
+      recording: 'מקליט... לחץ על המיקרופון לעצירה',
+      pressEnter: 'לחץ Enter לעיבוד',
+      processing: 'מעבד...',
+      createEvent: 'צור אירוע',
+      ally: 'אלי',
+      yourAIAssistant: 'העוזר החכם שלך',
+      listening: 'מאזין... לחץ שוב לעצירה.',
+      listeningToYou: 'מאזין למה שאמרת...',
+      understanding: 'מבין את הבקשה שלך...',
+      eventAdded: 'האירוע נוסף ליומן שלך!',
+      conflictDetected: 'זה מתנגש עם אירועים קיימים.',
+      creatingAnyway: 'יוצר את האירוע בכל זאת...',
+      failedTranscribe: 'נכשל בתמלול שמע. אנא נסה שוב.',
+      couldNotTranscribe: 'לא ניתן לתמלל שמע.',
+      failedCreate: 'נכשל ביצירת אירוע.',
+      unexpectedConflict: 'התנגשות בלתי צפויה',
+      allowMicrophone: 'אנא אפשר גישה למיקרופון לשימוש בקלט קולי.',
     },
   },
 
@@ -767,6 +847,8 @@ export const he: TranslationShape = {
     next: 'הבא',
     previous: 'הקודם',
     finish: 'סיום',
+    startAudit: 'התחל ביקורת',
+    allyProtocol: 'פרוטוקול אלי',
     steps: {
       welcome: {
         title: 'ברוך הבא לאלי',
@@ -776,6 +858,22 @@ export const he: TranslationShape = {
         audioText:
           'ברוך הבא לאלי, העוזר החכם שלך ליומן! אני כאן כדי לעזור לך לנהל את לוח הזמנים שלך בקלות. תן לי להראות לך סביב.',
       },
+      assistant: {
+        title: 'מרכז הפיקוד שלך',
+        content: "זהו ממשק הצ'אט הראשי. האצל משימות, תזמן פגישות, או בקש סיכומים כאן.",
+      },
+      analytics: {
+        title: 'אינטליגנציית ביצועים',
+        content: 'עקוב אחר יחס העבודה העמוקה שלך וראה בדיוק כמה זמן אלי מחזירה לך.',
+      },
+      integrations: {
+        title: 'קישוריות חלקה',
+        content: 'חבר את אלי ל-WhatsApp, Telegram ומקורות היומן שלך כדי לרכז את הפעילויות שלך.',
+      },
+      settings: {
+        title: 'פרטיות ושליטה',
+        content: 'נהל כאן את הגדרות הזיכרון ההקשרי והעדפות אבטחת החשבון שלך.',
+      },
       chat: {
         title: 'שוחח עם אלי',
         description: 'תזמון בשפה טבעית',
@@ -783,14 +881,6 @@ export const he: TranslationShape = {
           'פשוט הקלד או דבר באופן טבעי. אמור דברים כמו "קבע פגישה עם ג׳ון מחר בשעה 2" או "מה יש לי בשבוע הבא?" אלי מבין הקשר ומטפל בבקשות מורכבות.',
         audioText:
           'ממשק הצ\'אט הוא הדרך העיקרית שלך להתקשר איתי. פשוט הקלד באופן טבעי, כמו שאתה שולח הודעה לחבר. אמור דברים כמו "קבע ארוחת צהריים עם שרה מחר" או "אילו פגישות יש לי השבוע?"',
-      },
-      analytics: {
-        title: 'עקוב אחר הזמן שלך',
-        description: 'תובנות ללוח הזמנים שלך',
-        content:
-          'צפה באנליטיקות מפורטות על איך אתה מבלה את הזמן שלך. הבן את דפוסי הפגישות שלך, מצא הזדמנויות לייעול, ושמור על איזון בריא בין עבודה לחיים.',
-        audioText:
-          'לוח המחוונים של האנליטיקות נותן לך תובנות רבות עוצמה על איך אתה מבלה את הזמן שלך. עקוב אחר דפוסי פגישות, זהה תקופות עמוסות, וייעל את לוח הזמנים שלך לפרודוקטיביות טובה יותר.',
       },
       gaps: {
         title: 'החזר זמן אבוד',
@@ -1338,17 +1428,29 @@ export const he: TranslationShape = {
     slack: {
       title: 'Slack',
       description: 'הוסף את אלי למרחב העבודה שלך ב-Slack לניהול לוח שנה קבוצתי.',
+      addToSlack: 'הוסף ל-Slack',
+      refresh: 'רענן',
     },
     googleCalendar: {
       title: 'Google Calendar',
+      description: 'סנכרן את היומנים שלך עם אלי לתזמון חלק ופתרון קונפליקטים.',
       failedToLoad: 'נכשל בטעינת נתוני לוח שנה.',
       noSources: 'לא נמצאו מקורות לוח שנה פעילים.',
+      fetchingCalendars: 'מביא יומנים...',
+      syncedSources: 'מקורות מסונכרנים',
+      manage: 'נהל',
+      tryAgain: 'נסה שוב',
+      apiActive: 'API פעיל',
+      unnamed: 'יומן ללא שם',
     },
     status: {
       connected: 'מחובר',
       disconnected: 'מנותק',
+      notConnected: 'לא מחובר',
     },
     connectWhatsApp: 'חבר WhatsApp',
+    whatsappModalDescription: 'כדי לחבר WhatsApp, אנא עקוב אחרי ההוראות בקונסול של Ally Node.',
+    openConsole: 'פתח קונסול',
     refresh: 'רענן',
   },
 

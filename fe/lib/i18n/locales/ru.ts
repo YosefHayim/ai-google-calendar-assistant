@@ -266,13 +266,6 @@ export const ru: TranslationShape = {
     },
   },
 
-  dialogs: {
-    confirm: {
-      confirm: 'Подтвердить',
-      cancel: 'Отмена',
-    },
-  },
-
   allySidebar: {
     initialMessage: 'Привет! Я Ally, ваш ИИ-ассистент. Как я могу помочь оптимизировать ваш календарь сегодня?',
     responseMessage: 'Я понял! Позвольте мне проанализировать ваш календарь и предложить оптимизации.',
@@ -566,6 +559,14 @@ export const ru: TranslationShape = {
       online: 'Онлайн',
       chatWith: 'Чат с Ally',
     },
+
+    avatarView: {
+      startConversation: 'Начать разговор',
+      speakOrType: 'Говорите или печатайте для начала',
+      liveContext: 'Живой контекст',
+      cancelEdit: 'Отменить редактирование',
+      confirmEdit: 'Подтвердить редактирование',
+    },
   },
 
   gaps: {
@@ -624,6 +625,57 @@ export const ru: TranslationShape = {
       create: 'Создать событие',
     },
 
+    tabs: {
+      gaps: 'Пробелы',
+      analytics: 'Аналитика',
+      settings: 'Настройки',
+    },
+
+    stats: {
+      totalGaps: 'Всего пробелов',
+      potentialOpportunities: 'Потенциальные возможности',
+      highConfidence: 'Высокая уверенность',
+      ofTotal: '{{percent}}% от общего',
+      potentialHours: 'Потенциальные часы',
+      availableForScheduling: 'Доступно для планирования',
+      avgGapSize: 'Средний размер пробела',
+      averageGapDuration: 'Средняя продолжительность пробела',
+    },
+
+    analytics: {
+      totalPotentialHours: 'Всего потенциальных часов',
+      availableForScheduling: 'Доступно для планирования',
+      averageGap: 'Средний пробел',
+      typicalGapSize: 'Типичный размер пробела',
+      largestGap: 'Самый большой пробел',
+      bestOpportunity: 'Лучшая возможность',
+      analysisPeriod: 'Период анализа',
+      to: 'до',
+      confidenceDistribution: 'Распределение уверенности',
+      confidenceDescription: 'Насколько уверен наш ИИ в каждом предложении по пробелу',
+      highConfidence: 'Высокая уверенность',
+      mediumConfidence: 'Средняя уверенность',
+      lowConfidence: 'Низкая уверенность',
+      durationDistribution: 'Распределение по длительности',
+      durationDescription: 'Разбивка размеров пробелов по длительности',
+      lessThanOneHour: '< 1 часа',
+      oneToTwoHours: '1-2 часа',
+      twoOrMoreHours: '2+ часов',
+      analysisSettings: 'Настройки анализа',
+      settingsDescription: 'Текущая конфигурация для обнаружения пробелов',
+      minGap: 'Мин. пробел:',
+      maxGap: 'Макс. пробел:',
+      lookback: 'Ретроспектива:',
+      autoAnalysis: 'Авто-анализ:',
+      enabled: 'Включено',
+      disabled: 'Отключено',
+      calendars: 'Календари:',
+      calendarsIncluded: '{{count}} включено',
+      languages: 'Языки:',
+      languagesSupported: '{{count}} поддерживается',
+      days: 'дней',
+    },
+
     subtitle: 'Обнаружьте возможности планирования в вашем календаре',
     potentialGaps: 'потенциальных пробелов обнаружено',
     analyzingPeriod: 'Период анализа:',
@@ -633,6 +685,7 @@ export const ru: TranslationShape = {
       createEvent: 'Создать событие',
       skipping: 'Пропуск...',
       skipGap: 'Пропустить пробел',
+      dismissAllGaps: 'Отклонить все пробелы',
     },
   },
 
@@ -674,6 +727,10 @@ export const ru: TranslationShape = {
   },
 
   dialogs: {
+    confirm: {
+      confirm: 'Подтвердить',
+      cancel: 'Отмена',
+    },
     eventDetails: {
       title: 'Детали события',
       noDescription: 'Нет описания',
@@ -717,13 +774,40 @@ export const ru: TranslationShape = {
     },
     createCalendar: {
       title: 'Создать новый календарь',
+      subtitle: 'Введите название для вашего нового календаря. Он будет добавлен в ваш аккаунт Google Календаря.',
       name: 'Название календаря',
-      namePlaceholder: 'Введите название календаря',
+      namePlaceholder: 'например: Рабочие проекты, Личные цели, Фитнес',
       description: 'Описание',
       descriptionPlaceholder: 'Добавить описание...',
       color: 'Цвет',
       creating: 'Создание...',
       create: 'Создать календарь',
+    },
+    quickEvent: {
+      title: 'Быстрое добавление',
+      description: 'Добавьте событие в календарь на естественном языке или голосом',
+      placeholder: 'Опишите ваше событие на естественном языке...',
+      examples: 'Примеры:',
+      example1: 'Встреча с Иваном завтра в 15:00',
+      example2: 'Обед в кафе Рома в пятницу в 12:30 на 1 час',
+      example3: 'Стендап команды каждый понедельник в 9:00',
+      recording: 'Запись... Нажмите на микрофон для остановки',
+      pressEnter: 'Нажмите Enter для обработки',
+      processing: 'Обработка...',
+      createEvent: 'Создать событие',
+      ally: 'Ally',
+      yourAIAssistant: 'Ваш ИИ-ассистент',
+      listening: 'Слушаю... Нажмите снова для остановки.',
+      listeningToYou: 'Слушаю, что вы сказали...',
+      understanding: 'Понимаю ваш запрос...',
+      eventAdded: 'Событие добавлено в ваш календарь!',
+      conflictDetected: 'Это конфликтует с существующими событиями.',
+      creatingAnyway: 'Всё равно создаю событие...',
+      failedTranscribe: 'Не удалось расшифровать аудио. Пожалуйста, попробуйте снова.',
+      couldNotTranscribe: 'Не удалось расшифровать аудио.',
+      failedCreate: 'Не удалось создать событие.',
+      unexpectedConflict: 'Неожиданный конфликт',
+      allowMicrophone: 'Пожалуйста, разрешите доступ к микрофону для голосового ввода.',
     },
   },
 
@@ -746,6 +830,8 @@ export const ru: TranslationShape = {
     next: 'Далее',
     previous: 'Назад',
     finish: 'Завершить',
+    startAudit: 'Начать аудит',
+    allyProtocol: 'Протокол Ally',
     steps: {
       welcome: {
         title: 'Добро пожаловать в Ally',
@@ -755,6 +841,22 @@ export const ru: TranslationShape = {
         audioText:
           'Добро пожаловать в Ally, вашего ИИ-помощника по календарю! Я здесь, чтобы помочь вам легко управлять своим расписанием. Позвольте мне провести вас по системе.',
       },
+      assistant: {
+        title: 'Ваш командный центр',
+        content: 'Это основной интерфейс чата. Делегируйте задачи, планируйте встречи или запрашивайте сводки здесь.',
+      },
+      analytics: {
+        title: 'Аналитика производительности',
+        content: 'Отслеживайте соотношение глубокой работы и смотрите, сколько времени Ally возвращает вам.',
+      },
+      integrations: {
+        title: 'Бесшовная связность',
+        content: 'Подключите Ally к WhatsApp, Telegram и вашим источникам календаря для централизации операций.',
+      },
+      settings: {
+        title: 'Конфиденциальность и контроль',
+        content: 'Управляйте настройками контекстной памяти и предпочтениями безопасности аккаунта здесь.',
+      },
       chat: {
         title: 'Общайтесь с Ally',
         description: 'Планирование на естественном языке',
@@ -762,14 +864,6 @@ export const ru: TranslationShape = {
           'Просто набирайте или говорите естественно. Говорите такие вещи как "Запланировать встречу с Джоном завтра в 14:00" или "Что у меня на следующей неделе?" Ally понимает контекст и обрабатывает сложные запросы.',
         audioText:
           'Интерфейс чата - ваш основной способ взаимодействия со мной. Просто набирайте естественно, как будто пишете сообщение другу. Говорите такие вещи как "Запланировать обед с Сарой завтра" или "Какие у меня встречи на этой неделе?"',
-      },
-      analytics: {
-        title: 'Отслеживайте свое время',
-        description: 'Аналитика вашего расписания',
-        content:
-          'Просматривайте детальную аналитику о том, как вы проводите время. Понимайте свои паттерны встреч, находите возможности для оптимизации и поддерживайте здоровый баланс между работой и жизнью.',
-        audioText:
-          'Панель аналитики дает вам мощные инсайты о том, как вы проводите время. Отслеживайте паттерны встреч, идентифицируйте загруженные периоды и оптимизируйте свое расписание для лучшей продуктивности.',
       },
       gaps: {
         title: 'Восстановите потерянное время',
@@ -1325,17 +1419,29 @@ export const ru: TranslationShape = {
     slack: {
       title: 'Slack',
       description: 'Добавьте Ally в свое Slack рабочее пространство для управления командным календарем.',
+      addToSlack: 'Добавить в Slack',
+      refresh: 'Обновить',
     },
     googleCalendar: {
       title: 'Google Calendar',
+      description: 'Синхронизируйте ваши календари с Ally для бесшовного планирования и разрешения конфликтов.',
       failedToLoad: 'Не удалось загрузить данные календаря.',
       noSources: 'Активные источники календаря не найдены.',
+      fetchingCalendars: 'Получение календарей...',
+      syncedSources: 'Синхронизированные источники',
+      manage: 'Управлять',
+      tryAgain: 'Попробовать снова',
+      apiActive: 'API активен',
+      unnamed: 'Безымянный календарь',
     },
     status: {
       connected: 'Подключено',
       disconnected: 'Отключено',
+      notConnected: 'Не подключено',
     },
     connectWhatsApp: 'Подключить WhatsApp',
+    whatsappModalDescription: 'Чтобы подключить WhatsApp, следуйте инструкциям в вашей консоли Ally Node.',
+    openConsole: 'Открыть консоль',
     refresh: 'Обновить',
   },
 

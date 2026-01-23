@@ -26,7 +26,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
   }
 
   const displayName = calendar.summary || calendar.id.split('@')[0]
-  const calendarColor = calendar.backgroundColor || '#6366f1'
+  const calendarColor = calendar.backgroundColor || 'hsl(var(--primary))'
   const calendarEntry = calendar as ExtendedCalendarEntry
 
   return (

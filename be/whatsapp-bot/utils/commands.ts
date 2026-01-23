@@ -1,5 +1,6 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents"
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import { runDPO } from "@/ai-agents/dpo"
 import { activateAgent } from "@/domains/analytics/utils"
 import { logger } from "@/lib/logger"
 import { unifiedContextStore } from "@/shared/context"
@@ -268,16 +269,38 @@ const handleAgentCommand = async (
       }
     )
 
-    const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
-      email,
-      session: userId
-        ? {
-            userId,
-            agentName: ORCHESTRATOR_AGENT.name,
-            taskId: from,
-          }
-        : undefined,
+    const dpoResult = await runDPO({
+      userId: userId || `whatsapp-${from}`,
+      agentId: ORCHESTRATOR_AGENT.name,
+      userQuery: agentCmd.prompt,
+      basePrompt: prompt,
+      isShadowRun: false,
     })
+
+    if (dpoResult.wasRejected) {
+      logger.warn(`WhatsApp: DPO rejected command for ${from}`, {
+        reason: dpoResult.judgeOutput?.reasoning,
+      })
+      const rejectMsg =
+        "Your request was flagged for safety review. Please rephrase your request."
+      await sendTextMessage(from, rejectMsg)
+      return { handled: true, response: rejectMsg }
+    }
+
+    const result = await activateAgent(
+      ORCHESTRATOR_AGENT,
+      dpoResult.effectivePrompt,
+      {
+        email,
+        session: userId
+          ? {
+              userId,
+              agentName: ORCHESTRATOR_AGENT.name,
+              taskId: from,
+            }
+          : undefined,
+      }
+    )
 
     const finalOutput = result.finalOutput || ""
 

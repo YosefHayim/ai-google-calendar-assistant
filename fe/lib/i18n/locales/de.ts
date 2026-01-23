@@ -315,13 +315,41 @@ export const de: TranslationShape = {
     },
     createCalendar: {
       title: 'Neuen Kalender erstellen',
+      subtitle:
+        'Geben Sie einen Namen für Ihren neuen Kalender ein. Er wird zu Ihrem Google Kalender-Konto hinzugefügt.',
       name: 'Kalendername',
-      namePlaceholder: 'Kalendernamen eingeben',
+      namePlaceholder: 'z.B. Arbeitsprojekte, Persönliche Ziele, Fitness',
       description: 'Beschreibung',
       descriptionPlaceholder: 'Beschreibung hinzufügen...',
       color: 'Farbe',
       creating: 'Erstelle...',
       create: 'Kalender erstellen',
+    },
+    quickEvent: {
+      title: 'Schnell Termin hinzufügen',
+      description: 'Fügen Sie einen Termin mit natürlicher Sprache oder Stimme hinzu',
+      placeholder: 'Beschreiben Sie Ihren Termin in natürlicher Sprache...',
+      examples: 'Beispiele:',
+      example1: 'Meeting mit John morgen um 15 Uhr',
+      example2: 'Mittagessen im Café Roma am Freitag 12:30 für 1 Stunde',
+      example3: 'Team-Standup jeden Montag um 9 Uhr',
+      recording: 'Aufnahme... Klicken Sie auf das Mikrofon zum Stoppen',
+      pressEnter: 'Enter drücken zum Verarbeiten',
+      processing: 'Verarbeite...',
+      createEvent: 'Termin erstellen',
+      ally: 'Ally',
+      yourAIAssistant: 'Ihr KI-Assistent',
+      listening: 'Höre zu... Erneut klicken zum Stoppen.',
+      listeningToYou: 'Höre zu, was Sie gesagt haben...',
+      understanding: 'Verstehe Ihre Anfrage...',
+      eventAdded: 'Termin zu Ihrem Kalender hinzugefügt!',
+      conflictDetected: 'Dies kollidiert mit bestehenden Terminen.',
+      creatingAnyway: 'Erstelle Termin trotzdem...',
+      failedTranscribe: 'Audio konnte nicht transkribiert werden. Bitte versuchen Sie es erneut.',
+      couldNotTranscribe: 'Audio konnte nicht transkribiert werden.',
+      failedCreate: 'Termin konnte nicht erstellt werden.',
+      unexpectedConflict: 'Unerwarteter Konflikt',
+      allowMicrophone: 'Bitte erlauben Sie Mikrofonzugriff für Spracheingabe.',
     },
   },
 
@@ -619,6 +647,14 @@ export const de: TranslationShape = {
       online: 'Online',
       chatWith: 'Mit Ally chatten',
     },
+
+    avatarView: {
+      startConversation: 'Gespräch starten',
+      speakOrType: 'Sprechen oder tippen Sie, um zu beginnen',
+      liveContext: 'Live-Kontext',
+      cancelEdit: 'Bearbeitung abbrechen',
+      confirmEdit: 'Bearbeitung bestätigen',
+    },
   },
 
   gaps: {
@@ -681,12 +717,64 @@ export const de: TranslationShape = {
     subtitle: 'Entdecken Sie Planungsmöglichkeiten in Ihrem Kalender',
     potentialGaps: 'potenzielle Lücken identifiziert',
     analyzingPeriod: 'Analysezeitraum:',
+    tabs: {
+      gaps: 'Lücken',
+      analytics: 'Analysen',
+      settings: 'Einstellungen',
+    },
+
+    stats: {
+      totalGaps: 'Gesamtlücken',
+      potentialOpportunities: 'Potenzielle Möglichkeiten',
+      highConfidence: 'Hohe Sicherheit',
+      ofTotal: '{{percent}}% der Gesamtheit',
+      potentialHours: 'Potenzielle Stunden',
+      availableForScheduling: 'Für Planung verfügbar',
+      avgGapSize: 'Durchschnittliche Lückengröße',
+      averageGapDuration: 'Durchschnittliche Lückendauer',
+    },
+
+    analytics: {
+      totalPotentialHours: 'Gesamte potenzielle Stunden',
+      availableForScheduling: 'Für Planung verfügbar',
+      averageGap: 'Durchschnittliche Lücke',
+      typicalGapSize: 'Typische Lückengröße',
+      largestGap: 'Größte Lücke',
+      bestOpportunity: 'Beste Gelegenheit',
+      analysisPeriod: 'Analysezeitraum',
+      to: 'bis',
+      confidenceDistribution: 'Sicherheitsverteilung',
+      confidenceDescription: 'Wie sicher unsere KI bei jedem Lückenvorschlag ist',
+      highConfidence: 'Hohe Sicherheit',
+      mediumConfidence: 'Mittlere Sicherheit',
+      lowConfidence: 'Geringe Sicherheit',
+      durationDistribution: 'Dauerverteilung',
+      durationDescription: 'Aufschlüsselung der Lückengrößen nach Dauer',
+      lessThanOneHour: '< 1 Stunde',
+      oneToTwoHours: '1-2 Stunden',
+      twoOrMoreHours: '2+ Stunden',
+      analysisSettings: 'Analyseeinstellungen',
+      settingsDescription: 'Aktuelle Konfiguration für Lückenerkennung',
+      minGap: 'Min. Lücke:',
+      maxGap: 'Max. Lücke:',
+      lookback: 'Rückblick:',
+      autoAnalysis: 'Auto-Analyse:',
+      enabled: 'Aktiviert',
+      disabled: 'Deaktiviert',
+      calendars: 'Kalender:',
+      calendarsIncluded: '{{count}} enthalten',
+      languages: 'Sprachen:',
+      languagesSupported: '{{count}} unterstützt',
+      days: 'Tage',
+    },
+
     actions: {
       selectCalendar: 'Kalender auswählen',
       creating: 'Erstelle...',
       createEvent: 'Ereignis erstellen',
       skipping: 'Überspringe...',
       skipGap: 'Lücke überspringen',
+      dismissAllGaps: 'Alle Lücken verwerfen',
     },
   },
 
@@ -746,6 +834,8 @@ export const de: TranslationShape = {
     next: 'Weiter',
     previous: 'Zurück',
     finish: 'Fertig',
+    startAudit: 'Audit starten',
+    allyProtocol: 'Ally-Protokoll',
     steps: {
       welcome: {
         title: 'Willkommen bei Ally',
@@ -763,13 +853,24 @@ export const de: TranslationShape = {
         audioText:
           'Die Chat-Oberfläche ist Ihre Hauptmethode, um mit mir zu interagieren. Tippen Sie einfach natürlich, als würden Sie einem Freund eine Nachricht schreiben. Sagen Sie Dinge wie "Mittagessen mit Sarah morgen planen" oder "Welche Meetings habe ich diese Woche?"',
       },
-      analytics: {
-        title: 'Verfolgen Sie Ihre Zeit',
-        description: 'Einblicke in Ihren Zeitplan',
+      assistant: {
+        title: 'Ihre Kommandozentrale',
         content:
-          'Sehen Sie detaillierte Analysen darüber, wie Sie Ihre Zeit verbringen. Verstehen Sie Ihre Besprechungsmuster, finden Sie Möglichkeiten zur Optimierung und erhalten Sie ein gesundes Gleichgewicht zwischen Arbeit und Leben.',
-        audioText:
-          'Das Analyse-Dashboard gibt Ihnen leistungsstarke Einblicke, wie Sie Ihre Zeit verbringen. Verfolgen Sie Besprechungsmuster, identifizieren Sie beschäftigte Zeiträume und optimieren Sie Ihren Zeitplan für bessere Produktivität.',
+          'Dies ist die primäre Chat-Oberfläche. Delegieren Sie Aufgaben, planen Sie Meetings oder fordern Sie Zusammenfassungen hier an.',
+      },
+      analytics: {
+        title: 'Leistungsintelligenz',
+        content:
+          'Verfolgen Sie Ihr Deep Work-Verhältnis und sehen Sie genau, wie viel Zeit Ally für Sie zurückgewinnt.',
+      },
+      integrations: {
+        title: 'Nahtlose Konnektivität',
+        content:
+          'Verbinden Sie Ally mit WhatsApp, Telegram und Ihren Kalenderquellen, um Ihre Abläufe zu zentralisieren.',
+      },
+      settings: {
+        title: 'Datenschutz & Kontrolle',
+        content: 'Verwalten Sie hier Ihre kontextbezogenen Speichereinstellungen und Kontosicherheitspräferenzen.',
       },
       gaps: {
         title: 'Verlorene Zeit wiederherstellen',
@@ -1334,17 +1435,29 @@ export const de: TranslationShape = {
     slack: {
       title: 'Slack',
       description: 'Fügen Sie Ally zu Ihrem Slack-Arbeitsbereich für Team-Kalenderverwaltung hinzu.',
+      addToSlack: 'Zu Slack hinzufügen',
+      refresh: 'Aktualisieren',
     },
     googleCalendar: {
       title: 'Google Calendar',
+      description: 'Synchronisieren Sie Ihre Kalender mit Ally für nahtlose Planung und Konfliktlösung.',
       failedToLoad: 'Kalenderdaten konnten nicht geladen werden.',
       noSources: 'Keine aktiven Kalenderquellen gefunden.',
+      fetchingCalendars: 'Kalender werden abgerufen...',
+      syncedSources: 'Synchronisierte Quellen',
+      manage: 'Verwalten',
+      tryAgain: 'Erneut versuchen',
+      apiActive: 'API aktiv',
+      unnamed: 'Unbenannter Kalender',
     },
     status: {
       connected: 'Verbunden',
       disconnected: 'Getrennt',
+      notConnected: 'Nicht verbunden',
     },
     connectWhatsApp: 'WhatsApp verbinden',
+    whatsappModalDescription: 'Um WhatsApp zu verbinden, folgen Sie bitte den Anweisungen in Ihrer Ally Node-Konsole.',
+    openConsole: 'Konsole öffnen',
     refresh: 'Aktualisieren',
   },
 

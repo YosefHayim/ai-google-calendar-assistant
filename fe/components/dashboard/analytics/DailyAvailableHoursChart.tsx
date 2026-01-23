@@ -22,7 +22,7 @@ interface DailyAvailableHoursChartProps {
 const chartConfig = {
   hours: {
     label: 'Available Hours',
-    color: '#f26306',
+    color: 'hsl(var(--primary))',
   },
 } satisfies ChartConfig
 

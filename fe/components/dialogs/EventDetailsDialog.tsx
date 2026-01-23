@@ -46,13 +46,13 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'confirmed':
-        return { text: '#10b981', bg: '#10b98120' }
+        return { text: 'hsl(var(--primary))', bg: 'hsl(var(--primary) / 0.2)' }
       case 'tentative':
-        return { text: '#f59e0b', bg: '#f59e0b20' }
+        return { text: 'hsl(var(--secondary))', bg: 'hsl(var(--secondary) / 0.2)' }
       case 'cancelled':
-        return { text: '#ef4444', bg: '#ef444420' }
+        return { text: 'hsl(var(--destructive))', bg: 'hsl(var(--destructive) / 0.2)' }
       default:
-        return { text: '#71717a', bg: '#71717a20' }
+        return { text: 'hsl(var(--muted-foreground))', bg: 'hsl(var(--muted-foreground) / 0.2)' }
     }
   }
 

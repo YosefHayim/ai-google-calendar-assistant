@@ -14,17 +14,17 @@ interface TimeDistributionChartProps {
 }
 
 const TIME_PERIODS = [
-  { key: 'morning', label: 'Morning', range: '6am - 12pm', color: '#fbbf24' },
-  { key: 'afternoon', label: 'Afternoon', range: '12pm - 6pm', color: '#38bdf8' },
-  { key: 'evening', label: 'Evening', range: '6pm - 10pm', color: '#818cf8' },
-  { key: 'night', label: 'Night', range: '10pm - 6am', color: '#64748b' },
+  { key: 'morning', label: 'Morning', range: '6am - 12pm', color: 'hsl(var(--secondary))' },
+  { key: 'afternoon', label: 'Afternoon', range: '12pm - 6pm', color: 'hsl(var(--accent))' },
+  { key: 'evening', label: 'Evening', range: '6pm - 10pm', color: 'hsl(var(--primary))' },
+  { key: 'night', label: 'Night', range: '10pm - 6am', color: 'hsl(var(--muted))' },
 ] as const
 
 const chartConfig = {
-  morning: { label: 'Morning', color: '#fbbf24' },
-  afternoon: { label: 'Afternoon', color: '#38bdf8' },
-  evening: { label: 'Evening', color: '#818cf8' },
-  night: { label: 'Night', color: '#64748b' },
+  morning: { label: 'Morning', color: 'hsl(var(--secondary))' },
+  afternoon: { label: 'Afternoon', color: 'hsl(var(--accent))' },
+  evening: { label: 'Evening', color: 'hsl(var(--primary))' },
+  night: { label: 'Night', color: 'hsl(var(--muted))' },
 }
 
 const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isLoading = false }) => {
