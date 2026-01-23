@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Calendar, Clock, ArrowRight, Loader2, Check, AlertCircle, Sparkles } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -25,6 +26,7 @@ export function RescheduleDialog({
   calendarId,
   onSuccess,
 }: RescheduleDialogProps) {
+  const { t } = useTranslation()
   const [selectedSuggestion, setSelectedSuggestion] = useState<RescheduleSuggestion | null>(null)
   const [preferredTime, setPreferredTime] = useState<'morning' | 'afternoon' | 'evening' | 'any'>('any')
 
@@ -75,16 +77,16 @@ export function RescheduleDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            Smart Reschedule
+            {t('rescheduleDialog.title')}
           </DialogTitle>
           <DialogDescription>
-            Find the best time to reschedule <span className="font-medium text-foreground">{eventSummary}</span>
+            {t('rescheduleDialog.description')} <span className="font-medium text-foreground">{eventSummary}</span>
           </DialogDescription>
         </DialogHeader>
 
         {/* Time Preference Selector */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">Preferred time of day</label>
+          <label className="text-sm font-medium text-muted-foreground">{t('rescheduleDialog.preferredTimeOfDay')}</label>
           <div className="flex flex-wrap gap-2">
             {(['any', 'morning', 'afternoon', 'evening'] as const).map((time) => (
               <Button
@@ -94,7 +96,7 @@ export function RescheduleDialog({
                 onClick={() => handleTimePreferenceChange(time)}
                 className="capitalize"
               >
-                {time === 'any' ? 'Any time' : time}
+                {t(`rescheduleDialog.timeOptions.${time}`)}
               </Button>
             ))}
           </div>
@@ -105,7 +107,7 @@ export function RescheduleDialog({
           <div className="rounded-lg border bg-muted/50 p-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
-              <span>Current: {eventInfo.start}</span>
+              <span>{t('rescheduleDialog.current')} {eventInfo.start}</span>
               <ArrowRight className="h-3 w-3" />
               <span>{eventInfo.end}</span>
               <Badge variant="secondary" className="ml-auto">
@@ -119,7 +121,7 @@ export function RescheduleDialog({
         {isLoadingSuggestions && (
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
             <Loader2 className="h-8 w-8 animate-spin mb-2" />
-            <span className="text-sm">Finding optimal times...</span>
+            <span className="text-sm">{t('rescheduleDialog.findingOptimalTimes')}</span>
           </div>
         )}
 
@@ -127,9 +129,9 @@ export function RescheduleDialog({
         {suggestionsError && (
           <div className="flex flex-col items-center justify-center py-8 text-destructive">
             <AlertCircle className="h-8 w-8 mb-2" />
-            <span className="text-sm">Failed to load suggestions</span>
+            <span className="text-sm">{t('rescheduleDialog.failedToLoadSuggestions')}</span>
             <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
-              Try again
+              {t('rescheduleDialog.tryAgain')}
             </Button>
           </div>
         )}
@@ -140,8 +142,8 @@ export function RescheduleDialog({
             {suggestions.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">No available slots found in the next 7 days.</p>
-                <p className="text-xs mt-1">Try a different time preference.</p>
+                <p className="text-sm">{t('rescheduleDialog.noAvailableSlots')}</p>
+                <p className="text-xs mt-1">{t('rescheduleDialog.tryDifferentTimePreference')}</p>
               </div>
             ) : (
               suggestions.map((suggestion, index) => (
@@ -187,18 +189,18 @@ export function RescheduleDialog({
         {/* Actions */}
         <div className="flex justify-end gap-2 pt-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('rescheduleDialog.cancel')}
           </Button>
           <Button onClick={handleReschedule} disabled={!selectedSuggestion || isRescheduling}>
             {isRescheduling ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Rescheduling...
+                {t('rescheduleDialog.rescheduling')}
               </>
             ) : (
               <>
                 <Calendar className="h-4 w-4 mr-2" />
-                Reschedule
+                {t('rescheduleDialog.reschedule')}
               </>
             )}
           </Button>

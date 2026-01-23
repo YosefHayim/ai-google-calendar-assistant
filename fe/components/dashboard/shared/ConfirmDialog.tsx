@@ -8,7 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
@@ -16,13 +17,12 @@ import { Loader2 } from 'lucide-react'
 export interface ConfirmDialogProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: () => void
+  onConfirm: () => void | Promise<void>
   title: string
   description: string
   confirmLabel?: string
   cancelLabel?: string
   variant?: 'destructive' | 'warning' | 'default'
-  isLoading?: boolean
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -31,11 +31,19 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onConfirm,
   title,
   description,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   variant = 'destructive',
-  isLoading = false,
 }) => {
+  const { t } = useTranslation()
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) {
+      setIsLoading(false)
+    }
+  }, [isOpen])
+
   const getButtonStyles = () => {
     switch (variant) {
       case 'destructive':
@@ -47,14 +55,25 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     }
   }
 
+  const handleConfirm = useCallback(async () => {
+    if (isLoading) return
+
+    setIsLoading(true)
+    try {
+      await onConfirm()
+    } finally {
+      setIsLoading(false)
+    }
+  }, [isLoading, onConfirm])
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Enter' && isOpen && !isLoading) {
         e.preventDefault()
-        onConfirm()
+        handleConfirm()
       }
     },
-    [isOpen, isLoading, onConfirm],
+    [isOpen, isLoading, handleConfirm],
   )
 
   useEffect(() => {
@@ -81,17 +100,17 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             disabled={isLoading}
             className="text-foreground dark:text-primary-foreground"
           >
-            {cancelLabel}
+            {cancelLabel || t('dialogs.confirm.cancel')}
           </Button>
           <Button
             type="button"
             variant={variant === 'default' ? 'default' : 'destructive'}
-            onClick={onConfirm}
+            onClick={handleConfirm}
             disabled={isLoading}
             className={getButtonStyles()}
           >
             {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {confirmLabel}
+            {confirmLabel || t('dialogs.confirm.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>

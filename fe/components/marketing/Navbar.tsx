@@ -91,8 +91,8 @@ const Navbar = () => {
           isScrolled ? 'py-3 bg-background/80 backdrop-blur-md border-b border shadow-sm' : 'py-6 bg-transparent'
         }`}
       >
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
+        <div className="container mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
+          <Link href="/" className="flex items-center gap-2 group flex-wrap">
             <div className="w-8 h-8 bg-foreground dark:bg-background rounded-md flex items-center justify-center text-background dark:text-foreground shadow-sm group-hover:scale-110 transition-transform">
               <AllyLogo className="w-5 h-5" />
             </div>
@@ -155,7 +155,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Toggle Section */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 md:hidden flex-wrap">
             {isAuthenticated && !isLoading && (
               <Avatar className="h-7 w-7">
                 <AvatarImage src={avatarUrl} alt={name} />
@@ -203,7 +203,7 @@ const Navbar = () => {
                 </Link>
               </div>
 
-              <div className="flex flex-col gap-6 flex-1">
+              <div className="flex flex-col gap-6 flex-1 overflow-hidden">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
@@ -219,7 +219,7 @@ const Navbar = () => {
               </div>
 
               {/* Social Icons added above the separator */}
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-4 mb-6 flex-wrap">
                 <a
                   href="https://discord.gg"
                   target="_blank"
@@ -280,7 +280,7 @@ const Navbar = () => {
                         setIsMobileMenuOpen(false)
                         router.push('/dashboard')
                       }}
-                      className="w-full h-14 text-lg gap-2"
+                      className="w-full h-14 text-lg gap-2 overflow-hidden"
                     >
                       {t('navbar.dashboard', 'Dashboard')}
                       <ArrowRight className="h-5 w-5" />

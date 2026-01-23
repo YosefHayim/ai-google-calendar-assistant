@@ -3,6 +3,7 @@
 import { AlertCircle, ArrowRight, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -25,6 +26,7 @@ interface ChatErrorProps {
 }
 
 export const ChatError: React.FC<ChatErrorProps> = ({ error, className }) => {
+  const { t } = useTranslation()
   const router = useRouter()
 
   if (!error) return null
@@ -79,7 +81,7 @@ export const ChatError: React.FC<ChatErrorProps> = ({ error, className }) => {
                   size="sm"
                   className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium shadow-sm mt-2 sm:mt-3"
                 >
-                  Upgrade Now
+                  {t('chatError.upgradeNow')}
                   <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </div>

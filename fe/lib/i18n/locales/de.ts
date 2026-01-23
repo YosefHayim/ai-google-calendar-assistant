@@ -246,6 +246,82 @@ export const de: TranslationShape = {
     },
   },
 
+  support: {
+    modal: {
+      title: 'Support kontaktieren',
+      submitSuccessTitle: 'Ticket eingereicht',
+      submitSuccessDescription: 'Wir werden uns so schnell wie möglich bei Ihnen melden.',
+      ticketNumber: 'Ihre Ticketnummer ist',
+      close: 'Schließen',
+      submitAnother: 'Weitere einreichen',
+      describeIssue: 'Beschreiben Sie Ihr Problem...',
+      whatAllyUnderstood: 'Was Ally verstanden hat',
+      messageWillAppear: 'Ihre Nachricht erscheint hier...',
+      sending: 'Wird gesendet...',
+      sendToSupport: 'An Support senden',
+      type: 'Tippen',
+      speak: 'Sprechen',
+      pleaseDescribeIssue: 'Bitte beschreiben Sie Ihr Problem',
+      ticketSubmitted: 'Support-Ticket erfolgreich eingereicht',
+      submitError: 'Beim Einreichen Ihres Tickets ist ein Fehler aufgetreten',
+    },
+  },
+
+  dialogs: {
+    confirm: {
+      confirm: 'Bestätigen',
+      cancel: 'Abbrechen',
+    },
+  },
+
+  allySidebar: {
+    initialMessage: 'Hey! Ich bin Ally, dein KI-Assistent. Wie kann ich dir helfen, deinen Kalender heute zu optimieren?',
+    responseMessage: 'Ich verstehe! Lass mich deinen Kalender analysieren und Optimierungsvorschläge machen.',
+    quickActions: {
+      optimizeSchedule: 'Zeitplan optimieren',
+      findFreeTime: 'Freie Zeit finden',
+      rescheduleMeeting: 'Besprechung verschieben',
+    },
+    placeholder: 'Frag Ally etwas...',
+    poweredBy: 'Unterstützt von Ally AI',
+    support: 'Support',
+    cancelVoiceRecording: 'Sprachaufzeichnung abbrechen',
+    sendMessage: 'Nachricht senden',
+    toggleVoiceInput: 'Spracheingabe umschalten',
+  },
+
+  chatError: {
+    upgradeNow: 'Jetzt upgraden',
+  },
+
+  eventConfirmation: {
+    foundEvents: '{{count}} {{eventText}} zum Hinzufügen gefunden',
+    allDay: 'Ganztägig',
+    cancel: 'Abbrechen',
+    addEvents: '{{eventText}} hinzufügen',
+  },
+
+  rescheduleDialog: {
+    title: 'Intelligente Neuplanung',
+    description: 'Den besten Zeitpunkt zum Verschieben finden',
+    preferredTimeOfDay: 'Bevorzugte Tageszeit',
+    timeOptions: {
+      any: 'Beliebige Zeit',
+      morning: 'Morgen',
+      afternoon: 'Nachmittag',
+      evening: 'Abend',
+    },
+    current: 'Aktuell:',
+    findingOptimalTimes: 'Suche optimale Zeiten...',
+    failedToLoadSuggestions: 'Vorschläge konnten nicht geladen werden',
+    tryAgain: 'Erneut versuchen',
+    noAvailableSlots: 'Keine verfügbaren Zeiträume in den nächsten 7 Tagen gefunden.',
+    tryDifferentTimePreference: 'Versuchen Sie eine andere Zeiteinstellung.',
+    cancel: 'Abbrechen',
+    rescheduling: 'Neuplanung läuft...',
+    reschedule: 'Neu planen',
+  },
+
   pricing: {
     testimonialsTitle: 'Der Standard für strategische Umsetzung',
     testimonialsSubtitle:
@@ -1289,5 +1365,4 @@ export const de: TranslationShape = {
         failed: 'Guthaben konnten nicht gewährt werden: {{error}}',
       },
     },
-  },
 } as const

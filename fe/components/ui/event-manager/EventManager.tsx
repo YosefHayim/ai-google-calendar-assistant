@@ -200,7 +200,7 @@ export function EventManager({
     <div className={cn('flex flex-col gap-3 sm:gap-4', className)}>
       {/* Mobile Layout - Compact header */}
       <div className="block md:hidden space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap">
           <h2 className="text-lg font-semibold truncate min-w-0 flex-1 mr-2">{getDateLabel(view, currentDate)}</h2>
           <div className="flex items-center gap-1">
             <Button variant="outline" size="icon" onClick={() => navigateDate('prev')} className="h-8 w-8">
@@ -215,7 +215,7 @@ export function EventManager({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <ViewToggle view={view} onViewChange={setView} />
           <Button onClick={handleNewEventClick} className="flex-1 h-9 text-sm">
             <Plus className="mr-1 h-4 w-4" />

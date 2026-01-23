@@ -238,6 +238,85 @@ export const he: TranslationShape = {
     },
   },
 
+  // Support Modal
+  support: {
+    modal: {
+      title: 'צור קשר עם התמיכה',
+      submitSuccessTitle: 'הכרטיס נשלח',
+      submitSuccessDescription: 'נחזור אליך בהקדם האפשרי.',
+      ticketNumber: 'מספר הכרטיס שלך הוא',
+      close: 'סגור',
+      submitAnother: 'שלח עוד',
+      describeIssue: 'תאר את הבעיה שלך...',
+      whatAllyUnderstood: 'מה Ally הבין',
+      messageWillAppear: 'ההודעה שלך תופיע כאן...',
+      sending: 'שולח...',
+      sendToSupport: 'שלח לתמיכה',
+      type: 'הקלד',
+      speak: 'דבר',
+      pleaseDescribeIssue: 'אנא תאר את הבעיה שלך',
+      ticketSubmitted: 'כרטיס התמיכה נשלח בהצלחה',
+      submitError: 'אירעה שגיאה בעת שליחת הכרטיס שלך',
+    },
+  },
+
+  // Common Dialogs
+  dialogs: {
+    confirm: {
+      confirm: 'אישור',
+      cancel: 'ביטול',
+    },
+  },
+
+  // AI Ally Sidebar
+  allySidebar: {
+    initialMessage: 'היי! אני Ally, העוזר האינטליגנטי שלך. איך אני יכול לעזור לך לבצע אופטימיזציה ללוח הזמנים שלך היום?',
+    responseMessage: 'אני מבין! תן לי לנתח את לוח הזמנים שלך ולהציע אופטימיזציות.',
+    quickActions: {
+      optimizeSchedule: 'אופטימיזציה של לוח זמנים',
+      findFreeTime: 'מצא זמן פנוי',
+      rescheduleMeeting: 'תזמן מחדש פגישה',
+    },
+    placeholder: 'שאל את Ally משהו...',
+    poweredBy: 'מופעל על ידי Ally AI',
+    support: 'תמיכה',
+    cancelVoiceRecording: 'בטל הקלטת קול',
+    sendMessage: 'שלח הודעה',
+    toggleVoiceInput: 'החלף קלט קולי',
+  },
+
+  chatError: {
+    upgradeNow: 'שדרג עכשיו',
+  },
+
+  eventConfirmation: {
+    foundEvents: 'נמצאו {{count}} {{eventText}} להוספה',
+    allDay: 'כל היום',
+    cancel: 'ביטול',
+    addEvents: 'הוסף {{eventText}}',
+  },
+
+  rescheduleDialog: {
+    title: 'תזמון חכם מחדש',
+    description: 'מצא את הזמן הטוב ביותר לתזמון מחדש',
+    preferredTimeOfDay: 'זמן מועדף ביום',
+    timeOptions: {
+      any: 'כל זמן',
+      morning: 'בוקר',
+      afternoon: 'צהריים',
+      evening: 'ערב',
+    },
+    current: 'נוכחי:',
+    findingOptimalTimes: 'מחפש זמנים אופטימליים...',
+    failedToLoadSuggestions: 'נכשל בטעינת הצעות',
+    tryAgain: 'נסה שוב',
+    noAvailableSlots: 'לא נמצאו חריצי זמן זמינים ב-7 הימים הבאים.',
+    tryDifferentTimePreference: 'נסה העדפת זמן שונה.',
+    cancel: 'ביטול',
+    rescheduling: 'מתזמן מחדש...',
+    reschedule: 'תזמן מחדש',
+  },
+
   // Pricing Page
   pricing: {
     testimonialsTitle: 'הסטנדרט לביצוע אסטרטגי',
@@ -1007,9 +1086,10 @@ export const he: TranslationShape = {
       refundButton: 'בקש החזר',
       nevermindButton: 'ביטול',
     },
+  },
 
-    // Toast messages
-    toast: {
+  // Toast messages
+  toast: {
       // General settings
       timezoneUpdated: 'אזור זמן עודכן',
       timezoneUpdateFailed: 'נכשל בעדכון אזור זמן',
@@ -1170,10 +1250,10 @@ export const he: TranslationShape = {
       unsupportedImageType: 'סוג תמונה לא נתמך: {{type}}',
       imageTooLarge: 'תמונה גדולה מדי (מקסימום {{size}}MB)',
       pastedImagesProcessingFailed: 'נכשל בעיבוד תמונות מודבקות',
-    },
+  },
 
-    // UI Text
-    ui: {
+  // UI Text
+  ui: {
       // Common UI elements
       stop: 'עצור',
       voice: 'קול',
@@ -1267,9 +1347,10 @@ export const he: TranslationShape = {
       connectWhatsApp: 'חבר WhatsApp',
       refresh: 'רענן',
     },
+  },
 
-    // Admin
-    admin: {
+  // Admin
+  admin: {
       grantCredits: {
         title: 'הענק קרדיטים',
         description: 'הוסף קרדיטים לחשבון של {{user}}',
@@ -1287,5 +1368,4 @@ export const he: TranslationShape = {
         failed: 'נכשל בהענקת קרדיטים: {{error}}',
       },
     },
-  },
 } as const

@@ -254,6 +254,88 @@ export const en = {
     },
   },
 
+  // Support Modal
+  support: {
+    modal: {
+      title: 'Contact Support',
+      submitSuccessTitle: 'Ticket Submitted',
+      submitSuccessDescription: 'We will get back to you as soon as possible.',
+      ticketNumber: 'Your ticket number is',
+      close: 'Close',
+      submitAnother: 'Submit Another',
+      describeIssue: 'Describe your issue...',
+      whatAllyUnderstood: 'What Ally understood',
+      messageWillAppear: 'Your message will appear here...',
+      sending: 'Sending...',
+      sendToSupport: 'Send to Support',
+      type: 'Type',
+      speak: 'Speak',
+      pleaseDescribeIssue: 'Please describe your issue',
+      ticketSubmitted: 'Support ticket submitted successfully',
+      submitError: 'An error occurred while submitting your ticket',
+    },
+  },
+
+  // Common Dialogs
+  dialogs: {
+    confirm: {
+      confirm: 'Confirm',
+      cancel: 'Cancel',
+    },
+  },
+
+  // AI Ally Sidebar
+  allySidebar: {
+    initialMessage: "Hey! I'm Ally, your AI assistant. How can I help optimize your calendar today?",
+    responseMessage: 'I understand! Let me analyze your calendar and suggest some optimizations.',
+    quickActions: {
+      optimizeSchedule: 'Optimize schedule',
+      findFreeTime: 'Find free time',
+      rescheduleMeeting: 'Reschedule meeting',
+    },
+    placeholder: 'Ask Ally anything...',
+    poweredBy: 'Powered by Ally AI',
+    support: 'Support',
+    cancelVoiceRecording: 'Cancel voice recording',
+    sendMessage: 'Send message',
+    toggleVoiceInput: 'Toggle voice input',
+  },
+
+  // Chat Error
+  chatError: {
+    upgradeNow: 'Upgrade Now',
+  },
+
+  // Event Confirmation Card
+  eventConfirmation: {
+    foundEvents: 'Found {{count}} {{eventText}} to add',
+    allDay: 'All day',
+    cancel: 'Cancel',
+    addEvents: 'Add {{eventText}}',
+  },
+
+  // Reschedule Dialog
+  rescheduleDialog: {
+    title: 'Smart Reschedule',
+    description: 'Find the best time to reschedule',
+    preferredTimeOfDay: 'Preferred time of day',
+    timeOptions: {
+      any: 'Any time',
+      morning: 'Morning',
+      afternoon: 'Afternoon',
+      evening: 'Evening',
+    },
+    current: 'Current:',
+    findingOptimalTimes: 'Finding optimal times...',
+    failedToLoadSuggestions: 'Failed to load suggestions',
+    tryAgain: 'Try again',
+    noAvailableSlots: 'No available slots found in the next 7 days.',
+    tryDifferentTimePreference: 'Try a different time preference.',
+    cancel: 'Cancel',
+    rescheduling: 'Rescheduling...',
+    reschedule: 'Reschedule',
+  },
+
   // Pricing Page
   pricing: {
     testimonialsTitle: 'The Standard for Strategic Execution',
@@ -1063,9 +1145,10 @@ export const en = {
       refundButton: 'Request Refund',
       nevermindButton: 'Never Mind',
     },
+  },
 
-    // Toast messages
-    toast: {
+  // Toast messages
+  toast: {
       // General settings
       timezoneUpdated: 'Timezone updated',
       timezoneUpdateFailed: 'Failed to update timezone',
@@ -1225,11 +1308,11 @@ export const en = {
       imageProcessingFailed: 'Failed to process images',
       unsupportedImageType: 'Unsupported image type: {{type}}',
       imageTooLarge: 'Image too large (max {{size}}MB)',
-      pastedImagesProcessingFailed: 'Failed to process pasted images',
-    },
+    pastedImagesProcessingFailed: 'Failed to process pasted images',
+  },
 
-    // UI Text
-    ui: {
+  // UI Text
+  ui: {
       // Common UI elements
       stop: 'Stop',
       voice: 'Voice',
@@ -1320,12 +1403,12 @@ export const en = {
         connected: 'Connected',
         disconnected: 'Disconnected',
       },
-      connectWhatsApp: 'Connect WhatsApp',
-      refresh: 'Refresh',
-    },
+    connectWhatsApp: 'Connect WhatsApp',
+    refresh: 'Refresh',
+  },
 
-    // Admin
-    admin: {
+  // Admin
+  admin: {
       grantCredits: {
         title: 'Grant Credits',
         description: "Add credits to {{user}}'s account",
@@ -1343,7 +1426,6 @@ export const en = {
         failed: 'Failed to grant credits: {{error}}',
       },
     },
-  },
 } as const
 
 export type TranslationKeys = typeof en

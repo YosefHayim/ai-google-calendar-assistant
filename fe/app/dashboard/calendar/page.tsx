@@ -364,7 +364,7 @@ function CalendarContent() {
       <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
         {/* Mobile Header - Compact */}
         <div className="mb-4 block md:hidden">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 flex-wrap">
             <h1 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Calendar</h1>
             <Button
               variant="outline"

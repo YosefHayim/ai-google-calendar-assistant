@@ -245,6 +245,82 @@ export const ru: TranslationShape = {
     },
   },
 
+  support: {
+    modal: {
+      title: 'Связаться с поддержкой',
+      submitSuccessTitle: 'Заявка отправлена',
+      submitSuccessDescription: 'Мы свяжемся с вами как можно скорее.',
+      ticketNumber: 'Ваш номер заявки',
+      close: 'Закрыть',
+      submitAnother: 'Отправить ещё',
+      describeIssue: 'Опишите вашу проблему...',
+      whatAllyUnderstood: 'Что понял Ally',
+      messageWillAppear: 'Ваше сообщение появится здесь...',
+      sending: 'Отправка...',
+      sendToSupport: 'Отправить в поддержку',
+      type: 'Печатать',
+      speak: 'Говорить',
+      pleaseDescribeIssue: 'Пожалуйста, опишите вашу проблему',
+      ticketSubmitted: 'Заявка в поддержку успешно отправлена',
+      submitError: 'Произошла ошибка при отправке вашей заявки',
+    },
+  },
+
+  dialogs: {
+    confirm: {
+      confirm: 'Подтвердить',
+      cancel: 'Отмена',
+    },
+  },
+
+  allySidebar: {
+    initialMessage: 'Привет! Я Ally, ваш ИИ-ассистент. Как я могу помочь оптимизировать ваш календарь сегодня?',
+    responseMessage: 'Я понял! Позвольте мне проанализировать ваш календарь и предложить оптимизации.',
+    quickActions: {
+      optimizeSchedule: 'Оптимизировать расписание',
+      findFreeTime: 'Найти свободное время',
+      rescheduleMeeting: 'Перенести встречу',
+    },
+    placeholder: 'Спросите Ally о чём угодно...',
+    poweredBy: 'Работает на Ally AI',
+    support: 'Поддержка',
+    cancelVoiceRecording: 'Отменить голосовую запись',
+    sendMessage: 'Отправить сообщение',
+    toggleVoiceInput: 'Переключить голосовой ввод',
+  },
+
+  chatError: {
+    upgradeNow: 'Обновить сейчас',
+  },
+
+  eventConfirmation: {
+    foundEvents: 'Найдено {{count}} {{eventText}} для добавления',
+    allDay: 'Весь день',
+    cancel: 'Отмена',
+    addEvents: 'Добавить {{eventText}}',
+  },
+
+  rescheduleDialog: {
+    title: 'Умная перепланировка',
+    description: 'Найти лучшее время для перепланировки',
+    preferredTimeOfDay: 'Предпочтительное время дня',
+    timeOptions: {
+      any: 'В любое время',
+      morning: 'Утро',
+      afternoon: 'День',
+      evening: 'Вечер',
+    },
+    current: 'Текущее:',
+    findingOptimalTimes: 'Поиск оптимального времени...',
+    failedToLoadSuggestions: 'Не удалось загрузить предложения',
+    tryAgain: 'Попробовать снова',
+    noAvailableSlots: 'Не найдено доступных слотов в ближайшие 7 дней.',
+    tryDifferentTimePreference: 'Попробуйте другие предпочтения по времени.',
+    cancel: 'Отмена',
+    rescheduling: 'Перепланировка...',
+    reschedule: 'Перепланировать',
+  },
+
   pricing: {
     testimonialsTitle: 'Стандарт для стратегического исполнения',
     testimonialsSubtitle:
@@ -1278,5 +1354,4 @@ export const ru: TranslationShape = {
         failed: 'Не удалось предоставить кредиты: {{error}}',
       },
     },
-  },
 } as const

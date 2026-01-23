@@ -655,6 +655,29 @@ export const ENDPOINTS = {
    * @param id - Contact ID
    */
   CONTACTS_DELETE: (id: string) => `/api/contacts/${id}`,
+  // ============================================
+  // SUPPORT ENDPOINTS
+  // ============================================
+
+  /**
+   * Create a support ticket with optional file attachments
+   * Methods: POST
+   * Body: multipart/form-data with subject, description, category, priority, attachments[]
+   */
+  SUPPORT_TICKETS: '/api/support/tickets',
+
+  /**
+   * Get user's support tickets
+   * Methods: GET
+   */
+  SUPPORT_TICKETS_LIST: '/api/support/tickets',
+
+  /**
+   * Get a specific support ticket by ID
+   * Methods: GET
+   * @param id - Ticket ID
+   */
+  SUPPORT_TICKET_BY_ID: (id: string) => `/api/support/tickets/${id}`,
 } as const
 
 export type EndpointsType = typeof ENDPOINTS

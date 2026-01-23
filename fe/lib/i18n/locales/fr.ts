@@ -246,6 +246,82 @@ export const fr: TranslationShape = {
     },
   },
 
+  support: {
+    modal: {
+      title: 'Contacter le support',
+      submitSuccessTitle: 'Ticket soumis',
+      submitSuccessDescription: 'Nous reviendrons vers vous dès que possible.',
+      ticketNumber: 'Votre numéro de ticket est',
+      close: 'Fermer',
+      submitAnother: 'Soumettre un autre',
+      describeIssue: 'Décrivez votre problème...',
+      whatAllyUnderstood: 'Ce qu’Ally a compris',
+      messageWillAppear: 'Votre message apparaîtra ici...',
+      sending: 'Envoi...',
+      sendToSupport: 'Envoyer au support',
+      type: 'Taper',
+      speak: 'Parler',
+      pleaseDescribeIssue: 'Veuillez décrire votre problème',
+      ticketSubmitted: 'Ticket de support soumis avec succès',
+      submitError: 'Une erreur s’est produite lors de la soumission de votre ticket',
+    },
+  },
+
+  dialogs: {
+    confirm: {
+      confirm: 'Confirmer',
+      cancel: 'Annuler',
+    },
+  },
+
+  allySidebar: {
+    initialMessage: 'Salut ! Je suis Ally, votre assistant IA. Comment puis-je vous aider à optimiser votre calendrier aujourd\'hui ?',
+    responseMessage: 'Je comprends ! Laissez-moi analyser votre calendrier et suggérer des optimisations.',
+    quickActions: {
+      optimizeSchedule: 'Optimiser l\'horaire',
+      findFreeTime: 'Trouver du temps libre',
+      rescheduleMeeting: 'Replanifier la réunion',
+    },
+    placeholder: 'Demandez quelque chose à Ally...',
+    poweredBy: 'Propulsé par Ally AI',
+    support: 'Support',
+    cancelVoiceRecording: 'Annuler l\'enregistrement vocal',
+    sendMessage: 'Envoyer le message',
+    toggleVoiceInput: 'Basculer l\'entrée vocale',
+  },
+
+  chatError: {
+    upgradeNow: 'Mettre à niveau maintenant',
+  },
+
+  eventConfirmation: {
+    foundEvents: '{{count}} {{eventText}} trouvé(s) à ajouter',
+    allDay: 'Toute la journée',
+    cancel: 'Annuler',
+    addEvents: 'Ajouter {{eventText}}',
+  },
+
+  rescheduleDialog: {
+    title: 'Replanification intelligente',
+    description: 'Trouver le meilleur moment pour replanifier',
+    preferredTimeOfDay: 'Moment préféré de la journée',
+    timeOptions: {
+      any: 'N\'importe quand',
+      morning: 'Matin',
+      afternoon: 'Après-midi',
+      evening: 'Soir',
+    },
+    current: 'Actuel:',
+    findingOptimalTimes: 'Recherche des meilleurs horaires...',
+    failedToLoadSuggestions: 'Échec du chargement des suggestions',
+    tryAgain: 'Réessayer',
+    noAvailableSlots: 'Aucun créneau disponible trouvé dans les 7 prochains jours.',
+    tryDifferentTimePreference: 'Essayez une préférence horaire différente.',
+    cancel: 'Annuler',
+    rescheduling: 'Replanification en cours...',
+    reschedule: 'Replanifier',
+  },
+
   pricing: {
     testimonialsTitle: 'Le standard pour une exécution stratégique',
     testimonialsSubtitle:
@@ -1293,5 +1369,4 @@ export const fr: TranslationShape = {
         failed: "Échec de l'accord des crédits : {{error}}",
       },
     },
-  },
 } as const

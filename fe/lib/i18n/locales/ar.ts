@@ -230,6 +230,82 @@ export const ar: TranslationShape = {
     },
   },
 
+  support: {
+    modal: {
+      title: 'اتصل بالدعم',
+      submitSuccessTitle: 'تم إرسال التذكرة',
+      submitSuccessDescription: 'سنتواصل معك في أقرب وقت ممكن.',
+      ticketNumber: 'رقم التذكرة الخاصة بك هو',
+      close: 'إغلاق',
+      submitAnother: 'إرسال أخرى',
+      describeIssue: 'وصف مشكلتك...',
+      whatAllyUnderstood: 'ما فهمه Ally',
+      messageWillAppear: 'ستظهر رسالتك هنا...',
+      sending: 'جاري الإرسال...',
+      sendToSupport: 'إرسال للدعم',
+      type: 'اكتب',
+      speak: 'تكلم',
+      pleaseDescribeIssue: 'يرجى وصف مشكلتك',
+      ticketSubmitted: 'تم إرسال تذكرة الدعم بنجاح',
+      submitError: 'حدث خطأ أثناء إرسال تذكرتك',
+    },
+  },
+
+  dialogs: {
+    confirm: {
+      confirm: 'تأكيد',
+      cancel: 'إلغاء',
+    },
+  },
+
+  allySidebar: {
+    initialMessage: 'مرحباً! أنا Ally، مساعدك الذكي. كيف يمكنني مساعدتك في تحسين جدولك اليوم؟',
+    responseMessage: 'أفهم! دعني أحلل جدولك واقترح بعض التحسينات.',
+    quickActions: {
+      optimizeSchedule: 'تحسين الجدول',
+      findFreeTime: 'العثور على وقت فارغ',
+      rescheduleMeeting: 'إعادة جدولة الاجتماع',
+    },
+    placeholder: 'اسأل Ally أي شيء...',
+    poweredBy: 'مدعوم من Ally AI',
+    support: 'الدعم',
+    cancelVoiceRecording: 'إلغاء تسجيل الصوت',
+    sendMessage: 'إرسال الرسالة',
+    toggleVoiceInput: 'تبديل الإدخال الصوتي',
+  },
+
+  chatError: {
+    upgradeNow: 'الترقية الآن',
+  },
+
+  eventConfirmation: {
+    foundEvents: 'تم العثور على {{count}} {{eventText}} للإضافة',
+    allDay: 'طوال اليوم',
+    cancel: 'إلغاء',
+    addEvents: 'إضافة {{eventText}}',
+  },
+
+  rescheduleDialog: {
+    title: 'إعادة جدولة ذكية',
+    description: 'البحث عن أفضل وقت لإعادة الجدولة',
+    preferredTimeOfDay: 'الوقت المفضل من اليوم',
+    timeOptions: {
+      any: 'أي وقت',
+      morning: 'الصباح',
+      afternoon: 'الظهيرة',
+      evening: 'المساء',
+    },
+    current: 'الحالي:',
+    findingOptimalTimes: 'البحث عن الأوقات المثالية...',
+    failedToLoadSuggestions: 'فشل في تحميل الاقتراحات',
+    tryAgain: 'حاول مرة أخرى',
+    noAvailableSlots: 'لم يتم العثور على فترات زمنية متاحة في الأيام السبعة القادمة.',
+    tryDifferentTimePreference: 'جرب تفضيل وقت مختلف.',
+    cancel: 'إلغاء',
+    rescheduling: 'جاري إعادة الجدولة...',
+    reschedule: 'إعادة الجدولة',
+  },
+
   pricing: {
     testimonialsTitle: 'المعيار للتنفيذ الاستراتيجي',
     testimonialsSubtitle: 'انضم لآلاف القادة الذين أتمتوا جدولتهم لحماية ساعات عملهم الأكثر قيمة.',
@@ -1200,5 +1276,4 @@ export const ar: TranslationShape = {
         failed: 'فشل في منح الرصيد: {{error}}',
       },
     },
-  },
 }

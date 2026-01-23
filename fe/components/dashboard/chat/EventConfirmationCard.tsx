@@ -1,6 +1,7 @@
 'use client'
 
 import { Calendar, Check, Clock, MapPin, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,7 +37,7 @@ const confidenceColors = {
 
 const formatEventTime = (startTime: string, endTime?: string, isAllDay?: boolean): string => {
   if (isAllDay) {
-    return 'All day'
+    return t('eventConfirmation.allDay')
   }
 
   const start = new Date(startTime)
@@ -63,6 +64,7 @@ export const EventConfirmationCard = ({
   isLoading = false,
   className,
 }: EventConfirmationCardProps) => {
+  const { t } = useTranslation()
   const eventCount = events.length
   const eventText = eventCount === 1 ? 'event' : 'events'
 
@@ -71,7 +73,7 @@ export const EventConfirmationCard = ({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <Calendar className="h-5 w-5 text-primary" />
-          Found {eventCount} {eventText} to add
+          {t('eventConfirmation.foundEvents', { count: eventCount, eventText })}
         </CardTitle>
       </CardHeader>
 
@@ -112,11 +114,11 @@ export const EventConfirmationCard = ({
       <CardFooter className="flex gap-2 pt-3">
         <Button variant="outline" onClick={onCancel} disabled={isLoading} className="flex-1">
           <X className="h-4 w-4 mr-1" />
-          Cancel
+          {t('eventConfirmation.cancel')}
         </Button>
         <Button onClick={onConfirm} disabled={isLoading} className="flex-1">
           <Check className="h-4 w-4 mr-1" />
-          Add {eventText}
+          {t('eventConfirmation.addEvents', { eventText })}
         </Button>
       </CardFooter>
     </Card>
