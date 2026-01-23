@@ -5,6 +5,7 @@ import { activateAgent } from "@/domains/analytics/utils"
 import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
 import { logger } from "@/lib/logger"
 import { unifiedContextStore } from "@/shared/context"
+import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import {
   sendButtonMessage as sendInteractiveButtons,
   sendListMessage as sendInteractiveList,
@@ -795,50 +796,64 @@ const USAGE_WARNING_PERCENT = 80
 const PERCENT_MULTIPLIER = 100
 
 type WhatsAppUserAccess = Awaited<ReturnType<typeof checkUserAccess>>
+type TranslateFunction = (
+  key: string,
+  options?: Record<string, unknown>
+) => string
 
 const getWhatsAppStatusText = (
   subscriptionStatus: string | null,
-  trialDaysLeft: number | null
+  trialDaysLeft: number | null,
+  t: TranslateFunction
 ): string => {
   if (trialDaysLeft !== null && trialDaysLeft > 0) {
-    return "Trial"
+    return t("commands.subscription.statusTrial")
   }
   if (subscriptionStatus === "active") {
-    return "Active"
+    return t("commands.subscription.statusActive")
   }
   if (subscriptionStatus === "cancelled") {
-    return "Cancelled"
+    return t("commands.subscription.statusCancelled")
   }
-  return "Expired"
+  return t("commands.subscription.statusExpired")
 }
 
-const buildTrialSection = (access: WhatsAppUserAccess): string => {
+const buildTrialSection = (
+  access: WhatsAppUserAccess,
+  t: TranslateFunction
+): string => {
   if (access.trial_days_left === null || access.trial_days_left <= 0) {
     return ""
   }
 
-  let section = `\n• Trial Days Left: *${access.trial_days_left}*`
+  let section = `\n• ${t("commands.subscription.trialDaysLeft")}: *${access.trial_days_left}*`
   if (access.trial_end_date) {
     const endDate = new Date(access.trial_end_date).toLocaleDateString()
-    section += `\n• Trial Ends: ${endDate}`
+    section += `\n• ${t("commands.subscription.trialEndsOn")}: ${endDate}`
   }
   return section
 }
 
-const buildUsageSection = (access: WhatsAppUserAccess): string => {
-  let section = `\n• Interactions Used: *${access.interactions_used}*`
+const buildUsageSection = (
+  access: WhatsAppUserAccess,
+  t: TranslateFunction
+): string => {
+  let section = `\n• ${t("commands.subscription.interactionsUsed")}: *${access.interactions_used}*`
 
   if (access.interactions_remaining !== null) {
-    section += `\n• Interactions Remaining: *${access.interactions_remaining}*`
+    section += `\n• ${t("commands.subscription.interactionsRemaining")}: *${access.interactions_remaining}*`
   } else {
-    section += "\n• Interactions Remaining: Unlimited"
+    section += `\n• ${t("commands.subscription.interactionsRemaining")}: ${t("commands.subscription.unlimited")}`
   }
 
-  section += `\n• Credits Remaining: *${access.credits_remaining}*`
+  section += `\n• ${t("commands.subscription.creditsRemaining")}: *${access.credits_remaining}*`
   return section
 }
 
-const buildWarningsSection = (access: WhatsAppUserAccess): string => {
+const buildWarningsSection = (
+  access: WhatsAppUserAccess,
+  t: TranslateFunction
+): string => {
   const warnings: string[] = []
 
   const hasTrialWarning =
@@ -848,7 +863,7 @@ const buildWarningsSection = (access: WhatsAppUserAccess): string => {
 
   if (hasTrialWarning) {
     warnings.push(
-      `⚠️ Your trial ends in ${access.trial_days_left} days. Upgrade to continue using Ally.`
+      t("commands.subscription.trialWarning", { days: access.trial_days_left })
     )
   }
 
@@ -860,7 +875,7 @@ const buildWarningsSection = (access: WhatsAppUserAccess): string => {
     )
     if (usagePercent >= USAGE_WARNING_PERCENT) {
       warnings.push(
-        `⚠️ You've used ${usagePercent}% of your monthly interactions.`
+        t("commands.subscription.usageWarning", { percent: usagePercent })
       )
     }
   }
@@ -868,13 +883,16 @@ const buildWarningsSection = (access: WhatsAppUserAccess): string => {
   return warnings.length > 0 ? `\n\n${warnings.join("\n\n")}` : ""
 }
 
-const buildLinksSection = (access: WhatsAppUserAccess): string => {
+const buildLinksSection = (
+  access: WhatsAppUserAccess,
+  t: TranslateFunction
+): string => {
   let section = "\n\n🔗 *Links*"
 
   if (!access.has_access || access.subscription_status !== "active") {
-    section += `\n• Upgrade: ${UPGRADE_URL}`
+    section += `\n• ${t("commands.subscription.upgrade")}: ${UPGRADE_URL}`
   }
-  section += `\n• Manage Billing: ${BILLING_URL}`
+  section += `\n• ${t("commands.subscription.manageBilling")}: ${BILLING_URL}`
   return section
 }
 
@@ -882,13 +900,15 @@ const handleSubscriptionCommand = async (
   ctx: CommandContext
 ): Promise<CommandResult> => {
   const { from, email } = ctx
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
 
   if (!email) {
-    const text = `💳 *Your Subscription*
+    const text = `💳 *${t("commands.subscription.header")}*
 
-Please connect your account first to view subscription details.
+${t("commands.subscription.noUser")}
 
-Visit ${BILLING_URL} to manage your account.`
+${t("commands.subscription.manageBilling")}: ${BILLING_URL}`
     await sendTextMessage(from, text)
     return { handled: true, response: text }
   }
@@ -897,31 +917,34 @@ Visit ${BILLING_URL} to manage your account.`
     const userId = await getUserIdFromWhatsApp(from)
     const access = await checkUserAccess(userId || `whatsapp-${from}`, email)
 
-    const planName = access.plan_name || "Free"
+    const planName = access.plan_name || t("commands.subscription.freeTier")
     const statusText = getWhatsAppStatusText(
       access.subscription_status,
-      access.trial_days_left
+      access.trial_days_left,
+      t
     )
 
-    let text = `💳 *Your Subscription*
+    let text = `💳 *${t("commands.subscription.header")}*
 
-📊 *Plan Status*
-• Plan: *${planName}*
-• Status: ${statusText}`
+📊 *${t("commands.subscription.sections.status.title")}*
+• ${t("commands.subscription.planName")}: *${planName}*
+• ${t("commands.subscription.status")}: ${statusText}`
 
-    text += buildTrialSection(access)
-    text += "\n\n📈 *Usage This Period*"
-    text += buildUsageSection(access)
-    text += buildWarningsSection(access)
-    text += buildLinksSection(access)
+    text += buildTrialSection(access, t)
+    text += `\n\n📈 *${t("commands.subscription.sections.usage.title")}*`
+    text += buildUsageSection(access, t)
+    text += buildWarningsSection(access, t)
+    text += buildLinksSection(access, t)
 
     await sendTextMessage(from, text)
     return { handled: true, response: text }
   } catch (error) {
     logger.error(`WhatsApp: Subscription command error for ${from}: ${error}`)
-    const text = `💳 *Your Subscription*
+    const text = `💳 *${t("commands.subscription.header")}*
 
-Sorry, I couldn't fetch your subscription details. Please try again or visit ${BILLING_URL}`
+${t("commands.subscription.error")}
+
+${t("commands.subscription.manageBilling")}: ${BILLING_URL}`
     await sendTextMessage(from, text)
     return { handled: true, response: text }
   }
