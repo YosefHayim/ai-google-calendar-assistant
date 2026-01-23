@@ -182,9 +182,5 @@ export const startTelegramBot = async (): Promise<void> => {
     })
   } catch (error) {
     logger.error(`Telegram Bot: Failed to start: ${error}`)
-    // In production, we want the container to restart if bot fails to start
-    if (env.isProd) {
-      throw error
-    }
   }
 }

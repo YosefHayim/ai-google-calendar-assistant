@@ -25,7 +25,6 @@ export async function initializeJobScheduler(): Promise<void> {
     logger.info("BullMQ: Job scheduler initialized successfully")
   } catch (error) {
     logger.error("BullMQ: Failed to initialize job scheduler:", error)
-    throw error
   }
 }
 
