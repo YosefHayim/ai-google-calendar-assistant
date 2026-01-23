@@ -7,25 +7,25 @@ interface BrowserMockupProps {
 }
 
 export const BrowserMockup = ({ children }: BrowserMockupProps) => (
-  <div className="relative mx-auto w-full max-w-[520px] h-[380px]">
-    <div className="absolute inset-0 bg-secondary dark:bg-secondary rounded-xl shadow-2xl  overflow-hidden">
+  <div className="relative mx-auto h-[380px] w-full max-w-[520px]">
+    <div className="absolute inset-0 overflow-hidden rounded-xl bg-secondary shadow-2xl">
       {/* Browser header */}
-      <div className="h-11 bg-accent dark:bg-secondary flex items-center px-4 gap-2">
+      <div className="flex h-11 items-center gap-2 bg-accent bg-secondary px-4">
         <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
-          <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-          <div className="w-3 h-3 rounded-full bg-[#27CA40]" />
+          <div className="h-3 w-3 rounded-full bg-[#FF5F56]" />
+          <div className="h-3 w-3 rounded-full bg-[#FFBD2E]" />
+          <div className="h-3 w-3 rounded-full bg-[#27CA40]" />
         </div>
-        <div className="flex-1 mx-4">
-          <div className="bg-background dark:bg-secondary rounded-lg h-7 flex items-center px-3 gap-2">
-            <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-              <Check className="w-2.5 h-2.5 text-white" />
+        <div className="mx-4 flex-1">
+          <div className="flex h-7 items-center gap-2 rounded-lg bg-background bg-secondary px-3">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
+              <Check className="h-2.5 w-2.5 text-foreground" />
             </div>
-            <span className="text-xs text-muted-foreground dark:text-muted-foreground font-medium">app.askally.io</span>
+            <span className="text-xs font-medium text-muted-foreground">app.askally.io</span>
           </div>
         </div>
       </div>
-      <div className="h-[calc(100%-2.75rem)] bg-background dark:bg-secondary overflow-hidden">{children}</div>
+      <div className="h-[calc(100%-2.75rem)] overflow-hidden bg-background bg-secondary">{children}</div>
     </div>
   </div>
 )

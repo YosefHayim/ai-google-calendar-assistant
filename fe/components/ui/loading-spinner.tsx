@@ -23,7 +23,7 @@ export function LoadingSpinner({ size = 'md', className, overlay = false, text }
   const spinner = (
     <div
       className={cn(
-        'animate-spin rounded-full border-muted border-t-foreground -secondary -t-primary-foreground',
+        '-secondary -t-primary-foreground animate-spin rounded-full border-muted border-t-foreground',
         sizeClasses[size],
         className,
       )}
@@ -32,9 +32,9 @@ export function LoadingSpinner({ size = 'md', className, overlay = false, text }
 
   if (overlay) {
     return (
-      <div className="absolute inset-0 bg-background/80 dark:bg-secondary/80 z-20 flex flex-col items-center justify-center gap-3">
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-background/80 bg-secondary/80">
         {spinner}
-        {text && <p className="text-sm text-muted-foreground dark:text-muted-foreground">{text}</p>}
+        {text && <p className="text-sm text-muted-foreground">{text}</p>}
       </div>
     )
   }
@@ -43,7 +43,7 @@ export function LoadingSpinner({ size = 'md', className, overlay = false, text }
     return (
       <div className="flex flex-col items-center justify-center gap-3">
         {spinner}
-        <p className="text-sm text-muted-foreground dark:text-muted-foreground">{text}</p>
+        <p className="text-sm text-muted-foreground">{text}</p>
       </div>
     )
   }

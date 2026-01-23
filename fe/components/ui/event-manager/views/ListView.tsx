@@ -23,7 +23,7 @@ export function ListView({ events, onEventClick, getColorClasses }: ListViewProp
       <div className="space-y-4 sm:space-y-6">
         {Object.entries(groupedEvents).map(([date, dateEvents]) => (
           <div key={date} className="space-y-2 sm:space-y-3">
-            <h3 className="text-xs font-semibold text-muted-foreground px-1 sm:text-sm">{date}</h3>
+            <h3 className="px-1 text-xs font-semibold text-muted-foreground sm:text-sm">{date}</h3>
             <div className="space-y-2">
               {dateEvents.map((event) => {
                 const colorClasses = getColorClasses(event.color)
@@ -33,21 +33,21 @@ export function ListView({ events, onEventClick, getColorClasses }: ListViewProp
                   <div
                     key={event.id}
                     onClick={() => onEventClick(event)}
-                    className="group cursor-pointer rounded-lg border bg-card p-3 transition-all hover:shadow-md hover:scale-[1.01] active:scale-[0.99] animate-in fade-in slide-in-from-bottom-2 duration-300 touch-manipulation sm:p-4"
+                    className="group cursor-pointer touch-manipulation rounded-lg border bg-card p-3 transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 hover:scale-[1.01] hover:shadow-md active:scale-[0.99] sm:p-4"
                   >
                     <div className="flex items-start gap-2 sm:gap-3">
                       <div
                         className={cn('mt-1 h-2.5 w-2.5 rounded-full sm:h-3 sm:w-3', !useHexColor && colorClasses.bg)}
                         style={bgStyle}
                       />
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
-                            <h4 className="font-semibold text-sm group-hover:text-primary transition-colors sm:text-base truncate">
+                            <h4 className="truncate text-sm font-semibold transition-colors group-hover:text-primary sm:text-base">
                               {event.title}
                             </h4>
                             {event.description && (
-                              <p className="mt-1 text-xs text-muted-foreground sm:text-sm line-clamp-2">
+                              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
                                 {event.description}
                               </p>
                             )}
@@ -76,7 +76,7 @@ export function ListView({ events, onEventClick, getColorClasses }: ListViewProp
                           {event.tags && event.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1">
                               {event.tags.map((tag) => (
-                                <Badge key={tag} variant="outline" className="text-[10px] h-4 sm:text-xs sm:h-5">
+                                <Badge key={tag} variant="outline" className="h-4 text-[10px] sm:h-5 sm:text-xs">
                                   {tag}
                                 </Badge>
                               ))}

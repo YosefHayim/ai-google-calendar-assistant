@@ -29,13 +29,13 @@ export const TimeAllocationBarChart: React.FC<TimeAllocationBarChartProps> = ({ 
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
       <BarChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12, top: 12, bottom: 12 }}>
-        <CartesianGrid vertical={false} className="stroke-muted dark:stroke-muted" />
+        <CartesianGrid vertical={false} className="stroke-muted" />
         <XAxis
           dataKey="category"
           tickLine={false}
           axisLine={false}
           tickMargin={8}
-          className="text-muted-foreground dark:text-muted-foreground"
+          className="text-muted-foreground"
           tick={{ fill: 'currentColor', fontSize: 11 }}
           interval={0}
           angle={-45}
@@ -46,14 +46,14 @@ export const TimeAllocationBarChart: React.FC<TimeAllocationBarChartProps> = ({ 
           tickLine={false}
           axisLine={false}
           tickMargin={8}
-          className="text-muted-foreground dark:text-muted-foreground"
+          className="text-muted-foreground"
           tick={{ fill: 'currentColor', fontSize: 11 }}
           tickFormatter={(value) => `${value}h`}
         />
         <ChartTooltip
           content={
             <ChartTooltipContent
-              className="w-[160px] bg-secondary dark:bg-secondary text-primary-foreground border-border"
+              className="w-[160px] border-border bg-secondary text-primary-foreground"
               formatter={(value, name, item) => {
                 const payload = item.payload as CalendarBreakdownItem
                 return (

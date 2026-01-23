@@ -87,31 +87,27 @@ export function AnimatedTestimonials({
     <section
       ref={sectionRef}
       id="testimonials"
-      className={`py-24 overflow-hidden bg-muted/50 dark:bg-secondary/10 ${className || ''}`}
+      className={`overflow-hidden bg-muted/50 bg-secondary/10 py-24 ${className || ''}`}
     >
       <div className="container mx-auto px-4 md:px-6">
         <motion.div
           initial="hidden"
           animate={controls}
           variants={containerVariants}
-          className="grid grid-cols-1 gap-16 w-full md:grid-cols-2 lg:gap-24"
+          className="grid w-full grid-cols-1 gap-16 md:grid-cols-2 lg:gap-24"
         >
           <motion.div variants={itemVariants} className="flex flex-col justify-center">
             <div className="space-y-2">
               {badgeText && (
-                <div className="inline-flex items-center px-3 py-1 rounded-full text-xs uppercase tracking-widest font-bold bg-primary/10 text-primary">
+                <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-primary">
                   <Star className="mr-1 h-3.5 w-3.5 fill-primary" />
                   <span>{badgeText}</span>
                 </div>
               )}
 
-              <h2 className="text-3xl font-medium tracking-tight sm:text-4xl md:text-5xl text-foreground dark:text-primary-foreground">
-                {title}
-              </h2>
+              <h2 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl md:text-5xl">{title}</h2>
 
-              <p className="max-w-[600px] text-muted-foreground dark:text-muted-foreground md:text-xl/relaxed font-medium">
-                {subtitle}
-              </p>
+              <p className="max-w-[600px] font-medium text-muted-foreground md:text-xl/relaxed">{subtitle}</p>
 
               <div className="flex items-center gap-3 pt-4">
                 {testimonials.map((_, index) => (
@@ -119,7 +115,7 @@ export function AnimatedTestimonials({
                     key={index}
                     onClick={() => setActiveIndex(index)}
                     className={`h-2.5 rounded-full transition-all duration-300 ${
-                      activeIndex === index ? 'w-10 bg-primary' : 'bg-muted w-2.5'
+                      activeIndex === index ? 'w-10 bg-primary' : 'w-2.5 bg-muted'
                     }`}
                     aria-label={`View testimonial ${index + 1}`}
                   />
@@ -142,7 +138,7 @@ export function AnimatedTestimonials({
                 transition={{ duration: 0.5, ease: 'easeInOut' as const }}
                 style={{ zIndex: activeIndex === index ? 10 : 0 }}
               >
-                <div className="bg-background dark:bg-secondary border-border shadow-xl rounded-2xl p-8 md:p-10 h-full flex flex-col transition-all">
+                <div className="flex h-full flex-col rounded-2xl border-border bg-background bg-secondary p-8 shadow-xl transition-all md:p-10">
                   <div className="mb-6 flex gap-1">
                     {Array(testimonial.rating)
                       .fill(0)
@@ -152,7 +148,7 @@ export function AnimatedTestimonials({
                   </div>
 
                   <div className="relative mb-8 flex-1">
-                    <Quote className="absolute -top-4 -left-4 h-12 w-12 text-primary/10 rotate-180" />
+                    <Quote className="absolute -left-4 -top-4 h-12 w-12 rotate-180 text-primary/10" />
                     <p className="relative z-10 text-xl font-medium leading-relaxed text-foreground">
                       "{testimonial.content}"
                     </p>
@@ -166,8 +162,8 @@ export function AnimatedTestimonials({
                       <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="font-bold text-foreground dark:text-primary-foreground">{testimonial.name}</h3>
-                      <p className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
+                      <h3 className="font-bold text-foreground">{testimonial.name}</h3>
+                      <p className="text-sm font-medium text-muted-foreground">
                         {testimonial.role}, {testimonial.company}
                       </p>
                     </div>
@@ -176,8 +172,8 @@ export function AnimatedTestimonials({
               </motion.div>
             ))}
 
-            <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-3xl bg-primary/5 -z-10 blur-2xl"></div>
-            <div className="absolute -top-10 -right-10 h-32 w-32 rounded-3xl bg-primary/5 -z-10 blur-2xl"></div>
+            <div className="absolute -bottom-10 -left-10 -z-10 h-32 w-32 rounded-3xl bg-primary/5 blur-2xl"></div>
+            <div className="absolute -right-10 -top-10 -z-10 h-32 w-32 rounded-3xl bg-primary/5 blur-2xl"></div>
           </motion.div>
         </motion.div>
       </div>

@@ -25,13 +25,13 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
     return (
       <div
         className={cn(
-          'flex w-16 h-8 p-1 rounded-full transition-all duration-300 bg-accent dark:bg-secondary border-border',
+          'flex h-8 w-16 rounded-full border-border bg-accent bg-secondary p-1 transition-all duration-300',
           className,
         )}
       >
-        <div className="flex justify-between items-center w-full">
-          <div className="flex justify-center items-center w-6 h-6 rounded-full bg-muted" />
-          <div className="flex justify-center items-center w-6 h-6 rounded-full" />
+        <div className="flex w-full items-center justify-between">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted" />
+          <div className="flex h-6 w-6 items-center justify-center rounded-full" />
         </div>
       </div>
     )
@@ -40,8 +40,8 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   return (
     <div
       className={cn(
-        'flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-300',
-        isDarkMode ? 'bg-secondary border-border' : 'bg-background border-border',
+        'flex h-8 w-16 cursor-pointer rounded-full p-1 transition-all duration-300',
+        isDarkMode ? 'border-border bg-secondary' : 'border-border bg-background',
         className,
       )}
       onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
@@ -53,29 +53,29 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         }
       }}
     >
-      <div className="flex justify-between items-center w-full">
+      <div className="flex w-full items-center justify-between">
         <div
           className={cn(
-            'flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300',
-            isDarkMode ? 'transform translate-x-0 bg-secondary' : 'transform translate-x-8 bg-accent',
+            'flex h-6 w-6 items-center justify-center rounded-full transition-transform duration-300',
+            isDarkMode ? 'translate-x-0 transform bg-secondary' : 'translate-x-8 transform bg-accent',
           )}
         >
           {isDarkMode ? (
-            <Moon className="w-4 h-4 text-white" strokeWidth={1.5} />
+            <Moon className="h-4 w-4 text-foreground" strokeWidth={1.5} />
           ) : (
-            <Sun className="w-4 h-4 text-foreground" strokeWidth={1.5} />
+            <Sun className="h-4 w-4 text-foreground" strokeWidth={1.5} />
           )}
         </div>
         <div
           className={cn(
-            'flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300',
-            isDarkMode ? 'bg-transparent' : 'transform -translate-x-8',
+            'flex h-6 w-6 items-center justify-center rounded-full transition-transform duration-300',
+            isDarkMode ? 'bg-transparent' : '-translate-x-8 transform',
           )}
         >
           {isDarkMode ? (
-            <Sun className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+            <Sun className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
           ) : (
-            <Moon className="w-4 h-4 text-foreground" strokeWidth={1.5} />
+            <Moon className="h-4 w-4 text-foreground" strokeWidth={1.5} />
           )}
         </div>
       </div>

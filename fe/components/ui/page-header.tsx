@@ -19,18 +19,16 @@ export function PageHeader({ title, description, icon, tooltip, action, classNam
     <div className={cn('flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4', className)}>
       <div className="flex items-center gap-2">
         {icon && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary shrink-0">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
             {icon}
           </div>
         )}
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
-            <h2 className="text-lg font-semibold text-foreground dark:text-primary-foreground truncate">{title}</h2>
+            <h2 className="truncate text-lg font-semibold text-foreground">{title}</h2>
             {tooltip && <InfoTooltip>{tooltip}</InfoTooltip>}
           </div>
-          {description && (
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground truncate">{description}</p>
-          )}
+          {description && <p className="truncate text-sm text-muted-foreground">{description}</p>}
         </div>
       </div>
       {action && <div className="shrink-0">{action}</div>}

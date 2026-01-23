@@ -92,18 +92,18 @@ function EventDetailsCard({
   return (
     <div
       className={cn(
-        'rounded-xl p-4 space-y-3',
+        'space-y-3 rounded-xl p-4',
         'bg-gradient-to-br from-muted/60 via-muted/40 to-transparent',
         'border-border/50',
         'relative overflow-hidden',
       )}
     >
-      <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-xl', getColorClasses(selectedEvent.color).bg)} />
+      <div className={cn('absolute left-0 top-0 h-full w-1 rounded-l-xl', getColorClasses(selectedEvent.color).bg)} />
 
       <div className="flex items-start gap-3 pl-2">
-        <Calendar className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+        <Calendar className="mt-0.5 h-5 w-5 flex-shrink-0 text-muted-foreground" />
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-foreground truncate">{selectedEvent.title}</h3>
+          <h3 className="truncate font-semibold text-foreground">{selectedEvent.title}</h3>
         </div>
       </div>
 
@@ -117,14 +117,14 @@ function EventDetailsCard({
 
       {selectedEvent.description && (
         <div className="flex items-start gap-3 pl-2 text-sm text-muted-foreground">
-          <FileText className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <FileText className="mt-0.5 h-4 w-4 flex-shrink-0" />
           <p className="line-clamp-2">{selectedEvent.description}</p>
         </div>
       )}
 
       {(selectedEvent.category || (selectedEvent.tags && selectedEvent.tags.length > 0)) && (
-        <div className="flex items-center gap-2 pl-2 flex-wrap">
-          <Tag className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+        <div className="flex flex-wrap items-center gap-2 pl-2">
+          <Tag className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
           {selectedEvent.category && (
             <Badge variant="secondary" className="text-xs">
               {selectedEvent.category}
@@ -162,14 +162,14 @@ function AllyResponseArea({
       {isProcessing ? (
         <div className="flex items-center gap-3 text-muted-foreground">
           <div className="relative">
-            <div className="h-5 w-5 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
           </div>
           <span className="text-sm">Ally is thinking...</span>
         </div>
       ) : actionResult ? (
         <div
           className={cn(
-            'flex items-center gap-2 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300',
+            'flex items-center gap-2 text-sm duration-300 animate-in fade-in slide-in-from-bottom-2',
             actionResult.type === 'deleted' ? 'text-destructive' : 'text-green-600',
           )}
         >
@@ -177,11 +177,11 @@ function AllyResponseArea({
           <span className="font-medium">{actionResult.message}</span>
         </div>
       ) : allyResponse ? (
-        <div className="text-sm text-foreground whitespace-pre-wrap animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="whitespace-pre-wrap text-sm text-foreground duration-300 animate-in fade-in slide-in-from-bottom-2">
           {allyResponse}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground italic">Ask Ally to update, reschedule, or delete this event</p>
+        <p className="text-sm italic text-muted-foreground">Ask Ally to update, reschedule, or delete this event</p>
       )}
     </div>
   )
@@ -217,7 +217,7 @@ function AllyInputArea({
   return (
     <div className="space-y-2">
       {isRecording ? (
-        <div className="relative flex flex-col items-center justify-center bg-background dark:bg-secondary border-border rounded-xl p-4 transition-all">
+        <div className="relative flex flex-col items-center justify-center rounded-xl border-border bg-background bg-secondary p-4 transition-all">
           <AIVoiceInput
             onStart={startRecording}
             onStop={(duration, text) => stopRecording(text ?? undefined)}
@@ -232,9 +232,9 @@ function AllyInputArea({
             variant="ghost"
             size="icon"
             onClick={cancelRecording}
-            className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+            className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
       ) : (
@@ -244,8 +244,8 @@ function AllyInputArea({
             onChange={(e) => setAllyPrompt(e.target.value)}
             placeholder="e.g., 'Change to 3pm' or 'Delete this event'"
             className={cn(
-              'min-h-[44px] max-h-[120px] resize-none flex-1',
-              'bg-background/50 border-border/60',
+              'max-h-[120px] min-h-[44px] flex-1 resize-none',
+              'border-border/60 bg-background/50',
               'focus:border-primary/50 focus:ring-primary/20',
               'transition-all duration-200',
             )}
@@ -277,7 +277,7 @@ function AllyInputArea({
         onClick={handleSendToAlly}
         disabled={!allyPrompt.trim() || isProcessing || !!actionResult || isRecording}
         className={cn(
-          'w-full gap-2 h-10',
+          'h-10 w-full gap-2',
           'bg-gradient-to-r from-primary to-primary/80',
           'hover:from-primary/90 hover:to-primary/70',
           'shadow-lg shadow-primary/20',
@@ -286,7 +286,7 @@ function AllyInputArea({
       >
         {isProcessing ? (
           <>
-            <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             Processing...
           </>
         ) : (

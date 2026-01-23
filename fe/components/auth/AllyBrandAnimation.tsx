@@ -58,29 +58,29 @@ const secondaryGlowVariants: Variants = {
 
 export function AllyBrandAnimation() {
   return (
-    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-600/5 dark:from-orange-500/10 dark:via-transparent dark:to-orange-600/10" />
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-orange-600/10" />
 
       <motion.div
-        className="absolute w-64 h-64 rounded-full blur-3xl bg-[#F54C0F]/30 dark:bg-[#F54C0F]/40"
+        className="absolute h-64 w-64 rounded-full bg-[#F54C0F]/40 blur-3xl"
         variants={glowVariants}
         animate="animate"
       />
 
       <motion.div
-        className="absolute w-80 h-80 rounded-full blur-[100px] bg-[#F54C0F]/20 dark:bg-[#F54C0F]/30"
+        className="absolute h-80 w-80 rounded-full bg-[#F54C0F]/30 blur-[100px]"
         variants={secondaryGlowVariants}
         animate="animate"
       />
 
       <motion.div
-        className="absolute w-96 h-96 rounded-full border-[#F54C0F]/10 -[#F54C0F]/20"
+        className="-[#F54C0F]/20 absolute h-96 w-96 rounded-full border-[#F54C0F]/10"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5, delay: 2 }}
       />
       <motion.div
-        className="absolute w-[28rem] h-[28rem] rounded-full border-[#F54C0F]/5 -[#F54C0F]/10"
+        className="-[#F54C0F]/10 absolute h-[28rem] w-[28rem] rounded-full border-[#F54C0F]/5"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.8, delay: 2.2 }}
@@ -88,7 +88,7 @@ export function AllyBrandAnimation() {
 
       <motion.svg
         viewBox="0 0 225 140"
-        className="relative z-10 w-full max-w-[320px] h-auto"
+        className="relative z-10 h-auto w-full max-w-[320px]"
         initial="hidden"
         animate="visible"
       >
@@ -211,7 +211,7 @@ export function AllyBrandAnimation() {
       </motion.svg>
 
       <motion.p
-        className="absolute bottom-8 text-sm font-medium tracking-widest text-muted-foreground dark:text-muted-foreground uppercase"
+        className="absolute bottom-8 text-sm font-medium uppercase tracking-widest text-muted-foreground"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.5, duration: 0.8 }}
@@ -220,7 +220,7 @@ export function AllyBrandAnimation() {
       </motion.p>
 
       <motion.div
-        className="absolute top-1/4 left-1/4 w-2 h-2 rounded-full bg-[#F54C0F]/40"
+        className="absolute left-1/4 top-1/4 h-2 w-2 rounded-full bg-[#F54C0F]/40"
         animate={{
           y: [0, -20, 0],
           opacity: [0.4, 0.8, 0.4],
@@ -233,7 +233,7 @@ export function AllyBrandAnimation() {
         }}
       />
       <motion.div
-        className="absolute top-1/3 right-1/4 w-1.5 h-1.5 rounded-full bg-[#F54C0F]/30"
+        className="absolute right-1/4 top-1/3 h-1.5 w-1.5 rounded-full bg-[#F54C0F]/30"
         animate={{
           y: [0, -15, 0],
           opacity: [0.3, 0.6, 0.3],
@@ -246,7 +246,7 @@ export function AllyBrandAnimation() {
         }}
       />
       <motion.div
-        className="absolute bottom-1/3 left-1/3 w-1 h-1 rounded-full bg-[#F54C0F]/50"
+        className="absolute bottom-1/3 left-1/3 h-1 w-1 rounded-full bg-[#F54C0F]/50"
         animate={{
           y: [0, -10, 0],
           opacity: [0.5, 0.9, 0.5],

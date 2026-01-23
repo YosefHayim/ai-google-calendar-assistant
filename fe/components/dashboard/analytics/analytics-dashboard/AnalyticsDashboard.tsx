@@ -20,62 +20,62 @@ import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
 
 // Dynamically import heavy chart components
 const BentoStatsGrid = dynamic(() => import('../BentoStatsGrid').then((mod) => ({ default: mod.BentoStatsGrid })), {
-  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const DailyAvailableHoursDashboard = dynamic(() => import('../DailyAvailableHoursDashboard'), {
-  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const EventDurationDashboard = dynamic(() => import('../EventDurationDashboard'), {
-  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const FocusTimeTracker = dynamic(() => import('../FocusTimeTracker'), {
-  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const ManageCalendars = dynamic(() => import('../ManageCalendars'), {
-  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const MonthlyPatternDashboard = dynamic(() => import('../MonthlyPatternDashboard'), {
-  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const RecentEvents = dynamic(() => import('../RecentEvents'), {
-  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const ScheduleHealthScore = dynamic(() => import('../ScheduleHealthScore'), {
-  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const TimeAllocationDashboard = dynamic(() => import('../TimeAllocationDashboard'), {
-  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const TimeDistributionChart = dynamic(() => import('../TimeDistributionChart'), {
-  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const UpcomingWeekPreview = dynamic(() => import('../UpcomingWeekPreview'), {
-  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
 const WeeklyPatternDashboard = dynamic(() => import('../WeeklyPatternDashboard'), {
-  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
   ssr: false,
 })
 
@@ -173,7 +173,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
 
   if (isAnalyticsError) {
     return (
-      <div className="max-w-7xl mx-auto w-full p-6 bg-muted dark:bg-secondary flex flex-col items-center justify-center min-h-[50vh]">
+      <div className="mx-auto flex min-h-[50vh] w-full max-w-7xl flex-col items-center justify-center bg-muted bg-secondary p-6">
         <ErrorState
           title="Error Loading Analytics"
           message={analyticsError?.message || 'Failed to fetch analytics data. Please try again.'}
@@ -200,7 +200,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
   } = processedData
 
   return (
-    <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500 overflow-y-auto bg-muted dark:bg-secondary space-y-4 sm:space-y-6">
+    <div className="mx-auto w-full max-w-7xl space-y-4 overflow-y-auto bg-muted bg-secondary p-3 duration-500 animate-in fade-in sm:space-y-6 sm:p-4">
       <AnalyticsHeader
         date={date}
         setDate={setDate}
@@ -213,12 +213,12 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
       />
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabId)} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 h-10 sm:h-11">
+        <TabsList className="grid h-10 w-full grid-cols-5 sm:h-11">
           {analyticsTabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-1 sm:px-3"
+              className="flex items-center gap-1 px-1 text-xs sm:gap-2 sm:px-3 sm:text-sm"
             >
               <tab.icon className="h-4 w-4" />
               <span className="hidden sm:inline">{tab.label}</span>
@@ -226,7 +226,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
           ))}
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4 sm:space-y-6 mt-4">
+        <TabsContent value="overview" className="mt-4 space-y-4 sm:space-y-6">
           <AIInsightsSection
             insightsData={insightsData}
             isLoading={isInsightsLoading}
@@ -242,13 +242,13 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
           />
         </TabsContent>
 
-        <TabsContent value="patterns" className="space-y-4 sm:space-y-6 mt-4">
+        <TabsContent value="patterns" className="mt-4 space-y-4 sm:space-y-6">
           <WeeklyPatternDashboard data={weeklyPattern} isLoading={isAnalyticsFetching} />
           <MonthlyPatternDashboard data={monthlyPattern} isLoading={isAnalyticsFetching} />
           <TimeDistributionChart data={timeOfDayDistribution} isLoading={isAnalyticsFetching} />
         </TabsContent>
 
-        <TabsContent value="time" className="space-y-4 sm:space-y-6 mt-4">
+        <TabsContent value="time" className="mt-4 space-y-4 sm:space-y-6">
           <TimeAllocationDashboard
             data={calendarBreakdown}
             onCalendarClick={openCalendarEventsDialog}
@@ -266,7 +266,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
           />
         </TabsContent>
 
-        <TabsContent value="calendars" className="space-y-4 sm:space-y-6 mt-4">
+        <TabsContent value="calendars" className="mt-4 space-y-4 sm:space-y-6">
           <ManageCalendars
             calendars={calendarsData}
             calendarMap={calendarMap}
@@ -276,8 +276,8 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
           />
         </TabsContent>
 
-        <TabsContent value="health" className="space-y-4 sm:space-y-6 mt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <TabsContent value="health" className="mt-4 space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <ScheduleHealthScore data={processedData} isLoading={isAnalyticsFetching} />
             <FocusTimeTracker
               data={processedData.focusTimeMetrics}

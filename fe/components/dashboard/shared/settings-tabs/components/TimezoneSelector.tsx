@@ -89,7 +89,7 @@ export const TimezoneSelector: React.FC<TimezoneSelectorProps> = ({ value, onCha
           className={cn('w-full justify-between gap-2 font-normal', className)}
         >
           <span className="truncate">{displayValue}</span>
-          <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
+          <ChevronDown className="h-4 w-4 flex-shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="end">

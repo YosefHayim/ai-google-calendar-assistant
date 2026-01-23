@@ -63,12 +63,10 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border ">
+      <DialogContent className="border bg-background bg-secondary sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-lg font-medium text-foreground dark:text-primary-foreground">
-            {t('dialogs.createCalendar.title')}
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground dark:text-muted-foreground">
+          <DialogTitle className="text-lg font-medium text-foreground">{t('dialogs.createCalendar.title')}</DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground">
             {t('dialogs.createCalendar.subtitle')}
           </DialogDescription>
         </DialogHeader>
@@ -79,7 +77,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
             value={calendarPrompt}
             onChange={(e) => setCalendarPrompt(e.target.value)}
             placeholder={t('dialogs.createCalendar.namePlaceholder')}
-            className="w-full p-3 rounded-md border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent placeholder:text-muted-foreground"
+            className="w-full rounded-md border-border bg-background p-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
             disabled={isCreatingCalendar}
             autoFocus
             onKeyDown={(e) => {
@@ -91,7 +89,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
           />
         </div>
 
-        <DialogFooter className="sm:justify-between sm:space-x-0 w-full grid grid-cols-2 gap-2 items-center">
+        <DialogFooter className="grid w-full grid-cols-2 items-center gap-2 sm:justify-between sm:space-x-0">
           <Button variant="outline" onClick={handleClose} disabled={isCreatingCalendar} className="w-full">
             {t('common.cancel')}
           </Button>

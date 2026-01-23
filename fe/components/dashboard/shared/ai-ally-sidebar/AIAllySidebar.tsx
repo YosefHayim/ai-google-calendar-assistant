@@ -120,11 +120,11 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="fixed bottom-6 right-6 z-50 w-96 max-h-[80vh] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border/60 /60 bg-background/95 dark:bg-secondary/95 backdrop-blur-2xl overflow-hidden"
+            className="border/60 /60 fixed bottom-6 right-6 z-50 flex max-h-[80vh] w-96 flex-col overflow-hidden rounded-2xl bg-background/95 bg-secondary/95 shadow-2xl shadow-black/40 backdrop-blur-2xl"
           >
             <ChatHeader onClose={onClose} onMinimize={onClose} />
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-64 max-h-80 scrollbar-thin scrollbar-thumb-muted dark:scrollbar-thumb-muted scrollbar-track-transparent">
+            <div className="scrollbar-thin scrollbar-thumb-muted scrollbar-thumb-muted scrollbar-track-transparent max-h-80 min-h-64 flex-1 space-y-2 overflow-y-auto p-4">
               {messages.map((message, index) => (
                 <MessageBubble key={message.id} message={message} index={index} />
               ))}
@@ -136,9 +136,9 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
               <QuickActionsBar actions={QUICK_ACTIONS} onActionClick={handleQuickAction} />
             )}
 
-            <div className="p-3 border-t border/50 /50 bg-muted/50 dark:bg-secondary/50">
+            <div className="border/50 /50 border-t bg-muted/50 bg-secondary/50 p-3">
               {isRecording ? (
-                <div className="relative flex flex-col items-center justify-center bg-background dark:bg-secondary rounded-2xl p-3">
+                <div className="relative flex flex-col items-center justify-center rounded-2xl bg-background bg-secondary p-3">
                   <AIVoiceInput
                     onStart={startRecording}
                     onStop={(duration, text) => handleStopRecording(text ?? '')}
@@ -153,7 +153,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     variant="ghost"
                     size="icon"
                     onClick={cancelRecording}
-                    className="absolute top-2 right-2 h-7 w-7 text-muted-foreground"
+                    className="absolute right-2 top-2 h-7 w-7 text-muted-foreground"
                     aria-label={t('allySidebar.cancelVoiceRecording')}
                   >
                     <X size={16} />
@@ -165,18 +165,18 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     e.preventDefault()
                     handleSendMessage()
                   }}
-                  className="relative flex items-center bg-background dark:bg-secondary rounded-2xl p-1.5 gap-1.5"
+                  className="relative flex items-center gap-1.5 rounded-2xl bg-background bg-secondary p-1.5"
                 >
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
                     onClick={toggleRecording}
-                    className="h-10 w-10 flex-shrink-0 text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground"
+                    className="h-10 w-10 flex-shrink-0 text-muted-foreground hover:text-foreground hover:text-primary-foreground"
                     disabled={!speechRecognitionSupported}
                     aria-label={t('allySidebar.toggleVoiceInput')}
                   >
-                    <Mic className="w-5 h-5" />
+                    <Mic className="h-5 w-5" />
                   </Button>
 
                   <Input
@@ -185,7 +185,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder={t('allySidebar.placeholder')}
-                    className="flex-1 h-10 bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm"
+                    className="h-10 flex-1 border-0 bg-transparent text-sm shadow-none focus-visible:ring-0"
                   />
 
                   <Button
@@ -195,26 +195,24 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     className={cn(
                       'h-10 w-10 flex-shrink-0 rounded-xl',
                       inputText.trim()
-                        ? 'bg-secondary dark:bg-secondary text-primary-foreground hover:bg-secondary dark:hover:bg-accent'
-                        : 'bg-secondary dark:bg-secondary text-muted-foreground',
+                        ? 'bg-secondary text-primary-foreground hover:bg-accent hover:bg-secondary'
+                        : 'bg-secondary text-muted-foreground',
                     )}
                     aria-label={t('allySidebar.sendMessage')}
                   >
-                    <ArrowUp className="w-5 h-5" />
+                    <ArrowUp className="h-5 w-5" />
                   </Button>
                 </form>
               )}
 
-              <div className="flex items-center justify-center gap-2 mt-2">
-                <p className="text-xs text-muted-foreground dark:text-muted-foreground font-medium">
-                  {t('allySidebar.poweredBy')}
-                </p>
+              <div className="mt-2 flex items-center justify-center gap-2">
+                <p className="text-xs font-medium text-muted-foreground">{t('allySidebar.poweredBy')}</p>
                 <span className="text-muted-foreground">·</span>
                 <button
                   onClick={() => setIsSupportModalOpen(true)}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                  className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <HelpCircle className="w-3 h-3" />
+                  <HelpCircle className="h-3 w-3" />
                   {t('allySidebar.support')}
                 </button>
               </div>

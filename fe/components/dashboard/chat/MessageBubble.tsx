@@ -41,7 +41,7 @@ const MessageImageLightbox: React.FC<MessageImageLightboxProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 border-none bg-transparent shadow-none">
+      <DialogContent className="max-h-[90vh] max-w-[90vw] border-none bg-transparent p-0 shadow-none">
         <VisuallyHidden>
           <DialogTitle>Image Preview</DialogTitle>
         </VisuallyHidden>
@@ -50,17 +50,17 @@ const MessageImageLightbox: React.FC<MessageImageLightboxProps> = ({
           <>
             <button
               onClick={onPrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/10 hover:bg-background/20 text-white transition-colors disabled:opacity-50"
+              className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-background/10 p-2 text-foreground transition-colors hover:bg-background/20 disabled:opacity-50"
               disabled={currentIndex === 0}
             >
-              <ChevronLeft className="w-8 h-8" />
+              <ChevronLeft className="h-8 w-8" />
             </button>
             <button
               onClick={onNext}
-              className="absolute right-12 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/10 hover:bg-background/20 text-white transition-colors disabled:opacity-50"
+              className="absolute right-12 top-1/2 z-10 -translate-y-1/2 rounded-full bg-background/10 p-2 text-foreground transition-colors hover:bg-background/20 disabled:opacity-50"
               disabled={currentIndex === images.length - 1}
             >
-              <ChevronRight className="w-8 h-8" />
+              <ChevronRight className="h-8 w-8" />
             </button>
           </>
         )}
@@ -69,10 +69,10 @@ const MessageImageLightbox: React.FC<MessageImageLightboxProps> = ({
           <img
             src={imageSrc}
             alt={`Image ${currentIndex + 1}`}
-            className="max-w-full max-h-[85vh] object-contain rounded-lg"
+            className="max-h-[85vh] max-w-full rounded-lg object-contain"
           />
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-foreground/50 text-white text-sm">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-foreground/50 px-3 py-1 text-sm text-foreground">
               {currentIndex + 1} / {images.length}
             </div>
           )}
@@ -109,14 +109,14 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
 
   return (
     <>
-      <div className={cn('flex w-full mb-2', isUser ? 'justify-end' : 'justify-start')}>
-        <div className={cn('max-w-[85%] md:max-w-[75%] flex flex-col', isUser ? 'items-end' : 'items-start')}>
+      <div className={cn('mb-2 flex w-full', isUser ? 'justify-end' : 'justify-start')}>
+        <div className={cn('flex max-w-[85%] flex-col md:max-w-[75%]', isUser ? 'items-end' : 'items-start')}>
           <div
             className={cn(
-              'px-4 py-3 rounded-md text-sm leading-relaxed transition-all duration-200',
+              'rounded-md px-4 py-3 text-sm leading-relaxed transition-all duration-200',
               isUser
-                ? 'bg-primary text-white rounded-tr-none shadow-md'
-                : 'bg-background dark:bg-secondary border-border text-foreground rounded-tl-none shadow-sm',
+                ? 'rounded-tr-none bg-primary text-primary-foreground shadow-md'
+                : 'rounded-tl-none border-border bg-background bg-secondary text-foreground shadow-sm',
             )}
             dir={textDirection}
           >
@@ -130,12 +130,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
                       key={index}
                       type="button"
                       onClick={() => openLightbox(index)}
-                      className="block focus:outline-none focus:ring-2 focus:ring-white/50 rounded-lg"
+                      className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50"
                     >
                       <img
                         src={imageSrc}
                         alt={`Attached image ${index + 1}`}
-                        className="max-w-[200px] max-h-[150px] object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                        className="max-h-[150px] max-w-[200px] cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-80"
                       />
                     </button>
                   )
@@ -146,7 +146,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
               <div
                 className={cn(
                   'prose prose-sm max-w-none',
-                  isUser ? 'prose-invert' : 'prose-zinc dark:prose-invert',
+                  isUser ? 'prose-invert' : 'prose-zinc prose-invert',
                   isRTL && 'text-right',
                 )}
               >
@@ -155,7 +155,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
             )}
           </div>
           {!hideTimestamp && (
-            <span className={cn('text-xs text-muted-foreground mt-1 px-1', isRTL && 'text-right w-full')}>
+            <span className={cn('mt-1 px-1 text-xs text-muted-foreground', isRTL && 'w-full text-right')}>
               {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}

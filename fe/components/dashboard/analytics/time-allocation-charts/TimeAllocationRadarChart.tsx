@@ -68,7 +68,7 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
       <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-        <PolarGrid className="stroke-muted dark:stroke-muted" gridType="polygon" />
+        <PolarGrid className="stroke-muted" gridType="polygon" />
         <PolarAngleAxis
           dataKey="category"
           tick={({ x, y, payload, index }) => {
@@ -108,12 +108,12 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
             if (active && payload && payload.length > 0) {
               const item = payload[0].payload as (typeof chartData)[0]
               return (
-                <div className="rounded-lg border-border bg-secondary dark:bg-secondary px-3 py-2 text-primary-foreground shadow-xl">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: item.color }} />
-                    <span className="font-medium text-sm">{item.category}</span>
+                <div className="rounded-lg border-border bg-secondary px-3 py-2 text-primary-foreground shadow-xl">
+                  <div className="mb-1 flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: item.color }} />
+                    <span className="text-sm font-medium">{item.category}</span>
                   </div>
-                  <div className="text-muted-foreground text-xs">{item.hours.toFixed(1)} hours</div>
+                  <div className="text-xs text-muted-foreground">{item.hours.toFixed(1)} hours</div>
                 </div>
               )
             }

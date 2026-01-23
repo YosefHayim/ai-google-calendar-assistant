@@ -123,7 +123,7 @@ export const SubscriptionTab: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[300px] h-full">
+      <div className="flex h-full min-h-[300px] items-center justify-center">
         <LoadingSection text="Loading subscription..." />
       </div>
     )
@@ -153,7 +153,7 @@ export const SubscriptionTab: React.FC = () => {
       />
 
       <div className="flex justify-center">
-        <div className="flex rounded-full bg-secondary dark:bg-secondary p-1">
+        <div className="flex rounded-full bg-secondary p-1">
           {PAYMENT_FREQUENCIES.map((freq) => (
             <Tab
               key={freq}
@@ -167,9 +167,9 @@ export const SubscriptionTab: React.FC = () => {
       </div>
 
       {isTrialing && !isPerUse && (
-        <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/50 border-accent">
-          <Info className="h-4 w-4 text-accent-foreground flex-shrink-0 mt-0.5" />
-          <p className="text-accent-foreground text-sm">
+        <div className="flex items-start gap-3 rounded-lg border-accent bg-accent/50 p-3">
+          <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent-foreground" />
+          <p className="text-sm text-accent-foreground">
             Select a plan to continue after your trial. You won't be charged until your trial ends.
           </p>
         </div>

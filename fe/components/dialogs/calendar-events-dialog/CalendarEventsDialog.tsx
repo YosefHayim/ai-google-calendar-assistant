@@ -71,7 +71,7 @@ export function CalendarEventsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
+      <DialogContent className="flex max-h-[90vh] max-w-3xl flex-col gap-0 overflow-hidden p-0">
         <div className="h-1 w-full shrink-0" style={{ backgroundColor: calendarColor }} />
 
         <DialogHeaderSection

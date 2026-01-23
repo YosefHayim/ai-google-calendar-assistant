@@ -110,47 +110,47 @@ const featureLabels: Record<string, { label: string; icon: React.ComponentType<{
 export default function ComparePage() {
   return (
     <MarketingLayout>
-      <section className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
+      <section className="relative overflow-hidden px-4 py-24 sm:px-6 md:py-32">
         <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 via-transparent to-transparent dark:from-orange-500/10" />
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute left-1/4 top-20 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl" />
+        <div className="absolute bottom-20 right-1/4 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
 
         <motion.div
-          className="relative z-10 max-w-4xl mx-auto text-center"
+          className="relative z-10 mx-auto max-w-4xl text-center"
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
         >
           <motion.h1
             variants={fadeInUp}
-            className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-6"
+            className="mb-6 text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground md:text-6xl lg:text-7xl"
           >
             Ask Ally vs
             <br />
             <span className="text-orange-500 dark:text-orange-400">Other Calendar Tools</span>
           </motion.h1>
 
-          <motion.p variants={fadeInUp} className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+          <motion.p variants={fadeInUp} className="mx-auto max-w-3xl text-xl text-muted-foreground md:text-2xl">
             Ask Ally, the AI Google Calendar Assistant, is a productivity SaaS tool for managing your calendar with
             natural language and voice commands.
           </motion.p>
         </motion.div>
       </section>
 
-      <section className="py-12 px-4 sm:px-6">
+      <section className="px-4 py-12 sm:px-6">
         <motion.div
-          className="max-w-4xl mx-auto"
+          className="mx-auto max-w-4xl"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <div className="p-6 rounded-2xl bg-orange-500/10 border-orange-500/20 dark:bg-orange-500/5 -orange-500/10">
+          <div className="-orange-500/10 rounded-2xl border-orange-500/20 bg-orange-500/10 p-6 dark:bg-orange-500/5">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="w-6 h-6 text-orange-500" />
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-orange-500/20">
+                <AlertCircle className="h-6 w-6 text-orange-500" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-foreground dark:text-primary-foreground mb-2">
+                <h2 className="mb-2 text-lg font-semibold text-foreground dark:text-primary-foreground">
                   Looking for Ask Ally? You&apos;re in the right place.
                 </h2>
                 <p className="text-muted-foreground">
@@ -166,24 +166,24 @@ export default function ComparePage() {
         </motion.div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-muted dark:bg-secondary/50">
-        <div className="max-w-6xl mx-auto">
+      <section className="bg-muted px-4 py-16 dark:bg-secondary/50 sm:px-6 md:py-24">
+        <div className="mx-auto max-w-6xl">
           <motion.div
-            className="text-center mb-16"
+            className="mb-16 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-4">
+            <h2 className="mb-4 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-5xl">
               What is Ask Ally?
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               Ask Ally is an AI Google Calendar Assistant - a productivity tool in the SaaS category
             </p>
           </motion.div>
 
           <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -224,33 +224,33 @@ export default function ComparePage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="p-6 rounded-2xl bg-background dark:bg-secondary  hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
+                className="rounded-2xl bg-background p-6 transition-colors hover:border-orange-300 dark:bg-secondary dark:hover:border-orange-700"
               >
-                <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
-                  <feature.icon className="w-6 h-6 text-orange-500" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/10">
+                  <feature.icon className="h-6 w-6 text-orange-500" />
                 </div>
-                <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2">
+                <h3 className="mb-2 text-lg font-medium text-foreground dark:text-primary-foreground">
                   {feature.title}
                 </h3>
-                <p className="text-muted-foreground text-sm">{feature.description}</p>
+                <p className="text-sm text-muted-foreground">{feature.description}</p>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
+      <section className="px-4 py-16 sm:px-6 md:py-24">
+        <div className="mx-auto max-w-6xl">
           <motion.div
-            className="text-center mb-16"
+            className="mb-16 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-4">
+            <h2 className="mb-4 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-5xl">
               Feature Comparison
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               See how Ask Ally compares to other calendar productivity tools
             </p>
           </motion.div>
@@ -263,19 +263,19 @@ export default function ComparePage() {
           >
             <table className="w-full min-w-[800px]">
               <thead>
-                <tr className="border-b -zinc-700">
-                  <th className="text-left py-4 px-4 font-medium text-muted-foreground">Feature</th>
+                <tr className="-zinc-700 border-b">
+                  <th className="px-4 py-4 text-left font-medium text-muted-foreground">Feature</th>
                   {competitors.map((competitor) => (
                     <th
                       key={competitor.name}
-                      className={`text-center py-4 px-4 font-medium ${
+                      className={`px-4 py-4 text-center font-medium ${
                         competitor.isAskAlly
-                          ? 'text-orange-500 bg-orange-500/5 rounded-t-xl'
+                          ? 'rounded-t-xl bg-orange-500/5 text-orange-500'
                           : 'text-foreground dark:text-primary-foreground'
                       }`}
                     >
                       <div>{competitor.name}</div>
-                      <div className="text-xs text-muted-foreground font-normal mt-1">{competitor.tagline}</div>
+                      <div className="mt-1 text-xs font-normal text-muted-foreground">{competitor.tagline}</div>
                     </th>
                   ))}
                 </tr>
@@ -284,23 +284,23 @@ export default function ComparePage() {
                 {Object.entries(featureLabels).map(([featureKey, { label, icon: Icon }], index) => (
                   <tr
                     key={featureKey}
-                    className={`border-b -zinc-700 ${index % 2 === 0 ? 'bg-muted/50 dark:bg-secondary/30' : ''}`}
+                    className={`-zinc-700 border-b ${index % 2 === 0 ? 'bg-muted/50 dark:bg-secondary/30' : ''}`}
                   >
-                    <td className="py-4 px-4">
+                    <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
-                        <Icon className="w-5 h-5 text-muted-foreground" />
+                        <Icon className="h-5 w-5 text-muted-foreground" />
                         <span className="text-foreground dark:text-primary-foreground">{label}</span>
                       </div>
                     </td>
                     {competitors.map((competitor) => (
                       <td
                         key={`${competitor.name}-${featureKey}`}
-                        className={`text-center py-4 px-4 ${competitor.isAskAlly ? 'bg-orange-500/5' : ''}`}
+                        className={`px-4 py-4 text-center ${competitor.isAskAlly ? 'bg-orange-500/5' : ''}`}
                       >
                         {competitor.features[featureKey as keyof typeof competitor.features] ? (
-                          <Check className="w-5 h-5 text-emerald-500 mx-auto" />
+                          <Check className="mx-auto h-5 w-5 text-emerald-500" />
                         ) : (
-                          <X className="w-5 h-5 text-zinc-400 mx-auto" />
+                          <X className="mx-auto h-5 w-5 text-zinc-400" />
                         )}
                       </td>
                     ))}
@@ -312,18 +312,18 @@ export default function ComparePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-secondary dark:bg-secondary">
-        <div className="max-w-4xl mx-auto">
+      <section className="bg-secondary px-4 py-16 dark:bg-secondary sm:px-6 md:py-24">
+        <div className="mx-auto max-w-4xl">
           <motion.div
-            className="text-center mb-12"
+            className="mb-12 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">
+            <h2 className="mb-4 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-4xl">
               Not to Be Confused With
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               Ask Ally is a Google Calendar AI Assistant. Here&apos;s how we differ from other services with similar
               names.
             </p>
@@ -353,8 +353,8 @@ export default function ComparePage() {
                   'Ally Bank and other financial institutions exist. Ask Ally has no affiliation with any financial services. We are strictly a productivity software company.',
               },
             ].map((item, index) => (
-              <motion.div key={index} variants={fadeInUp} className="p-6 rounded-2xl bg-background dark:bg-zinc-800 ">
-                <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground mb-2">
+              <motion.div key={index} variants={fadeInUp} className="rounded-2xl bg-background p-6 dark:bg-zinc-800">
+                <h3 className="mb-2 text-lg font-semibold text-foreground dark:text-primary-foreground">
                   {item.category}
                 </h3>
                 <p className="text-muted-foreground">{item.description}</p>
@@ -363,7 +363,7 @@ export default function ComparePage() {
           </motion.div>
 
           <motion.div
-            className="mt-12 p-6 rounded-2xl bg-orange-500/10 border-orange-500/20 text-center"
+            className="mt-12 rounded-2xl border-orange-500/20 bg-orange-500/10 p-6 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -377,30 +377,30 @@ export default function ComparePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-900/50 dark:to-zinc-900/0">
+      <section className="bg-gradient-to-b from-zinc-50 to-white px-4 py-16 dark:from-zinc-900/50 dark:to-zinc-900/0 sm:px-6 md:py-24">
         <motion.div
-          className="max-w-4xl mx-auto text-center"
+          className="mx-auto max-w-4xl text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-6">
+          <h2 className="mb-6 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-5xl">
             Ready to Transform Your Calendar?
           </h2>
-          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+          <p className="mx-auto mb-10 max-w-2xl text-xl text-muted-foreground">
             Join thousands of professionals using Ask Ally, the AI Google Calendar Assistant, to save hours every week.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/register" className="w-full sm:w-auto">
-              <InteractiveHoverButton text="Get Started Free" className="w-full sm:w-auto h-14 px-8 text-lg" />
+              <InteractiveHoverButton text="Get Started Free" className="h-14 w-full px-8 text-lg sm:w-auto" />
             </Link>
             <Link
               href="/pricing"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-14 px-8 text-lg font-medium rounded-md  text-foreground dark:text-primary-foreground hover:bg-muted dark:hover:bg-secondary transition-colors"
+              className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-md px-8 text-lg font-medium text-foreground transition-colors hover:bg-muted dark:text-primary-foreground dark:hover:bg-secondary sm:w-auto"
             >
               View Pricing
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
         </motion.div>

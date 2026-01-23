@@ -8,8 +8,8 @@ import type { AllyAnimationState } from './ally-character'
 const AllyCharacter = dynamic(() => import('./ally-character').then((mod) => mod.AllyCharacter), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="w-16 h-16 rounded-full bg-purple-200 dark:bg-purple-900 animate-pulse" />
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="h-16 w-16 animate-pulse rounded-full bg-purple-900" />
     </div>
   ),
 })
@@ -88,7 +88,7 @@ export function AllyChatAvatar({
         />
       )}
 
-      <div className="w-full h-full rounded-full overflow-hidden">
+      <div className="h-full w-full overflow-hidden rounded-full">
         <AllyCharacter
           animationState={animationState}
           mouthOpenness={chatState === 'speaking' ? audioLevel : 0}
@@ -110,7 +110,7 @@ export function AllyChatAvatar({
               {[0, 1, 2].map((i) => (
                 <motion.div
                   key={i}
-                  className="w-2 h-2 rounded-full bg-purple-500"
+                  className="h-2 w-2 rounded-full bg-purple-500"
                   animate={{ y: [0, -6, 0] }}
                   transition={{
                     duration: 0.6,
@@ -130,10 +130,10 @@ export function AllyChatAvatar({
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center"
+            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary"
           >
             <motion.div
-              className="w-2 h-2 bg-background rounded-full"
+              className="h-2 w-2 rounded-full bg-background"
               animate={{ scale: [1, 1.5, 1] }}
               transition={{ duration: 1, repeat: Infinity }}
             />
@@ -154,7 +154,7 @@ export function AllyFullAvatar({ chatState, audioLevel = 0, className = '' }: Al
   const animationState = useMemo(() => mapChatStateToAnimation(chatState), [chatState])
 
   return (
-    <div className={`relative w-full h-full min-h-[300px] ${className}`}>
+    <div className={`relative h-full min-h-[300px] w-full ${className}`}>
       <AllyCharacter
         animationState={animationState}
         mouthOpenness={chatState === 'speaking' ? audioLevel : 0}
@@ -171,7 +171,7 @@ export function AllyFullAvatar({ chatState, audioLevel = 0, className = '' }: Al
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="px-3 py-1 bg-foreground/50 backdrop-blur-sm rounded-full text-white text-sm"
+            className="rounded-full bg-foreground/50 px-3 py-1 text-sm text-foreground backdrop-blur-sm"
           >
             {chatState === 'idle' && 'Ready to help'}
             {chatState === 'listening' && 'Listening...'}

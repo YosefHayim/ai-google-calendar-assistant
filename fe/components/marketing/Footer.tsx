@@ -40,63 +40,59 @@ const Footer = () => {
   ]
 
   return (
-    <footer className="bg-background dark:bg-[#030303] border-t pt-20 pb-10">
+    <footer className="border-t bg-background pb-10 pt-20">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+        <div className="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-6">
-              <div className="w-7 h-7 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-white dark:text-foreground">
-                <AllyLogo className="w-4 h-4" />
+            <Link href="/" className="mb-6 flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-background bg-secondary text-foreground">
+                <AllyLogo className="h-4 w-4" />
               </div>
-              <span className="font-medium text-lg tracking-tight flex items-center text-foreground dark:text-primary-foreground">
+              <span className="flex items-center text-lg font-medium tracking-tight text-foreground">
                 Ally <BetaBadge />
               </span>
             </Link>
-            <p className="text-muted-foreground dark:text-muted-foreground max-w-sm mb-8 leading-relaxed">
-              {t('footer.description')}
-            </p>
+            <p className="mb-8 max-w-sm leading-relaxed text-muted-foreground">{t('footer.description')}</p>
             <div className="flex items-center gap-4">
               <a
                 href={SOCIAL_LINKS.TELEGRAM_BOT}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 bg-secondary dark:bg-secondary rounded-md text-muted-foreground hover:text-[#0088cc] transition-colors"
+                className="rounded-md bg-secondary p-2 text-muted-foreground transition-colors hover:text-[#0088cc]"
                 title={t('footer.chatOnTelegram')}
               >
-                <TelegramIcon className="w-5 h-5" />
+                <TelegramIcon className="h-5 w-5" />
               </a>
               <a
                 href={SOCIAL_LINKS.SLACK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 bg-secondary dark:bg-secondary rounded-md text-muted-foreground hover:text-[#4A154B] dark:hover:text-[#E01E5A] transition-colors"
+                className="rounded-md bg-secondary p-2 text-muted-foreground transition-colors hover:text-[#4A154B] hover:text-[#E01E5A]"
                 title="Slack"
               >
-                <SlackIcon className="w-5 h-5" />
+                <SlackIcon className="h-5 w-5" />
               </a>
               <a
                 href={SOCIAL_LINKS.WHATSAPP}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 bg-secondary dark:bg-secondary rounded-md text-muted-foreground hover:text-[#25D366] transition-colors"
+                className="rounded-md bg-secondary p-2 text-muted-foreground transition-colors hover:text-[#25D366]"
                 title="WhatsApp"
               >
-                <WhatsAppIcon className="w-5 h-5" />
+                <WhatsAppIcon className="h-5 w-5" />
               </a>
             </div>
           </div>
 
           {sections.map((section) => (
             <div key={section.title}>
-              <h4 className="font-medium text-foreground dark:text-primary-foreground mb-6 uppercase text-xs tracking-widest">
-                {section.title}
-              </h4>
+              <h4 className="mb-6 text-xs font-medium uppercase tracking-widest text-foreground">{section.title}</h4>
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground dark:text-muted-foreground hover:text-primary transition-colors"
+                      className="text-sm text-muted-foreground transition-colors hover:text-primary"
                     >
                       {link.name}
                     </Link>
@@ -107,7 +103,7 @@ const Footer = () => {
           ))}
         </div>
 
-        <div className="pt-10 border-t border-border  flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col items-center justify-between gap-6 border-t border-border pt-10 md:flex-row">
           <p className="text-xs text-muted-foreground">© {currentYear} Ally Technologies Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <SystemStatus />

@@ -164,7 +164,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
       <TabHeader
         title="Voice Settings"
         tooltip="Choose how Ally speaks to you in voice responses"
-        icon={<Volume2 className="w-5 h-5 text-foreground dark:text-primary" />}
+        icon={<Volume2 className="h-5 w-5 text-foreground" />}
       />
       <CardContent className="space-y-4">
         <SettingsSection>
@@ -172,7 +172,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
             id="voice-enabled"
             title="Enable Voice Responses"
             tooltip="When enabled, Ally will respond with voice in chat and when you send voice messages on Telegram"
-            icon={<Mic size={18} className="text-foreground dark:text-primary" />}
+            icon={<Mic size={18} className="text-foreground" />}
             control={
               <CinematicGlowToggle
                 id={toggleId}
@@ -197,14 +197,14 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
                   id="voice-selection"
                   title="Voice"
                   tooltip="Choose which voice Ally uses for audio responses"
-                  icon={<Music size={18} className="text-foreground dark:text-primary" />}
+                  icon={<Music size={18} className="text-foreground" />}
                   control={
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <div className="flex w-full items-center gap-2 sm:w-auto">
                       <SettingsDropdown
                         value={selectedVoice}
                         options={VOICE_DROPDOWN_OPTIONS}
                         onChange={handleVoiceChange}
-                        className="flex-1 sm:flex-none sm:min-w-52"
+                        className="flex-1 sm:min-w-52 sm:flex-none"
                       />
                       <Button
                         type="button"
@@ -216,11 +216,11 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
                         aria-label={isPreviewPlaying ? 'Stop voice preview' : 'Preview voice'}
                       >
                         {isPreviewLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                         ) : isPreviewPlaying ? (
-                          <Square className="w-4 h-4" />
+                          <Square className="h-4 w-4" />
                         ) : (
-                          <Play className="w-4 h-4" />
+                          <Play className="h-4 w-4" />
                         )}
                       </Button>
                     </div>
@@ -231,7 +231,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
                   id="playback-speed"
                   title="Playback Speed"
                   tooltip="Adjust how fast Ally speaks. Default is 1x (normal speed)"
-                  icon={<Gauge size={18} className="text-foreground dark:text-primary" />}
+                  icon={<Gauge size={18} className="text-foreground" />}
                   control={
                     <SettingsDropdown
                       value={selectedPlaybackSpeed.toString()}

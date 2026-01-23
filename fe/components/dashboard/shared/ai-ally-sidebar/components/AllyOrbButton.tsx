@@ -13,7 +13,7 @@ export function AllyOrbButton({ onClick, isOpen }: AllyOrbButtonProps) {
   return (
     <motion.button
       onClick={onClick}
-      className="group relative w-16 h-16 rounded-full flex items-center justify-center"
+      className="group relative flex h-16 w-16 items-center justify-center rounded-full"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       initial={false}
@@ -21,15 +21,15 @@ export function AllyOrbButton({ onClick, isOpen }: AllyOrbButtonProps) {
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       suppressHydrationWarning
     >
-      <div className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-pulse" />
+      <div className="absolute inset-0 animate-pulse rounded-full bg-primary/30 blur-xl" />
 
-      <div className="relative w-14 h-14 rounded-full overflow-hidden shadow-2xl shadow-primary/40">
-        <VoicePoweredOrb enableVoiceControl={false} className="w-full h-full" maxRotationSpeed={0.3} />
+      <div className="relative h-14 w-14 overflow-hidden rounded-full shadow-2xl shadow-primary/40">
+        <VoicePoweredOrb enableVoiceControl={false} className="h-full w-full" maxRotationSpeed={0.3} />
       </div>
 
-      <div className="absolute -left-28 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-secondary dark:bg-secondary text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl">
+      <div className="pointer-events-none absolute -left-28 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-secondary px-3 py-1.5 text-xs font-medium text-foreground opacity-0 shadow-xl transition-opacity group-hover:opacity-100">
         Chat with Ally
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-secondary dark:bg-secondary rotate-45" />
+        <div className="absolute right-0 top-1/2 h-2 w-2 -translate-y-1/2 translate-x-1 rotate-45 bg-secondary" />
       </div>
     </motion.button>
   )

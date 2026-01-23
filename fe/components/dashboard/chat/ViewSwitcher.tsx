@@ -17,21 +17,21 @@ interface ViewSwitcherProps {
 export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ activeTab, onTabChange }) => {
   const { t } = useTranslation()
   return (
-    <div className="z-30 flex flex-nowrap justify-center bg-background/80 dark:bg-secondary/80 backdrop-blur-md p-1 rounded-lg shadow-lg border border-border/50 md:absolute md:top-4 md:left-1/2 md:-translate-x-1/2 md:ml-4">
+    <div className="z-30 flex flex-nowrap justify-center rounded-lg border border-border/50 bg-background/80 bg-secondary/80 p-1 shadow-lg backdrop-blur-md md:absolute md:left-1/2 md:top-4 md:ml-4 md:-translate-x-1/2">
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onTabChange('chat')}
-            className={`flex h-9 items-center gap-1.5 sm:gap-2 rounded-md text-xs font-bold touch-manipulation px-3 sm:px-4 ${
+            className={`flex h-9 touch-manipulation items-center gap-1.5 rounded-md px-3 text-xs font-bold sm:gap-2 sm:px-4 ${
               activeTab === 'chat'
-                ? 'bg-secondary dark:bg-secondary shadow-sm text-white dark:text-foreground hover:bg-secondary dark:hover:bg-secondary hover:text-white dark:hover:text-foreground'
-                : 'text-muted-foreground hover:bg-secondary dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground'
+                ? 'bg-secondary text-foreground shadow-sm hover:bg-secondary hover:text-foreground'
+                : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
-            <MessageSquare className="w-4 h-4" />
-            <span className="hidden xs:inline">Chat</span>
+            <MessageSquare className="h-4 w-4" />
+            <span className="xs:inline hidden">Chat</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
@@ -44,14 +44,14 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ activeTab, onTabChan
             variant="ghost"
             size="sm"
             onClick={() => onTabChange('avatar')}
-            className={`flex h-9 items-center gap-1.5 sm:gap-2 rounded-md text-xs font-bold touch-manipulation px-3 sm:px-4 ${
+            className={`flex h-9 touch-manipulation items-center gap-1.5 rounded-md px-3 text-xs font-bold sm:gap-2 sm:px-4 ${
               activeTab === 'avatar'
-                ? 'bg-secondary dark:bg-secondary shadow-sm text-white dark:text-foreground hover:bg-secondary dark:hover:bg-secondary hover:text-white dark:hover:text-foreground'
-                : 'text-muted-foreground hover:bg-secondary dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground'
+                ? 'bg-secondary text-foreground shadow-sm hover:bg-secondary hover:text-foreground'
+                : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
-            <User className="w-4 h-4" />
-            <span className="hidden xs:inline">2D</span>
+            <User className="h-4 w-4" />
+            <span className="xs:inline hidden">2D</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>

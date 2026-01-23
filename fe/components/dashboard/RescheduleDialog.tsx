@@ -124,7 +124,7 @@ export function RescheduleDialog({
         {/* Loading State */}
         {isLoadingSuggestions && (
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-            <Loader2 className="h-8 w-8 animate-spin mb-2" />
+            <Loader2 className="mb-2 h-8 w-8 animate-spin" />
             <span className="text-sm">{t('rescheduleDialog.findingOptimalTimes')}</span>
           </div>
         )}
@@ -132,7 +132,7 @@ export function RescheduleDialog({
         {/* Error State */}
         {suggestionsError && (
           <div className="flex flex-col items-center justify-center py-8 text-destructive">
-            <AlertCircle className="h-8 w-8 mb-2" />
+            <AlertCircle className="mb-2 h-8 w-8" />
             <span className="text-sm">{t('rescheduleDialog.failedToLoadSuggestions')}</span>
             <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
               {t('rescheduleDialog.tryAgain')}
@@ -142,19 +142,19 @@ export function RescheduleDialog({
 
         {/* Suggestions List */}
         {!isLoadingSuggestions && !suggestionsError && (
-          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+          <div className="max-h-[300px] space-y-2 overflow-y-auto">
             {suggestions.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <div className="py-8 text-center text-muted-foreground">
+                <Clock className="mx-auto mb-2 h-8 w-8 opacity-50" />
                 <p className="text-sm">{t('rescheduleDialog.noAvailableSlots')}</p>
-                <p className="text-xs mt-1">{t('rescheduleDialog.tryDifferentTimePreference')}</p>
+                <p className="mt-1 text-xs">{t('rescheduleDialog.tryDifferentTimePreference')}</p>
               </div>
             ) : (
               suggestions.map((suggestion, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedSuggestion(suggestion)}
-                  className={`w-full text-left p-3 rounded-lg border transition-all ${
+                  className={`w-full rounded-lg border p-3 text-left transition-all ${
                     selectedSuggestion === suggestion
                       ? 'border-primary bg-primary/5 ring-1 ring-primary'
                       : 'border-border hover:border-primary/50 hover:bg-muted/50'
@@ -163,7 +163,7 @@ export function RescheduleDialog({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                        className={`flex h-8 w-8 items-center justify-center rounded-full ${
                           selectedSuggestion === suggestion
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-muted text-muted-foreground'
@@ -176,7 +176,7 @@ export function RescheduleDialog({
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-sm">{suggestion.dayOfWeek}</p>
+                        <p className="text-sm font-medium">{suggestion.dayOfWeek}</p>
                         <p className="text-xs text-muted-foreground">{suggestion.startFormatted}</p>
                       </div>
                     </div>
@@ -198,12 +198,12 @@ export function RescheduleDialog({
           <Button onClick={handleReschedule} disabled={!selectedSuggestion || isRescheduling}>
             {isRescheduling ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 {t('rescheduleDialog.rescheduling')}
               </>
             ) : (
               <>
-                <Calendar className="h-4 w-4 mr-2" />
+                <Calendar className="mr-2 h-4 w-4" />
                 {t('rescheduleDialog.reschedule')}
               </>
             )}

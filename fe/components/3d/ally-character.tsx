@@ -216,14 +216,14 @@ export const AllyCharacter = memo(function AllyCharacter({
 
   if (!mounted) {
     return (
-      <div className={`w-full h-full flex items-center justify-center ${className}`}>
-        <div className="w-24 h-24 rounded-full bg-purple-200 dark:bg-purple-900 animate-pulse" />
+      <div className={`flex h-full w-full items-center justify-center ${className}`}>
+        <div className="h-24 w-24 animate-pulse rounded-full bg-purple-900" />
       </div>
     )
   }
 
   return (
-    <div className={`w-full h-full ${className}`} style={{ backgroundColor: backgroundColor || 'transparent' }}>
+    <div className={`h-full w-full ${className}`} style={{ backgroundColor: backgroundColor || 'transparent' }}>
       <Canvas key={canvasKey} shadows dpr={[1, 2]} gl={glConfig} camera={CAMERA_CONFIG}>
         <Scene
           animationState={animationState}

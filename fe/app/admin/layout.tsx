@@ -47,7 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-muted dark:bg-secondary">
         <AdminAppSidebar />
-        <SidebarInset className="flex-1 flex flex-col">
+        <SidebarInset className="flex flex-1 flex-col">
           <header className="flex h-14 shrink-0 items-center gap-4 border-b px-4 md:hidden">
             <SidebarTrigger className="h-9 w-9 shrink-0" />
           </header>

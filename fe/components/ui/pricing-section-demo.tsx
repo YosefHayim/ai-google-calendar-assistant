@@ -16,14 +16,14 @@ export { PAYMENT_FREQUENCIES }
 
 function PricingSkeleton() {
   return (
-    <div className="w-full max-w-6xl mx-auto px-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="mx-auto w-full max-w-6xl px-4">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-background dark:bg-secondary border-border rounded-xl p-6 shadow-sm">
-            <Skeleton className="h-6 w-24 mb-2" />
-            <Skeleton className="h-4 w-full mb-6" />
-            <Skeleton className="h-10 w-32 mb-6" />
-            <Skeleton className="h-10 w-full mb-6 rounded-md" />
+          <div key={i} className="rounded-xl border-border bg-background bg-secondary p-6 shadow-sm">
+            <Skeleton className="mb-2 h-6 w-24" />
+            <Skeleton className="mb-6 h-4 w-full" />
+            <Skeleton className="mb-6 h-10 w-32" />
+            <Skeleton className="mb-6 h-10 w-full rounded-md" />
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map((j) => (
                 <div key={j} className="flex items-center gap-2">
@@ -43,14 +43,12 @@ function PricingError() {
   const { t } = useTranslation()
 
   return (
-    <div className="w-full max-w-md mx-auto text-center py-12">
-      <div className="flex justify-center mb-4">
+    <div className="mx-auto w-full max-w-md py-12 text-center">
+      <div className="mb-4 flex justify-center">
         <AlertCircle className="h-12 w-12 text-primary" />
       </div>
-      <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground mb-2">
-        {t('pricing.error.title')}
-      </h3>
-      <p className="text-muted-foreground mb-4">{t('pricing.error.description')}</p>
+      <h3 className="mb-2 text-lg font-semibold text-foreground">{t('pricing.error.title')}</h3>
+      <p className="mb-4 text-muted-foreground">{t('pricing.error.description')}</p>
     </div>
   )
 }
@@ -86,7 +84,7 @@ export function PricingSectionDemo() {
   const tiers = plans && plans.length > 0 ? transformPlansToTiers(plans) : []
 
   return (
-    <div className="relative flex flex-col justify-center items-center w-full min-h-[600px]">
+    <div className="relative flex min-h-[600px] w-full flex-col items-center justify-center">
       <div className="absolute inset-0 -z-10">
         <div className="h-full w-full bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:35px_35px] opacity-30 [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
       </div>

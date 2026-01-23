@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 function LoginFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background dark:bg-[#030303]">
+    <div className="flex min-h-screen items-center justify-center bg-background dark:bg-[#030303]">
       <div className="animate-pulse text-muted-foreground">Loading...</div>
     </div>
   )

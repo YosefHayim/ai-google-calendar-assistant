@@ -67,23 +67,23 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
 
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary rounded-md shadow-sm">
-        <div className="p-3 sm:p-4 pb-2 border-b border ">
+      <div className="rounded-md bg-background bg-secondary shadow-sm">
+        <div className="border border-b p-3 pb-2 sm:p-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
             <div className="flex items-center gap-2">
-              <Skeleton className="h-4 sm:h-5 w-24 sm:w-32" />
-              <Skeleton className="h-3 sm:h-4 w-16 sm:w-20" />
+              <Skeleton className="h-4 w-24 sm:h-5 sm:w-32" />
+              <Skeleton className="h-3 w-16 sm:h-4 sm:w-20" />
             </div>
-            <Skeleton className="h-7 sm:h-8 w-full sm:w-48" />
+            <Skeleton className="h-7 w-full sm:h-8 sm:w-48" />
           </div>
         </div>
-        <div className="p-3 sm:p-4 flex flex-col lg:flex-row gap-3 sm:gap-4">
-          <div className="flex-1 flex justify-center items-center">
-            <Skeleton className="h-[150px] w-[150px] sm:h-[200px] sm:w-[200px] rounded-full" />
+        <div className="flex flex-col gap-3 p-3 sm:gap-4 sm:p-4 lg:flex-row">
+          <div className="flex flex-1 items-center justify-center">
+            <Skeleton className="h-[150px] w-[150px] rounded-full sm:h-[200px] sm:w-[200px]" />
           </div>
-          <div className="lg:w-48 flex-shrink-0 space-y-1.5 sm:space-y-2">
+          <div className="flex-shrink-0 space-y-1.5 sm:space-y-2 lg:w-48">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-8 sm:h-10 w-full" />
+              <Skeleton key={i} className="h-8 w-full sm:h-10" />
             ))}
           </div>
         </div>
@@ -93,7 +93,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
 
   if (totalHours === 0) {
     return (
-      <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-6 flex items-center justify-center min-h-[200px]">
+      <div className="flex min-h-[200px] items-center justify-center rounded-md bg-background bg-secondary p-6 shadow-sm">
         <EmptyState
           icon={<Clock />}
           title="No time data"
@@ -128,10 +128,10 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
   }
 
   return (
-    <div className="bg-background dark:bg-secondary rounded-md shadow-sm">
-      <div className="p-3 sm:p-4 pb-2 border-b border ">
+    <div className="rounded-md bg-background bg-secondary shadow-sm">
+      <div className="border border-b p-3 pb-2 sm:p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-          <h3 className="font-medium text-sm sm:text-base text-foreground dark:text-primary-foreground flex items-center gap-2 flex-wrap">
+          <h3 className="flex flex-wrap items-center gap-2 text-sm font-medium text-foreground sm:text-base">
             <span className="flex items-center gap-2">
               Time Allocation
               <HoverCard>
@@ -139,7 +139,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-foreground"
+                    className="h-5 w-5 text-muted-foreground hover:text-foreground sm:h-6 sm:w-6"
                   >
                     <Info size={14} className="sm:hidden" />
                     <Info size={16} className="hidden sm:block" />
@@ -147,7 +147,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 </HoverCardTrigger>
                 <HoverCardContent>
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-sm">Time Allocation</h4>
+                    <h4 className="text-sm font-semibold">Time Allocation</h4>
                     <p className="text-xs text-muted-foreground">
                       Visual breakdown of how your time is distributed across different calendars. Each segment
                       represents the total hours spent in that calendar during the selected date range.
@@ -156,7 +156,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 </HoverCardContent>
               </HoverCard>
             </span>
-            <span className="text-xs sm:text-sm font-normal text-muted-foreground">
+            <span className="text-xs font-normal text-muted-foreground sm:text-sm">
               {formatNumber(totalHours, 1)}H total
             </span>
           </h3>
@@ -170,7 +170,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                   <TabsTrigger
                     key={type}
                     value={type}
-                    className="h-6 sm:h-7 px-1.5 sm:px-2 text-[10px] sm:text-xs gap-0.5 sm:gap-1"
+                    className="h-6 gap-0.5 px-1.5 text-[10px] sm:h-7 sm:gap-1 sm:px-2 sm:text-xs"
                     title={config.label}
                   >
                     <span className="sm:hidden">
@@ -188,8 +188,8 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
         </div>
       </div>
 
-      <div className="p-3 sm:p-4 flex flex-col lg:flex-row gap-3 sm:gap-4">
-        <div className="flex-1 min-w-0">
+      <div className="flex flex-col gap-3 p-3 sm:gap-4 sm:p-4 lg:flex-row">
+        <div className="min-w-0 flex-1">
           <AnimatePresence mode="wait">
             <motion.div
               key={chartType}
@@ -204,17 +204,15 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
         </div>
 
         {['bar', 'horizontal', 'radar', 'donut'].includes(chartType) && (
-          <div className="lg:w-48 flex-shrink-0">
+          <div className="flex-shrink-0 lg:w-48">
             <ul className="space-y-1.5 sm:space-y-2">
               {data.map((item) => {
                 const safeColor = getValidHexColor(item.color)
                 return (
                   <li
                     key={item.category}
-                    className={`border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 text-xs sm:text-sm rounded-md p-1.5 sm:p-2 -m-1.5 sm:-m-2 transition-colors ${
-                      onCalendarClick && item.calendarId
-                        ? 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary/50'
-                        : ''
+                    className={`-m-1.5 flex items-center gap-2 rounded-md border-transparent p-1.5 text-xs transition-colors hover:border hover:border-black sm:-m-2 sm:gap-3 sm:p-2 sm:text-sm ${
+                      onCalendarClick && item.calendarId ? 'cursor-pointer hover:bg-secondary/50' : ''
                     }`}
                     style={{ backgroundColor: `${safeColor}10` }}
                     onClick={() => {
@@ -231,14 +229,14 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                     tabIndex={onCalendarClick && item.calendarId ? 0 : undefined}
                   >
                     <div
-                      className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm flex-shrink-0"
+                      className="h-2 w-2 flex-shrink-0 rounded-sm sm:h-2.5 sm:w-2.5"
                       style={{ backgroundColor: safeColor }}
                     />
-                    <span className="flex-1 font-medium text-foreground truncate">{item.category}</span>
-                    <span className="font-mono text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs flex-shrink-0">
+                    <span className="flex-1 truncate font-medium text-foreground">{item.category}</span>
+                    <span className="flex-shrink-0 font-mono text-[10px] text-muted-foreground sm:text-xs">
                       {formatNumber(item.hours, 1)}H
                     </span>
-                    <span className="text-[10px] sm:text-xs text-muted-foreground w-7 sm:w-8 text-right flex-shrink-0">
+                    <span className="w-7 flex-shrink-0 text-right text-[10px] text-muted-foreground sm:w-8 sm:text-xs">
                       {calculatePercentage(item.hours, totalHours, 0)}%
                     </span>
                   </li>

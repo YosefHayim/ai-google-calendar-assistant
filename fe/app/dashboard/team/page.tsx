@@ -91,31 +91,31 @@ export default function TeamPage() {
     switch (status) {
       case 'pending':
         return (
-          <Badge variant="outline" className="text-yellow-700 border-yellow-300 bg-yellow-50">
-            <Clock className="w-3 h-3 mr-1" /> Pending
+          <Badge variant="outline" className="border-yellow-300 bg-yellow-50 text-yellow-700">
+            <Clock className="mr-1 h-3 w-3" /> Pending
           </Badge>
         )
       case 'accepted':
         return (
-          <Badge variant="outline" className="text-green-600 border-green-300 bg-green-50">
-            <CheckCircle2 className="w-3 h-3 mr-1" /> Accepted
+          <Badge variant="outline" className="border-green-300 bg-green-50 text-green-600">
+            <CheckCircle2 className="mr-1 h-3 w-3" /> Accepted
           </Badge>
         )
       case 'declined':
         return (
-          <Badge variant="outline" className="text-destructive border-red-300 bg-destructive/5">
-            <XCircle className="w-3 h-3 mr-1" /> Declined
+          <Badge variant="outline" className="border-red-300 bg-destructive/5 text-destructive">
+            <XCircle className="mr-1 h-3 w-3" /> Declined
           </Badge>
         )
       case 'expired':
         return (
-          <Badge variant="outline" className="text-foreground border-gray-300 bg-muted">
-            <Clock className="w-3 h-3 mr-1" /> Expired
+          <Badge variant="outline" className="border-gray-300 bg-muted text-foreground">
+            <Clock className="mr-1 h-3 w-3" /> Expired
           </Badge>
         )
       case 'cancelled':
         return (
-          <Badge variant="outline" className="text-foreground border-gray-300 bg-muted">
+          <Badge variant="outline" className="border-gray-300 bg-muted text-foreground">
             Cancelled
           </Badge>
         )
@@ -138,19 +138,19 @@ export default function TeamPage() {
   }
 
   return (
-    <div className="flex-1 p-6 overflow-auto">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="flex-1 overflow-auto p-6">
+      <div className="mx-auto max-w-4xl space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground dark:text-white">Team</h1>
-            <p className="text-muted-foreground dark:text-muted-foreground mt-1">
+            <p className="mt-1 text-muted-foreground dark:text-muted-foreground">
               Invite team members to collaborate on your calendar
             </p>
           </div>
           <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
             <DialogTrigger asChild>
               <Button>
-                <UserPlus className="w-4 h-4 mr-2" />
+                <UserPlus className="mr-2 h-4 w-4" />
                 Invite Member
               </Button>
             </DialogTrigger>
@@ -198,9 +198,9 @@ export default function TeamPage() {
                 </Button>
                 <Button onClick={handleSendInvite} disabled={createInvite.isPending}>
                   {createInvite.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
-                    <Mail className="w-4 h-4 mr-2" />
+                    <Mail className="mr-2 h-4 w-4" />
                   )}
                   Send Invite
                 </Button>
@@ -210,9 +210,9 @@ export default function TeamPage() {
         </div>
 
         {receivedInvites && receivedInvites.length > 0 && (
-          <Card className="p-6 border-primary/20 bg-primary/5">
-            <div className="flex items-center gap-2 mb-4">
-              <Mail className="w-5 h-5 text-primary" />
+          <Card className="border-primary/20 bg-primary/5 p-6">
+            <div className="mb-4 flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" />
               <h3 className="text-lg font-semibold text-foreground dark:text-white">Pending Invitations</h3>
               <Badge className="bg-primary text-white">{receivedInvites.length}</Badge>
             </div>
@@ -220,7 +220,7 @@ export default function TeamPage() {
               {receivedInvites.map((invite) => (
                 <div
                   key={invite.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-background dark:bg-secondary border"
+                  className="flex items-center justify-between rounded-lg border bg-background p-4 dark:bg-secondary"
                 >
                   <div>
                     <p className="font-medium text-foreground dark:text-white">{invite.inviter_email}</p>
@@ -228,7 +228,7 @@ export default function TeamPage() {
                       {invite.team_name || 'Personal workspace'} • {getRoleBadge(invite.role)}
                     </p>
                     {invite.message && (
-                      <p className="text-sm text-zinc-600 dark:text-muted-foreground mt-1 italic">"{invite.message}"</p>
+                      <p className="mt-1 text-sm italic text-zinc-600 dark:text-muted-foreground">"{invite.message}"</p>
                     )}
                   </div>
                   <div className="flex gap-2">
@@ -245,7 +245,7 @@ export default function TeamPage() {
                       onClick={() => respondToInvite.mutate({ token: invite.invite_token, action: 'accept' })}
                       disabled={respondToInvite.isPending}
                     >
-                      {respondToInvite.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Accept'}
+                      {respondToInvite.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Accept'}
                     </Button>
                   </div>
                 </div>
@@ -255,9 +255,9 @@ export default function TeamPage() {
         )}
 
         <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-muted-foreground" />
+              <Users className="h-5 w-5 text-muted-foreground" />
               <h3 className="text-lg font-semibold text-foreground dark:text-white">Sent Invites</h3>
             </div>
           </div>
@@ -268,7 +268,7 @@ export default function TeamPage() {
             </div>
           ) : !sentInvites || sentInvites.length === 0 ? (
             <EmptyState
-              icon={<UserPlus className="w-12 h-12" />}
+              icon={<UserPlus className="h-12 w-12" />}
               title="No invites sent"
               description="Invite team members to collaborate on your calendar"
               action={{
@@ -280,35 +280,35 @@ export default function TeamPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b ">
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Role</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Sent</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                  <tr className="border-b">
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Email</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Role</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Sent</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sentInvites.map((invite) => (
-                    <tr key={invite.id} className="border-b border-zinc-100 ">
-                      <td className="py-4 px-4">
+                    <tr key={invite.id} className="border-b border-zinc-100">
+                      <td className="px-4 py-4">
                         <span className="text-foreground dark:text-white">{invite.invitee_email}</span>
                       </td>
-                      <td className="py-4 px-4">{getRoleBadge(invite.role)}</td>
-                      <td className="py-4 px-4">{getStatusBadge(invite.status)}</td>
-                      <td className="py-4 px-4 text-sm text-muted-foreground">
+                      <td className="px-4 py-4">{getRoleBadge(invite.role)}</td>
+                      <td className="px-4 py-4">{getStatusBadge(invite.status)}</td>
+                      <td className="px-4 py-4 text-sm text-muted-foreground">
                         {formatDate(invite.created_at, DATE_FORMATS.FULL)}
                       </td>
-                      <td className="py-4 px-4 text-right">
+                      <td className="px-4 py-4 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="w-4 h-4" />
+                              <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleCopyInviteLink(invite.invite_token)}>
-                              <Copy className="w-4 h-4 mr-2" />
+                              <Copy className="mr-2 h-4 w-4" />
                               Copy Link
                             </DropdownMenuItem>
                             {(invite.status === 'pending' || invite.status === 'expired') && (
@@ -316,7 +316,7 @@ export default function TeamPage() {
                                 onClick={() => resendInvite.mutate(invite.id)}
                                 disabled={resendInvite.isPending}
                               >
-                                <RefreshCw className="w-4 h-4 mr-2" />
+                                <RefreshCw className="mr-2 h-4 w-4" />
                                 Resend
                               </DropdownMenuItem>
                             )}
@@ -326,7 +326,7 @@ export default function TeamPage() {
                                 disabled={cancelInvite.isPending}
                                 className="text-destructive"
                               >
-                                <Trash2 className="w-4 h-4 mr-2" />
+                                <Trash2 className="mr-2 h-4 w-4" />
                                 Cancel
                               </DropdownMenuItem>
                             )}
@@ -342,29 +342,29 @@ export default function TeamPage() {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-foreground dark:text-white mb-4">Team Roles</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20 border-purple-200 -purple-800">
-              <div className="flex items-center gap-2 mb-2">
-                <Building2 className="w-5 h-5 text-purple-600" />
+          <h3 className="mb-4 text-lg font-semibold text-foreground dark:text-white">Team Roles</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="-purple-800 rounded-lg border-purple-200 bg-purple-50 p-4 dark:bg-purple-900/20">
+              <div className="mb-2 flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-purple-600" />
                 <h4 className="font-medium text-foreground dark:text-white">Admin</h4>
               </div>
               <p className="text-sm text-zinc-600 dark:text-muted-foreground">
                 Full access to all calendars, can invite and manage team members
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-primary/5 dark:bg-blue-900/20 border-primary/20 -blue-800">
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-primary" />
+            <div className="-blue-800 rounded-lg border-primary/20 bg-primary/5 p-4 dark:bg-blue-900/20">
+              <div className="mb-2 flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
                 <h4 className="font-medium text-foreground dark:text-white">Member</h4>
               </div>
               <p className="text-sm text-zinc-600 dark:text-muted-foreground">
                 Can view and edit shared calendars, create and modify events
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-muted dark:bg-gray-900/20 border -gray-700">
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-foreground" />
+            <div className="-gray-700 rounded-lg border bg-muted p-4 dark:bg-gray-900/20">
+              <div className="mb-2 flex items-center gap-2">
+                <Users className="h-5 w-5 text-foreground" />
                 <h4 className="font-medium text-foreground dark:text-white">Viewer</h4>
               </div>
               <p className="text-sm text-zinc-600 dark:text-muted-foreground">

@@ -99,9 +99,9 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
   if (successTicketNumber) {
     return (
       <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-        <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border">
+        <DialogContent className="border bg-background bg-secondary sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-medium text-foreground dark:text-primary-foreground flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-lg font-medium text-foreground">
               <CheckCircle className="h-5 w-5 text-primary" />
               {t('support.modal.submitSuccessTitle')}
             </DialogTitle>
@@ -114,7 +114,7 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
               </div>
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">{t('support.modal.submitSuccessDescription')}</p>
-                <p className="text-2xl font-bold text-foreground font-mono tracking-wide">{successTicketNumber}</p>
+                <p className="font-mono text-2xl font-bold tracking-wide text-foreground">{successTicketNumber}</p>
                 <p className="text-sm text-muted-foreground">{t('support.modal.ticketNumber')}</p>
               </div>
             </div>
@@ -135,22 +135,20 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-2xl bg-background dark:bg-secondary border p-0 overflow-hidden">
-        <DialogHeader className="px-6 pt-6 pb-0">
-          <DialogTitle className="text-lg font-medium text-foreground dark:text-primary-foreground">
-            {t('support.modal.title')}
-          </DialogTitle>
+      <DialogContent className="overflow-hidden border bg-background bg-secondary p-0 sm:max-w-2xl">
+        <DialogHeader className="px-6 pb-0 pt-6">
+          <DialogTitle className="text-lg font-medium text-foreground">{t('support.modal.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="p-6 pt-4">
-          <div className="grid grid-cols-2 gap-4 min-h-[280px]">
+          <div className="grid min-h-[280px] grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <div className="flex items-center justify-center gap-1 mb-3">
+              <div className="mb-3 flex items-center justify-center gap-1">
                 <button
                   type="button"
                   onClick={() => setInputMode('type')}
                   className={cn(
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-l-full text-sm font-medium transition-all',
+                    'flex items-center gap-1.5 rounded-l-full px-3 py-1.5 text-sm font-medium transition-all',
                     inputMode === 'type'
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted/50 text-muted-foreground hover:bg-muted',
@@ -164,11 +162,11 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
                   onClick={() => setInputMode('voice')}
                   disabled={!speechRecognitionSupported}
                   className={cn(
-                    'flex items-center gap-1.5 px-3 py-1.5 rounded-r-full text-sm font-medium transition-all',
+                    'flex items-center gap-1.5 rounded-r-full px-3 py-1.5 text-sm font-medium transition-all',
                     inputMode === 'voice'
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted/50 text-muted-foreground hover:bg-muted',
-                    !speechRecognitionSupported && 'opacity-50 cursor-not-allowed',
+                    !speechRecognitionSupported && 'cursor-not-allowed opacity-50',
                   )}
                 >
                   <Mic className="h-3.5 w-3.5" />
@@ -182,16 +180,16 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={t('support.modal.describeIssue')}
                   disabled={isSubmitting}
-                  className="flex-1 min-h-[200px] resize-none border border-input bg-background/50 rounded-xl p-4 text-sm"
+                  className="min-h-[200px] flex-1 resize-none rounded-xl border border-input bg-background/50 p-4 text-sm"
                 />
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center bg-muted/20 rounded-xl border border-dashed border-muted-foreground/20 relative">
+                <div className="relative flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/20 bg-muted/20">
                   {isRecording && (
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={cancelRecording}
-                      className="absolute top-2 right-2 h-7 w-7 text-muted-foreground hover:text-foreground"
+                      className="absolute right-2 top-2 h-7 w-7 text-muted-foreground hover:text-foreground"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -211,23 +209,23 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
             </div>
 
             <div className="flex flex-col">
-              <div className="flex items-center justify-center mb-3">
+              <div className="mb-3 flex items-center justify-center">
                 <span className="text-sm font-medium text-muted-foreground">
                   {t('support.modal.whatAllyUnderstood')}
                 </span>
               </div>
-              <div className="flex-1 bg-muted/30 rounded-xl p-4 border border-muted/50">
+              <div className="flex-1 rounded-xl border border-muted/50 bg-muted/30 p-4">
                 {message.trim() ? (
-                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{message}</p>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{message}</p>
                 ) : (
-                  <p className="text-sm text-muted-foreground/60 italic">{t('support.modal.messageWillAppear')}</p>
+                  <p className="text-sm italic text-muted-foreground/60">{t('support.modal.messageWillAppear')}</p>
                 )}
               </div>
             </div>
           </div>
 
           <div className="mt-6 flex justify-center">
-            <Button onClick={handleSubmit} disabled={isSubmitting || !message.trim()} className="px-8 gap-2" size="lg">
+            <Button onClick={handleSubmit} disabled={isSubmitting || !message.trim()} className="gap-2 px-8" size="lg">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />

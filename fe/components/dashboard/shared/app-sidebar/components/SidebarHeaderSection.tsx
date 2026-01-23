@@ -24,10 +24,10 @@ export function SidebarHeaderSection() {
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-white dark:text-foreground">
-                <AllyLogo className="w-5 h-5" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-background bg-secondary text-foreground">
+                <AllyLogo className="h-5 w-5" />
               </div>
-              <span className="font-medium text-lg tracking-normal flex items-center">
+              <span className="flex items-center text-lg font-medium tracking-normal">
                 Ally <BetaBadge />
               </span>
             </Link>
@@ -35,7 +35,7 @@ export function SidebarHeaderSection() {
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton onClick={handleNewChatClick} tooltip="New Chat">
-            <Plus className="w-5 h-5" />
+            <Plus className="h-5 w-5" />
             <span>New Chat</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

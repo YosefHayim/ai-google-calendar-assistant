@@ -16,9 +16,9 @@ export function BooleanStatus({ title, tooltipTitle, tooltipDescription, value, 
     <InfoSection title={title} tooltipTitle={tooltipTitle} tooltipDescription={tooltipDescription} icon={icon}>
       <div className="flex items-center gap-2">
         {value ? (
-          <span className="text-sm text-primary dark:text-primary font-medium">Yes</span>
+          <span className="text-sm font-medium text-primary">Yes</span>
         ) : (
-          <span className="text-sm text-muted-foreground dark:text-muted-foreground">No</span>
+          <span className="text-sm text-muted-foreground">No</span>
         )}
       </div>
     </InfoSection>

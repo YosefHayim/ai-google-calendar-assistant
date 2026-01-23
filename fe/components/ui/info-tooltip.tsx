@@ -56,16 +56,16 @@ export function InfoTooltip({
       <HoverCardTrigger asChild>
         <span
           className={cn(
-            'inline-flex cursor-help text-muted-foreground hover:text-foreground transition-colors',
+            'inline-flex cursor-help text-muted-foreground transition-colors hover:text-foreground',
             iconClassName,
           )}
         >
-          {icon || <Info className="w-3.5 h-3.5" />}
+          {icon || <Info className="h-3.5 w-3.5" />}
         </span>
       </HoverCardTrigger>
       <HoverCardContent side={side} align={align} className={cn(width, 'text-xs', contentClassName)}>
-        {title && <p className="font-medium mb-1">{title}</p>}
-        <div className="text-muted-foreground dark:text-muted-foreground">{children}</div>
+        {title && <p className="mb-1 font-medium">{title}</p>}
+        <div className="text-muted-foreground">{children}</div>
       </HoverCardContent>
     </HoverCard>
   )

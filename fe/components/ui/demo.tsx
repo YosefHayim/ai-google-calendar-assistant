@@ -5,14 +5,14 @@ import { SparklesCore } from '@/components/ui/sparkles' // Adjusted import path
 
 export function SparklesPreview() {
   return (
-    <div className="h-[40rem] w-full bg-foreground flex flex-col items-center justify-center overflow-hidden rounded-md">
-      <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">Acme</h1>
-      <div className="w-[40rem] h-40 relative">
+    <div className="flex h-[40rem] w-full flex-col items-center justify-center overflow-hidden rounded-md bg-foreground">
+      <h1 className="relative z-20 text-center text-3xl font-bold text-foreground md:text-7xl lg:text-9xl">Acme</h1>
+      <div className="relative h-40 w-[40rem]">
         {/* Gradients */}
-        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />
-        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-px w-3/4" />
-        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[5px] w-1/4 blur-sm" />
-        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4" />
+        <div className="absolute inset-x-20 top-0 h-[2px] w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent blur-sm" />
+        <div className="absolute inset-x-20 top-0 h-px w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+        <div className="absolute inset-x-60 top-0 h-[5px] w-1/4 bg-gradient-to-r from-transparent via-sky-500 to-transparent blur-sm" />
+        <div className="absolute inset-x-60 top-0 h-px w-1/4 bg-gradient-to-r from-transparent via-sky-500 to-transparent" />
 
         {/* Core component */}
         <SparklesCore
@@ -20,12 +20,12 @@ export function SparklesPreview() {
           minSize={0.4}
           maxSize={1}
           particleDensity={1200}
-          className="w-full h-full"
+          className="h-full w-full"
           particleColor="#FFFFFF"
         />
 
         {/* Radial Gradient to prevent sharp edges */}
-        <div className="absolute inset-0 w-full h-full bg-foreground [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
+        <div className="absolute inset-0 h-full w-full bg-foreground [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
       </div>
     </div>
   )
@@ -33,44 +33,46 @@ export function SparklesPreview() {
 
 export function SparklesPreviewDark() {
   return (
-    <div className="h-[40rem] relative w-full bg-foreground flex flex-col items-center justify-center overflow-hidden rounded-md">
-      <div className="w-full absolute inset-0 h-screen">
+    <div className="relative flex h-[40rem] w-full flex-col items-center justify-center overflow-hidden rounded-md bg-foreground">
+      <div className="absolute inset-0 h-screen w-full">
         <SparklesCore
           id="tsparticlesfullpage"
           background="transparent"
           minSize={0.6}
           maxSize={1.4}
           particleDensity={100}
-          className="w-full h-full"
+          className="h-full w-full"
           particleColor="#FFFFFF"
           speed={1}
         />
       </div>
-      <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">Build faster</h1>
+      <h1 className="relative z-20 text-center text-3xl font-bold text-foreground md:text-7xl lg:text-9xl">
+        Build faster
+      </h1>
     </div>
   )
 }
 
 export function SparklesPreviewColorful() {
   return (
-    <div className="h-[40rem] relative w-full bg-foreground flex flex-col items-center justify-center overflow-hidden rounded-md">
-      <div className="w-full absolute inset-0 h-screen">
+    <div className="relative flex h-[40rem] w-full flex-col items-center justify-center overflow-hidden rounded-md bg-foreground">
+      <div className="absolute inset-0 h-screen w-full">
         <SparklesCore
           id="tsparticlescolorful"
           background="transparent"
           minSize={0.6}
           maxSize={1.4}
           particleDensity={100}
-          className="w-full h-full"
+          className="h-full w-full"
           particleColor="#00ff00"
           speed={0.5}
         />
       </div>
-      <div className="flex flex-col items-center justify-center gap-4 relative z-20">
-        <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
+      <div className="relative z-20 flex flex-col items-center justify-center gap-4">
+        <h1 className="bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-center text-3xl font-bold text-transparent md:text-7xl lg:text-9xl">
           The Future
         </h1>
-        <p className="text-neutral-300 cursor-default text-center">is brighter than you think</p>
+        <p className="cursor-default text-center text-neutral-300">is brighter than you think</p>
       </div>
     </div>
   )

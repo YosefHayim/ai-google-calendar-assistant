@@ -31,7 +31,7 @@ export function DayView({
   const hasNoEvents = events.length === 0
 
   return (
-    <Card className="overflow-auto relative">
+    <Card className="relative overflow-auto">
       {hasNoEvents && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <EmptyState
@@ -48,14 +48,14 @@ export function DayView({
           return (
             <div
               key={hour}
-              className="flex border-b last:border-b-0 touch-manipulation"
+              className="flex touch-manipulation border-b last:border-b-0"
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => onDrop(currentDate, hour)}
             >
               <div className="w-12 flex-shrink-0 border-r p-1.5 text-[10px] text-muted-foreground sm:w-14 sm:p-2 sm:text-xs md:w-20 md:p-3 md:text-sm">
                 {hour.toString().padStart(2, '0')}:00
               </div>
-              <div className="min-h-12 flex-1 p-1 transition-colors hover:bg-accent/50 active:bg-accent/70 sm:min-h-16 md:min-h-20 sm:p-1.5 md:p-2">
+              <div className="min-h-12 flex-1 p-1 transition-colors hover:bg-accent/50 active:bg-accent/70 sm:min-h-16 sm:p-1.5 md:min-h-20 md:p-2">
                 <div className="space-y-1 sm:space-y-2">
                   {hourEvents.map((event) => (
                     <EventCard

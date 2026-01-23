@@ -37,33 +37,26 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
   return (
     <div
       className={cn(
-        'group relative flex items-start gap-3 p-3 rounded-lg transition-colors',
-        notification.read
-          ? 'bg-transparent hover:bg-muted dark:hover:bg-secondary'
-          : 'bg-primary/5/50 dark:bg-blue-950/20',
+        'group relative flex items-start gap-3 rounded-lg p-3 transition-colors',
+        notification.read ? 'bg-transparent hover:bg-muted hover:bg-secondary' : 'bg-blue-950/20',
       )}
     >
       <div className={cn('mt-0.5 flex-shrink-0', iconColor)}>
-        <Icon className="w-5 h-5" />
+        <Icon className="h-5 w-5" />
       </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <p
-            className={cn(
-              'text-sm font-medium text-foreground dark:text-primary-foreground',
-              !notification.read && 'font-semibold',
-            )}
-          >
+          <p className={cn('text-sm font-medium text-foreground', !notification.read && 'font-semibold')}>
             {notification.title}
           </p>
-          {!notification.read && <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />}
+          {!notification.read && <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-primary" />}
         </div>
-        <p className="text-sm text-muted-foreground line-clamp-2 mt-0.5">{notification.message}</p>
-        <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">{formattedTime}</p>
+        <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{notification.message}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{formattedTime}</p>
       </div>
 
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
         {!notification.read && (
           <Button
             variant="ghost"
@@ -75,7 +68,7 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
             }}
             title="Mark as read"
           >
-            <Check className="w-4 h-4" />
+            <Check className="h-4 w-4" />
           </Button>
         )}
         <Button
@@ -88,7 +81,7 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
           }}
           title="Remove notification"
         >
-          <X className="w-4 h-4" />
+          <X className="h-4 w-4" />
         </Button>
       </div>
     </div>

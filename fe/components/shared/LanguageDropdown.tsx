@@ -21,8 +21,8 @@ export function LanguageDropdown({ className, triggerClassName, compact = false 
       <DropdownMenuTrigger
         className={cn(
           'flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium transition-colors',
-          'text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground',
-          'hover:bg-secondary dark:hover:bg-secondary',
+          'text-muted-foreground hover:text-foreground hover:text-primary-foreground',
+          'hover:bg-secondary',
           'focus:outline-none',
           triggerClassName,
         )}
@@ -36,8 +36,8 @@ export function LanguageDropdown({ className, triggerClassName, compact = false 
             key={lang.code}
             onClick={() => changeLanguage(lang.code)}
             className={cn(
-              'flex items-center justify-between gap-2 cursor-pointer',
-              currentLanguage === lang.code && 'bg-secondary dark:bg-secondary',
+              'flex cursor-pointer items-center justify-between gap-2',
+              currentLanguage === lang.code && 'bg-secondary',
             )}
           >
             <div className="flex items-center gap-2">

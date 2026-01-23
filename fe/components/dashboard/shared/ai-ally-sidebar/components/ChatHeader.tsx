@@ -14,26 +14,26 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
   return (
-    <div className="relative flex items-center justify-between px-4 py-3 border-b border/50 /50 bg-gradient-to-r from-zinc-50/80 to-white/80 dark:from-zinc-900/80 dark:to-zinc-950/80 backdrop-blur-xl rounded-t-2xl">
+    <div className="border/50 /50 relative flex items-center justify-between rounded-t-2xl border-b bg-gradient-to-r from-zinc-900/80 to-zinc-950/80 px-4 py-3 backdrop-blur-xl">
       <motion.div
-        className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-primary via-orange-500 to-primary rounded-full"
+        className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full bg-gradient-to-r from-primary via-orange-500 to-primary"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       />
 
       <div className="flex items-center gap-3">
-        <div className="relative w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/20">
-          <VoicePoweredOrb enableVoiceControl={false} className="w-full h-full" maxRotationSpeed={0.2} />
+        <div className="relative h-9 w-9 overflow-hidden rounded-xl shadow-lg shadow-primary/20">
+          <VoicePoweredOrb enableVoiceControl={false} className="h-full w-full" maxRotationSpeed={0.2} />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-foreground dark:text-primary-foreground flex items-center gap-1.5">
+          <h3 className="flex items-center gap-1.5 text-sm font-bold text-foreground">
             Ally
-            <span className="px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-md">
+            <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-primary">
               AI
             </span>
           </h3>
-          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Online</p>
+          <p className="text-xs font-medium text-emerald-400">Online</p>
         </div>
       </div>
 

@@ -20,7 +20,7 @@ export const Tab: React.FC<TabProps> = ({ text, selected, setSelected, discount 
       onClick={() => setSelected(text)}
       className={cn(
         'relative w-fit px-4 py-2 text-sm font-semibold capitalize',
-        'text-foreground dark:text-primary-foreground transition-colors',
+        'text-foreground transition-colors',
         discount && 'flex items-center justify-center gap-2.5',
       )}
     >
@@ -29,15 +29,15 @@ export const Tab: React.FC<TabProps> = ({ text, selected, setSelected, discount 
         <motion.span
           layoutId="tab"
           transition={{ type: 'spring', duration: 0.4 }}
-          className="absolute inset-0 z-0 rounded-full bg-background dark:bg-secondary shadow-sm"
+          className="absolute inset-0 z-0 rounded-full bg-background bg-secondary shadow-sm"
         />
       )}
       {discount && (
         <Badge
           variant="secondary"
           className={cn(
-            'relative z-10 whitespace-nowrap shadow-none bg-primary/20 text-primary border-primary/30',
-            selected && 'bg-accent dark:bg-secondary',
+            'relative z-10 whitespace-nowrap border-primary/30 bg-primary/20 text-primary shadow-none',
+            selected && 'bg-accent bg-secondary',
           )}
         >
           Save 35%

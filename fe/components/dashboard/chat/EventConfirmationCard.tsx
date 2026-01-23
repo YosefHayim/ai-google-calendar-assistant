@@ -30,9 +30,9 @@ type EventConfirmationCardProps = {
 }
 
 const confidenceColors = {
-  high: 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary',
-  medium: 'bg-secondary/10 text-secondary-foreground dark:bg-secondary/20 dark:text-secondary-foreground',
-  low: 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive',
+  high: 'bg-primary/10 text-primary/20',
+  medium: 'bg-secondary/10 text-secondary-foreground bg-secondary/20',
+  low: 'bg-destructive/10 text-destructive/20',
 }
 
 const formatEventDate = (startTime: string): string => {
@@ -77,12 +77,12 @@ export const EventConfirmationCard = ({
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-3 max-h-64 overflow-y-auto">
+      <CardContent className="max-h-64 space-y-3 overflow-y-auto">
         {events.map((event) => (
-          <div key={event.id} className="p-3 rounded-lg bg-muted/50 border border-border/50 space-y-2">
+          <div key={event.id} className="space-y-2 rounded-lg border border-border/50 bg-muted/50 p-3">
             <div className="flex items-start justify-between gap-2">
-              <h4 className="font-medium text-sm leading-tight">{event.title}</h4>
-              <Badge variant="outline" className={cn('text-xs shrink-0', confidenceColors[event.confidence])}>
+              <h4 className="text-sm font-medium leading-tight">{event.title}</h4>
+              <Badge variant="outline" className={cn('shrink-0 text-xs', confidenceColors[event.confidence])}>
                 {event.confidence}
               </Badge>
             </div>
@@ -106,18 +106,18 @@ export const EventConfirmationCard = ({
               )}
             </div>
 
-            {event.description && <p className="text-xs text-muted-foreground line-clamp-2">{event.description}</p>}
+            {event.description && <p className="line-clamp-2 text-xs text-muted-foreground">{event.description}</p>}
           </div>
         ))}
       </CardContent>
 
       <CardFooter className="flex gap-2 pt-3">
         <Button variant="outline" onClick={onCancel} disabled={isLoading} className="flex-1">
-          <X className="h-4 w-4 mr-1" />
+          <X className="mr-1 h-4 w-4" />
           {t('eventConfirmation.cancel')}
         </Button>
         <Button onClick={onConfirm} disabled={isLoading} className="flex-1">
-          <Check className="h-4 w-4 mr-1" />
+          <Check className="mr-1 h-4 w-4" />
           {t('eventConfirmation.addEvents', { eventText })}
         </Button>
       </CardFooter>

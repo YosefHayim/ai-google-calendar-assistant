@@ -11,17 +11,17 @@ export function SchedulingContent() {
   return (
     <div className="space-y-2 pt-10">
       <div className="flex justify-end">
-        <div className="bg-secondary dark:bg-secondary text-white dark:text-foreground px-3 py-2 rounded-2xl rounded-tr-none text-xs font-medium shadow-lg flex items-center gap-2 max-w-[80%]">
+        <div className="flex max-w-[80%] items-center gap-2 rounded-2xl rounded-tr-none bg-secondary px-3 py-2 text-xs font-medium text-foreground shadow-lg">
           Find 30m for me, Sarah, and Alex tomorrow.
         </div>
       </div>
       <div className="flex justify-start">
-        <div className="bg-background dark:bg-secondary px-3 py-2 rounded-2xl rounded-tl-none text-xs font-medium shadow-sm flex flex-col gap-1 max-w-[80%]">
-          <div className="flex items-center gap-2 text-foreground dark:text-primary-foreground">
-            <AllyLogo className="w-3.5 h-3.5" />
+        <div className="flex max-w-[80%] flex-col gap-1 rounded-2xl rounded-tl-none bg-background bg-secondary px-3 py-2 text-xs font-medium shadow-sm">
+          <div className="flex items-center gap-2 text-foreground">
+            <AllyLogo className="h-3.5 w-3.5" />
             <span>Scanning calendars...</span>
           </div>
-          <div className="flex items-center gap-2 text-primary text-xs mt-1">
+          <div className="mt-1 flex items-center gap-2 text-xs text-primary">
             <Check size={16} />
             <span>Done. Tuesday 2:30 PM.</span>
           </div>
@@ -35,17 +35,17 @@ export function WhatsAppContent() {
   return (
     <div className="space-y-2 pt-10">
       <div className="flex justify-start">
-        <div className="bg-primary text-primary-foreground px-3 py-2 rounded-2xl rounded-tl-none text-xs font-medium shadow-lg flex flex-col gap-1 max-w-[85%]">
-          <div className="flex items-center gap-2 mb-1">
-            <WhatsAppIcon className="w-4 h-4" />
-            <span className="text-xs opacity-70 font-bold uppercase tracking-wider">Ally AI</span>
+        <div className="flex max-w-[85%] flex-col gap-1 rounded-2xl rounded-tl-none bg-primary px-3 py-2 text-xs font-medium text-primary-foreground shadow-lg">
+          <div className="mb-1 flex items-center gap-2">
+            <WhatsAppIcon className="h-4 w-4" />
+            <span className="text-xs font-bold uppercase tracking-wider opacity-70">Ally AI</span>
           </div>
           <span>&quot;Move the board call back 15 mins and notify stakeholders.&quot;</span>
         </div>
       </div>
       <div className="flex justify-end">
-        <div className="bg-background dark:bg-secondary px-3 py-2 rounded-2xl rounded-tr-none text-xs font-medium shadow-sm">
-          <div className="flex items-center gap-2 text-primary font-bold">
+        <div className="rounded-2xl rounded-tr-none bg-background bg-secondary px-3 py-2 text-xs font-medium shadow-sm">
+          <div className="flex items-center gap-2 font-bold text-primary">
             <Check size={16} />
             <span>Acknowledged. 2:15 PM.</span>
           </div>
@@ -58,23 +58,23 @@ export function WhatsAppContent() {
 export function SummariesContent() {
   return (
     <div className="space-y-2 pt-10">
-      <div className="p-3 bg-muted dark:bg-secondary rounded-xl border ">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Board Call Summary</span>
+      <div className="rounded-xl border bg-muted bg-secondary p-3">
+        <div className="mb-2 flex items-center gap-2">
+          <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
+          <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Board Call Summary</span>
         </div>
         <ul className="space-y-2">
-          <li className="flex items-start gap-2 text-xs font-medium text-muted-foreground dark:text-muted-foreground">
-            <Check className="w-3 h-3 text-primary shrink-0" /> Approved Q4 budget
+          <li className="flex items-start gap-2 text-xs font-medium text-muted-foreground">
+            <Check className="h-3 w-3 shrink-0 text-primary" /> Approved Q4 budget
           </li>
-          <li className="flex items-start gap-2 text-xs font-medium text-muted-foreground dark:text-muted-foreground">
-            <Check className="w-3 h-3 text-primary shrink-0" /> Hiring for AI Ops leads
+          <li className="flex items-start gap-2 text-xs font-medium text-muted-foreground">
+            <Check className="h-3 w-3 shrink-0 text-primary" /> Hiring for AI Ops leads
           </li>
         </ul>
       </div>
-      <div className="p-2 bg-primary rounded-lg flex items-center justify-between">
-        <span className="text-xs font-bold text-white uppercase ml-2">3 Tasks Created</span>
-        <ArrowRight className="w-3 h-3 text-white mr-2" />
+      <div className="flex items-center justify-between rounded-lg bg-primary p-2">
+        <span className="ml-2 text-xs font-bold uppercase text-foreground">3 Tasks Created</span>
+        <ArrowRight className="mr-2 h-3 w-3 text-foreground" />
       </div>
     </div>
   )
@@ -83,15 +83,15 @@ export function SummariesContent() {
 export function LogisticsContent() {
   return (
     <div className="flex flex-col gap-4 pt-10">
-      <div className="p-3 bg-destructive/5 dark:bg-destructive/20 border-destructive/20 dark:border-destructive/30 rounded-xl text-center">
-        <p className="text-xs font-bold text-destructive uppercase mb-1">Flight Delayed</p>
-        <p className="text-xl font-bold text-foreground dark:text-primary-foreground">+2h 15m</p>
+      <div className="bg-destructive/5/20 border-destructive/20/30 rounded-xl p-3 text-center">
+        <p className="mb-1 text-xs font-bold uppercase text-destructive">Flight Delayed</p>
+        <p className="text-xl font-bold text-foreground">+2h 15m</p>
       </div>
-      <div className="p-3 bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30 rounded-xl text-center">
-        <p className="text-xs font-bold text-primary uppercase mb-1">Ally Resolved</p>
-        <p className="text-xs font-bold text-foreground dark:text-primary-foreground">Hotel & Limo Synced</p>
+      <div className="bg-primary/10/20 border-primary/20/30 rounded-xl p-3 text-center">
+        <p className="mb-1 text-xs font-bold uppercase text-primary">Ally Resolved</p>
+        <p className="text-xs font-bold text-foreground">Hotel & Limo Synced</p>
       </div>
-      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground font-medium">
+      <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
         <MapPin size={16} /> Stakeholders updated
       </div>
     </div>
@@ -102,17 +102,15 @@ export function FocusContent() {
   return (
     <div className="flex flex-col items-center gap-4 pt-20">
       <div className="relative">
-        <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse" />
-        <div className="relative bg-secondary dark:bg-background text-white dark:text-foreground p-4 rounded-3xl shadow-2xl flex flex-col items-center gap-2">
-          <ShieldCheck className="w-10 h-10 text-primary" />
-          <span className="text-sm font-bold tracking-tight text-center">SHIELD ON</span>
+        <div className="absolute inset-0 animate-pulse rounded-full bg-primary/20 blur-2xl" />
+        <div className="relative flex flex-col items-center gap-2 rounded-3xl bg-background bg-secondary p-4 text-foreground shadow-2xl">
+          <ShieldCheck className="h-10 w-10 text-primary" />
+          <span className="text-center text-sm font-bold tracking-tight">SHIELD ON</span>
         </div>
       </div>
-      <div className="bg-background dark:bg-secondary dark:bg-secondary p-3 rounded-xl shadow-sm text-center w-full">
-        <p className="text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-widest mb-1">
-          Interruption Filter
-        </p>
-        <p className="text-foreground dark:text-primary-foreground font-bold text-xs">2 syncs rescheduled</p>
+      <div className="w-full rounded-xl bg-background bg-secondary p-3 text-center shadow-sm">
+        <p className="mb-1 text-xs font-medium uppercase tracking-widest text-muted-foreground">Interruption Filter</p>
+        <p className="text-xs font-bold text-foreground">2 syncs rescheduled</p>
       </div>
     </div>
   )
@@ -121,15 +119,15 @@ export function FocusContent() {
 export function ConflictContent() {
   return (
     <div className="w-full space-y-2 pt-12">
-      <div className="p-3 bg-destructive/10 dark:bg-destructive/20 rounded-xl border-destructive/20 dark:border-destructive/30">
-        <div className="flex items-center gap-2 mb-2">
-          <AlertCircle className="w-3.5 h-3.5 text-destructive" />
-          <span className="text-xs font-bold text-destructive dark:text-destructive">Overlap Detected</span>
+      <div className="bg-destructive/10/20 border-destructive/20/30 rounded-xl p-3">
+        <div className="mb-2 flex items-center gap-2">
+          <AlertCircle className="h-3.5 w-3.5 text-destructive" />
+          <span className="text-xs font-bold text-destructive">Overlap Detected</span>
         </div>
-        <p className="text-xs font-bold text-foreground dark:text-muted-foreground">Demo vs. All Hands</p>
+        <p className="text-xs font-bold text-foreground text-muted-foreground">Demo vs. All Hands</p>
       </div>
       <div className="flex justify-center">
-        <div className="p-3 bg-secondary dark:bg-secondary text-white dark:text-foreground rounded-xl shadow-xl text-center border-white/10">
+        <div className="rounded-xl border-white/10 bg-secondary p-3 text-center text-foreground shadow-xl">
           <p className="text-xs font-bold uppercase opacity-60">Ally&apos;s Solution</p>
           <p className="text-xs font-bold">Record one, attend the other</p>
         </div>
@@ -140,22 +138,22 @@ export function ConflictContent() {
 
 export function VoiceContent() {
   return (
-    <div className="space-y-2 flex flex-col items-center w-full pt-20">
-      <div className="flex items-center gap-1 h-10">
+    <div className="flex w-full flex-col items-center space-y-2 pt-20">
+      <div className="flex h-10 items-center gap-1">
         {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="w-1 bg-primary rounded-full origin-bottom"
+            className="w-1 origin-bottom rounded-full bg-primary"
             animate={{ scaleY: [0.27, 1, 0.5, 0.83, 0.27] }}
             transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
             style={{ height: '30px' }}
           />
         ))}
       </div>
-      <div className="text-center italic text-muted-foreground dark:text-muted-foreground text-xs px-4 font-medium">
+      <div className="px-4 text-center text-xs font-medium italic text-muted-foreground">
         &quot;Remind me to check the Q3 forecasts when I land.&quot;
       </div>
-      <div className="bg-primary/10 dark:bg-primary/30 border-primary/20 dark:border-primary/50 px-3 py-1.5 rounded-full text-primary dark:text-primary text-xs font-bold flex items-center gap-2">
+      <div className="bg-primary/10/30 border-primary/20/50 flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold text-primary">
         <Check size={16} />
         Task created & Geofenced
       </div>
@@ -165,20 +163,20 @@ export function VoiceContent() {
 
 export function IntelligenceContent() {
   return (
-    <div className="grid grid-cols-1 gap-3 w-full pt-10">
-      <div className="bg-muted dark:bg-secondary p-3 rounded-xl shadow-sm flex flex-col items-center">
+    <div className="grid w-full grid-cols-1 gap-3 pt-10">
+      <div className="flex flex-col items-center rounded-xl bg-muted bg-secondary p-3 shadow-sm">
         <span className="text-xl font-bold text-primary">12h</span>
-        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Time Reclaimed</span>
+        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Time Reclaimed</span>
       </div>
-      <div className="bg-muted dark:bg-secondary p-3 rounded-xl shadow-sm flex flex-col items-center">
+      <div className="flex flex-col items-center rounded-xl bg-muted bg-secondary p-3 shadow-sm">
         <span className="text-xl font-bold text-accent">84%</span>
-        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Focus Ratio</span>
+        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Focus Ratio</span>
       </div>
-      <div className="h-16 flex items-end px-2 gap-1 mt-2">
+      <div className="mt-2 flex h-16 items-end gap-1 px-2">
         {[30, 60, 40, 90, 60, 80, 50, 95].map((h, i) => (
           <motion.div
             key={i}
-            className="flex-1 bg-primary/80 rounded-t-[2px] origin-bottom"
+            className="flex-1 origin-bottom rounded-t-[2px] bg-primary/80"
             initial={{ scaleY: 0 }}
             animate={{ scaleY: h / 100 }}
             transition={{ delay: i * 0.05, duration: 0.8 }}

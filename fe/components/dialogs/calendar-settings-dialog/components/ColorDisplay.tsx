@@ -19,26 +19,26 @@ export function ColorDisplay({ backgroundColor, foregroundColor, colorId }: Colo
       <div className="space-y-2">
         {backgroundColor && (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-md border " style={{ backgroundColor }} />
+            <div className="h-8 w-8 rounded-md border" style={{ backgroundColor }} />
             <div>
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground">Background</p>
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground font-mono">{backgroundColor}</p>
+              <p className="text-xs text-muted-foreground">Background</p>
+              <p className="font-mono text-sm text-muted-foreground">{backgroundColor}</p>
             </div>
           </div>
         )}
         {foregroundColor && (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-md border " style={{ backgroundColor: foregroundColor }} />
+            <div className="h-8 w-8 rounded-md border" style={{ backgroundColor: foregroundColor }} />
             <div>
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground">Foreground</p>
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground font-mono">{foregroundColor}</p>
+              <p className="text-xs text-muted-foreground">Foreground</p>
+              <p className="font-mono text-sm text-muted-foreground">{foregroundColor}</p>
             </div>
           </div>
         )}
         {colorId && (
           <div className="flex items-center gap-2">
-            <p className="text-xs text-muted-foreground dark:text-muted-foreground">Color ID</p>
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground">{colorId}</p>
+            <p className="text-xs text-muted-foreground">Color ID</p>
+            <p className="text-sm text-muted-foreground">{colorId}</p>
           </div>
         )}
       </div>

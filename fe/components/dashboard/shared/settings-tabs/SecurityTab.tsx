@@ -20,7 +20,7 @@ export const SecurityTab: React.FC = () => {
             id="mfa"
             title="Authenticator App (MFA)"
             tooltip="Require a 2FA code when logging in from a new device for enhanced security"
-            icon={<ShieldCheck size={18} className="text-foreground dark:text-primary" />}
+            icon={<ShieldCheck size={18} className="text-foreground" />}
             control={<CinematicGlowToggle id={toggleId} checked={authenticatorApp} onChange={setAuthenticatorApp} />}
           />
         </SettingsSection>
@@ -30,10 +30,10 @@ export const SecurityTab: React.FC = () => {
             id="active-sessions"
             title="Active Sessions"
             tooltip="View and manage your active login sessions across devices"
-            icon={<Monitor size={18} className="text-foreground dark:text-primary" />}
+            icon={<Monitor size={18} className="text-foreground" />}
             control={
               <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground hover:text-foreground">
-                1 (Current) <ChevronRight className="w-4 h-4" />
+                1 (Current) <ChevronRight className="h-4 w-4" />
               </Button>
             }
           />

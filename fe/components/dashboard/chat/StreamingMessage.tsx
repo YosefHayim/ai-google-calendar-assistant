@@ -38,44 +38,44 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
   const isRTL = textDirection === 'rtl'
 
   return (
-    <div className="flex w-full mb-2 justify-start">
-      <div className="max-w-[85%] md:max-w-[75%] flex flex-col items-start">
+    <div className="mb-2 flex w-full justify-start">
+      <div className="flex max-w-[85%] flex-col items-start md:max-w-[75%]">
         <div
-          className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-background dark:bg-secondary border-border text-foreground shadow-sm"
+          className="rounded-md rounded-tl-none border-border bg-background bg-secondary px-4 py-3 text-sm leading-relaxed text-foreground shadow-sm"
           dir={content ? textDirection : undefined}
         >
           {showToolIndicator && (
             <div className="flex items-center gap-3">
               {/* Mini pulsing orb with spinner */}
-              <div className="relative w-6 h-6 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
-                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              <div className="relative flex h-6 w-6 items-center justify-center">
+                <div className="absolute inset-0 animate-pulse rounded-full bg-primary/20" />
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
               </div>
               <span className="text-xs font-medium text-muted-foreground">{getToolDisplayName(currentTool)}</span>
             </div>
           )}
 
           {content && (
-            <div className={cn('prose prose-sm max-w-none prose-zinc dark:prose-invert', isRTL && 'text-right')}>
+            <div className={cn('prose prose-sm prose-zinc prose-invert max-w-none', isRTL && 'text-right')}>
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
             </div>
           )}
 
-          {isStreaming && content && <span className="inline-block w-2 h-4 ml-1 bg-primary animate-pulse rounded-sm" />}
+          {isStreaming && content && <span className="ml-1 inline-block h-4 w-2 animate-pulse rounded-sm bg-primary" />}
 
           {isStreaming && !content && !currentTool && (
             <div className="flex items-center gap-3">
               {/* Mini pulsing orb */}
-              <div className="relative w-6 h-6 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
-                <div className="relative w-4 h-4 rounded-full bg-gradient-to-br from-primary to-orange-600 animate-pulse shadow-lg shadow-primary/40" />
+              <div className="relative flex h-6 w-6 items-center justify-center">
+                <div className="absolute inset-0 animate-ping rounded-full bg-primary/30" />
+                <div className="relative h-4 w-4 animate-pulse rounded-full bg-gradient-to-br from-primary to-orange-600 shadow-lg shadow-primary/40" />
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-medium text-muted-foreground">Ally is thinking...</span>
                 <div className="flex gap-1">
-                  <div className="w-1 h-1 bg-primary/60 rounded-full animate-bounce" />
-                  <div className="w-1 h-1 bg-primary/60 rounded-full animate-bounce [animation-delay:0.15s]" />
-                  <div className="w-1 h-1 bg-primary/60 rounded-full animate-bounce [animation-delay:0.3s]" />
+                  <div className="h-1 w-1 animate-bounce rounded-full bg-primary/60" />
+                  <div className="h-1 w-1 animate-bounce rounded-full bg-primary/60 [animation-delay:0.15s]" />
+                  <div className="h-1 w-1 animate-bounce rounded-full bg-primary/60 [animation-delay:0.3s]" />
                 </div>
               </div>
             </div>

@@ -310,24 +310,24 @@ export default function AdminBlogPage() {
   // ----------------------------------------------------------------
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground dark:text-white">Create Blog Post</h1>
-        <p className="text-muted-foreground dark:text-muted-foreground mt-1">Write and publish new blog articles</p>
+        <p className="mt-1 text-muted-foreground dark:text-muted-foreground">Write and publish new blog articles</p>
       </div>
 
       <Tabs defaultValue="editor" className="w-full">
         <TabsList className="grid w-full max-w-lg grid-cols-3">
           <TabsTrigger value="editor" className="gap-2">
-            <FileText className="w-4 h-4" />
+            <FileText className="h-4 w-4" />
             Editor
           </TabsTrigger>
           <TabsTrigger value="ai" className="gap-2">
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="h-4 w-4" />
             GEO AI Generate
           </TabsTrigger>
           <TabsTrigger value="json" className="gap-2">
-            <Code className="w-4 h-4" />
+            <Code className="h-4 w-4" />
             JSON Template
           </TabsTrigger>
         </TabsList>
@@ -336,11 +336,11 @@ export default function AdminBlogPage() {
           <Tabs defaultValue="form" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="form" className="gap-2">
-                <FormInput className="w-4 h-4" />
+                <FormInput className="h-4 w-4" />
                 Single Post
               </TabsTrigger>
               <TabsTrigger value="bulk" className="gap-2">
-                <Upload className="w-4 h-4" />
+                <Upload className="h-4 w-4" />
                 Bulk JSON
               </TabsTrigger>
             </TabsList>
@@ -417,7 +417,7 @@ export default function AdminBlogPage() {
                         )}
                       />
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         {/* Category */}
                         <FormField
                           control={form.control}
@@ -460,7 +460,7 @@ export default function AdminBlogPage() {
                               <FormMessage />
                               {/* Tag Preview */}
                               {field.value && (
-                                <div className="flex flex-wrap gap-2 mt-2">
+                                <div className="mt-2 flex flex-wrap gap-2">
                                   {field.value
                                     .split(',')
                                     .map((t) => t.trim())
@@ -477,7 +477,7 @@ export default function AdminBlogPage() {
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         {/* Status */}
                         <FormField
                           control={form.control}
@@ -495,13 +495,13 @@ export default function AdminBlogPage() {
                                     <FormControl>
                                       <RadioGroupItem value="published" />
                                     </FormControl>
-                                    <FormLabel className="font-normal cursor-pointer">Published</FormLabel>
+                                    <FormLabel className="cursor-pointer font-normal">Published</FormLabel>
                                   </FormItem>
                                   <FormItem className="flex items-center space-x-2 space-y-0">
                                     <FormControl>
                                       <RadioGroupItem value="draft" />
                                     </FormControl>
-                                    <FormLabel className="font-normal cursor-pointer">Draft</FormLabel>
+                                    <FormLabel className="cursor-pointer font-normal">Draft</FormLabel>
                                   </FormItem>
                                 </RadioGroup>
                               </FormControl>
@@ -528,7 +528,7 @@ export default function AdminBlogPage() {
                         />
                       </div>
 
-                      <div className="flex justify-end gap-3 pt-4 border-t ">
+                      <div className="flex justify-end gap-3 border-t pt-4">
                         <Button
                           type="button"
                           variant="outline"
@@ -549,12 +549,12 @@ export default function AdminBlogPage() {
                         <Button type="submit" disabled={createPost.isPending}>
                           {createPost.isPending ? (
                             <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                               Creating...
                             </>
                           ) : (
                             <>
-                              <FileText className="w-4 h-4 mr-2" />
+                              <FileText className="mr-2 h-4 w-4" />
                               Create Post
                             </>
                           )}
@@ -567,18 +567,18 @@ export default function AdminBlogPage() {
             </TabsContent>
 
             <TabsContent value="bulk">
-              <Card className="p-6 space-y-6">
+              <Card className="space-y-6 p-6">
                 <div>
-                  <h3 className="font-semibold text-foreground dark:text-white mb-2">Bulk Create from JSON</h3>
+                  <h3 className="mb-2 font-semibold text-foreground dark:text-white">Bulk Create from JSON</h3>
                   <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                     Paste a JSON array of blog posts to create multiple posts in one request. Use the JSON Template tab
                     for the expected format.
                   </p>
                 </div>
 
-                <div className="bg-accent/30 border-accent rounded-lg p-4">
-                  <h4 className="font-medium text-accent-foreground mb-2">🤖 GEO/AEO Optimization Features</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                <div className="rounded-lg border-accent bg-accent/30 p-4">
+                  <h4 className="mb-2 font-medium text-accent-foreground">🤖 GEO/AEO Optimization Features</h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>
                       • <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs
                     </li>
@@ -600,9 +600,9 @@ export default function AdminBlogPage() {
                   </ul>
                 </div>
 
-                <div className="bg-accent/30 border-accent rounded-lg p-4">
-                  <h4 className="font-medium text-accent-foreground mb-2">🤖 GEO/AEO Optimization Features</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                <div className="rounded-lg border-accent bg-accent/30 p-4">
+                  <h4 className="mb-2 font-medium text-accent-foreground">🤖 GEO/AEO Optimization Features</h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>
                       • <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs
                     </li>
@@ -667,28 +667,28 @@ export default function AdminBlogPage() {
                         {bulkProgress.current} / {bulkProgress.total}
                       </span>
                     </div>
-                    <div className="w-full bg-accent dark:bg-zinc-700 rounded-full h-2">
+                    <div className="h-2 w-full rounded-full bg-accent dark:bg-zinc-700">
                       <div
-                        className="bg-primary h-2 rounded-full transition-all duration-300"
+                        className="h-2 rounded-full bg-primary transition-all duration-300"
                         style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%` }}
                       />
                     </div>
                   </div>
                 )}
 
-                <div className="flex justify-end gap-3 pt-4 border-t ">
+                <div className="flex justify-end gap-3 border-t pt-4">
                   <Button type="button" variant="outline" onClick={() => setBulkJson('')} disabled={isBulkCreating}>
                     Clear
                   </Button>
                   <Button onClick={handleBulkSubmit} disabled={isBulkCreating || !bulkJson.trim()}>
                     {isBulkCreating ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Creating {bulkProgress.current}/{bulkProgress.total}...
                       </>
                     ) : (
                       <>
-                        <Upload className="w-4 h-4 mr-2" />
+                        <Upload className="mr-2 h-4 w-4" />
                         Create Posts
                       </>
                     )}
@@ -703,7 +703,7 @@ export default function AdminBlogPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
+                <Sparkles className="h-5 w-5 text-primary" />
                 GEO AI-Powered Blog Generation
               </CardTitle>
               <CardDescription>
@@ -754,7 +754,7 @@ export default function AdminBlogPage() {
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {/* Category */}
                     <FormField
                       control={aiForm.control}
@@ -844,9 +844,9 @@ export default function AdminBlogPage() {
                     )}
                   />
 
-                  <div className="bg-accent/30 border-accent rounded-lg p-4">
-                    <h4 className="font-medium text-accent-foreground mb-2">🚀 GEO/AEO Optimization Engine</h4>
-                    <ul className="text-sm text-muted-foreground space-y-1">
+                  <div className="rounded-lg border-accent bg-accent/30 p-4">
+                    <h4 className="mb-2 font-medium text-accent-foreground">🚀 GEO/AEO Optimization Engine</h4>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
                       <li>
                         • <strong>Zero-Click Optimization</strong> - Direct answers for AI search results
                       </li>
@@ -868,19 +868,19 @@ export default function AdminBlogPage() {
                     </ul>
                   </div>
 
-                  <div className="flex justify-end gap-3 pt-4 border-t border-border">
+                  <div className="flex justify-end gap-3 border-t border-border pt-4">
                     <Button type="button" variant="outline" onClick={() => aiForm.reset()}>
                       Reset Form
                     </Button>
                     <Button type="submit" disabled={generateAI.isPending} className="gap-2">
                       {generateAI.isPending ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                           Generating GEO-Optimized Content...
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-4 h-4" />
+                          <Sparkles className="h-4 w-4" />
                           Generate with GEO AI
                         </>
                       )}
@@ -897,11 +897,11 @@ export default function AdminBlogPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
+                  <Sparkles className="h-5 w-5 text-primary" />
                   <h3 className="font-semibold text-foreground dark:text-white">AI Prompt Template</h3>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => handleCopy('prompt')} className="gap-2">
-                  {copied === 'prompt' ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                  {copied === 'prompt' ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
                   {copied === 'prompt' ? 'Copied!' : 'Copy Prompt'}
                 </Button>
               </div>
@@ -911,7 +911,7 @@ export default function AdminBlogPage() {
                 Engine Optimization.
               </p>
               <div className="relative">
-                <pre className="bg-secondary text-primary-foreground p-4 rounded-lg overflow-x-auto text-xs leading-relaxed max-h-[300px] overflow-y-auto">
+                <pre className="max-h-[300px] overflow-x-auto overflow-y-auto rounded-lg bg-secondary p-4 text-xs leading-relaxed text-primary-foreground">
                   {AI_PROMPT_TEMPLATE}
                 </pre>
               </div>
@@ -922,31 +922,31 @@ export default function AdminBlogPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Code className="w-5 h-5 text-primary" />
+                  <Code className="h-5 w-5 text-primary" />
                   <h3 className="font-semibold text-foreground dark:text-white">JSON Payload Structure</h3>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => handleCopy('template')} className="gap-2">
-                  {copied === 'template' ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                  {copied === 'template' ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
                   {copied === 'template' ? 'Copied!' : 'Copy JSON'}
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                 This is the expected payload structure for creating blog posts. The{' '}
-                <code className="px-1 py-0.5 bg-secondary dark:bg-secondary rounded text-xs">_instructions</code> field
+                <code className="rounded bg-secondary px-1 py-0.5 text-xs dark:bg-secondary">_instructions</code> field
                 contains validation rules and tips.
               </p>
               <div className="relative">
-                <pre className="bg-secondary text-primary-foreground p-4 rounded-lg overflow-x-auto text-xs leading-relaxed max-h-[500px] overflow-y-auto">
+                <pre className="max-h-[500px] overflow-x-auto overflow-y-auto rounded-lg bg-secondary p-4 text-xs leading-relaxed text-primary-foreground">
                   <code>{JSON.stringify(JSON_TEMPLATE, null, 2)}</code>
                 </pre>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-primary/5 border-primary/20">
+          <Card className="border-primary/20 bg-primary/5 p-6">
             <div className="space-y-3">
-              <h3 className="font-semibold text-foreground dark:text-white flex items-center gap-2">
-                <FileText className="w-5 h-5 text-primary" />
+              <h3 className="flex items-center gap-2 font-semibold text-foreground dark:text-white">
+                <FileText className="h-5 w-5 text-primary" />
                 Supported Categories
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -963,30 +963,30 @@ export default function AdminBlogPage() {
           </Card>
 
           <Card className="p-6">
-            <h3 className="font-semibold text-foreground dark:text-white mb-4">Quick Tips</h3>
+            <h3 className="mb-4 font-semibold text-foreground dark:text-white">Quick Tips</h3>
             <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">1.</span>
+                <span className="mt-1 text-primary">1.</span>
                 <span>
                   <strong>GEO-Optimized Content</strong> - Posts are optimized for AI search engines (Google AI
                   Overviews, ChatGPT, etc.)
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">2.</span>
+                <span className="mt-1 text-primary">2.</span>
                 <span>
                   <strong>Direct Answers First</strong> - Content provides immediate solutions to rank in zero-click
                   search results
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">3.</span>
+                <span className="mt-1 text-primary">3.</span>
                 <span>
                   <strong>E-E-A-T Authority</strong> - Establishes Ask Ally as the authoritative AI calendar assistant
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">4.</span>
+                <span className="mt-1 text-primary">4.</span>
                 <span>
                   <strong>Use the AI Generate Tab</strong> for one-click GEO-optimized blog creation with your custom
                   parameters

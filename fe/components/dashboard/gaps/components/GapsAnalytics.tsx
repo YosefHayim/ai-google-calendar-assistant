@@ -71,7 +71,7 @@ export function GapsAnalytics({ gaps = [], analyzedRange, settings }: GapsAnalyt
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -129,11 +129,11 @@ export function GapsAnalytics({ gaps = [], analyzedRange, settings }: GapsAnalyt
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
           <Card className="p-6">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <BarChart3 className="h-5 w-5" />
                 {t('gaps.analytics.confidenceDistribution')}
               </CardTitle>
@@ -159,7 +159,7 @@ export function GapsAnalytics({ gaps = [], analyzedRange, settings }: GapsAnalyt
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }}>
           <Card className="p-6">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Clock className="h-5 w-5" />
                 {t('gaps.analytics.durationDistribution')}
               </CardTitle>
@@ -191,7 +191,7 @@ export function GapsAnalytics({ gaps = [], analyzedRange, settings }: GapsAnalyt
               <CardDescription>{t('gaps.analytics.settingsDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
                 <div>
                   <span className="text-muted-foreground">{t('gaps.analytics.minGap')}</span>
                   <span className="ml-2 font-medium">{settings.minGapThreshold}min</span>

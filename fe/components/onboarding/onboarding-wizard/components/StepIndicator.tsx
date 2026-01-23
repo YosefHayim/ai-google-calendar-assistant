@@ -9,7 +9,7 @@ interface StepIndicatorProps {
 
 export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
   return (
-    <div className="flex justify-center mb-6">
+    <div className="mb-6 flex justify-center">
       <div className="flex gap-1.5">
         {Array.from({ length: totalSteps }).map((_, index) => (
           <div
@@ -20,7 +20,7 @@ export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
                 ? 'w-8 bg-primary'
                 : index < currentStep
                   ? 'w-1.5 bg-primary/50'
-                  : 'w-1.5 bg-accent dark:bg-secondary',
+                  : 'w-1.5 bg-accent bg-secondary',
             )}
           />
         ))}

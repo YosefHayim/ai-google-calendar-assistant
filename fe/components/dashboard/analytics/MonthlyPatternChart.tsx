@@ -28,12 +28,12 @@ const MonthlyPatternChart: React.FC<MonthlyPatternChartProps> = ({ data, isLoadi
 
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-6">
-        <div className="flex items-center gap-2 mb-2">
-          <Skeleton className="w-5 h-5 rounded" />
+      <div className="rounded-xl bg-background bg-secondary p-6 shadow-sm">
+        <div className="mb-2 flex items-center gap-2">
+          <Skeleton className="h-5 w-5 rounded" />
           <Skeleton className="h-5 w-32" />
         </div>
-        <Skeleton className="h-4 w-48 mb-6" />
+        <Skeleton className="mb-6 h-4 w-48" />
         <Skeleton className="h-[200px] w-full" />
       </div>
     )
@@ -42,19 +42,17 @@ const MonthlyPatternChart: React.FC<MonthlyPatternChartProps> = ({ data, isLoadi
   const hasData = filteredData.length > 0
 
   return (
-    <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-2 mb-1">
-        <div className="w-8 h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center">
-          <Calendar className="w-4 h-4 text-foreground dark:text-primary" />
+    <div className="rounded-xl bg-background bg-secondary p-6 shadow-sm transition-shadow hover:shadow-md">
+      <div className="mb-1 flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary">
+          <Calendar className="h-4 w-4 text-foreground" />
         </div>
-        <h3 className="font-semibold text-foreground dark:text-primary-foreground">Monthly Pattern</h3>
+        <h3 className="font-semibold text-foreground">Monthly Pattern</h3>
       </div>
-      <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-6 ml-10">
-        Hours scheduled per day of month
-      </p>
+      <p className="mb-6 ml-10 text-xs text-muted-foreground">Hours scheduled per day of month</p>
 
       {!hasData ? (
-        <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+        <div className="flex h-[200px] items-center justify-center text-muted-foreground">
           No events scheduled in this period
         </div>
       ) : (

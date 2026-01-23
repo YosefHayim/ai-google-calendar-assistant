@@ -50,16 +50,16 @@ function ServiceIndicator({
   const isDisabled = status === 'disabled'
 
   const getStatusColor = () => {
-    if (isHealthy) return 'text-primary dark:text-primary'
-    if (isDisabled) return 'text-muted-foreground dark:text-muted-foreground'
-    return 'text-destructive dark:text-destructive'
+    if (isHealthy) return 'text-primary'
+    if (isDisabled) return 'text-muted-foreground text-muted-foreground'
+    return 'text-destructive'
   }
 
   return (
     <div className="flex items-center gap-1.5">
-      <Icon className={`w-3 h-3 ${getStatusColor()}`} />
+      <Icon className={`h-3 w-3 ${getStatusColor()}`} />
       <span className={`text-[10px] font-medium ${getStatusColor()}`}>{name}</span>
-      {detail && <span className="text-[9px] text-muted-foreground dark:text-muted-foreground">({detail})</span>}
+      {detail && <span className="text-[9px] text-muted-foreground">({detail})</span>}
     </div>
   )
 }
@@ -112,23 +112,23 @@ export function SystemStatus() {
   }
 
   const getStatusDotColor = () => {
-    if (isChecking) return 'bg-secondary dark:bg-secondary'
-    if (isOnline) return 'bg-primary dark:bg-primary'
-    return 'bg-destructive dark:bg-destructive'
+    if (isChecking) return 'bg-secondary'
+    if (isOnline) return 'bg-primary'
+    return 'bg-destructive'
   }
 
   const getStatusTextColor = () => {
-    if (isChecking) return 'text-secondary dark:text-secondary'
-    if (isOnline) return 'text-primary dark:text-primary'
-    return 'text-destructive dark:text-destructive'
+    if (isChecking) return 'text-secondary'
+    if (isOnline) return 'text-primary'
+    return 'text-destructive'
   }
 
   return (
     <TooltipProvider>
       <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
-          <span className="flex items-center gap-2 text-xs font-medium uppercase tracking-tight cursor-default">
-            <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${getStatusDotColor()}`} />
+          <span className="flex cursor-default items-center gap-2 text-xs font-medium uppercase tracking-tight">
+            <div className={`h-1.5 w-1.5 animate-pulse rounded-full ${getStatusDotColor()}`} />
             <span className={getStatusTextColor()}>
               {isChecking
                 ? t('footer.systemChecking')
@@ -138,25 +138,25 @@ export function SystemStatus() {
             </span>
           </span>
         </TooltipTrigger>
-        <TooltipContent side="top" className="p-3 max-w-xs bg-background dark:bg-secondary " sideOffset={8}>
+        <TooltipContent side="top" className="max-w-xs bg-background bg-secondary p-3" sideOffset={8}>
           {isChecking ? (
-            <p className="text-xs text-muted-foreground dark:text-muted-foreground">{t('footer.checkingServices')}</p>
+            <p className="text-xs text-muted-foreground">{t('footer.checkingServices')}</p>
           ) : !isOnline || !healthData ? (
-            <p className="text-xs text-destructive dark:text-destructive">{t('footer.serverUnreachable')}</p>
+            <p className="text-xs text-destructive">{t('footer.serverUnreachable')}</p>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-1.5">
-                  <Server className="w-3 h-3 text-primary dark:text-primary" />
-                  <span className="text-xs font-medium text-primary dark:text-primary">{t('footer.serverOnline')}</span>
+                  <Server className="h-3 w-3 text-primary" />
+                  <span className="text-xs font-medium text-primary">{t('footer.serverOnline')}</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground dark:text-muted-foreground">
+                <span className="text-[10px] text-muted-foreground">
                   {t('footer.uptime')}: {formatUptime(healthData.uptime)}
                 </span>
               </div>
 
               {healthData.services && (
-                <div className="border-t  pt-2 space-y-1.5">
+                <div className="space-y-1.5 border-t pt-2">
                   {healthData.services.websockets && (
                     <ServiceIndicator
                       icon={Wifi}

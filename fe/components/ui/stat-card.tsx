@@ -31,35 +31,29 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4 min-w-0',
+        'flex min-w-0 flex-col gap-2 rounded-md bg-background bg-secondary p-3 shadow-sm sm:gap-3 sm:p-4 md:gap-4 md:p-6',
         className,
       )}
     >
       <div className="flex items-center gap-2 sm:gap-3">
-        <div className={cn('w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-md shrink-0', iconBgColor)}>
+        <div className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-md sm:h-8 sm:w-8', iconBgColor)}>
           {icon}
         </div>
-        <h3 className="text-xs sm:text-sm font-medium text-muted-foreground dark:text-muted-foreground truncate">
-          {title}
-        </h3>
+        <h3 className="truncate text-xs font-medium text-muted-foreground sm:text-sm">{title}</h3>
       </div>
       <div className="min-w-0">
         <div className="flex items-baseline gap-2">
-          <p className="text-xl sm:text-2xl font-bold text-foreground dark:text-primary-foreground truncate">{value}</p>
+          <p className="truncate text-xl font-bold text-foreground sm:text-2xl">{value}</p>
           {trend && (
             <span
-              className={cn('text-xs font-medium shrink-0', trend.isPositive ? 'text-emerald-500' : 'text-destructive')}
+              className={cn('shrink-0 text-xs font-medium', trend.isPositive ? 'text-emerald-500' : 'text-destructive')}
             >
               {trend.isPositive ? '+' : ''}
               {trend.value}%
             </span>
           )}
         </div>
-        {description && (
-          <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground mt-1 truncate">
-            {description}
-          </p>
-        )}
+        {description && <p className="mt-1 truncate text-xs text-muted-foreground sm:text-sm">{description}</p>}
       </div>
       {children}
     </div>
@@ -70,17 +64,17 @@ export function StatCardSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4',
+        'flex flex-col gap-2 rounded-md bg-background bg-secondary p-3 shadow-sm sm:gap-3 sm:p-4 md:gap-4 md:p-6',
         className,
       )}
     >
       <div className="flex items-center gap-2 sm:gap-3">
-        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-accent dark:bg-secondary animate-pulse" />
-        <div className="h-3 w-20 bg-accent dark:bg-secondary rounded animate-pulse" />
+        <div className="h-7 w-7 animate-pulse rounded-md bg-accent bg-secondary sm:h-8 sm:w-8" />
+        <div className="h-3 w-20 animate-pulse rounded bg-accent bg-secondary" />
       </div>
       <div>
-        <div className="h-7 w-16 bg-accent dark:bg-secondary rounded animate-pulse" />
-        <div className="h-3 w-24 bg-accent dark:bg-secondary rounded animate-pulse mt-2" />
+        <div className="h-7 w-16 animate-pulse rounded bg-accent bg-secondary" />
+        <div className="mt-2 h-3 w-24 animate-pulse rounded bg-accent bg-secondary" />
       </div>
     </div>
   )

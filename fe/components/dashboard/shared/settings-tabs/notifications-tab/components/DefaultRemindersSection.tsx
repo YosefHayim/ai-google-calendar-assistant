@@ -95,7 +95,7 @@ export function DefaultRemindersSection() {
       <TabHeader
         title="Default Reminders"
         tooltip="Configure default reminders that Ally will apply when creating new events"
-        icon={<Bell className="w-5 h-5 text-foreground dark:text-primary" />}
+        icon={<Bell className="h-5 w-5 text-foreground" />}
       />
       <CardContent>
         {isLoadingReminders ? (
@@ -107,7 +107,7 @@ export function DefaultRemindersSection() {
                 id="reminder-enabled"
                 title="Apply Default Reminders"
                 tooltip="When enabled, Ally will automatically add your preferred reminders to new events"
-                icon={<BellRing size={18} className="text-foreground dark:text-primary" />}
+                icon={<BellRing size={18} className="text-foreground" />}
                 control={
                   <CinematicGlowToggle
                     id={reminderToggleId}
@@ -144,15 +144,13 @@ export function DefaultRemindersSection() {
                 </div>
 
                 {reminderSettings.defaultReminders.length === 0 ? (
-                  <p className="text-sm text-muted-foreground dark:text-muted-foreground py-2">
-                    No custom reminders configured. Add one below.
-                  </p>
+                  <p className="py-2 text-sm text-muted-foreground">No custom reminders configured. Add one below.</p>
                 ) : (
                   <div className="space-y-2">
                     {reminderSettings.defaultReminders.map((reminder, index) => (
                       <div
                         key={index}
-                        className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-muted dark:bg-secondary/50 sm:flex-nowrap"
+                        className="flex flex-wrap items-center gap-2 rounded-lg bg-muted bg-secondary/50 p-3 sm:flex-nowrap"
                       >
                         <SettingsDropdown
                           id={`reminder-method-${index}`}
@@ -174,7 +172,7 @@ export function DefaultRemindersSection() {
                           onClick={() => handleRemoveReminder(index)}
                           className="h-9 w-9 text-muted-foreground hover:text-destructive"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}
@@ -183,7 +181,7 @@ export function DefaultRemindersSection() {
 
                 {reminderSettings.defaultReminders.length < MAX_REMINDERS && (
                   <Button variant="outline" size="sm" onClick={handleAddReminder} className="w-full">
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="mr-2 h-4 w-4" />
                     Add Reminder
                   </Button>
                 )}
@@ -193,7 +191,7 @@ export function DefaultRemindersSection() {
             <Button
               onClick={handleSaveReminders}
               disabled={!isReminderDirty || isUpdatingReminders}
-              className="w-full mt-4"
+              className="mt-4 w-full"
             >
               {isUpdatingReminders ? (
                 <>

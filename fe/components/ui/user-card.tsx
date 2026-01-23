@@ -39,10 +39,8 @@ export function UserCard({ name, subtitle, avatarUrl, size = 'md', className, on
         <AvatarFallback className="bg-accent text-muted-foreground">{initials}</AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
-        <p className={cn('font-medium text-foreground dark:text-primary-foreground truncate', sizes.name)}>{name}</p>
-        {subtitle && (
-          <p className={cn('text-muted-foreground dark:text-muted-foreground truncate', sizes.subtitle)}>{subtitle}</p>
-        )}
+        <p className={cn('truncate font-medium text-foreground', sizes.name)}>{name}</p>
+        {subtitle && <p className={cn('truncate text-muted-foreground', sizes.subtitle)}>{subtitle}</p>}
       </div>
     </>
   )
@@ -52,7 +50,7 @@ export function UserCard({ name, subtitle, avatarUrl, size = 'md', className, on
       <button
         type="button"
         onClick={onClick}
-        className={cn('flex items-center gap-2.5 text-left hover:opacity-80 transition-opacity', className)}
+        className={cn('flex items-center gap-2.5 text-left transition-opacity hover:opacity-80', className)}
       >
         {content}
       </button>
@@ -67,10 +65,10 @@ export function UserCardSkeleton({ size = 'md', className }: { size?: UserCardSi
 
   return (
     <div className={cn('flex items-center gap-2.5', className)}>
-      <div className={cn(sizes.avatar, 'rounded-full bg-accent animate-pulse shrink-0')} />
+      <div className={cn(sizes.avatar, 'shrink-0 animate-pulse rounded-full bg-accent')} />
       <div className="flex-1 space-y-1.5">
-        <div className="h-3 w-24 bg-accent rounded animate-pulse" />
-        <div className="h-2 w-32 bg-accent rounded animate-pulse" />
+        <div className="h-3 w-24 animate-pulse rounded bg-accent" />
+        <div className="h-2 w-32 animate-pulse rounded bg-accent" />
       </div>
     </div>
   )

@@ -177,7 +177,7 @@ export default function AdminDashboardPage() {
                 <CardContent className="h-[calc(100%_-_52px)] pb-0">
                   <div className="text-2xl font-bold">{formatCurrency(stats?.totalRevenueCents || 0)}</div>
                   <p className="text-xs text-muted-foreground">MRR: {formatCurrency(stats?.mrrCents || 0)}</p>
-                  <div className="h-[80px] w-full mt-4">
+                  <div className="mt-4 h-[80px] w-full">
                     <ChartContainer
                       config={{
                         revenue: { label: 'Revenue', color: 'var(--primary)' },

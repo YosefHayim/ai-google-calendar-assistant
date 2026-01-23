@@ -13,14 +13,14 @@ const EVENTS = [
 ]
 
 export const WebCalendarView = () => (
-  <div className="h-full p-4 bg-muted dark:bg-secondary">
-    <div className="flex items-center justify-between mb-4">
+  <div className="h-full bg-muted bg-secondary p-4">
+    <div className="mb-4 flex items-center justify-between">
       <div>
-        <h3 className="font-semibold text-foreground dark:text-white text-sm">Today's Schedule</h3>
+        <h3 className="text-sm font-semibold text-foreground">Today's Schedule</h3>
         <p className="text-xs text-muted-foreground">Monday, Jan 13</p>
       </div>
-      <button className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center">
-        <Plus className="w-4 h-4" />
+      <button className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+        <Plus className="h-4 w-4" />
       </button>
     </div>
     <div className="space-y-2">
@@ -31,15 +31,15 @@ export const WebCalendarView = () => (
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 + i * 0.1 }}
           className={cn(
-            'flex items-center gap-3 p-3 rounded-xl bg-background dark:bg-secondary ',
+            'flex items-center gap-3 rounded-xl bg-background bg-secondary p-3',
             event.focus && 'ring-2 ring-primary/50',
           )}
         >
-          <div className={cn('w-1 h-12 rounded-full', event.color)} />
+          <div className={cn('h-12 w-1 rounded-full', event.color)} />
           <div className="flex-1">
-            <div className="text-sm font-medium text-foreground dark:text-white flex items-center gap-2">
+            <div className="flex items-center gap-2 text-sm font-medium text-foreground">
               {event.title}
-              {event.focus && <Brain className="w-3 h-3 text-primary" />}
+              {event.focus && <Brain className="h-3 w-3 text-primary" />}
             </div>
             <div className="text-xs text-muted-foreground">
               {event.time} · {event.duration}

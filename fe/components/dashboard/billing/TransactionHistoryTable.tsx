@@ -24,8 +24,7 @@ const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Chec
   pending: {
     label: 'Pending',
     icon: Clock,
-    className:
-      'bg-secondary/10 dark:bg-secondary/30 text-secondary-foreground dark:text-secondary-foreground border-secondary/20 dark:border-secondary/80',
+    className: 'bg-secondary/10 bg-secondary/30 text-secondary-foreground border-secondary/20/80',
   },
   failed: {
     label: 'Failed',
@@ -40,9 +39,9 @@ function StatusBadge({ status }: { status: TransactionStatus }) {
 
   return (
     <span
-      className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium', config.className)}
+      className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', config.className)}
     >
-      <Icon className="w-3 h-3" />
+      <Icon className="h-3 w-3" />
       {config.label}
     </span>
   )
@@ -58,38 +57,34 @@ function MobileTransactionCard({
   onToggle: () => void
 }) {
   return (
-    <div className="bg-background dark:bg-secondary rounded-lg overflow-hidden">
+    <div className="overflow-hidden rounded-lg bg-background bg-secondary">
       <Button
         type="button"
         variant="ghost"
         onClick={onToggle}
-        className="w-full p-4 h-auto flex items-center justify-between text-left hover:bg-muted dark:hover:bg-secondary/50"
+        className="flex h-auto w-full items-center justify-between p-4 text-left hover:bg-muted hover:bg-secondary/50"
       >
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-muted-foreground dark:text-muted-foreground">
-              {format(new Date(transaction.date), 'MMM dd, yyyy')}
-            </span>
-            <span className="font-mono font-bold text-foreground dark:text-primary-foreground">
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">{format(new Date(transaction.date), 'MMM dd, yyyy')}</span>
+            <span className="font-mono font-bold text-foreground">
               {formatMoney(transaction.amount, { currency: transaction.currency })}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-foreground dark:text-primary-foreground truncate pr-2">
-              {transaction.description}
-            </span>
+            <span className="truncate pr-2 text-sm font-medium text-foreground">{transaction.description}</span>
             <StatusBadge status={transaction.status} />
           </div>
         </div>
         <div className="ml-3 flex-shrink-0 text-muted-foreground">
-          {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
         </div>
       </Button>
 
       {isExpanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-border space-y-2">
+        <div className="space-y-2 border-t border-border px-4 pb-4 pt-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground dark:text-muted-foreground">Transaction ID</span>
+            <span className="text-muted-foreground">Transaction ID</span>
             <span className="font-mono text-xs text-muted-foreground">{transaction.id}</span>
           </div>
           {transaction.invoiceUrl ? (
@@ -99,13 +94,11 @@ function MobileTransactionCard({
               className="w-full"
               onClick={() => window.open(transaction.invoiceUrl ?? '#', '_blank')}
             >
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="mr-2 h-4 w-4" />
               Download Invoice
             </Button>
           ) : (
-            <span className="block text-center text-sm text-muted-foreground dark:text-muted-foreground">
-              No invoice available
-            </span>
+            <span className="block text-center text-sm text-muted-foreground">No invoice available</span>
           )}
         </div>
       )}
@@ -118,9 +111,9 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
 
   if (transactions.length === 0) {
     return (
-      <div className={cn('text-center py-12', className)}>
-        <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-        <p className="text-muted-foreground dark:text-muted-foreground">No transactions yet</p>
+      <div className={cn('py-12 text-center', className)}>
+        <Receipt className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+        <p className="text-muted-foreground">No transactions yet</p>
       </div>
     )
   }
@@ -133,7 +126,7 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-[120px]">Date</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead className="text-right w-[100px]">Amount</TableHead>
+              <TableHead className="w-[100px] text-right">Amount</TableHead>
               <TableHead className="w-[100px]">Status</TableHead>
               <TableHead className="w-[100px] text-right">Invoice</TableHead>
             </TableRow>
@@ -144,10 +137,8 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
                 <TableCell className="text-muted-foreground">
                   {format(new Date(transaction.date), 'MMM dd, yyyy')}
                 </TableCell>
-                <TableCell className="font-medium text-foreground dark:text-primary-foreground">
-                  {transaction.description}
-                </TableCell>
-                <TableCell className="text-right font-mono font-bold text-foreground dark:text-primary-foreground">
+                <TableCell className="font-medium text-foreground">{transaction.description}</TableCell>
+                <TableCell className="text-right font-mono font-bold text-foreground">
                   {formatMoney(transaction.amount, { currency: transaction.currency })}
                 </TableCell>
                 <TableCell>
@@ -161,11 +152,11 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
                       className="text-primary hover:text-primary/80"
                       onClick={() => window.open(transaction.invoiceUrl ?? '#', '_blank')}
                     >
-                      <Download className="w-4 h-4 mr-1" />
+                      <Download className="mr-1 h-4 w-4" />
                       PDF
                     </Button>
                   ) : (
-                    <span className="text-muted-foreground dark:text-muted-foreground text-sm">—</span>
+                    <span className="text-sm text-muted-foreground">—</span>
                   )}
                 </TableCell>
               </TableRow>
@@ -174,7 +165,7 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
         </Table>
       </div>
 
-      <div className="md:hidden space-y-2">
+      <div className="space-y-2 md:hidden">
         {transactions.map((transaction) => (
           <MobileTransactionCard
             key={transaction.id}

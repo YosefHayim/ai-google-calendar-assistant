@@ -89,32 +89,32 @@ export default function ReferralsPage() {
     switch (status) {
       case 'pending':
         return (
-          <Badge variant="outline" className="text-yellow-700 border-yellow-300 bg-yellow-50">
-            <Clock className="w-3 h-3 mr-1" /> Pending
+          <Badge variant="outline" className="border-yellow-300 bg-yellow-50 text-yellow-700">
+            <Clock className="mr-1 h-3 w-3" /> Pending
           </Badge>
         )
       case 'signed_up':
         return (
-          <Badge variant="outline" className="text-primary border-blue-300 bg-primary/5">
-            <Users className="w-3 h-3 mr-1" /> Signed Up
+          <Badge variant="outline" className="border-blue-300 bg-primary/5 text-primary">
+            <Users className="mr-1 h-3 w-3" /> Signed Up
           </Badge>
         )
       case 'converted':
         return (
-          <Badge variant="outline" className="text-green-600 border-green-300 bg-green-50">
-            <CheckCircle2 className="w-3 h-3 mr-1" /> Converted
+          <Badge variant="outline" className="border-green-300 bg-green-50 text-green-600">
+            <CheckCircle2 className="mr-1 h-3 w-3" /> Converted
           </Badge>
         )
       case 'rewarded':
         return (
-          <Badge variant="outline" className="text-purple-600 border-purple-300 bg-purple-50">
-            <Gift className="w-3 h-3 mr-1" /> Rewarded
+          <Badge variant="outline" className="border-purple-300 bg-purple-50 text-purple-600">
+            <Gift className="mr-1 h-3 w-3" /> Rewarded
           </Badge>
         )
       case 'expired':
         return (
-          <Badge variant="outline" className="text-foreground border-gray-300 bg-muted">
-            <XCircle className="w-3 h-3 mr-1" /> Expired
+          <Badge variant="outline" className="border-gray-300 bg-muted text-foreground">
+            <XCircle className="mr-1 h-3 w-3" /> Expired
           </Badge>
         )
       default:
@@ -123,32 +123,32 @@ export default function ReferralsPage() {
   }
 
   return (
-    <div className="flex-1 p-6 overflow-auto">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="flex-1 overflow-auto p-6">
+      <div className="mx-auto max-w-4xl space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-white">Referral Program</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground dark:text-muted-foreground">
             Invite friends and earn free months when they subscribe
           </p>
         </div>
 
-        <Card className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+        <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 p-6">
           <div className="flex items-start gap-4">
-            <div className="p-3 rounded-xl bg-primary/20">
-              <Gift className="w-6 h-6 text-primary" />
+            <div className="rounded-xl bg-primary/20 p-3">
+              <Gift className="h-6 w-6 text-primary" />
             </div>
             <div className="flex-1">
               <h2 className="text-lg font-semibold text-foreground dark:text-white">
                 Invite a friend, get 1 month free!
               </h2>
-              <p className="text-zinc-600 dark:text-muted-foreground mt-1 text-sm">
+              <p className="mt-1 text-sm text-zinc-600 dark:text-muted-foreground">
                 For every friend who signs up and subscribes to a paid plan, you both get 1 free month of Ask Ally Pro.
               </p>
             </div>
           </div>
 
           <div className="mt-6">
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Your referral link
             </label>
             <div className="flex gap-2">
@@ -158,22 +158,22 @@ export default function ReferralsPage() {
                 className="flex-1 bg-background dark:bg-secondary"
               />
               <Button variant="outline" onClick={handleCopy} disabled={isLoadingCode || !referralCode}>
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
               <Button onClick={handleShare} disabled={isLoadingCode || !referralCode}>
-                <Share2 className="w-4 h-4 mr-2" />
+                <Share2 className="mr-2 h-4 w-4" />
                 Share
               </Button>
             </div>
             {referralCode?.referralCode && (
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="mt-2 text-xs text-muted-foreground">
                 Referral code: <span className="font-mono font-medium">{referralCode.referralCode}</span>
               </p>
             )}
           </div>
         </Card>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {isLoadingStats ? (
             <>
               <StatCardSkeleton />
@@ -184,18 +184,18 @@ export default function ReferralsPage() {
           ) : (
             <>
               <StatCard
-                icon={<Users className="w-5 h-5" />}
+                icon={<Users className="h-5 w-5" />}
                 title="Total Referrals"
                 value={stats?.total_referrals ?? 0}
               />
               <StatCard
-                icon={<CheckCircle2 className="w-5 h-5" />}
+                icon={<CheckCircle2 className="h-5 w-5" />}
                 title="Successful"
                 value={stats?.successful_referrals ?? 0}
               />
-              <StatCard icon={<Clock className="w-5 h-5" />} title="Pending" value={stats?.pending_referrals ?? 0} />
+              <StatCard icon={<Clock className="h-5 w-5" />} title="Pending" value={stats?.pending_referrals ?? 0} />
               <StatCard
-                icon={<Gift className="w-5 h-5" />}
+                icon={<Gift className="h-5 w-5" />}
                 title="Free Months Earned"
                 value={stats?.total_free_months_earned ?? 0}
               />
@@ -204,9 +204,9 @@ export default function ReferralsPage() {
         </div>
 
         <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <h3 className="text-lg font-semibold text-foreground dark:text-white">Your Referrals</h3>
-            <TrendingUp className="w-5 h-5 text-muted-foreground" />
+            <TrendingUp className="h-5 w-5 text-muted-foreground" />
           </div>
 
           {isLoadingReferrals ? (
@@ -215,7 +215,7 @@ export default function ReferralsPage() {
             </div>
           ) : !referrals || referrals.length === 0 ? (
             <EmptyState
-              icon={<Users className="w-12 h-12" />}
+              icon={<Users className="h-12 w-12" />}
               title="No referrals yet"
               description="Share your referral link with friends to start earning free months!"
               action={{
@@ -227,35 +227,35 @@ export default function ReferralsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b ">
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Date</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Reward</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
+                  <tr className="border-b">
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Email</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Date</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Reward</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {referrals.map((referral) => (
-                    <tr key={referral.id} className="border-b border-zinc-100 ">
-                      <td className="py-4 px-4">
+                    <tr key={referral.id} className="border-b border-zinc-100">
+                      <td className="px-4 py-4">
                         <span className="text-foreground dark:text-white">
                           {referral.referred_email || (
-                            <span className="text-muted-foreground italic">Not yet used</span>
+                            <span className="italic text-muted-foreground">Not yet used</span>
                           )}
                         </span>
                       </td>
-                      <td className="py-4 px-4">{getStatusBadge(referral.status)}</td>
-                      <td className="py-4 px-4 text-sm text-muted-foreground">
+                      <td className="px-4 py-4">{getStatusBadge(referral.status)}</td>
+                      <td className="px-4 py-4 text-sm text-muted-foreground">
                         {formatDate(referral.created_at, DATE_FORMATS.FULL)}
                       </td>
-                      <td className="py-4 px-4">
+                      <td className="px-4 py-4">
                         <span className="text-sm text-zinc-600 dark:text-muted-foreground">
                           {referral.reward_amount}{' '}
                           {referral.reward_type === 'free_month' ? 'month' : referral.reward_type}
                         </span>
                       </td>
-                      <td className="py-4 px-4 text-right">
+                      <td className="px-4 py-4 text-right">
                         {referral.status === 'converted' && (
                           <Button
                             size="sm"
@@ -263,7 +263,7 @@ export default function ReferralsPage() {
                             onClick={() => handleClaimReward(referral.id)}
                             disabled={claimReward.isPending}
                           >
-                            {claimReward.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Claim Reward'}
+                            {claimReward.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Claim Reward'}
                           </Button>
                         )}
                         {referral.status === 'rewarded' && (
@@ -279,35 +279,35 @@ export default function ReferralsPage() {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-foreground dark:text-white mb-4">How it works</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h3 className="mb-4 text-lg font-semibold text-foreground dark:text-white">How it works</h3>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
                 1
               </div>
               <div>
                 <h4 className="font-medium text-foreground dark:text-white">Share your link</h4>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Copy your unique referral link and share it with friends
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
                 2
               </div>
               <div>
                 <h4 className="font-medium text-foreground dark:text-white">Friend subscribes</h4>
-                <p className="text-sm text-muted-foreground mt-1">When they sign up and subscribe to a paid plan</p>
+                <p className="mt-1 text-sm text-muted-foreground">When they sign up and subscribe to a paid plan</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
                 3
               </div>
               <div>
                 <h4 className="font-medium text-foreground dark:text-white">You both win</h4>
-                <p className="text-sm text-muted-foreground mt-1">You get 1 free month, and so does your friend!</p>
+                <p className="mt-1 text-sm text-muted-foreground">You get 1 free month, and so does your friend!</p>
               </div>
             </div>
           </div>

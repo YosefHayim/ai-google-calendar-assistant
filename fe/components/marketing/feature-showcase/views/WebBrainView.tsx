@@ -12,13 +12,13 @@ const PREFERENCES = [
 ]
 
 export const WebBrainView = () => (
-  <div className="h-full p-4 bg-muted dark:bg-secondary">
-    <div className="flex items-center gap-3 mb-4">
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-        <Brain className="w-5 h-5 text-white" />
+  <div className="h-full bg-muted bg-secondary p-4">
+    <div className="mb-4 flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary">
+        <Brain className="h-5 w-5 text-foreground" />
       </div>
       <div>
-        <h3 className="font-semibold text-foreground dark:text-white text-sm">Ally Brain</h3>
+        <h3 className="text-sm font-semibold text-foreground">Ally Brain</h3>
         <p className="text-xs text-muted-foreground">Your personal preferences</p>
       </div>
     </div>
@@ -29,13 +29,13 @@ export const WebBrainView = () => (
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 * i }}
-          className="flex items-center justify-between p-3 rounded-xl bg-background dark:bg-secondary "
+          className="flex items-center justify-between rounded-xl bg-background bg-secondary p-3"
         >
           <div className="flex items-center gap-3">
-            <pref.icon className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground dark:text-muted-foreground">{pref.label}</span>
+            <pref.icon className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">{pref.label}</span>
           </div>
-          <span className="text-sm font-medium text-foreground dark:text-white">{pref.value}</span>
+          <span className="text-sm font-medium text-foreground">{pref.value}</span>
         </motion.div>
       ))}
     </div>

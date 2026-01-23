@@ -43,7 +43,7 @@ export const MonthlyPatternAreaChart: React.FC<MonthlyPatternAreaChartProps> = (
                 <stop offset="95%" stopColor="#059669" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-800" />
             <XAxis
               dataKey="dayOfMonth"
               axisLine={false}
@@ -62,11 +62,11 @@ export const MonthlyPatternAreaChart: React.FC<MonthlyPatternAreaChartProps> = (
                 if (active && payload && payload.length > 0) {
                   const point = payload[0].payload as MonthlyPatternDataPoint
                   return (
-                    <div className="bg-secondary dark:bg-secondary text-white px-3 py-2 rounded-lg shadow-lg">
+                    <div className="rounded-lg bg-secondary px-3 py-2 text-foreground shadow-lg">
                       <p className="font-medium">Day {point.dayOfMonth}</p>
                       <p className="text-sm">{point.hours}h scheduled</p>
                       <p className="text-xs text-muted-foreground">{point.eventCount} events</p>
-                      {point.events.length > 0 && <p className="text-xs text-emerald-400 mt-1">Click to view events</p>}
+                      {point.events.length > 0 && <p className="mt-1 text-xs text-emerald-400">Click to view events</p>}
                     </div>
                   )
                 }

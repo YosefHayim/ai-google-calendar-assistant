@@ -58,7 +58,7 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-primary" />
+            <CreditCard className="h-5 w-5 text-primary" />
             {t('admin.grantCredits.title')}
           </DialogTitle>
           <DialogDescription>
@@ -102,7 +102,7 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
             <Button type="submit" disabled={grantCredits.isPending}>
               {grantCredits.isPending ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {t('admin.grantCredits.granting')}
                 </>
               ) : (

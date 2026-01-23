@@ -83,7 +83,7 @@ export const FEATURES: FeatureItem[] = [
     title: 'Leverage Analytics',
     description: 'Quantify your impact with deep insights into your productivity patterns.',
     icon: BarChart3,
-    color: 'text-foreground dark:text-white',
+    color: 'text-foreground',
     content: <IntelligenceContent />,
   },
 ]

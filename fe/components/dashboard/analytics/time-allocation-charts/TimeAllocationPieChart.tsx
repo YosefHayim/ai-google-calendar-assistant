@@ -45,12 +45,12 @@ export const TimeAllocationPieChart: React.FC<TimeAllocationPieChartProps> = ({ 
             if (active && payload && payload.length > 0) {
               const item = payload[0].payload as CalendarBreakdownItem & { percentage: number }
               return (
-                <div className="rounded-lg border-border bg-secondary dark:bg-secondary px-3 py-2 text-primary-foreground shadow-xl">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getValidHexColor(item.color) }} />
-                    <span className="font-medium text-sm">{item.category}</span>
+                <div className="rounded-lg border-border bg-secondary px-3 py-2 text-primary-foreground shadow-xl">
+                  <div className="mb-1 flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: getValidHexColor(item.color) }} />
+                    <span className="text-sm font-medium">{item.category}</span>
                   </div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-xs text-muted-foreground">
                     {formatHours(item.hours, 1)} ({item.percentage}%)
                   </div>
                 </div>
@@ -71,7 +71,7 @@ export const TimeAllocationPieChart: React.FC<TimeAllocationPieChartProps> = ({ 
                 return (
                   <li
                     key={`legend-${index}`}
-                    className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+                    className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
                     onClick={() => handleClick(item)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -81,11 +81,9 @@ export const TimeAllocationPieChart: React.FC<TimeAllocationPieChartProps> = ({ 
                     role="button"
                     tabIndex={0}
                   >
-                    <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: entry.color }} />
-                    <span className="text-muted-foreground truncate max-w-[100px]">{item.category}</span>
-                    <span className="text-muted-foreground dark:text-muted-foreground font-mono text-xs">
-                      {formatHours(item.hours)}
-                    </span>
+                    <div className="h-3 w-3 flex-shrink-0 rounded-sm" style={{ backgroundColor: entry.color }} />
+                    <span className="max-w-[100px] truncate text-muted-foreground">{item.category}</span>
+                    <span className="font-mono text-xs text-muted-foreground">{formatHours(item.hours)}</span>
                   </li>
                 )
               })}

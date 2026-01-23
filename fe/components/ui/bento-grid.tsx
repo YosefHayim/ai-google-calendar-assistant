@@ -10,7 +10,7 @@ const BentoGrid: React.FC<{
 }> = ({ children, className }) => {
   return (
     <div
-      className={cn('grid w-full auto-rows-[16rem] md:auto-rows-[22rem] grid-cols-1 md:grid-cols-3 gap-4', className)}
+      className={cn('grid w-full auto-rows-[16rem] grid-cols-1 gap-4 md:auto-rows-[22rem] md:grid-cols-3', className)}
     >
       {children}
     </div>
@@ -33,30 +33,28 @@ const BentoCard: React.FC<{
       // light styles
       'bg-background [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]',
       // dark styles
-      'transform-gpu dark:bg-secondary/50 dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]',
+      'transform-gpu bg-secondary/50',
       className,
     )}
   >
     <div className="absolute inset-0 z-0">{background}</div>
 
-    <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-4 md:p-6 transition-all duration-300 group-hover:-translate-y-10">
-      <Icon className="h-8 w-8 md:h-12 md:w-12 origin-left transform-gpu text-foreground dark:text-primary-foreground transition-all duration-300 ease-in-out group-hover:scale-75" />
-      <h3 className="text-lg md:text-xl font-semibold text-foreground dark:text-primary-foreground">{name}</h3>
-      <p className="max-w-lg text-muted-foreground dark:text-muted-foreground text-xs md:text-sm line-clamp-3 md:line-clamp-none">
-        {description}
-      </p>
+    <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-4 transition-all duration-300 group-hover:-translate-y-10 md:p-6">
+      <Icon className="h-8 w-8 origin-left transform-gpu text-foreground transition-all duration-300 ease-in-out group-hover:scale-75 md:h-12 md:w-12" />
+      <h3 className="text-lg font-semibold text-foreground md:text-xl">{name}</h3>
+      <p className="line-clamp-3 max-w-lg text-xs text-muted-foreground md:line-clamp-none md:text-sm">{description}</p>
     </div>
 
     <div
       className={cn(
-        'pointer-events-none absolute bottom-0 flex w-full translate-y-10 transform-gpu flex-row items-center p-3 md:p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 z-20',
+        'pointer-events-none absolute bottom-0 z-20 flex w-full translate-y-10 transform-gpu flex-row items-center p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 md:p-4',
       )}
     >
       <Button
         variant="ghost"
         asChild
         size="sm"
-        className="pointer-events-auto text-primary hover:text-primary-hover hover:bg-primary/10"
+        className="pointer-events-auto text-primary hover:bg-primary/10 hover:text-primary-hover"
       >
         <a href={href} className="flex items-center">
           {cta}
@@ -64,7 +62,7 @@ const BentoCard: React.FC<{
         </a>
       </Button>
     </div>
-    <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300 group-hover:bg-secondary/[.03] group-hover:dark:bg-secondary/[.02]" />
+    <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300 group-hover:bg-secondary/[.02] group-hover:bg-secondary/[.03]" />
   </div>
 )
 

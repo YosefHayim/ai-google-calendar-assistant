@@ -42,31 +42,31 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
 
   if (isLoading) {
     return (
-      <Card className="bg-background dark:bg-secondary py-0">
+      <Card className="bg-background bg-secondary py-0">
         <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
-          <div className="flex flex-1 flex-col justify-center gap-1 px-4 sm:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3 sm:!py-4">
+          <div className="flex flex-1 flex-col justify-center gap-1 px-4 pb-2 pt-3 sm:!py-4 sm:px-6 sm:pb-3 sm:pt-4">
             <div className="flex items-center gap-2">
-              <Skeleton className="w-4 h-4 sm:w-5 sm:h-5" />
-              <Skeleton className="h-4 sm:h-5 w-24 sm:w-32" />
+              <Skeleton className="h-4 w-4 sm:h-5 sm:w-5" />
+              <Skeleton className="h-4 w-24 sm:h-5 sm:w-32" />
             </div>
-            <Skeleton className="h-3 sm:h-4 w-36 sm:w-48 mt-1" />
+            <Skeleton className="mt-1 h-3 w-36 sm:h-4 sm:w-48" />
           </div>
           <div className="flex">
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t px-4 sm:px-6 py-3 sm:py-4 sm:border-t-0 sm:border-l lg:px-8 lg:py-6">
-              <Skeleton className="h-2.5 sm:h-3 w-16 sm:w-20" />
-              <Skeleton className="h-6 sm:h-8 w-12 sm:w-16 mt-1" />
+            <div className="flex flex-1 flex-col justify-center gap-1 border-t px-4 py-3 sm:border-l sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+              <Skeleton className="h-2.5 w-16 sm:h-3 sm:w-20" />
+              <Skeleton className="mt-1 h-6 w-12 sm:h-8 sm:w-16" />
             </div>
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l px-4 sm:px-6 py-3 sm:py-4 sm:border-t-0 lg:px-8 lg:py-6">
-              <Skeleton className="h-2.5 sm:h-3 w-12 sm:w-16" />
-              <Skeleton className="h-6 sm:h-8 w-10 sm:w-12 mt-1" />
+            <div className="flex flex-1 flex-col justify-center gap-1 border-l border-t px-4 py-3 sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+              <Skeleton className="h-2.5 w-12 sm:h-3 sm:w-16" />
+              <Skeleton className="mt-1 h-6 w-10 sm:h-8 sm:w-12" />
             </div>
           </div>
         </CardHeader>
-        <CardContent className="px-2 p-3 sm:p-6">
-          <div className="flex justify-end mb-3 sm:mb-4">
-            <Skeleton className="h-7 sm:h-8 w-24 sm:w-32" />
+        <CardContent className="p-3 px-2 sm:p-6">
+          <div className="mb-3 flex justify-end sm:mb-4">
+            <Skeleton className="h-7 w-24 sm:h-8 sm:w-32" />
           </div>
-          <Skeleton className="h-[160px] sm:h-[200px] w-full" />
+          <Skeleton className="h-[160px] w-full sm:h-[200px]" />
         </CardContent>
       </Card>
     )
@@ -74,10 +74,10 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
 
   if (!data || data.length === 0) {
     return (
-      <Card className="bg-background dark:bg-secondary border ">
+      <Card className="border bg-background bg-secondary">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CalendarDays className="w-5 h-5 text-primary" />
+            <CalendarDays className="h-5 w-5 text-primary" />
             {t('analytics.charts.weeklyPattern')}
           </CardTitle>
           <CardDescription>{t('common.noData')}</CardDescription>
@@ -102,18 +102,18 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
   }
 
   return (
-    <Card className="bg-background dark:bg-secondary py-0">
+    <Card className="bg-background bg-secondary py-0">
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-4 sm:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3 sm:!py-4">
-          <CardTitle className="flex items-center gap-2 text-sm sm:text-base text-foreground dark:text-primary-foreground">
-            <CalendarDays className="w-4 h-4 sm:w-5 sm:h-5 text-foreground dark:text-primary flex-shrink-0" />
+        <div className="flex flex-1 flex-col justify-center gap-1 px-4 pb-2 pt-3 sm:!py-4 sm:px-6 sm:pb-3 sm:pt-4">
+          <CardTitle className="flex items-center gap-2 text-sm text-foreground sm:text-base">
+            <CalendarDays className="h-4 w-4 flex-shrink-0 text-foreground sm:h-5 sm:w-5" />
             <span className="truncate">{t('analytics.charts.weeklyPattern')}</span>
             <HoverCard>
               <HoverCardTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground flex-shrink-0"
+                  className="h-5 w-5 flex-shrink-0 text-muted-foreground hover:text-muted-foreground sm:h-6 sm:w-6"
                 >
                   <Info size={14} className="sm:hidden" />
                   <Info size={16} className="hidden sm:block" />
@@ -121,38 +121,34 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-sm">{t('analytics.charts.weeklyPattern')}</h4>
-                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">
-                    {t('analytics.charts.weeklyPatternTooltip')}
-                  </p>
+                  <h4 className="text-sm font-semibold">{t('analytics.charts.weeklyPattern')}</h4>
+                  <p className="text-xs text-muted-foreground">{t('analytics.charts.weeklyPatternTooltip')}</p>
                 </div>
               </HoverCardContent>
             </HoverCard>
           </CardTitle>
-          <CardDescription className="text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs font-medium italic line-clamp-1">
+          <CardDescription className="line-clamp-1 text-[10px] font-medium italic text-muted-foreground sm:text-xs">
             {t('analytics.charts.weeklyPatternDescription')}
           </CardDescription>
         </div>
         <div className="flex">
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 sm:gap-1 border-t px-4 sm:px-6 py-2 sm:py-4 text-left sm:border-t-0 sm:border-l lg:px-8 lg:py-6">
-            <span className="text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs">
-              {t('analytics.charts.totalHours')}
-            </span>
-            <span className="text-base leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 border-t px-4 py-2 text-left sm:gap-1 sm:border-l sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+            <span className="text-[10px] text-muted-foreground sm:text-xs">{t('analytics.charts.totalHours')}</span>
+            <span className="text-base font-bold leading-none text-foreground sm:text-xl lg:text-3xl">
               {formatNumber(totalHours, 1)}H
             </span>
           </div>
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 sm:gap-1 border-t border-l px-4 sm:px-6 py-2 sm:py-4 text-left sm:border-t-0 lg:px-8 lg:py-6">
-            <span className="text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 border-l border-t px-4 py-2 text-left sm:gap-1 sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+            <span className="text-[10px] text-muted-foreground sm:text-xs">
               {t('analytics.charts.totalEventsLabel')}
             </span>
-            <span className="text-base leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
+            <span className="text-base font-bold leading-none text-foreground sm:text-xl lg:text-3xl">
               {formatNumber(totalEvents)}
             </span>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="px-2 p-3 sm:p-6">
+      <CardContent className="p-3 px-2 sm:p-6">
         <ChartTypeWrapper chartId="weekly-pattern" chartTypes={CHART_TYPES} defaultType="bar">
           {(chartType) => renderChart(chartType)}
         </ChartTypeWrapper>

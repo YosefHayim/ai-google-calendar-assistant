@@ -26,16 +26,12 @@ export function TrendBadge({
   const absValue = Math.abs(value)
 
   const colorClass = isNeutral
-    ? 'text-muted-foreground dark:text-muted-foreground'
+    ? 'text-muted-foreground text-muted-foreground'
     : isPositive
-      ? 'text-emerald-600 dark:text-emerald-400'
-      : 'text-destructive dark:text-red-400'
+      ? 'text-emerald-400'
+      : 'text-red-400'
 
-  const bgClass = isNeutral
-    ? 'bg-secondary dark:bg-secondary'
-    : isPositive
-      ? 'bg-emerald-50 dark:bg-emerald-900/20'
-      : 'bg-destructive/5 dark:bg-red-900/20'
+  const bgClass = isNeutral ? 'bg-secondary' : isPositive ? 'bg-emerald-900/20' : 'bg-red-900/20'
 
   const iconSize = size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm'

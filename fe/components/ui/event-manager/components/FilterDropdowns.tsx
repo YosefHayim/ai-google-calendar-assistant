@@ -35,7 +35,7 @@ export function ColorFilterDropdown({
         <Button
           variant="outline"
           size="sm"
-          className={cn('gap-2 bg-transparent', mobile && 'whitespace-nowrap flex-shrink-0')}
+          className={cn('gap-2 bg-transparent', mobile && 'flex-shrink-0 whitespace-nowrap')}
         >
           <Filter className="h-4 w-4" />
           Colors
@@ -84,7 +84,7 @@ export function TagFilterDropdown({ tags, selectedTags, onTagToggle, align, mobi
         <Button
           variant="outline"
           size="sm"
-          className={cn('gap-2 bg-transparent', mobile && 'whitespace-nowrap flex-shrink-0')}
+          className={cn('gap-2 bg-transparent', mobile && 'flex-shrink-0 whitespace-nowrap')}
         >
           <Filter className="h-4 w-4" />
           Tags
@@ -133,7 +133,7 @@ export function CategoryFilterDropdown({
         <Button
           variant="outline"
           size="sm"
-          className={cn('gap-2 bg-transparent', mobile && 'whitespace-nowrap flex-shrink-0')}
+          className={cn('gap-2 bg-transparent', mobile && 'flex-shrink-0 whitespace-nowrap')}
         >
           <Filter className="h-4 w-4" />
           Categories

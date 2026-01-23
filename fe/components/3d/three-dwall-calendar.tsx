@@ -106,7 +106,7 @@ export function ThreeDWallCalendar({
   return (
     <div className="space-y-2">
       {!hideControls && (
-        <div className="flex gap-2 items-center justify-center">
+        <div className="flex items-center justify-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -114,7 +114,7 @@ export function ThreeDWallCalendar({
           >
             Prev
           </Button>
-          <div className="font-semibold text-sm min-w-32 text-center">{format(dateRef, 'MMMM yyyy')}</div>
+          <div className="min-w-32 text-center text-sm font-semibold">{format(dateRef, 'MMMM yyyy')}</div>
           <Button
             variant="outline"
             size="sm"
@@ -133,7 +133,7 @@ export function ThreeDWallCalendar({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        className="w-full overflow-hidden cursor-grab active:cursor-grabbing"
+        className="w-full cursor-grab overflow-hidden active:cursor-grabbing"
         style={{ perspective: 1200 }}
       >
         <div
@@ -171,12 +171,10 @@ export function ThreeDWallCalendar({
                     zIndex: Math.round(100 - Math.abs(rowOffset)),
                   }}
                 >
-                  <Card className="h-full overflow-visible bg-background/80 dark:bg-secondary/80 backdrop-blur-sm border ">
-                    <CardContent className="p-3 h-full flex flex-col">
-                      <div className="flex justify-between items-start">
-                        <div className="text-xs font-bold text-foreground dark:text-primary-foreground">
-                          {format(day, 'd')}
-                        </div>
+                  <Card className="h-full overflow-visible border bg-background/80 bg-secondary/80 backdrop-blur-sm">
+                    <CardContent className="flex h-full flex-col p-3">
+                      <div className="flex items-start justify-between">
+                        <div className="text-xs font-bold text-foreground">{format(day, 'd')}</div>
                         <div className="text-xs font-bold uppercase text-muted-foreground">{format(day, 'EEE')}</div>
                       </div>
 
@@ -191,19 +189,19 @@ export function ThreeDWallCalendar({
                                 <HoverCard>
                                   <HoverCardTrigger asChild>
                                     <div
-                                      className="absolute w-5 h-5 rounded-full bg-primary flex items-center justify-center text-white text-xs cursor-pointer shadow-lg hover:scale-110 transition-transform"
+                                      className="absolute flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-primary text-xs text-foreground shadow-lg transition-transform hover:scale-110"
                                       style={{ left, top, transform: `translateZ(10px)` }}
                                     >
                                       •
                                     </div>
                                   </HoverCardTrigger>
-                                  <HoverCardContent className="p-2 w-auto min-w-[120px]">
+                                  <HoverCardContent className="w-auto min-w-[120px] p-2">
                                     <p className="text-xs font-bold">{ev.title}</p>
                                   </HoverCardContent>
                                 </HoverCard>
                               </PopoverTrigger>
                               <PopoverContent className="w-48 p-2">
-                                <div className="flex justify-between items-center gap-2">
+                                <div className="flex items-center justify-between gap-2">
                                   <div className="flex flex-col">
                                     <span className="text-xs font-bold">{ev.title}</span>
                                     <span className="text-xs text-muted-foreground">
@@ -227,7 +225,7 @@ export function ThreeDWallCalendar({
                         })}
                       </div>
 
-                      <div className="mt-1 text-xs font-bold text-muted-foreground uppercase tracking-tighter">
+                      <div className="mt-1 text-xs font-bold uppercase tracking-tighter text-muted-foreground">
                         {dayEvents.length > 0 ? `${dayEvents.length} Tasks` : ''}
                       </div>
                     </CardContent>
@@ -241,7 +239,7 @@ export function ThreeDWallCalendar({
 
       {/* Add event form - hidden in preview */}
       {!hideControls && (
-        <div className="flex gap-2 items-center max-w-sm mx-auto">
+        <div className="mx-auto flex max-w-sm items-center gap-2">
           <Input
             className="h-8 text-xs"
             placeholder="Event title"
@@ -249,7 +247,7 @@ export function ThreeDWallCalendar({
             onChange={(e) => setTitle(e.target.value)}
           />
           <Input
-            className="h-8 text-xs w-32"
+            className="h-8 w-32 text-xs"
             type="date"
             value={newDate}
             onChange={(e) => setNewDate(e.target.value)}

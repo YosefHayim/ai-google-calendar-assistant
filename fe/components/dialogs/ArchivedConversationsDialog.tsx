@@ -70,10 +70,10 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh]">
+      <DialogContent className="max-h-[80vh] max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Archive className="w-5 h-5" />
+            <Archive className="h-5 w-5" />
             Archived Conversations
           </DialogTitle>
           <DialogDescription>
@@ -83,7 +83,7 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
 
         <div className="flex flex-col gap-4">
           {conversations.length > 0 && (
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 {conversations.length} archived conversation{conversations.length !== 1 ? 's' : ''}
               </p>
@@ -94,7 +94,7 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
                 disabled={isRestoringAll}
                 className="gap-2"
               >
-                {isRestoringAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                {isRestoringAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
                 Restore All
               </Button>
             </div>
@@ -103,12 +103,12 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
           <ScrollArea className="max-h-96">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin" />
+                <Loader2 className="h-6 w-6 animate-spin" />
                 <span className="ml-2">Loading archived conversations...</span>
               </div>
             ) : conversations.length === 0 ? (
               <EmptyState
-                icon={<Archive className="w-12 h-12 text-muted-foreground" />}
+                icon={<Archive className="h-12 w-12 text-muted-foreground" />}
                 title="No archived conversations"
                 description="You haven't archived any conversations yet. Conversations you archive will appear here."
               />
@@ -117,12 +117,12 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
                 {conversations.map((conversation) => (
                   <div
                     key={conversation.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50"
                   >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <MessageSquare className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                        <h4 className="font-medium truncate">{conversation.title || 'Untitled Conversation'}</h4>
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        <h4 className="truncate font-medium">{conversation.title || 'Untitled Conversation'}</h4>
                         {conversation.pinned && (
                           <Badge variant="secondary" className="text-xs">
                             Pinned
@@ -132,27 +132,27 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
-                          <MessageSquare className="w-3 h-3" />
+                          <MessageSquare className="h-3 w-3" />
                           {conversation.messageCount} messages
                         </div>
 
                         {conversation.archivedAt && (
                           <div className="flex items-center gap-1">
-                            <Archive className="w-3 h-3" />
+                            <Archive className="h-3 w-3" />
                             Archived {formatRelativeDate(conversation.archivedAt)}
                           </div>
                         )}
 
                         {conversation.lastMessageAt && (
                           <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
+                            <Calendar className="h-3 w-3" />
                             Last updated {formatRelativeDate(conversation.lastMessageAt)}
                           </div>
                         )}
                       </div>
 
                       {conversation.summary && (
-                        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{conversation.summary}</p>
+                        <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{conversation.summary}</p>
                       )}
                     </div>
 
@@ -161,9 +161,9 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
                       size="sm"
                       onClick={() => handleRestoreConversation(conversation.id)}
                       disabled={isRestoring}
-                      className="ml-4 gap-2 flex-shrink-0"
+                      className="ml-4 flex-shrink-0 gap-2"
                     >
-                      {isRestoring ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                      {isRestoring ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
                       Restore
                     </Button>
                   </div>

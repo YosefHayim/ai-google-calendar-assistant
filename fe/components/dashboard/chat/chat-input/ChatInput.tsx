@@ -274,7 +274,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     return (
       <div
         id="tour-chat-input"
-        className="sticky bottom-0 left-0 right-0 p-3 sm:p-4 z-20 bg-gradient-to-t from-background dark:from-background via-background/80 dark:via-background/80 to-transparent"
+        className="sticky bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-background via-background/80 to-transparent p-3 sm:p-4"
       >
         <AnimatePresence mode="popLayout">
           {images.length > 0 && (
@@ -282,7 +282,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="flex gap-2 sm:gap-3 mb-2 flex-wrap max-w-full overflow-x-auto pb-2 overflow-visible"
+              className="mb-2 flex max-w-full flex-wrap gap-2 overflow-visible overflow-x-auto pb-2 sm:gap-3"
             >
               {images.map((image, index) => (
                 <motion.div
@@ -291,17 +291,17 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.2 }}
-                  className="relative group flex-shrink-0"
+                  className="group relative flex-shrink-0"
                 >
                   <button
                     type="button"
                     onClick={() => openLightbox(index)}
-                    className="block focus:outline-none focus:ring-2 focus:ring-ring rounded-lg"
+                    className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
                   >
                     <Image
                       src={image.preview}
                       alt="Upload preview"
-                      className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border-border cursor-pointer hover:opacity-80 transition-opacity"
+                      className="h-14 w-14 cursor-pointer rounded-lg border-border object-cover transition-opacity hover:opacity-80 sm:h-16 sm:w-16"
                       width={64}
                       height={64}
                     />
@@ -309,10 +309,10 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                   <button
                     type="button"
                     onClick={() => removeImage(image.id)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-destructive hover:bg-destructive text-white rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-sm"
+                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-foreground opacity-100 shadow-sm transition-opacity hover:bg-destructive md:opacity-0 md:group-hover:opacity-100"
                     title="Remove image"
                   >
-                    <Trash2 className="w-3 h-3" />
+                    <Trash2 className="h-3 w-3" />
                   </button>
                 </motion.div>
               ))}
@@ -339,7 +339,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="relative flex flex-col items-center justify-center backdrop-blur-xl bg-background/80 dark:bg-secondary/80 rounded-2xl shadow-2xl p-4 transition-all"
+              className="relative flex flex-col items-center justify-center rounded-2xl bg-background/80 bg-secondary/80 p-4 shadow-2xl backdrop-blur-xl transition-all"
             >
               <AIVoiceInput
                 onStart={onStartRecording}
@@ -354,10 +354,10 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                 variant="ghost"
                 size="icon"
                 onClick={onCancelRecording}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 text-muted-foreground hover:text-foreground"
+                className="absolute right-3 top-3 text-muted-foreground hover:text-foreground sm:right-4 sm:top-4"
                 aria-label="Cancel recording"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </Button>
             </motion.div>
           ) : (
@@ -368,7 +368,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
               onSubmit={handleSubmit}
-              className="relative backdrop-blur-xl bg-background/90 dark:bg-secondary/90 border/80 /80 rounded-2xl shadow-2xl overflow-hidden"
+              className="border/80 /80 relative overflow-hidden rounded-2xl bg-background/90 bg-secondary/90 shadow-2xl backdrop-blur-xl"
             >
               <Input
                 ref={fileInputRef}
@@ -379,7 +379,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                 className="hidden"
               />
 
-              <div className="flex items-end p-1.5 sm:p-2 gap-1 sm:gap-2">
+              <div className="flex items-end gap-1 p-1.5 sm:gap-2 sm:p-2">
                 <div className="flex flex-col gap-1 pb-0.5">
                   {imageUpload && (
                     <motion.button
@@ -388,15 +388,15 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       whileTap={{ scale: 0.95 }}
                       onClick={() => fileInputRef.current?.click()}
                       className={cn(
-                        'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
+                        'flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
                         'text-muted-foreground hover:text-foreground',
-                        'hover:bg-secondary dark:hover:bg-secondary',
-                        (isDisabled || !canAddMoreImages) && 'opacity-40 cursor-not-allowed',
+                        'hover:bg-secondary',
+                        (isDisabled || !canAddMoreImages) && 'cursor-not-allowed opacity-40',
                       )}
                       disabled={isDisabled || !canAddMoreImages}
                       title={canAddMoreImages ? 'Add files' : `Max ${MAX_IMAGES} files`}
                     >
-                      <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
                     </motion.button>
                   )}
 
@@ -407,20 +407,20 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       whileTap={{ scale: 0.95 }}
                       onClick={onToggleRecording}
                       className={cn(
-                        'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
+                        'flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
                         isRecording
-                          ? 'text-destructive bg-destructive/5'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary dark:hover:bg-secondary',
-                        (isDisabled || !speechRecognitionSupported) && 'opacity-40 cursor-not-allowed',
+                          ? 'bg-destructive/5 text-destructive'
+                          : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+                        (isDisabled || !speechRecognitionSupported) && 'cursor-not-allowed opacity-40',
                       )}
                       disabled={isDisabled || !speechRecognitionSupported}
                     >
-                      <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <Mic className="h-4 w-4 sm:h-5 sm:w-5" />
                     </motion.button>
                   )}
                 </div>
 
-                <div className="flex-1 relative min-w-0">
+                <div className="relative min-w-0 flex-1">
                   <textarea
                     ref={combinedRef}
                     value={input}
@@ -439,11 +439,11 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                         : "What do you have for me today? I'm ready to help you."
                     }
                     className={cn(
-                      'w-full min-h-[100px] max-h-[200px] overflow-y-auto resize-none',
-                      'bg-transparent border-0 shadow-none outline-none',
-                      'py-3 px-2 sm:px-3 text-sm sm:text-base font-medium',
-                      'placeholder:text-muted-foreground dark:placeholder:text-muted-foreground placeholder:italic placeholder:font-normal',
-                      'text-foreground dark:text-primary-foreground',
+                      'max-h-[200px] min-h-[100px] w-full resize-none overflow-y-auto',
+                      'border-0 bg-transparent shadow-none outline-none',
+                      'px-2 py-3 text-sm font-medium sm:px-3 sm:text-base',
+                      'placeholder:font-normal placeholder:italic placeholder:text-muted-foreground',
+                      'text-foreground',
                       inputDirection === 'rtl' && 'text-right',
                       isInputTooLong && 'text-destructive',
                     )}
@@ -457,7 +457,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 5 }}
                         className={cn(
-                          'absolute right-2 bottom-1 text-xs font-mono',
+                          'absolute bottom-1 right-2 font-mono text-xs',
                           isInputTooLong ? 'text-destructive' : 'text-muted-foreground',
                         )}
                       >
@@ -474,11 +474,11 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={onCancel}
-                      className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center bg-destructive hover:bg-destructive text-white shadow-lg transition-colors"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl bg-destructive text-foreground shadow-lg transition-colors hover:bg-destructive sm:h-12 sm:w-12"
                       title="Cancel AI response"
                     >
                       <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                        <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <Pause className="h-4 w-4 sm:h-5 sm:w-5" />
                       </motion.div>
                     </motion.button>
                   ) : (
@@ -488,14 +488,14 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       whileTap={hasContent && !isLoading && !isInputTooLong ? { scale: 0.98 } : {}}
                       disabled={!hasContent || isLoading || isInputTooLong}
                       className={cn(
-                        'h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center transition-all duration-200',
+                        'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 sm:h-12 sm:w-12',
                         hasContent && !isLoading && !isInputTooLong
-                          ? 'bg-secondary dark:bg-secondary text-white dark:text-foreground shadow-lg hover:shadow-xl'
-                          : 'bg-secondary dark:bg-secondary text-muted-foreground dark:text-muted-foreground',
+                          ? 'bg-secondary text-foreground shadow-lg hover:shadow-xl'
+                          : 'bg-secondary text-muted-foreground',
                       )}
                       title={isInputTooLong ? 'Message too long' : undefined}
                     >
-                      <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <ArrowUp className="h-4 w-4 sm:h-5 sm:w-5" />
                     </motion.button>
                   )}
                 </div>

@@ -79,7 +79,7 @@ export default function AnimatedTextCycle({ words, interval = 5000, className = 
       <div
         ref={measureRef}
         aria-hidden="true"
-        className="absolute opacity-0 pointer-events-none"
+        className="pointer-events-none absolute opacity-0"
         style={{ visibility: 'hidden' }}
       >
         {words.map((word, i) => (

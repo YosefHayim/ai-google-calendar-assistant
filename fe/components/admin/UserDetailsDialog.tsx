@@ -64,25 +64,25 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-accent dark:bg-secondary flex items-center justify-center overflow-hidden">
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-accent bg-secondary">
                 {user.avatar_url ? (
                   <Image
                     src={user.avatar_url}
                     alt=""
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="h-16 w-16 rounded-full object-cover"
                     width={64}
                     height={64}
                   />
                 ) : (
-                  <User className="w-8 h-8 text-muted-foreground" />
+                  <User className="h-8 w-8 text-muted-foreground" />
                 )}
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-foreground dark:text-white">
+                <h3 className="text-lg font-semibold text-foreground">
                   {user.display_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'No name'}
                 </h3>
                 <p className="text-muted-foreground">{user.email}</p>
-                <div className="flex gap-2 mt-2">
+                <div className="mt-2 flex gap-2">
                   <StatusBadge status={user.status} />
                   <RoleBadge role={user.role} />
                 </div>
@@ -94,9 +94,9 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
                 size="sm"
                 onClick={handleImpersonate}
                 disabled={isImpersonating || user.role === 'admin'}
-                className="text-secondary border-secondary hover:bg-secondary/5"
+                className="border-secondary text-secondary hover:bg-secondary/5"
               >
-                {isImpersonating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Eye className="w-4 h-4 mr-2" />}
+                {isImpersonating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Eye className="mr-2 h-4 w-4" />}
                 View as User
               </Button>
               <Button
@@ -104,12 +104,12 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
                 size="sm"
                 onClick={handleRevokeSessions}
                 disabled={isRevokingSessions}
-                className="text-destructive border-destructive hover:bg-destructive/5"
+                className="border-destructive text-destructive hover:bg-destructive/5"
               >
                 {isRevokingSessions ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="mr-2 h-4 w-4" />
                 )}
                 Force Logout
               </Button>
@@ -119,72 +119,66 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
           {/* Info Cards */}
           <div className="grid grid-cols-2 gap-4">
             <Card className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                <Mail className="w-4 h-4" />
+              <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+                <Mail className="h-4 w-4" />
                 <span className="text-sm">Email Status</span>
               </div>
-              <p className="font-medium text-foreground dark:text-white">
-                {user.email_verified ? 'Verified' : 'Not Verified'}
-              </p>
+              <p className="font-medium text-foreground">{user.email_verified ? 'Verified' : 'Not Verified'}</p>
             </Card>
 
             <Card className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                <Calendar className="w-4 h-4" />
+              <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+                <Calendar className="h-4 w-4" />
                 <span className="text-sm">Joined</span>
               </div>
-              <p className="font-medium text-foreground dark:text-white">
-                {format(new Date(user.created_at), 'MMM d, yyyy')}
-              </p>
+              <p className="font-medium text-foreground">{format(new Date(user.created_at), 'MMM d, yyyy')}</p>
             </Card>
 
             <Card className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                <Globe className="w-4 h-4" />
+              <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+                <Globe className="h-4 w-4" />
                 <span className="text-sm">Timezone</span>
               </div>
-              <p className="font-medium text-foreground dark:text-white">{user.timezone || 'Not set'}</p>
+              <p className="font-medium text-foreground">{user.timezone || 'Not set'}</p>
             </Card>
 
             <Card className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                <Shield className="w-4 h-4" />
+              <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+                <Shield className="h-4 w-4" />
                 <span className="text-sm">OAuth Connected</span>
               </div>
-              <p className="font-medium text-foreground dark:text-white">{user.oauth_connected ? 'Yes' : 'No'}</p>
+              <p className="font-medium text-foreground">{user.oauth_connected ? 'Yes' : 'No'}</p>
             </Card>
           </div>
 
           {/* Subscription Info */}
           {user.subscription && (
             <Card className="p-4">
-              <div className="flex items-center gap-2 text-muted-foreground mb-3">
-                <CreditCard className="w-4 h-4" />
+              <div className="mb-3 flex items-center gap-2 text-muted-foreground">
+                <CreditCard className="h-4 w-4" />
                 <span className="text-sm font-medium">Subscription Details</span>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Plan</p>
-                  <p className="font-medium text-foreground dark:text-white">{user.subscription.plan_name}</p>
+                  <p className="font-medium text-foreground">{user.subscription.plan_name}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Status</p>
-                  <p className="font-medium text-foreground dark:text-white capitalize">{user.subscription.status}</p>
+                  <p className="font-medium capitalize text-foreground">{user.subscription.status}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">AI Interactions Used</p>
-                  <p className="font-medium text-foreground dark:text-white">
-                    {user.subscription.ai_interactions_used}
-                  </p>
+                  <p className="font-medium text-foreground">{user.subscription.ai_interactions_used}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Credits Remaining</p>
-                  <p className="font-medium text-foreground dark:text-white">{user.subscription.credits_remaining}</p>
+                  <p className="font-medium text-foreground">{user.subscription.credits_remaining}</p>
                 </div>
                 {user.subscription.current_period_end && (
                   <div className="col-span-2">
                     <p className="text-sm text-muted-foreground">Current Period Ends</p>
-                    <p className="font-medium text-foreground dark:text-white">
+                    <p className="font-medium text-foreground">
                       {format(new Date(user.subscription.current_period_end), 'MMM d, yyyy')}
                     </p>
                   </div>
@@ -194,7 +188,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
           )}
 
           {/* IDs */}
-          <div className="text-xs text-muted-foreground space-y-1">
+          <div className="space-y-1 text-xs text-muted-foreground">
             <p>User ID: {user.id}</p>
             <p>Last Updated: {format(new Date(user.updated_at), 'MMM d, yyyy HH:mm')}</p>
           </div>
@@ -206,21 +200,20 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
 
 function StatusBadge({ status }: { status: UserStatus }) {
   const variants: Record<UserStatus, string> = {
-    active: 'bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary',
-    inactive: 'bg-secondary text-secondary-foreground dark:bg-secondary/30 dark:text-muted-foreground',
-    suspended: 'bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive',
-    pending_verification:
-      'bg-secondary/10 text-secondary-foreground dark:bg-secondary/30 dark:text-secondary-foreground',
+    active: 'bg-primary/10 text-primary/30',
+    inactive: 'bg-secondary text-secondary-foreground bg-secondary/30 text-muted-foreground',
+    suspended: 'bg-destructive/10 text-destructive/30',
+    pending_verification: 'bg-secondary/10 text-secondary-foreground bg-secondary/30',
   }
   return <Badge className={variants[status]}>{status.replace('_', ' ')}</Badge>
 }
 
 function RoleBadge({ role }: { role: UserRole }) {
   const variants: Record<UserRole, string> = {
-    admin: 'bg-accent/10 text-accent-foreground dark:bg-accent/30 dark:text-accent-foreground',
-    moderator: 'bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary',
-    support: 'bg-secondary/10 text-secondary-foreground dark:bg-secondary/30 dark:text-secondary-foreground',
-    user: 'bg-secondary text-secondary-foreground dark:bg-secondary/30 dark:text-muted-foreground',
+    admin: 'bg-accent/10 text-accent-foreground/30 text-accent-foreground',
+    moderator: 'bg-primary/10 text-primary/30',
+    support: 'bg-secondary/10 text-secondary-foreground bg-secondary/30',
+    user: 'bg-secondary text-secondary-foreground bg-secondary/30 text-muted-foreground',
   }
   return <Badge className={variants[role]}>{role}</Badge>
 }

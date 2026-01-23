@@ -22,13 +22,13 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
   const PRIMARY_COLOR = 'hsl(var(--primary))'
 
   if (!data || data.length === 0) {
-    return <div ref={containerRef} className="w-full h-full" />
+    return <div ref={containerRef} className="h-full w-full" />
   }
 
   const { width, height } = dimensions
 
   if (width === 0 || height === 0) {
-    return <div ref={containerRef} className="w-full h-full" />
+    return <div ref={containerRef} className="h-full w-full" />
   }
 
   const padding = 20
@@ -60,7 +60,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
               y2={y}
               stroke="currentColor"
               strokeWidth="0.5"
-              className="text-muted-foreground dark:text-muted-foreground"
+              className="text-muted-foreground"
               opacity={0.5}
             />
           )
@@ -134,7 +134,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
 
           return (
             <div
-              className="absolute p-3 text-xs bg-secondary dark:bg-secondary text-primary-foreground rounded-lg shadow-xl pointer-events-none border-border min-w-[180px] z-50"
+              className="pointer-events-none absolute z-50 min-w-[180px] rounded-lg border-border bg-secondary p-3 text-xs text-primary-foreground shadow-xl"
               style={{
                 left: `${((padding + hoveredIndex * (barWidth + barSpacing) + barWidth / 2) / width) * 100}%`,
                 top: `${((padding + plotHeight - getBarHeight(point.hours) - 60) / height) * 100}%`,
@@ -144,19 +144,19 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
             >
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Day {point.day}
                   </span>
-                  <span className="text-xs text-muted-foreground font-medium">{formattedDate}</span>
+                  <span className="text-xs font-medium text-muted-foreground">{formattedDate}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  <span className="text-sm font-bold text-white">{formatHours(point.hours)} saved</span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span className="text-sm font-bold text-foreground">{formatHours(point.hours)} saved</span>
                 </div>
-                <div className="pt-1 border-t border-border">
-                  <span className="text-xs text-muted-foreground dark:text-muted-foreground">
+                <div className="border-t border-border pt-1">
+                  <span className="text-xs text-muted-foreground">
                     Available Hours Left:{' '}
-                    <span className="font-bold text-white">{formatHours(availableHoursLeft)}</span>
+                    <span className="font-bold text-foreground">{formatHours(availableHoursLeft)}</span>
                   </span>
                 </div>
               </div>

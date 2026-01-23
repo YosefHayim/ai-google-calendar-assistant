@@ -119,8 +119,8 @@ function MobileFilters({
   onClearFilters,
 }: FilterSectionProps) {
   return (
-    <div className="sm:hidden -mx-4 px-4">
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide flex-wrap">
+    <div className="-mx-4 px-4 sm:hidden">
+      <div className="scrollbar-hide flex flex-wrap gap-2 overflow-x-auto pb-2">
         {availableFilters.colors.length > 0 && (
           <ColorFilterDropdown
             colors={availableFilters.colors}
@@ -149,7 +149,7 @@ function MobileFilters({
           />
         )}
         {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={onClearFilters} className="gap-2 whitespace-nowrap flex-shrink-0">
+          <Button variant="ghost" size="sm" onClick={onClearFilters} className="flex-shrink-0 gap-2 whitespace-nowrap">
             <X className="h-4 w-4" />
             Clear Filters
           </Button>
@@ -171,7 +171,7 @@ function DesktopFilters({
   onClearFilters,
 }: FilterSectionProps) {
   return (
-    <div className="hidden sm:flex items-center gap-2">
+    <div className="hidden items-center gap-2 sm:flex">
       {availableFilters.colors.length > 0 && (
         <ColorFilterDropdown
           colors={availableFilters.colors}

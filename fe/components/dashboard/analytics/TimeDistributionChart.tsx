@@ -43,16 +43,16 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
 
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-6">
-        <div className="flex items-center gap-2 mb-2">
-          <Skeleton className="w-5 h-5 rounded" />
+      <div className="rounded-xl bg-background bg-secondary p-6 shadow-sm">
+        <div className="mb-2 flex items-center gap-2">
+          <Skeleton className="h-5 w-5 rounded" />
           <Skeleton className="h-5 w-28" />
         </div>
-        <Skeleton className="h-4 w-44 mb-6" />
+        <Skeleton className="mb-6 h-4 w-44" />
         <div className="flex justify-center">
           <Skeleton className="h-[160px] w-[160px] rounded-full" />
         </div>
-        <div className="grid grid-cols-2 gap-2 mt-6">
+        <div className="mt-6 grid grid-cols-2 gap-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-6 w-full" />
           ))}
@@ -64,24 +64,20 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
   const hasData = total > 0
 
   return (
-    <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-2 mb-1">
-        <div className="w-8 h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center">
-          <Clock className="w-4 h-4 text-foreground dark:text-primary" />
+    <div className="rounded-xl bg-background bg-secondary p-6 shadow-sm transition-shadow hover:shadow-md">
+      <div className="mb-1 flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary">
+          <Clock className="h-4 w-4 text-foreground" />
         </div>
-        <h3 className="font-semibold text-foreground dark:text-primary-foreground">Time of Day</h3>
+        <h3 className="font-semibold text-foreground">Time of Day</h3>
       </div>
-      <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-4 ml-10">
-        When your events are scheduled
-      </p>
+      <p className="mb-4 ml-10 text-xs text-muted-foreground">When your events are scheduled</p>
 
       {!hasData ? (
-        <div className="h-[160px] flex items-center justify-center text-muted-foreground dark:text-muted-foreground">
-          No events in this period
-        </div>
+        <div className="flex h-[160px] items-center justify-center text-muted-foreground">No events in this period</div>
       ) : (
         <ChartContainer config={chartConfig} className="mx-auto aspect-auto h-[180px]">
-          <div className="relative flex items-center justify-center h-full">
+          <div className="relative flex h-full items-center justify-center">
             <ResponsiveContainer width={160} height={160}>
               <PieChart>
                 <Pie
@@ -120,9 +116,9 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
                 />
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <p className="text-2xl font-bold text-foreground dark:text-primary-foreground">{total}</p>
+                <p className="text-2xl font-bold text-foreground">{total}</p>
                 <p className="text-xs text-muted-foreground">events</p>
               </div>
             </div>
@@ -130,16 +126,16 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
         </ChartContainer>
       )}
 
-      <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-4">
+      <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
         {TIME_PERIODS.map((period) => {
           const count = data[period.key]
           const percentage = total > 0 ? ((count / total) * 100).toFixed(0) : 0
           return (
             <div key={period.key} className="flex items-center gap-2 text-sm">
-              <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: period.color }} />
-              <div className="flex-1 min-w-0">
-                <span className="text-foreground dark:text-muted-foreground truncate">{period.label}</span>
-                <span className="text-muted-foreground dark:text-muted-foreground ml-1">
+              <div className="h-3 w-3 flex-shrink-0 rounded-sm" style={{ backgroundColor: period.color }} />
+              <div className="min-w-0 flex-1">
+                <span className="truncate text-foreground text-muted-foreground">{period.label}</span>
+                <span className="ml-1 text-muted-foreground">
                   {count} ({percentage}%)
                 </span>
               </div>

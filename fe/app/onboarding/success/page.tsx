@@ -156,7 +156,7 @@ export default function SuccessPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <CheckCircle className="h-5 w-5 text-green-500" />
                     {category.category}
                   </CardTitle>
                 </CardHeader>
@@ -176,13 +176,13 @@ export default function SuccessPage() {
 
         {/* Additional info */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+          <Card className="border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5">
             <CardContent className="p-6">
               <div className="flex items-start gap-3">
-                <Sparkles className="w-6 h-6 text-primary mt-0.5" />
+                <Sparkles className="mt-0.5 h-6 w-6 text-primary" />
                 <div>
-                  <h3 className="font-semibold mb-2">What's next?</h3>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <h3 className="mb-2 font-semibold">What's next?</h3>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>• Your calendar will be automatically optimized based on your preferences</li>
                     <li>• You'll start receiving {notificationFrequency?.replace('_', ' ')} notifications</li>
                     <li>• You can always adjust these settings in your preferences later</li>
@@ -202,7 +202,7 @@ export default function SuccessPage() {
         >
           <Button onClick={handleComplete} disabled={isLoading} size="lg" className="px-12 py-3 text-lg">
             {isLoading ? 'Setting up...' : 'Start using Ally'}
-            {!isLoading && <ArrowRight className="w-5 h-5 ml-2" />}
+            {!isLoading && <ArrowRight className="ml-2 h-5 w-5" />}
           </Button>
         </motion.div>
       </div>

@@ -14,12 +14,12 @@ interface TimelineVisualizationProps {
 
 export function TimelineVisualization({ events, calendarMap }: TimelineVisualizationProps) {
   return (
-    <div className="px-6 py-4 border-b border ">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground">Day Overview</span>
+    <div className="border border-b px-6 py-4">
+      <div className="mb-2 flex items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground">Day Overview</span>
       </div>
-      <div className="relative h-8 bg-secondary dark:bg-secondary rounded-md overflow-hidden">
-        <div className="absolute inset-y-0 left-0 bg-primary/10 dark:bg-primary/30" style={{ width: '100%' }} />
+      <div className="relative h-8 overflow-hidden rounded-md bg-secondary">
+        <div className="bg-primary/10/30 absolute inset-y-0 left-0" style={{ width: '100%' }} />
         {events.map((event, index) => {
           if (!event.start?.dateTime || !event.end?.dateTime) return null
           const start = new Date(event.start.dateTime)
@@ -40,14 +40,14 @@ export function TimelineVisualization({ events, calendarMap }: TimelineVisualiza
             <HoverCard key={event.id || index} openDelay={200} closeDelay={100}>
               <HoverCardTrigger asChild>
                 <div
-                  className="absolute inset-y-0 opacity-80 overflow-hidden cursor-pointer hover:opacity-100 transition-opacity"
+                  className="absolute inset-y-0 cursor-pointer overflow-hidden opacity-80 transition-opacity hover:opacity-100"
                   style={{
                     left: `${leftPercent}%`,
                     width: `${Math.max(widthPercent, 1)}%`,
                     backgroundColor: color,
                   }}
                 >
-                  <span className="text-xs text-black truncate block px-0.5 leading-8">{displayName}</span>
+                  <span className="block truncate px-0.5 text-xs leading-8 text-primary-foreground">{displayName}</span>
                 </div>
               </HoverCardTrigger>
               <HoverCardContent side="top" className="w-auto max-w-xs p-2">
@@ -70,7 +70,7 @@ export function TimelineVisualization({ events, calendarMap }: TimelineVisualiza
           ))}
         </div>
       </div>
-      <div className="flex justify-between mt-1">
+      <div className="mt-1 flex justify-between">
         <span className="text-[10px] text-muted-foreground">12am</span>
         <span className="text-[10px] text-muted-foreground">12pm</span>
       </div>

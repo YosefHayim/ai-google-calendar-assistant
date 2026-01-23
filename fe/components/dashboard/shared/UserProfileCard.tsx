@@ -16,8 +16,8 @@ function UserProfileCard({ isOpen }: UserProfileCardProps) {
   if (isLoading) {
     if (!isOpen) {
       return (
-        <div className="flex items-center justify-center p-2 rounded-md md:justify-center">
-          <div className="w-9 h-9 rounded-full bg-accent animate-pulse shrink-0" />
+        <div className="flex items-center justify-center rounded-md p-2 md:justify-center">
+          <div className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-accent" />
         </div>
       )
     }
@@ -31,7 +31,7 @@ function UserProfileCard({ isOpen }: UserProfileCardProps) {
 
   if (!isOpen) {
     return (
-      <div className="flex items-center justify-center p-2 rounded-md md:justify-center">
+      <div className="flex items-center justify-center rounded-md p-2 md:justify-center">
         <Avatar className="h-9 w-9 shrink-0">
           <AvatarImage src={avatarUrl} alt={fullName} />
           <AvatarFallback className="bg-accent text-muted-foreground">{initials}</AvatarFallback>

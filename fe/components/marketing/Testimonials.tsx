@@ -102,27 +102,27 @@ const Testimonials = () => {
   const { t } = useTranslation()
 
   return (
-    <section className="py-20 md:py-28 relative overflow-hidden bg-muted dark:bg-secondary">
-      <div className="absolute inset-0 z-0 opacity-30 pointer-events-none" aria-hidden="true">
-        <div className="absolute top-[10%] left-[10%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(var(--primary-rgb,34,197,94),0.15),rgba(255,255,255,0))]" />
+    <section className="relative overflow-hidden bg-muted bg-secondary py-20 md:py-28">
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-30" aria-hidden="true">
+        <div className="absolute left-[10%] top-[10%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(var(--primary-rgb,34,197,94),0.15),rgba(255,255,255,0))]" />
         <div className="absolute bottom-[10%] right-[10%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(139,92,246,0.1),rgba(255,255,255,0))]" />
       </div>
 
-      <div className="container z-10 mx-auto px-4 relative">
+      <div className="container relative z-10 mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           viewport={{ once: true }}
-          className="flex flex-col items-center justify-center max-w-[600px] mx-auto mb-12"
+          className="mx-auto mb-12 flex max-w-[600px] flex-col items-center justify-center"
         >
-          <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">{t('testimonials.badge')}</p>
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-primary">{t('testimonials.badge')}</p>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-center text-foreground dark:text-primary-foreground">
+          <h2 className="text-center text-3xl font-medium tracking-tight text-foreground sm:text-4xl md:text-5xl">
             {t('testimonials.title')}
           </h2>
 
-          <p className="text-center mt-5 text-muted-foreground dark:text-muted-foreground max-w-md">
+          <p className="mt-5 max-w-md text-center text-muted-foreground">
             {t('testimonials.subtitle', 'See what early users are saying about Ally. Your feedback could be here too!')}
           </p>
 
@@ -135,19 +135,19 @@ const Testimonials = () => {
           >
             <Link
               href="/contact"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-white font-medium text-sm hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25"
+              className="flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-colors hover:bg-primary/90"
             >
-              <Send className="w-4 h-4" />
+              <Send className="h-4 w-4" />
               {t('testimonials.feedbackButton', 'Share Your Feedback')}
             </Link>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border-primary/20">
-              <MessageSquarePlus className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-2 rounded-full border-primary/20 bg-primary/10 px-4 py-2">
+              <MessageSquarePlus className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium text-primary">{t('testimonials.cta', 'Be one of the first')}</span>
             </div>
           </motion.div>
         </motion.div>
 
-        <div className="flex justify-center gap-6 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] max-h-[740px] overflow-hidden">
+        <div className="flex max-h-[740px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
           <TestimonialsColumn testimonials={firstColumn} duration={18} />
           <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={22} />
           <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={20} />

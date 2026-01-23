@@ -301,10 +301,10 @@ export function ChatInterface() {
   }
 
   return (
-    <div className="flex h-full w-full relative overflow-hidden">
-      <div className="flex-1 flex flex-col h-full mx-auto w-full relative overflow-hidden">
+    <div className="relative flex h-full w-full overflow-hidden">
+      <div className="relative mx-auto flex h-full w-full flex-1 flex-col overflow-hidden">
         {/* Mobile header for tabs */}
-        <div className="md:hidden flex h-14 shrink-0 items-center justify-center bg-muted/80 dark:bg-secondary/80 backdrop-blur-sm border-b border-border/50">
+        <div className="flex h-14 shrink-0 items-center justify-center border-b border-border/50 bg-muted/80 bg-secondary/80 backdrop-blur-sm md:hidden">
           <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
@@ -315,7 +315,7 @@ export function ChatInterface() {
 
         {isLoadingConversation && <LoadingSpinner overlay />}
 
-        <div className="flex-1 relative h-full overflow-hidden">
+        <div className="relative h-full flex-1 overflow-hidden">
           {activeTab === 'avatar' ? (
             <AvatarView
               messages={messages}

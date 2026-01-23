@@ -39,31 +39,28 @@ const NavLink: React.FC<NavLinkProps> = ({
         href={href}
         onClick={onClick}
         className={cn(
-          'flex-1 flex items-center gap-3 p-3 md:p-2 rounded-lg transition-colors min-h-[44px] md:min-h-0',
+          'flex min-h-[44px] flex-1 items-center gap-3 rounded-lg p-3 transition-colors md:min-h-0 md:p-2',
           isActive
-            ? 'bg-secondary dark:bg-secondary text-foreground dark:text-primary-foreground font-bold'
-            : 'text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary',
+            ? 'bg-secondary font-bold text-foreground'
+            : 'text-muted-foreground hover:bg-muted hover:bg-secondary',
           !isOpen && 'md:justify-center',
         )}
       >
-        <Icon className={cn('w-5 h-5 shrink-0', isActive && 'text-primary')} />
-        <span className={cn('text-sm whitespace-nowrap', !isOpen && 'md:hidden')}>{children}</span>
+        <Icon className={cn('h-5 w-5 shrink-0', isActive && 'text-primary')} />
+        <span className={cn('whitespace-nowrap text-sm', !isOpen && 'md:hidden')}>{children}</span>
       </Link>
       {description && isOpen && (
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
             <button
               type="button"
-              className="p-2 md:p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary dark:hover:bg-secondary transition-colors min-w-[36px] min-h-[36px] md:min-w-0 md:min-h-0 flex items-center justify-center"
+              className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground md:min-h-0 md:min-w-0 md:p-1"
               aria-label="More information"
             >
-              <Info className="w-3.5 h-3.5" />
+              <Info className="h-3.5 w-3.5" />
             </button>
           </TooltipTrigger>
-          <TooltipContent
-            side="right"
-            className="max-w-[220px] bg-secondary dark:bg-secondary text-primary-foreground border-border"
-          >
+          <TooltipContent side="right" className="max-w-[220px] border-border bg-secondary text-primary-foreground">
             <p className="text-xs leading-relaxed">{description}</p>
           </TooltipContent>
         </Tooltip>
@@ -114,7 +111,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
 
   return (
     <TooltipProvider>
-      <nav className="px-4 space-y-0.5 pt-1">
+      <nav className="space-y-0.5 px-4 pt-1">
         {navItems.map((item) => (
           <NavLink
             key={item.href}

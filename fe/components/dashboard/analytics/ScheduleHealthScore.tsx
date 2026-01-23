@@ -150,18 +150,18 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
 
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6">
-        <div className="flex items-center gap-2 mb-2">
-          <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg" />
-          <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
+      <div className="rounded-xl bg-background bg-secondary p-4 shadow-sm sm:p-6">
+        <div className="mb-2 flex items-center gap-2">
+          <Skeleton className="h-7 w-7 rounded-lg sm:h-8 sm:w-8" />
+          <Skeleton className="h-4 w-28 sm:h-5 sm:w-36" />
         </div>
-        <Skeleton className="h-3 sm:h-4 w-36 sm:w-44 mb-4 sm:mb-6" />
-        <div className="flex justify-center mb-4 sm:mb-6">
-          <Skeleton className="h-24 w-24 sm:h-32 sm:w-32 rounded-full" />
+        <Skeleton className="mb-4 h-3 w-36 sm:mb-6 sm:h-4 sm:w-44" />
+        <div className="mb-4 flex justify-center sm:mb-6">
+          <Skeleton className="h-24 w-24 rounded-full sm:h-32 sm:w-32" />
         </div>
         <div className="space-y-2 sm:space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-8 sm:h-10 w-full" />
+            <Skeleton key={i} className="h-8 w-full sm:h-10" />
           ))}
         </div>
       </div>
@@ -181,11 +181,11 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
   const getStatusIcon = (status: 'good' | 'warning' | 'bad') => {
     switch (status) {
       case 'good':
-        return <CheckCircle className="w-4 h-4 text-primary" />
+        return <CheckCircle className="h-4 w-4 text-primary" />
       case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-primary" />
+        return <AlertTriangle className="h-4 w-4 text-primary" />
       case 'bad':
-        return <AlertTriangle className="w-4 h-4 text-destructive" />
+        return <AlertTriangle className="h-4 w-4 text-destructive" />
     }
   }
 
@@ -197,26 +197,24 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
   const strokeDashoffset = circumference - (percentage / 100) * circumference
 
   return (
-    <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-1 gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center flex-shrink-0">
-            <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />
+    <div className="rounded-xl bg-background bg-secondary p-4 shadow-sm transition-shadow hover:shadow-md sm:p-6">
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-secondary sm:h-8 sm:w-8">
+            <Activity className="h-3.5 w-3.5 text-foreground sm:h-4 sm:w-4" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-foreground dark:text-primary-foreground truncate">
-            Schedule Health
-          </h3>
+          <h3 className="truncate text-sm font-semibold text-foreground sm:text-base">Schedule Health</h3>
         </div>
-        <span className={`text-xs sm:text-sm font-medium flex-shrink-0 ${overall.color}`}>{overall.label}</span>
+        <span className={`flex-shrink-0 text-xs font-medium sm:text-sm ${overall.color}`}>{overall.label}</span>
       </div>
-      <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mb-3 sm:mb-4 ml-9 sm:ml-10">
+      <p className="mb-3 ml-9 text-[10px] text-muted-foreground sm:mb-4 sm:ml-10 sm:text-xs">
         Overall schedule wellness
       </p>
 
       {/* Circular Progress */}
-      <div className="flex justify-center mb-4 sm:mb-6">
+      <div className="mb-4 flex justify-center sm:mb-6">
         <div className="relative">
-          <svg width="100" height="100" className="sm:hidden transform -rotate-90">
+          <svg width="100" height="100" className="-rotate-90 transform sm:hidden">
             <circle
               cx="50"
               cy="50"
@@ -224,7 +222,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
               fill="none"
               stroke="currentColor"
               strokeWidth="6"
-              className="text-muted-foreground dark:text-muted-foreground"
+              className="text-muted-foreground"
             />
             <circle
               cx="50"
@@ -241,7 +239,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
               }}
             />
           </svg>
-          <svg width="128" height="128" className="hidden sm:block transform -rotate-90">
+          <svg width="128" height="128" className="hidden -rotate-90 transform sm:block">
             <circle
               cx="64"
               cy="64"
@@ -249,7 +247,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
               fill="none"
               stroke="currentColor"
               strokeWidth="8"
-              className="text-muted-foreground dark:text-muted-foreground"
+              className="text-muted-foreground"
             />
             <circle
               cx="64"
@@ -268,10 +266,8 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <span className="text-2xl sm:text-3xl font-bold text-foreground dark:text-primary-foreground">
-                {percentage}
-              </span>
-              <span className="text-sm sm:text-lg text-muted-foreground">/100</span>
+              <span className="text-2xl font-bold text-foreground sm:text-3xl">{percentage}</span>
+              <span className="text-sm text-muted-foreground sm:text-lg">/100</span>
             </div>
           </div>
         </div>
@@ -282,22 +278,22 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
         {factors.map((factor) => (
           <div
             key={factor.id}
-            className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-muted dark:hover:bg-secondary/50 transition-colors group"
+            className="group flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-muted hover:bg-secondary/50 sm:gap-3 sm:p-2"
           >
-            <factor.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
-            <div className="flex-1 min-w-0">
+            <factor.icon className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground sm:h-4 sm:w-4" />
+            <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs sm:text-sm text-foreground dark:text-muted-foreground truncate">
+                <span className="truncate text-xs text-foreground text-muted-foreground sm:text-sm">
                   {factor.label}
                 </span>
-                <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                  <span className="text-xs sm:text-sm font-medium text-foreground dark:text-primary-foreground">
+                <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-2">
+                  <span className="text-xs font-medium text-foreground sm:text-sm">
                     {factor.score}/{factor.maxScore}
                   </span>
                   {getStatusIcon(factor.status)}
                 </div>
               </div>
-              <div className="h-1 sm:h-1.5 bg-accent dark:bg-secondary rounded-full mt-1 overflow-hidden">
+              <div className="mt-1 h-1 overflow-hidden rounded-full bg-accent bg-secondary sm:h-1.5">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${
                     factor.status === 'good'
@@ -309,7 +305,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
                   style={{ width: `${(factor.score / factor.maxScore) * 100}%` }}
                 />
               </div>
-              <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mt-1 opacity-0 group-hover:opacity-100 transition-opacity line-clamp-1">
+              <p className="mt-1 line-clamp-1 text-[10px] text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 sm:text-xs">
                 {factor.tip}
               </p>
             </div>

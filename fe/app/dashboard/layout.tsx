@@ -44,13 +44,13 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
 
         <AppSidebar onOpenSettings={openSettings} onSignOut={handleSignOut} />
 
-        <SidebarInset className="flex-1 flex flex-col">
+        <SidebarInset className="flex flex-1 flex-col">
           <TrialExpirationBanner onUpgrade={handleUpgrade} />
 
-          <header className="sticky top-0 flex h-14 shrink-0 items-center gap-4 border-b bg-muted dark:bg-secondary px-4 md:hidden z-40">
+          <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-4 border-b bg-muted px-4 dark:bg-secondary md:hidden">
             <SidebarTrigger className="h-9 w-9 shrink-0" />
           </header>
-          <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
+          <main className="flex flex-1 flex-col overflow-hidden">{children}</main>
         </SidebarInset>
 
         <SettingsModal

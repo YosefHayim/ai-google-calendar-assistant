@@ -23,11 +23,11 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
     <HoverCard>
       <HoverCardTrigger asChild>
         <li
-          className="flex items-start gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-md p-3 -mx-3 transition-colors"
+          className="group -mx-3 flex cursor-pointer items-start gap-3 rounded-md p-3 transition-colors hover:bg-muted hover:bg-secondary/50"
           onClick={() => onEventClick(event, calendarColor, calendarName)}
         >
           <div
-            className="w-8 h-8 rounded-md group-hover:opacity-80 transition-opacity flex items-center justify-center shrink-0 mt-0.5"
+            className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-opacity group-hover:opacity-80"
             style={{
               backgroundColor: calendarColor,
               opacity: 0.2,
@@ -35,22 +35,22 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
           >
             <CalendarDays size={16} style={{ color: calendarColor }} />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground line-clamp-1">{event.summary || 'No Title'}</p>
-            <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <div className="text-xs text-muted-foreground font-bold uppercase flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="line-clamp-1 text-sm font-semibold text-foreground">{event.summary || 'No Title'}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase text-muted-foreground">
                 <Clock size={12} style={{ color: calendarColor }} />
                 <span>{eventTimeRange}</span>
               </div>
-              <span className="text-xs font-bold text-muted-foreground dark:text-muted-foreground">•</span>
-              <div className="text-xs font-bold text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
+              <span className="text-xs font-bold text-muted-foreground">•</span>
+              <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
                 <Hourglass size={12} style={{ color: calendarColor }} />
                 <span>{duration}</span>
               </div>
               {event.status && (
                 <>
-                  <span className="text-xs font-bold text-muted-foreground dark:text-muted-foreground">•</span>
-                  <span className="text-xs font-bold px-1.5 py-0.5">
+                  <span className="text-xs font-bold text-muted-foreground">•</span>
+                  <span className="px-1.5 py-0.5 text-xs font-bold">
                     {event.status === 'confirmed' ? (
                       <CircleCheckBig size={12} className="text-primary" />
                     ) : (
@@ -61,8 +61,8 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
               )}
             </div>
             {event.location && (
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1 line-clamp-1">
-                <MapPin size={10} className="inline mr-1" />
+              <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
+                <MapPin size={10} className="mr-1 inline" />
                 {event.location}
               </p>
             )}
@@ -71,9 +71,7 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
       </HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="space-y-2">
-          <h4 className="font-semibold text-sm text-foreground dark:text-primary-foreground">
-            {event.summary || 'No Title'}
-          </h4>
+          <h4 className="text-sm font-semibold text-foreground">{event.summary || 'No Title'}</h4>
           <div className="space-y-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <Clock size={16} />
@@ -94,9 +92,7 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
               </div>
             )}
             {event.description && (
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground line-clamp-2 mt-2">
-                {event.description}
-              </p>
+              <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{event.description}</p>
             )}
           </div>
         </div>

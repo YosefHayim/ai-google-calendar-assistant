@@ -76,17 +76,17 @@ const OTPVerificationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background dark:bg-[#030303] flex flex-col relative overflow-hidden">
-      <BackgroundPattern1 className="flex-1 flex flex-col items-center justify-center pt-0 pb-0">
-        <div className="w-full max-w-md px-6 relative z-10">
-          <div className="flex flex-col items-center text-center mb-10">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border-primary/20">
-              {isSuccess ? <CheckCircle2 className="w-10 h-10 text-emerald-500" /> : <Lock className="w-10 h-10" />}
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background">
+      <BackgroundPattern1 className="flex flex-1 flex-col items-center justify-center pb-0 pt-0">
+        <div className="relative z-10 w-full max-w-md px-6">
+          <div className="mb-10 flex flex-col items-center text-center">
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border-primary/20 bg-primary/10 text-primary shadow-xl shadow-primary/10">
+              {isSuccess ? <CheckCircle2 className="h-10 w-10 text-emerald-500" /> : <Lock className="h-10 w-10" />}
             </div>
-            <h1 className="text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4">
+            <h1 className="mb-4 text-4xl font-medium tracking-tight text-foreground">
               {isSuccess ? 'Identity Verified' : 'Verify Protocol'}
             </h1>
-            <p className="text-muted-foreground dark:text-muted-foreground text-lg font-medium leading-relaxed">
+            <p className="text-lg font-medium leading-relaxed text-muted-foreground">
               {isSuccess
                 ? 'Security handshake complete. Redirecting to your dashboard...'
                 : `Enter the 6-digit code we sent to your device ending in ${phone?.slice(-4) || '...'}`}
@@ -109,7 +109,7 @@ const OTPVerificationPage: React.FC = () => {
                       value={digit}
                       onChange={(e) => handleChange(index, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(index, e)}
-                      className="w-12 h-16 sm:w-14 sm:h-20 rounded-xl text-center text-3xl font-bold focus:ring-4 focus:ring-primary/10"
+                      className="h-16 w-12 rounded-xl text-center text-3xl font-bold focus:ring-4 focus:ring-primary/10 sm:h-20 sm:w-14"
                     />
                   ))}
                 </div>
@@ -117,19 +117,19 @@ const OTPVerificationPage: React.FC = () => {
                 <div className="space-y-2 text-center">
                   <InteractiveHoverButton
                     text={isVerifying ? 'Verifying...' : 'Verify Identity'}
-                    className="w-full h-16 text-lg shadow-xl shadow-primary/20"
+                    className="h-16 w-full text-lg shadow-xl shadow-primary/20"
                     disabled={isVerifying || otp.join('').length < 6}
                   />
 
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                    <p className="text-sm font-medium text-muted-foreground">
                       Didn&apos;t receive code?{' '}
                       {canResend ? (
-                        <Button onClick={handleResend} type="button" variant="link" className="p-0 h-auto font-bold">
+                        <Button onClick={handleResend} type="button" variant="link" className="h-auto p-0 font-bold">
                           Send again
                         </Button>
                       ) : (
-                        <span className="text-muted-foreground italic">
+                        <span className="italic text-muted-foreground">
                           Retry in 0:{timer.toString().padStart(2, '0')}
                         </span>
                       )}
@@ -141,17 +141,17 @@ const OTPVerificationPage: React.FC = () => {
               <Button
                 onClick={() => router.push('/phone-registration')}
                 variant="ghost"
-                className="mt-12 w-full text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground font-medium text-xs uppercase tracking-widest"
+                className="mt-12 w-full text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground hover:text-primary-foreground"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Edit Phone Number
+                <ArrowLeft className="h-3.5 w-3.5" /> Edit Phone Number
               </Button>
             </>
           )}
         </div>
       </BackgroundPattern1>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-30 select-none text-foreground dark:text-white">
-        <AllyLogo className="w-4 h-4" />
+      <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 select-none items-center gap-2 text-foreground opacity-30">
+        <AllyLogo className="h-4 w-4" />
         <span className="text-xs font-bold uppercase tracking-[0.3em]">Encrypted Session Active</span>
       </div>
     </div>

@@ -81,23 +81,23 @@ export default function AdminFeatureFlagsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-white">Feature Flags</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground dark:text-muted-foreground">
             Manage feature flags and rollout settings
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
           <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm">
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="mr-2 h-4 w-4" />
                 Create Flag
               </Button>
             </DialogTrigger>
@@ -108,7 +108,7 @@ export default function AdminFeatureFlagsPage() {
 
       <Card className="p-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by key or name..."
             value={search}
@@ -120,28 +120,28 @@ export default function AdminFeatureFlagsPage() {
 
       <Card>
         {isLoading ? (
-          <div className="p-8 flex justify-center">
+          <div className="flex justify-center p-8">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="border-b ">
+              <thead className="border-b">
                 <tr>
-                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Flag</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                  <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Flag</th>
+                  <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
+                  <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
                     Rollout
                   </th>
-                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Tiers</th>
-                  <th className="text-right p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                  <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Tiers</th>
+                  <th className="p-4 text-right font-medium text-muted-foreground dark:text-muted-foreground">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredFlags?.map((flag) => (
-                  <tr key={flag.id} className="border-b border-zinc-100  hover:bg-muted dark:hover:bg-secondary/50">
+                  <tr key={flag.id} className="border-b border-zinc-100 hover:bg-muted dark:hover:bg-secondary/50">
                     <td className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
@@ -149,9 +149,9 @@ export default function AdminFeatureFlagsPage() {
                         </div>
                         <div>
                           <p className="font-medium text-foreground dark:text-white">{flag.name}</p>
-                          <p className="text-xs text-muted-foreground font-mono">{flag.key}</p>
+                          <p className="font-mono text-xs text-muted-foreground">{flag.key}</p>
                           {flag.description && (
-                            <p className="text-xs text-muted-foreground mt-1 max-w-xs truncate">{flag.description}</p>
+                            <p className="mt-1 max-w-xs truncate text-xs text-muted-foreground">{flag.description}</p>
                           )}
                         </div>
                       </div>
@@ -177,9 +177,9 @@ export default function AdminFeatureFlagsPage() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-20 h-2 bg-accent dark:bg-zinc-700 rounded-full overflow-hidden">
+                        <div className="h-2 w-20 overflow-hidden rounded-full bg-accent dark:bg-zinc-700">
                           <div
-                            className="h-full bg-primary rounded-full"
+                            className="h-full rounded-full bg-primary"
                             style={{ width: `${flag.rolloutPercentage}%` }}
                           />
                         </div>
@@ -211,18 +211,18 @@ export default function AdminFeatureFlagsPage() {
                             setEditDialogOpen(true)
                           }}
                         >
-                          <Pencil className="w-4 h-4" />
+                          <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/5 dark:hover:bg-red-900/20"
+                          className="text-destructive hover:bg-destructive/5 hover:text-destructive dark:hover:bg-red-900/20"
                           onClick={() => {
                             setSelectedFlag(flag)
                             setDeleteDialogOpen(true)
                           }}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </td>
@@ -377,7 +377,7 @@ function CreateFeatureFlagDialog({
               max="100"
               value={formData.rolloutPercentage}
               onChange={(e) => setFormData((prev) => ({ ...prev, rolloutPercentage: parseInt(e.target.value) }))}
-              className="w-full h-2 bg-accent rounded-lg appearance-none cursor-pointer dark:bg-zinc-700"
+              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-accent dark:bg-zinc-700"
             />
           </div>
           <div className="space-y-2">
@@ -479,7 +479,7 @@ function EditFeatureFlagDialog({
               max="100"
               value={formData.rolloutPercentage}
               onChange={(e) => setFormData((prev) => ({ ...prev, rolloutPercentage: parseInt(e.target.value) }))}
-              className="w-full h-2 bg-accent rounded-lg appearance-none cursor-pointer dark:bg-zinc-700"
+              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-accent dark:bg-zinc-700"
             />
           </div>
           <div className="space-y-2">

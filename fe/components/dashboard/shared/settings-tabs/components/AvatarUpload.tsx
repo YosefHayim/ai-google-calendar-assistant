@@ -115,7 +115,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ userData, className 
       <CardContent className="pt-6">
         <div className="flex flex-col items-center space-y-4">
           {/* Avatar Display */}
-          <div className="relative group">
+          <div className="group relative">
             <div
               className={cn(
                 'relative h-24 w-24 rounded-full border-4 border-dashed transition-colors',
@@ -133,15 +133,15 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ userData, className 
               {avatarUrl ? (
                 <Image src={avatarUrl} alt={fullName} fill className="rounded-full object-cover" sizes="96px" />
               ) : (
-                <div className="h-full w-full rounded-full bg-accent flex items-center justify-center">
+                <div className="flex h-full w-full items-center justify-center rounded-full bg-accent">
                   <span className="text-2xl font-medium text-muted-foreground">{initials}</span>
                 </div>
               )}
 
               {/* Loading overlay */}
               {isLoading && (
-                <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-white" />
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50">
+                  <Loader2 className="h-6 w-6 animate-spin text-foreground" />
                 </div>
               )}
             </div>
@@ -175,13 +175,13 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ userData, className 
           </div>
 
           {/* Instructions */}
-          <div className="text-center space-y-2">
+          <div className="space-y-2 text-center">
             <p className="text-sm font-medium">
               {avatarUrl
                 ? t('settings.avatar.changeAvatar', 'Change your avatar')
                 : t('settings.avatar.uploadAvatar', 'Upload an avatar')}
             </p>
-            <p className="text-xs text-muted-foreground max-w-xs">
+            <p className="max-w-xs text-xs text-muted-foreground">
               {t(
                 'settings.avatar.uploadHint',
                 'Drag and drop an image or click to browse. Max size: 5MB. Supported formats: JPEG, PNG, WebP.',

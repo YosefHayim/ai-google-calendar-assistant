@@ -14,7 +14,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
     <html lang="en">
       <body className="font-sans">
         <div className="flex min-h-screen items-center justify-center bg-muted p-4 dark:bg-secondary">
-          <div className="w-full max-w-lg rounded-lg border bg-background p-6 shadow-sm  dark:bg-secondary">
+          <div className="w-full max-w-lg rounded-lg border bg-background p-6 shadow-sm dark:bg-secondary">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 dark:bg-red-900/20">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

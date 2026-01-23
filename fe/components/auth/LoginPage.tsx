@@ -39,30 +39,28 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <TubesBackground className="min-h-screen animate-in fade-in duration-500">
-      <div className="flex flex-col items-center justify-center min-h-screen p-8 lg:p-12 pointer-events-auto">
+    <TubesBackground className="min-h-screen duration-500 animate-in fade-in">
+      <div className="pointer-events-auto flex min-h-screen flex-col items-center justify-center p-8 lg:p-12">
         <Link
           href="/"
-          className="absolute top-8 left-8 flex items-center gap-2 hover:opacity-80 transition-opacity z-50"
+          className="absolute left-8 top-8 z-50 flex items-center gap-2 transition-opacity hover:opacity-80"
         >
-          <div className="w-9 h-9 bg-secondary dark:bg-background rounded-md flex items-center justify-center shadow-lg text-white dark:text-foreground">
-            <AllyLogo className="w-5 h-5" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-background bg-secondary text-foreground shadow-lg">
+            <AllyLogo className="h-5 w-5" />
           </div>
-          <span className="font-medium text-2xl tracking-normal flex items-center text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">
+          <span className="flex items-center text-2xl font-medium tracking-normal text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">
             Ally <BetaBadge />
           </span>
         </Link>
 
-        <div className="w-full max-w-md bg-background/95 dark:bg-secondary/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
-          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-foreground dark:text-primary-foreground overflow-hidden">
+        <div className="w-full max-w-md rounded-2xl bg-background/95 bg-secondary/95 p-8 shadow-2xl backdrop-blur-sm">
+          <h1 className="mb-4 overflow-hidden text-4xl font-medium tracking-normal text-foreground md:text-5xl">
             {t('login.title')}
           </h1>
-          <p className="text-muted-foreground dark:text-muted-foreground mb-8 text-lg font-medium">
-            {t('login.subtitle')}
-          </p>
+          <p className="mb-8 text-lg font-medium text-muted-foreground">{t('login.subtitle')}</p>
           {error && (
-            <div className="mb-6 p-4 bg-destructive/5 dark:bg-destructive/20 border-destructive/20 dark:border-destructive rounded-lg">
-              <p className="text-destructive dark:text-destructive text-sm font-medium">
+            <div className="bg-destructive/5/20 mb-6 rounded-lg border-destructive/20 p-4">
+              <p className="text-sm font-medium text-destructive">
                 {error === 'no_token' && t('login.errors.noToken')}
                 {error === 'callback_failed' && t('login.errors.callbackFailed')}
                 {error === 'session_expired' &&
@@ -83,13 +81,13 @@ const LoginPage: React.FC = () => {
               loadingText={t('login.connecting')}
               isLoading={isLoading}
               Icon={<FcGoogle size={24} />}
-              className="w-full h-14 text-lg shadow-lg "
+              className="h-14 w-full text-lg shadow-lg"
               onClick={handleGoogleLogin}
             />
           </div>
-          <p className="mt-8 text-center text-muted-foreground dark:text-muted-foreground text-sm">
+          <p className="mt-8 text-center text-sm text-muted-foreground">
             {t('login.noAccount')}{' '}
-            <Link href="/register" className="text-primary font-medium hover:underline p-0">
+            <Link href="/register" className="p-0 font-medium text-primary hover:underline">
               {t('login.signUp')}
             </Link>
           </p>

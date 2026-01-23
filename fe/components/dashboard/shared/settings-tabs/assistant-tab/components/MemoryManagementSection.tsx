@@ -53,7 +53,7 @@ export const MemoryManagementSection: React.FC<MemoryManagementSectionProps> = (
             id="contextual-scheduling"
             title="Contextual Scheduling"
             tooltip="Allow Ally to remember your preferred meeting durations, buffer times, and recurring locations"
-            icon={<CalendarCheck size={18} className="text-foreground dark:text-primary" />}
+            icon={<CalendarCheck size={18} className="text-foreground" />}
             control={
               <CinematicGlowToggle
                 id={toggleId}

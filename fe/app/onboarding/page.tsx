@@ -22,35 +22,35 @@ const personaOptions: PersonaOption[] = [
     id: 'solopreneur',
     title: 'Solopreneur',
     description: 'Running your own business or consultancy',
-    icon: <User className="w-8 h-8" />,
+    icon: <User className="h-8 w-8" />,
     features: ['Client scheduling', 'Gap recovery', 'Daily briefings', 'Invoice tracking'],
   },
   {
     id: 'developer',
     title: 'Developer',
     description: 'Software engineer or programmer',
-    icon: <Code className="w-8 h-8" />,
+    icon: <Code className="h-8 w-8" />,
     features: ['Deep work blocks', 'Focus protection', 'Code reviews', 'Meeting buffers'],
   },
   {
     id: 'manager',
     title: 'Manager',
     description: 'Team lead or project manager',
-    icon: <Users className="w-8 h-8" />,
+    icon: <Users className="h-8 w-8" />,
     features: ['Meeting buffers', 'WhatsApp summaries', 'Conflict detection', 'Team updates'],
   },
   {
     id: 'student',
     title: 'Student',
     description: 'College or university student',
-    icon: <GraduationCap className="w-8 h-8" />,
+    icon: <GraduationCap className="h-8 w-8" />,
     features: ['Study blocks', 'Assignment tracking', 'Exam preparation', 'Progress monitoring'],
   },
   {
     id: 'freelancer',
     title: 'Freelancer',
     description: 'Independent contractor or consultant',
-    icon: <Briefcase className="w-8 h-8" />,
+    icon: <Briefcase className="h-8 w-8" />,
     features: ['Client prep', 'Invoice reminders', 'Project tracking', 'Rate optimization'],
   },
 ]
@@ -85,25 +85,25 @@ export default function PersonaSelectionPage() {
             >
               <Card
                 className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  selectedPersona === persona.id ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
+                  selectedPersona === persona.id ? 'bg-primary/5 ring-2 ring-primary' : 'hover:bg-muted/50'
                 }`}
                 onClick={() => setSelectedPersona(persona.id)}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div
-                      className={`p-3 rounded-lg ${
+                      className={`rounded-lg p-3 ${
                         selectedPersona === persona.id ? 'bg-primary text-primary-foreground' : 'bg-muted'
                       }`}
                     >
                       {persona.icon}
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-1">{persona.title}</h3>
-                      <p className="text-muted-foreground mb-3">{persona.description}</p>
+                      <h3 className="mb-1 text-lg font-semibold">{persona.title}</h3>
+                      <p className="mb-3 text-muted-foreground">{persona.description}</p>
                       <div className="flex flex-wrap gap-2">
                         {persona.features.slice(0, 3).map((feature) => (
-                          <span key={feature} className="text-xs bg-muted px-2 py-1 rounded-full">
+                          <span key={feature} className="rounded-full bg-muted px-2 py-1 text-xs">
                             {feature}
                           </span>
                         ))}
@@ -122,7 +122,7 @@ export default function PersonaSelectionPage() {
         <div className="flex justify-end pt-4">
           <Button onClick={handleContinue} disabled={!selectedPersona} size="lg" className="px-8">
             Continue
-            <ArrowRight className="w-4 h-4 ml-2" />
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>

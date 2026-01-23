@@ -45,9 +45,9 @@ const PromoCountdown = ({ targetDate, onExpired }: PromoCountdownProps) => {
   }, [targetDate, onExpired])
 
   return (
-    <div className="flex items-center gap-2 text-sm font-mono">
-      <Clock className="w-4 h-4" />
-      <span className="text-primary font-bold">
+    <div className="flex items-center gap-2 font-mono text-sm">
+      <Clock className="h-4 w-4" />
+      <span className="font-bold text-primary">
         {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:
         {String(timeLeft.seconds).padStart(2, '0')}
       </span>
@@ -92,13 +92,13 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
         animate={{ opacity: 1, transform: 'translateY(0px)' }}
         exit={{ opacity: 0, transform: 'translateY(-10px)' }}
         transition={{ duration: 0.3 }}
-        className="w-full bg-gradient-to-r from-primary/10 via-orange-500/10 to-red-500/10 border-b border-primary/20 -primary/30"
+        className="-primary/30 w-full border-b border-primary/20 bg-gradient-to-r from-primary/10 via-orange-500/10 to-red-500/10"
       >
-        <div className="max-w-7xl mx-auto px-4 py-3">
+        <div className="mx-auto max-w-7xl px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
+                <Sparkles className="h-5 w-5 text-primary" />
                 <span className="font-semibold text-foreground">
                   {isExpired
                     ? t('trial.expired', 'Trial Expired')
@@ -109,7 +109,7 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
                 </span>
               </div>
 
-              <div className="hidden sm:block text-sm text-muted-foreground">
+              <div className="hidden text-sm text-muted-foreground sm:block">
                 {isExpired
                   ? t('trial.expiredDescription', 'Your trial has expired – upgrade now to keep your access.')
                   : t(
@@ -133,7 +133,7 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
               <Button
                 onClick={onUpgrade}
                 size="sm"
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium shadow-sm"
+                className="bg-gradient-to-r from-amber-500 to-orange-500 font-medium text-foreground shadow-sm hover:from-amber-600 hover:to-orange-600"
               >
                 {t('trial.getDeal', 'Get the Deal')}
               </Button>
@@ -148,14 +148,14 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
                   }}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </Button>
               )}
             </div>
           </div>
 
           {/* Mobile text */}
-          <div className="sm:hidden mt-2 text-sm text-muted-foreground">
+          <div className="mt-2 text-sm text-muted-foreground sm:hidden">
             {isExpired
               ? t('trial.expiredDescription', 'Your trial has expired – upgrade now to keep your access.')
               : t(

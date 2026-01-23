@@ -35,12 +35,12 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
   return (
     <>
       <div className="space-y-6">
-        <div className="relative h-8 bg-secondary dark:bg-secondary rounded-full overflow-hidden flex">
+        <div className="relative flex h-8 overflow-hidden rounded-full bg-secondary">
           {segments.map((segment, index) => (
             <Button
               key={segment.key}
               variant="ghost"
-              className="h-full p-0 transition-all duration-500 relative group cursor-pointer hover:opacity-80 rounded-none"
+              className="group relative h-full cursor-pointer rounded-none p-0 transition-all duration-500 hover:opacity-80"
               style={{
                 width: `${segment.percentage}%`,
                 backgroundColor: segment.color,
@@ -51,9 +51,9 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
               }}
               onClick={() => handleCategoryClick(segment)}
             >
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
                 {segment.percentage >= 15 && (
-                  <span className="text-xs font-medium text-white drop-shadow-sm">
+                  <span className="text-xs font-medium text-foreground drop-shadow-sm">
                     {segment.percentage.toFixed(0)}%
                   </span>
                 )}
@@ -67,16 +67,16 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
             <Button
               key={cat.key}
               variant="ghost"
-              className="flex items-center gap-2 text-left hover:bg-muted dark:hover:bg-secondary/50 rounded-lg p-1 -m-1 h-auto justify-start"
+              className="-m-1 flex h-auto items-center justify-start gap-2 rounded-lg p-1 text-left hover:bg-muted hover:bg-secondary/50"
               onClick={() => handleCategoryClick(cat)}
             >
-              <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: cat.color }} />
-              <div className="flex-1 min-w-0">
+              <div className="h-3 w-3 flex-shrink-0 rounded-sm" style={{ backgroundColor: cat.color }} />
+              <div className="min-w-0 flex-1">
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-medium text-muted-foreground">{cat.label}</span>
-                  <span className="text-xs text-muted-foreground dark:text-muted-foreground">({cat.range})</span>
+                  <span className="text-xs text-muted-foreground">({cat.range})</span>
                 </div>
-                <div className="text-xs text-muted-foreground dark:text-muted-foreground">
+                <div className="text-xs text-muted-foreground">
                   {cat.count} events ({totalEvents > 0 ? ((cat.count / totalEvents) * 100).toFixed(0) : 0}%)
                 </div>
               </div>

@@ -10,11 +10,11 @@ interface MobileSignOutProps {
 
 export function MobileSignOut({ onSignOut }: MobileSignOutProps) {
   return (
-    <div className="sm:hidden mt-4 pt-3 border-t border ">
+    <div className="mt-4 border border-t pt-3 sm:hidden">
       <Button
         variant="ghost"
         onClick={onSignOut}
-        className="w-full justify-center gap-2 py-2 text-muted-foreground text-sm font-medium hover:bg-destructive/10 hover:text-destructive"
+        className="w-full justify-center gap-2 py-2 text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
       >
         <LogOut size={14} /> Sign Out
       </Button>

@@ -40,43 +40,43 @@ export function CurrentPlanCard({
 
   const getPlanIcon = () => {
     if (isHighlighted || planSlug?.includes('executive') || planSlug?.includes('sovereignty')) {
-      return <Crown className="w-5 h-5 text-primary" />
+      return <Crown className="h-5 w-5 text-primary" />
     }
     if (isPopular || planSlug?.includes('pro') || planSlug?.includes('operational')) {
-      return <Zap className="w-5 h-5 text-primary" />
+      return <Zap className="h-5 w-5 text-primary" />
     }
-    return <Shield className="w-5 h-5 text-muted-foreground" />
+    return <Shield className="h-5 w-5 text-muted-foreground" />
   }
 
   if (!planName) return null
 
   return (
-    <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+    <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
       <CardContent className="p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex min-w-0 items-center gap-3">
             {getPlanIcon()}
             <div className="min-w-0 flex-1">
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground">Current Plan</p>
-              <p className="font-semibold text-foreground dark:text-white truncate">{planName}</p>
+              <p className="text-xs text-muted-foreground">Current Plan</p>
+              <p className="truncate font-semibold text-foreground">{planName}</p>
             </div>
             {isTrialing && trialTimeDisplay ? (
               <Badge variant="default" className="text-xs sm:hidden">
-                <Clock className="w-3 h-3 mr-1" />
+                <Clock className="mr-1 h-3 w-3" />
                 {trialTimeDisplay} left
               </Badge>
             ) : (
-              <Badge className="bg-primary/20 text-primary text-xs sm:hidden">Active</Badge>
+              <Badge className="bg-primary/20 text-xs text-primary sm:hidden">Active</Badge>
             )}
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center gap-2">
             {isTrialing && trialTimeDisplay ? (
-              <Badge variant="default" className="text-xs hidden sm:inline-flex">
-                <Clock className="w-3 h-3 mr-1" />
+              <Badge variant="default" className="hidden text-xs sm:inline-flex">
+                <Clock className="mr-1 h-3 w-3" />
                 {trialTimeDisplay} left
               </Badge>
             ) : (
-              <Badge className="bg-primary/20 text-primary text-xs hidden sm:inline-flex">Active</Badge>
+              <Badge className="hidden bg-primary/20 text-xs text-primary sm:inline-flex">Active</Badge>
             )}
             <Button
               variant="outline"
@@ -86,31 +86,31 @@ export function CurrentPlanCard({
               className="flex-1 sm:flex-none"
             >
               {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  Manage <ExternalLink className="w-3 h-3 ml-1" />
+                  Manage <ExternalLink className="ml-1 h-3 w-3" />
                 </>
               )}
             </Button>
           </div>
         </div>
         {(interactionsRemaining !== null && interactionsRemaining !== undefined) || isTrialing ? (
-          <div className="mt-3 pt-3 border-t border-primary/10 space-y-2">
+          <div className="mt-3 space-y-2 border-t border-primary/10 pt-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">AI Interactions</span>
-              <span className="font-medium text-foreground dark:text-white">
+              <span className="font-medium text-foreground">
                 {isTrialing ? 'Unlimited' : `${interactionsRemaining} remaining`}
               </span>
             </div>
             {isTrialing && interactionsUsed !== null && interactionsUsed !== undefined && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Used during trial</span>
-                <span className="font-medium text-foreground dark:text-white">{interactionsUsed}</span>
+                <span className="font-medium text-foreground">{interactionsUsed}</span>
               </div>
             )}
             {isTrialing && (
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Your trial gives you unlimited access. Choose a plan below to continue after your trial ends.
               </p>
             )}

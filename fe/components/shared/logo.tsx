@@ -9,7 +9,7 @@ export const AllyLogo = ({ className = 'w-6 h-6' }: { className?: string }) => (
 )
 
 export const BetaBadge = () => (
-  <span className="ml-1.5 self-center rounded-sm border-primary/20 bg-primary/10 px-1.5 py-0.5 font-bold text-[6px] text-primary uppercase leading-none tracking-wider">
+  <span className="ml-1.5 self-center rounded-sm border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[6px] font-bold uppercase leading-none tracking-wider text-primary">
     BETA
   </span>
 )

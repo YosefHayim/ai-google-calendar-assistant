@@ -325,8 +325,8 @@ export default function RotatingEarth({
     return (
       <div className={`flex items-center justify-center p-8 ${className}`}>
         <div className="text-center">
-          <p className="text-destructive font-semibold mb-2">Error loading Earth visualization</p>
-          <p className="text-muted-foreground text-sm">{error}</p>
+          <p className="mb-2 font-semibold text-destructive">Error loading Earth visualization</p>
+          <p className="text-sm text-muted-foreground">{error}</p>
         </div>
       </div>
     )
@@ -335,17 +335,17 @@ export default function RotatingEarth({
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       {!isInView && (
-        <div className="w-full h-full min-h-[200px] bg-muted animate-pulse rounded-lg flex items-center justify-center">
-          <div className="text-muted-foreground text-sm">Loading globe...</div>
+        <div className="flex h-full min-h-[200px] w-full animate-pulse items-center justify-center rounded-lg bg-muted">
+          <div className="text-sm text-muted-foreground">Loading globe...</div>
         </div>
       )}
       <canvas
         ref={canvasRef}
-        className={`w-full h-auto ${isInView ? 'opacity-100' : 'opacity-0'}`}
+        className={`h-auto w-full ${isInView ? 'opacity-100' : 'opacity-0'}`}
         style={{ maxWidth: '100%', height: 'auto' }}
       />
       {!hideControls && isInView && (
-        <div className="absolute bottom-4 left-4 text-xs text-muted-foreground font-bold uppercase tracking-widest px-2 py-1 rounded bg-foreground/50 backdrop-blur-sm">
+        <div className="absolute bottom-4 left-4 rounded bg-foreground/50 px-2 py-1 text-xs font-bold uppercase tracking-widest text-muted-foreground backdrop-blur-sm">
           Drag to rotate • Scroll to zoom
         </div>
       )}

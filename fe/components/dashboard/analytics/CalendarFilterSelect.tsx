@@ -63,16 +63,16 @@ export function CalendarFilterSelect({
         <Button
           variant="outline"
           size="sm"
-          className="h-9 w-full gap-2 bg-background dark:bg-secondary hover:bg-muted dark:hover:bg-secondary touch-manipulation"
+          className="h-9 w-full touch-manipulation gap-2 bg-background bg-secondary hover:bg-muted hover:bg-secondary"
           disabled={isLoading}
         >
-          <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          <span className="truncate text-muted-foreground text-sm">{getSelectedCalendarNames()}</span>
-          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 ml-auto" />
+          <Calendar className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+          <span className="truncate text-sm text-muted-foreground">{getSelectedCalendarNames()}</span>
+          <ChevronDown className="ml-auto h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 sm:w-64 p-0" align="start">
-        <div className="p-3 border-b sm:p-2">
+      <PopoverContent className="w-80 p-0 sm:w-64" align="start">
+        <div className="border-b p-3 sm:p-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-muted-foreground">
               {t('analytics.calendarFilter.filterByCalendar', 'Filter by Calendar')}
@@ -81,10 +81,10 @@ export function CalendarFilterSelect({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground touch-manipulation sm:h-6"
+                className="h-7 touch-manipulation px-2 text-xs text-muted-foreground hover:text-foreground sm:h-6"
                 onClick={handleClearSelection}
               >
-                <X className="h-3 w-3 mr-1" />
+                <X className="mr-1 h-3 w-3" />
                 {t('analytics.calendarFilter.clear', 'Clear')}
               </Button>
             )}
@@ -98,8 +98,8 @@ export function CalendarFilterSelect({
             onClick={handleSelectAll}
             className={cn(
               'flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors',
-              'hover:bg-secondary dark:hover:bg-secondary',
-              isAllSelected && 'bg-secondary dark:bg-secondary',
+              'hover:bg-secondary',
+              isAllSelected && 'bg-secondary',
             )}
           >
             <div
@@ -114,7 +114,7 @@ export function CalendarFilterSelect({
             <span className="text-muted-foreground">{t('analytics.calendarFilter.allCalendars', 'All Calendars')}</span>
           </button>
 
-          <div className="my-1 h-px bg-accent dark:bg-secondary" />
+          <div className="my-1 h-px bg-accent bg-secondary" />
 
           {/* Individual calendars */}
           {calendars.map((calendar) => {
@@ -127,23 +127,23 @@ export function CalendarFilterSelect({
                 type="button"
                 onClick={() => handleToggleCalendar(calendar.id)}
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors touch-manipulation',
-                  'hover:bg-secondary dark:hover:bg-secondary active:bg-accent/70',
+                  'flex w-full touch-manipulation items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors',
+                  'hover:bg-secondary active:bg-accent/70',
                   'sm:px-2 sm:py-2',
-                  isSelected && 'bg-secondary dark:bg-secondary',
+                  isSelected && 'bg-secondary',
                 )}
               >
                 <div
                   className={cn(
-                    'flex h-5 w-5 items-center justify-center rounded border flex-shrink-0',
+                    'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border',
                     'sm:h-4 sm:w-4',
                     isSelected ? 'border-primary bg-primary text-primary-foreground' : 'border-border',
                   )}
                 >
                   {isSelected && <Check className="h-3 w-3 sm:h-3 sm:w-3" />}
                 </div>
-                <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: calendarColor }} />
-                <span className="truncate text-muted-foreground text-sm sm:text-sm">
+                <div className="h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: calendarColor }} />
+                <span className="truncate text-sm text-muted-foreground sm:text-sm">
                   {calendar.summary || calendar.id}
                 </span>
               </button>

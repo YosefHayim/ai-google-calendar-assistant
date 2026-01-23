@@ -183,40 +183,40 @@ export function ConversationListSection() {
 
   return (
     <SidebarGroup className="flex-1 overflow-hidden">
-      <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <SidebarGroupLabel className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
         Recent Chats
       </SidebarGroupLabel>
-      <div className="relative px-2 mb-2">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+      <div className="relative mb-2 px-2">
+        <Search className="absolute left-5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
           value={localSearchValue}
           onChange={handleSearchChange}
           placeholder="Search conversations..."
-          className="w-full pl-9 pr-8 bg-secondary border-0 h-8"
+          className="h-8 w-full border-0 bg-secondary pl-9 pr-8"
         />
         {localSearchValue && (
           <Button
             variant="ghost"
             size="icon"
             onClick={handleClearSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground"
+            className="absolute right-3 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground"
           >
-            <X className="w-3 h-3" />
+            <X className="h-3 w-3" />
           </Button>
         )}
       </div>
 
-      <SidebarGroupContent className="overflow-y-auto flex-1">
+      <SidebarGroupContent className="flex-1 overflow-y-auto">
         {isLoadingConversations || isSearching ? (
           <div className="space-y-2 px-2">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="animate-pulse h-12 bg-secondary rounded-md" />
+              <div key={i} className="h-12 animate-pulse rounded-md bg-secondary" />
             ))}
           </div>
         ) : conversations.length === 0 ? (
-          <div className="text-center py-4 text-muted-foreground px-2">
-            <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
+          <div className="px-2 py-4 text-center text-muted-foreground">
+            <MessageSquare className="mx-auto mb-2 h-8 w-8 opacity-50" />
             <p className="text-xs">{localSearchValue ? 'No matching conversations' : 'No conversations yet'}</p>
           </div>
         ) : (
@@ -230,22 +230,22 @@ export function ConversationListSection() {
                   onClick={() => handleConversationClick(conversation)}
                   onKeyDown={(e) => e.key === 'Enter' && handleConversationClick(conversation)}
                   className={cn(
-                    'w-full text-left p-2 rounded-md transition-colors group cursor-pointer',
+                    'group w-full cursor-pointer rounded-md p-2 text-left transition-colors',
                     selectedConversationId === conversation.id
                       ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                       : 'hover:bg-sidebar-accent/50',
                   )}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">
                         <StreamingTitle
                           title={conversation.title}
                           isStreaming={streamingTitleConversationId === conversation.id}
                         />
                       </p>
-                      <div className="flex items-center gap-1 mt-0.5 text-xs text-muted-foreground">
-                        <Clock className="w-3 h-3" />
+                      <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                        <Clock className="h-3 w-3" />
                         <span>{formatRelativeDate(conversation.lastUpdated)}</span>
                       </div>
                     </div>
@@ -259,7 +259,7 @@ export function ConversationListSection() {
                             conversation.pinned ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
                           )}
                         >
-                          <MoreHorizontal className="w-3 h-3" />
+                          <MoreHorizontal className="h-3 w-3" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
@@ -268,7 +268,7 @@ export function ConversationListSection() {
                           disabled={pinningId === conversation.id}
                           className="cursor-pointer"
                         >
-                          <Pin className={cn('w-4 h-4 mr-2', conversation.pinned && 'fill-current')} />
+                          <Pin className={cn('mr-2 h-4 w-4', conversation.pinned && 'fill-current')} />
                           {conversation.pinned ? 'Unpin' : 'Pin'}
                         </DropdownMenuItem>
                         <DropdownMenuItem
@@ -277,11 +277,11 @@ export function ConversationListSection() {
                           className="cursor-pointer"
                         >
                           {copiedId === conversation.id ? (
-                            <Check className="w-4 h-4 mr-2 text-primary" />
+                            <Check className="mr-2 h-4 w-4 text-primary" />
                           ) : sharingId === conversation.id ? (
-                            <Copy className="w-4 h-4 mr-2 animate-pulse" />
+                            <Copy className="mr-2 h-4 w-4 animate-pulse" />
                           ) : (
-                            <LinkIcon className="w-4 h-4 mr-2" />
+                            <LinkIcon className="mr-2 h-4 w-4" />
                           )}
                           {copiedId === conversation.id ? 'Link copied!' : 'Share'}
                         </DropdownMenuItem>
@@ -289,7 +289,7 @@ export function ConversationListSection() {
                           onClick={(e) => handleChangeConversationTitle(e, conversation.id)}
                           className="cursor-pointer"
                         >
-                          <Pencil className="w-4 h-4 mr-2" />
+                          <Pencil className="mr-2 h-4 w-4" />
                           Rename
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -297,14 +297,14 @@ export function ConversationListSection() {
                           onClick={(e) => initiateArchive(e, conversation.id)}
                           className="cursor-pointer"
                         >
-                          <Archive className="w-4 h-4 mr-2" />
+                          <Archive className="mr-2 h-4 w-4" />
                           Archive
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => initiateDelete(e, conversation.id)}
                           className="cursor-pointer text-destructive focus:text-destructive"
                         >
-                          <Trash2 className="w-4 h-4 mr-2" />
+                          <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>

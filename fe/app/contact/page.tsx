@@ -10,33 +10,33 @@ export default function ContactPage() {
 
   return (
     <MarketingLayout>
-      <section className="py-24 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4">
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground md:text-5xl">
               {t('contact.title')}
             </h1>
-            <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground dark:text-muted-foreground">
               {t('contact.subtitle')}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid gap-8 md:grid-cols-3">
             <div className="md:col-span-2">
-              <div className="bg-background dark:bg-secondary rounded-2xl p-6 md:p-8">
+              <div className="rounded-2xl bg-background p-6 dark:bg-secondary md:p-8">
                 <ContactForm />
               </div>
             </div>
 
             <div className="space-y-6">
-              <div className="bg-muted dark:bg-secondary rounded-2xl p-6">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <Mail className="w-5 h-5 text-primary" />
+              <div className="rounded-2xl bg-muted p-6 dark:bg-secondary">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                  <Mail className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="font-medium text-foreground dark:text-primary-foreground mb-2">
+                <h3 className="mb-2 font-medium text-foreground dark:text-primary-foreground">
                   {t('contact.emailUs')}
                 </h3>
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-3">
+                <p className="mb-3 text-sm text-muted-foreground dark:text-muted-foreground">
                   {t('contact.emailUsDesc')}
                 </p>
                 <a href="mailto:hello@askally.io" className="text-sm text-primary hover:underline">
@@ -44,8 +44,8 @@ export default function ContactPage() {
                 </a>
               </div>
 
-              <div className="bg-muted dark:bg-secondary rounded-2xl p-6">
-                <h3 className="font-medium text-foreground dark:text-primary-foreground mb-2">
+              <div className="rounded-2xl bg-muted p-6 dark:bg-secondary">
+                <h3 className="mb-2 font-medium text-foreground dark:text-primary-foreground">
                   {t('contact.responseTime')}
                 </h3>
                 <p className="text-sm text-muted-foreground dark:text-muted-foreground">

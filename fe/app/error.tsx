@@ -52,23 +52,23 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted p-6 dark:bg-secondary">
-      <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-300">
-        <Card className="border shadow-xl  dark:bg-secondary/50 backdrop-blur-sm">
-          <CardHeader className="items-center text-center pb-2">
-            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 border-amber-100 dark:bg-amber-900/20 -amber-900/30 shadow-sm">
+      <div className="w-full max-w-md duration-300 animate-in fade-in zoom-in-95">
+        <Card className="border shadow-xl backdrop-blur-sm dark:bg-secondary/50">
+          <CardHeader className="items-center pb-2 text-center">
+            <div className="-amber-900/30 mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border-amber-100 bg-amber-50 shadow-sm dark:bg-amber-900/20">
               <AlertTriangle className="h-8 w-8 text-amber-700 dark:text-amber-500" />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground dark:text-zinc-50">
               {t('errors.hitSnag')}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground dark:text-muted-foreground leading-relaxed max-w-[90%]">
+            <p className="mt-2 max-w-[90%] text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground">
               {t('errors.hitSnagDesc')}
             </p>
           </CardHeader>
 
           <CardContent className="space-y-4 pt-4">
-            <details className="group rounded-xl border bg-background px-4 py-3  dark:bg-secondary transition-all hover:border-zinc-300 dark:hover:border-zinc-700">
-              <summary className="flex cursor-pointer items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200">
+            <details className="group rounded-xl border bg-background px-4 py-3 transition-all hover:border-zinc-300 dark:bg-secondary dark:hover:border-zinc-700">
+              <summary className="flex cursor-pointer items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-zinc-200">
                 <span>{t('errors.viewSystemLogs')}</span>
                 <div className="flex items-center gap-2">
                   <button
@@ -96,18 +96,18 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
                 </div>
               </summary>
 
-              <div className="mt-3 space-y-2 pt-2 border-t border-zinc-100 /50">
-                <div className="flex items-start gap-2 rounded-md bg-destructive/5 p-3 dark:bg-red-900/10 border-red-100 -red-900/20">
-                  <AlertCircle className="h-4 w-4 shrink-0 text-destructive dark:text-red-400 mt-0.5" />
-                  <p className="text-xs font-medium text-red-800 dark:text-red-300 break-all font-mono">
+              <div className="/50 mt-3 space-y-2 border-t border-zinc-100 pt-2">
+                <div className="-red-900/20 flex items-start gap-2 rounded-md border-red-100 bg-destructive/5 p-3 dark:bg-red-900/10">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive dark:text-red-400" />
+                  <p className="break-all font-mono text-xs font-medium text-red-800 dark:text-red-300">
                     {error.message || 'Unknown Application Error'}
                   </p>
                 </div>
 
                 {error.digest && (
-                  <div className="flex justify-between items-center text-[10px] text-muted-foreground">
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                     <span>{t('errors.referenceId')}:</span>
-                    <span className="font-mono bg-secondary dark:bg-secondary px-1.5 py-0.5 rounded text-zinc-600 dark:text-zinc-300">
+                    <span className="rounded bg-secondary px-1.5 py-0.5 font-mono text-zinc-600 dark:bg-secondary dark:text-zinc-300">
                       {error.digest}
                     </span>
                   </div>
@@ -116,7 +116,7 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
                 {/* Only show stack in dev mode */}
                 {process.env.NODE_ENV === 'development' && error.stack && (
                   <div className="relative">
-                    <pre className="max-h-32 overflow-auto rounded-md bg-secondary p-3 text-[10px] leading-relaxed text-zinc-300 scrollbar-thin scrollbar-thumb-zinc-700">
+                    <pre className="scrollbar-thin scrollbar-thumb-zinc-700 max-h-32 overflow-auto rounded-md bg-secondary p-3 text-[10px] leading-relaxed text-zinc-300">
                       {error.stack}
                     </pre>
                   </div>
@@ -129,24 +129,24 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
             <Button
               onClick={handleRetry}
               disabled={isRetrying}
-              className="w-full gap-2 bg-secondary text-white hover:bg-secondary dark:bg-secondary dark:text-foreground dark:hover:bg-accent font-semibold"
+              className="w-full gap-2 bg-secondary font-semibold text-white hover:bg-secondary dark:bg-secondary dark:text-foreground dark:hover:bg-accent"
             >
               <RefreshCw className={cn('h-4 w-4', isRetrying && 'animate-spin')} />
               {isRetrying ? t('errors.retrying') : t('errors.tryAgain')}
             </Button>
 
-            <div className="grid grid-cols-2 gap-2 w-full">
+            <div className="grid w-full grid-cols-2 gap-2">
               <Button
                 onClick={() => window.location.reload()}
                 variant="outline"
-                className="w-full dark:bg-transparent dark:hover:bg-secondary text-xs"
+                className="w-full text-xs dark:bg-transparent dark:hover:bg-secondary"
               >
                 {t('errors.reloadPage')}
               </Button>
               <Button
                 onClick={() => (window.location.href = '/')}
                 variant="outline"
-                className="w-full gap-2 dark:bg-transparent dark:hover:bg-secondary text-xs"
+                className="w-full gap-2 text-xs dark:bg-transparent dark:hover:bg-secondary"
               >
                 <Home className="h-3.5 w-3.5" />
                 {t('errors.returnHome')}

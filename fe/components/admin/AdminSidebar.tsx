@@ -30,11 +30,11 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-background  dark:bg-secondary">
-      <div className="border-b p-4 ">
+    <div className="flex h-screen w-64 flex-col border-r bg-background bg-secondary">
+      <div className="border-b p-4">
         <div className="flex items-center gap-2">
           <Shield className="h-6 w-6 text-primary" />
-          <h2 className="font-bold text-lg text-foreground dark:text-white">Admin Panel</h2>
+          <h2 className="text-lg font-bold text-foreground">Admin Panel</h2>
         </div>
       </div>
 
@@ -45,10 +45,10 @@ export function AdminSidebar() {
           return (
             <Link
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors',
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-primary text-white'
-                  : 'text-zinc-600 hover:bg-secondary hover:text-foreground dark:text-muted-foreground dark:hover:bg-secondary dark:hover:text-white',
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
               )}
               href={item.href}
               key={item.href}
@@ -60,9 +60,9 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      <div className="border-t p-4 ">
+      <div className="border-t p-4">
         <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-sm text-zinc-600 transition-colors hover:bg-secondary hover:text-foreground dark:text-muted-foreground dark:hover:bg-secondary dark:hover:text-white"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
           href="/dashboard"
         >
           <ArrowLeft className="h-5 w-5" />

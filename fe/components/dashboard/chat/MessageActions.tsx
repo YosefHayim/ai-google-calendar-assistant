@@ -33,7 +33,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
 
   if (msg.role === 'assistant') {
     return (
-      <div className="flex items-center gap-2 mt-1 px-1">
+      <div className="mt-1 flex items-center gap-2 px-1">
         <Button
           variant="ghost"
           size="icon"
@@ -52,7 +52,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
         >
           <Volume2 size={16} className={isSpeaking ? 'animate-pulse text-primary' : ''} />
         </Button>
-        <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">
+        <span className="text-xs font-bold uppercase tracking-tighter text-muted-foreground">
           {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
@@ -60,9 +60,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
   }
 
   return (
-    <div className="flex items-center justify-end gap-3 mt-1.5 px-1">
-      <div className="flex items-center gap-1 text-xs font-bold text-muted-foreground uppercase tracking-tighter">
-        <Clock className="w-2.5 h-2.5" />
+    <div className="mt-1.5 flex items-center justify-end gap-3 px-1">
+      <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-tighter text-muted-foreground">
+        <Clock className="h-2.5 w-2.5" />
         {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </div>
       <div className="flex items-center gap-1 border-l pl-2">

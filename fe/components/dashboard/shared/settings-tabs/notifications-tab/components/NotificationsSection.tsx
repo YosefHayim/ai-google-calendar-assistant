@@ -98,7 +98,7 @@ export function NotificationsSection() {
                 id="sound-notifications"
                 title="Sound Effects"
                 tooltip="Play a sound when you receive a notification"
-                icon={<Volume2 size={18} className="text-foreground dark:text-primary" />}
+                icon={<Volume2 size={18} className="text-foreground" />}
                 control={
                   <CinematicGlowToggle
                     id="sound-notifications-toggle"
@@ -112,7 +112,7 @@ export function NotificationsSection() {
                 id="browser-notifications"
                 title="Browser Notifications"
                 tooltip="Show notifications even when Ally is in the background"
-                icon={<Globe size={18} className="text-foreground dark:text-primary" />}
+                icon={<Globe size={18} className="text-foreground" />}
                 control={
                   <CinematicGlowToggle
                     id="browser-notifications-toggle"
@@ -128,7 +128,7 @@ export function NotificationsSection() {
                 id="event-confirmations"
                 title="Event Confirmations"
                 tooltip="Get an immediate confirmation message when Ally successfully adds or updates an event"
-                icon={<CheckCircle size={18} className="text-foreground dark:text-primary" />}
+                icon={<CheckCircle size={18} className="text-foreground" />}
                 control={
                   <MultiSelectDropdown
                     id="event-confirmations-dropdown"
@@ -144,7 +144,7 @@ export function NotificationsSection() {
                 id="conflict-alerts"
                 title="Conflict Alerts"
                 tooltip="Get notified immediately if a new request overlaps with an existing commitment"
-                icon={<AlertTriangle size={18} className="text-foreground dark:text-primary" />}
+                icon={<AlertTriangle size={18} className="text-foreground" />}
                 control={
                   <MultiSelectDropdown
                     id="conflict-alerts-dropdown"
@@ -160,7 +160,7 @@ export function NotificationsSection() {
                 id="feature-updates"
                 title="Feature Updates"
                 tooltip="Stay in the loop on new integrations like WhatsApp and Notion"
-                icon={<Sparkles size={18} className="text-foreground dark:text-primary" />}
+                icon={<Sparkles size={18} className="text-foreground" />}
                 control={
                   <MultiSelectDropdown
                     id="feature-updates-dropdown"
@@ -173,7 +173,7 @@ export function NotificationsSection() {
               />
             </SettingsSection>
 
-            <Button onClick={handleSave} disabled={!isDirty || isUpdating} className="w-full mt-4">
+            <Button onClick={handleSave} disabled={!isDirty || isUpdating} className="mt-4 w-full">
               {isUpdating ? (
                 <>
                   <Loader2 size={16} className="mr-2 animate-spin" />

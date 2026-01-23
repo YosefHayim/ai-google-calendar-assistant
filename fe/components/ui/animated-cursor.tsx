@@ -72,7 +72,7 @@ export const Cursor: React.FC<{ children: ReactNode; className?: string }> = ({ 
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
-          className={cn('fixed top-0 left-0 z-[99999] pointer-events-none', className)}
+          className={cn('pointer-events-none fixed left-0 top-0 z-[99999]', className)}
         >
           {children}
         </motion.div>
@@ -100,7 +100,7 @@ export const CursorFollow: React.FC<{ children: ReactNode; className?: string }>
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
-          className={cn('fixed top-0 left-0 z-[99998] pointer-events-none', className)}
+          className={cn('pointer-events-none fixed left-0 top-0 z-[99998]', className)}
         >
           {children}
         </motion.div>

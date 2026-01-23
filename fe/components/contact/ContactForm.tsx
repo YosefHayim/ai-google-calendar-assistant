@@ -180,13 +180,9 @@ export const ContactForm: React.FC = () => {
   if (submissionState === 'success') {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <CheckCircle className="w-16 h-16 text-green-600 mb-4" />
-        <h3 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-2">
-          {t('contact.form.success')}
-        </h3>
-        <p className="text-muted-foreground dark:text-muted-foreground mb-6">
-          We&apos;ve received your message and will get back to you soon.
-        </p>
+        <CheckCircle className="mb-4 h-16 w-16 text-green-600" />
+        <h3 className="mb-2 text-2xl font-medium text-foreground">{t('contact.form.success')}</h3>
+        <p className="mb-6 text-muted-foreground">We&apos;ve received your message and will get back to you soon.</p>
         <Button onClick={() => setSubmissionState('idle')} variant="outline">
           {t('contact.form.submit')}
         </Button>
@@ -246,7 +242,7 @@ export const ContactForm: React.FC = () => {
           value={form.message}
           onChange={handleInputChange}
           disabled={submissionState === 'loading'}
-          className="flex w-full rounded-lg bg-background px-3 py-2 text-sm text-foreground shadow-sm shadow-black/5 transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+          className="flex w-full resize-none rounded-lg bg-background px-3 py-2 text-sm text-foreground shadow-sm shadow-black/5 transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
 
@@ -257,9 +253,9 @@ export const ContactForm: React.FC = () => {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            'border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors',
+            'cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-colors',
             isDragOver ? 'border-primary bg-primary/5' : 'hover:border-primary/50',
-            submissionState === 'loading' && 'opacity-50 cursor-not-allowed',
+            submissionState === 'loading' && 'cursor-not-allowed opacity-50',
           )}
         >
           <input
@@ -272,11 +268,9 @@ export const ContactForm: React.FC = () => {
             accept={ALLOWED_FILE_TYPES.join(',')}
           />
           <label htmlFor="file-upload" className="cursor-pointer">
-            <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-              Drag and drop files here, or click to browse
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <Upload className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Drag and drop files here, or click to browse</p>
+            <p className="mt-1 text-xs text-muted-foreground">
               Max {MAX_FILES} files, {MAX_FILE_SIZE_MB}MB each
             </p>
           </label>
@@ -287,9 +281,9 @@ export const ContactForm: React.FC = () => {
             {files.map((file, index) => (
               <div
                 key={`${file.name}-${index}`}
-                className="flex items-center justify-between p-2 bg-muted dark:bg-secondary rounded-lg"
+                className="flex items-center justify-between rounded-lg bg-muted bg-secondary p-2"
               >
-                <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate max-w-[200px]">{file.name}</span>
+                <span className="max-w-[200px] truncate text-sm text-muted-foreground text-zinc-700">{file.name}</span>
                 <Button
                   type="button"
                   variant="ghost"
@@ -298,7 +292,7 @@ export const ContactForm: React.FC = () => {
                   className="h-6 w-6 text-muted-foreground hover:text-destructive"
                   disabled={submissionState === 'loading'}
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             ))}
@@ -307,8 +301,8 @@ export const ContactForm: React.FC = () => {
       </div>
 
       {errorMessage && (
-        <div className="flex items-center gap-2 p-3 bg-destructive/5 dark:bg-red-900/20 text-destructive dark:text-red-400 rounded-lg">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 rounded-lg bg-red-900/20 p-3 text-red-400">
+          <AlertCircle className="h-4 w-4 flex-shrink-0" />
           <span className="text-sm">{errorMessage}</span>
         </div>
       )}
@@ -316,7 +310,7 @@ export const ContactForm: React.FC = () => {
       <Button type="submit" className="w-full" disabled={submissionState === 'loading'}>
         {submissionState === 'loading' ? (
           <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             {t('contact.form.submitting')}
           </>
         ) : (

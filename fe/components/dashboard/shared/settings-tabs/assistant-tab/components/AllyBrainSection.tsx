@@ -104,7 +104,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
       <TabHeader
         title="Ally's Brain"
         tooltip="Teach Ally about your preferences. These instructions will be remembered in every conversation"
-        icon={<Brain className="w-5 h-5 text-foreground dark:text-primary" />}
+        icon={<Brain className="h-5 w-5 text-foreground" />}
       />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -113,7 +113,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
               id="ally-brain-toggle"
               title="Enable Custom Instructions"
               tooltip="When enabled, Ally will always consider these instructions in all conversations"
-              icon={<Lightbulb size={18} className="text-foreground dark:text-primary" />}
+              icon={<Lightbulb size={18} className="text-foreground" />}
               control={
                 <CinematicGlowToggle
                   id={toggleId}
@@ -150,7 +150,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                         toggleRecording()
                       }}
                       disabled={!speechRecognitionSupported}
-                      className={`h-8 px-2 gap-1.5 ${
+                      className={`h-8 gap-1.5 px-2 ${
                         isVoiceRecording
                           ? 'text-destructive hover:text-destructive'
                           : 'text-muted-foreground hover:text-foreground'
@@ -196,12 +196,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                     id="instructions"
                     placeholder={ALLY_BRAIN_PLACEHOLDER}
                     rows={5}
-                    className={`w-full px-3 py-2 text-sm rounded-lg border bg-background dark:bg-secondary 
-                      placeholder:text-muted-foreground dark:placeholder:text-muted-foreground
-                      focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
-                      transition-colors resize-none
-                      ${isOverLimit ? 'border-destructive focus:border-destructive focus:ring-destructive/20' : 'border-border'}
-                    `}
+                    className={`w-full resize-none rounded-lg border bg-background bg-secondary px-3 py-2 text-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 ${isOverLimit ? 'border-destructive focus:border-destructive focus:ring-destructive/20' : 'border-border'} `}
                   />
 
                   <AnimatePresence>
@@ -228,7 +223,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                   </AnimatePresence>
 
                   {errors.instructions && (
-                    <p className="text-xs text-destructive flex items-center gap-1">
+                    <p className="flex items-center gap-1 text-xs text-destructive">
                       <AlertTriangle size={12} />
                       {errors.instructions.message}
                     </p>

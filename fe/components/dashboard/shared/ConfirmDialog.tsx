@@ -50,9 +50,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   const getButtonStyles = () => {
     switch (variant) {
       case 'destructive':
-        return 'bg-destructive hover:bg-destructive text-white'
+        return 'bg-destructive hover:bg-destructive text-foreground'
       case 'warning':
-        return 'bg-secondary hover:bg-secondary text-white'
+        return 'bg-secondary hover:bg-secondary text-foreground'
       default:
         return ''
     }
@@ -90,21 +90,13 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border ">
+      <DialogContent className="border bg-background bg-secondary sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-foreground dark:text-primary-foreground">{title}</DialogTitle>
-          <DialogDescription className="text-muted-foreground dark:text-muted-foreground">
-            {description}
-          </DialogDescription>
+          <DialogTitle className="text-foreground">{title}</DialogTitle>
+          <DialogDescription className="text-muted-foreground">{description}</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-end gap-2 mt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            disabled={isLoading}
-            className="text-foreground dark:text-primary-foreground"
-          >
+        <DialogFooter className="mt-4 gap-2 sm:justify-end">
+          <Button type="button" variant="outline" onClick={onClose} disabled={isLoading} className="text-foreground">
             {cancelLabel || t('dialogs.confirm.cancel')}
           </Button>
           <Button
@@ -114,7 +106,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             disabled={isLoading}
             className={getButtonStyles()}
           >
-            {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {confirmLabel || t('dialogs.confirm.confirm')}
           </Button>
         </DialogFooter>

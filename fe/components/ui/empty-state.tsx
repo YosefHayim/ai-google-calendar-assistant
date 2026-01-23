@@ -47,11 +47,7 @@ export function EmptyState({ icon, title, description, action, size = 'md', clas
     <div className={cn('flex flex-col items-center justify-center text-center', sizes.container, className)}>
       <div className={cn('text-muted-foreground', sizes.icon)}>{icon}</div>
       <p className={cn('font-medium text-foreground', sizes.title)}>{title}</p>
-      {description && (
-        <p className={cn('text-muted-foreground dark:text-muted-foreground max-w-xs', sizes.description)}>
-          {description}
-        </p>
-      )}
+      {description && <p className={cn('max-w-xs text-muted-foreground', sizes.description)}>{description}</p>}
       {action && (
         <Button variant="link" size="sm" onClick={action.onClick} className="mt-2 h-auto p-0">
           {action.label}

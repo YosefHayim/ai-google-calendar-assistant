@@ -10,9 +10,9 @@ export function AudioProgressBar({ isVisible }: AudioProgressBarProps) {
   if (!isVisible) return null
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 h-1 bg-secondary dark:bg-secondary">
+    <div className="absolute bottom-0 left-0 right-0 h-1 bg-secondary">
       <motion.div
-        className="h-full bg-primary origin-left"
+        className="h-full origin-left bg-primary"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ duration: 10, ease: 'linear' }}

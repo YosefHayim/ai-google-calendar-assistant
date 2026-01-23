@@ -25,14 +25,14 @@ export default function AdminSubscriptionsPage() {
   })
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-white">Subscription Management</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground mt-1">View and manage all subscriptions</p>
+          <p className="mt-1 text-muted-foreground dark:text-muted-foreground">View and manage all subscriptions</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isRefetching}>
-          <RefreshCw className={`w-4 h-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`mr-2 h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
           {isRefetching ? 'Refreshing...' : 'Refresh'}
         </Button>
       </div>
@@ -40,8 +40,8 @@ export default function AdminSubscriptionsPage() {
       {/* Filters */}
       <Card className="p-4">
         <div className="flex flex-wrap gap-4">
-          <div className="relative flex-1 min-w-48">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <div className="relative min-w-48 flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by user email..."
               value={search}
@@ -58,7 +58,7 @@ export default function AdminSubscriptionsPage() {
               setStatusFilter(e.target.value as SubscriptionStatus | '')
               setPage(1)
             }}
-            className="px-3 py-2  rounded-md bg-background dark:bg-secondary text-sm"
+            className="rounded-md bg-background px-3 py-2 text-sm dark:bg-secondary"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -73,34 +73,34 @@ export default function AdminSubscriptionsPage() {
       {/* Subscriptions Table */}
       <Card>
         {isLoading ? (
-          <div className="p-8 flex justify-center">
+          <div className="flex justify-center p-8">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b ">
+                <thead className="border-b">
                   <tr>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">User</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Plan</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">User</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Plan</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
                       Status
                     </th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
                       Credits
                     </th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
                       AI Interactions
                     </th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
                       Period End
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.subscriptions.map((sub) => (
-                    <tr key={sub.id} className="border-b border-zinc-100  hover:bg-muted dark:hover:bg-secondary/50">
+                    <tr key={sub.id} className="border-b border-zinc-100 hover:bg-muted dark:hover:bg-secondary/50">
                       <td className="p-4">
                         <div>
                           <p className="font-medium text-foreground dark:text-white">{sub.userEmail}</p>
@@ -109,7 +109,7 @@ export default function AdminSubscriptionsPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
-                          <CreditCard className="w-4 h-4 text-muted-foreground" />
+                          <CreditCard className="h-4 w-4 text-muted-foreground" />
                           <span className="font-medium text-foreground dark:text-white">{sub.planName}</span>
                         </div>
                       </td>
@@ -135,13 +135,13 @@ export default function AdminSubscriptionsPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between p-4 border-t ">
+            <div className="flex items-center justify-between border-t p-4">
               <p className="text-sm text-muted-foreground">
                 Showing {data?.subscriptions.length || 0} of {data?.total || 0} subscriptions
               </p>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  <ChevronLeft className="mr-1 h-4 w-4" />
                   Previous
                 </Button>
                 <Button
@@ -151,7 +151,7 @@ export default function AdminSubscriptionsPage() {
                   onClick={() => setPage((p) => p + 1)}
                 >
                   Next
-                  <ChevronRight className="w-4 h-4 ml-1" />
+                  <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </div>

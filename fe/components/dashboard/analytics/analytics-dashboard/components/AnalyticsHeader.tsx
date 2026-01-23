@@ -36,19 +36,17 @@ export function AnalyticsHeader({
   return (
     <header className="flex flex-col gap-2 sm:gap-3 md:gap-4">
       {date?.from && date?.to && (
-        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-baseline gap-1 sm:gap-1.5 md:gap-2">
-          <span className="text-xs sm:text-sm md:text-base text-muted-foreground dark:text-muted-foreground">
-            {t('analytics.for')}
-          </span>
-          <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground dark:text-primary-foreground truncate">
+        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-1.5 md:gap-2">
+          <span className="text-xs text-muted-foreground sm:text-sm md:text-base">{t('analytics.for')}</span>
+          <span className="truncate text-xs font-semibold text-foreground sm:text-sm md:text-base">
             {format(date.from, 'MMM dd, yyyy')} - {format(date.to, 'MMM dd, yyyy')}
           </span>
-          <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground dark:text-muted-foreground">
+          <span className="text-[10px] text-muted-foreground sm:text-xs md:text-sm">
             ({getDaysBetween(date.from, date.to)} days)
           </span>
         </div>
       )}
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2 md:gap-3 items-stretch sm:items-center">
+      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 md:gap-3">
         <div className="w-full sm:w-auto sm:min-w-[240px]">
           <DatePickerWithRange date={date} setDate={setDate} />
         </div>

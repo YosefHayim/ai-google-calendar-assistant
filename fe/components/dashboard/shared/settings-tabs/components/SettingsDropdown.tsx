@@ -38,13 +38,13 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
         <Button
           id={id}
           variant="outline"
-          className={cn('w-full sm:w-auto justify-between gap-2 font-normal', className)}
+          className={cn('w-full justify-between gap-2 font-normal sm:w-auto', className)}
         >
           <span className="flex items-center gap-2 truncate">
             {selectedOption?.icon}
             {selectedOption?.label || placeholder}
           </span>
-          <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
+          <ChevronDown className="h-4 w-4 flex-shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -58,7 +58,7 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
               {option.icon}
               {option.label}
             </span>
-            {value === option.value && <Check className="w-4 h-4 text-primary" />}
+            {value === option.value && <Check className="h-4 w-4 text-primary" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
@@ -113,10 +113,10 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         <Button
           id={id}
           variant="outline"
-          className={cn('w-full sm:w-auto justify-between gap-2 font-normal', className)}
+          className={cn('w-full justify-between gap-2 font-normal sm:w-auto', className)}
         >
           <span className="truncate">{getDisplayText()}</span>
-          <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
+          <ChevronDown className="h-4 w-4 flex-shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -137,11 +137,11 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
               </span>
               <div
                 className={cn(
-                  'w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors',
-                  isSelected ? 'bg-primary border-primary' : 'border-zinc-300 -zinc-600',
+                  'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border-2 transition-colors',
+                  isSelected ? 'border-primary bg-primary' : 'border-border',
                 )}
               >
-                {isSelected && <Check className="w-3 h-3 text-white" />}
+                {isSelected && <Check className="h-3 w-3 text-foreground" />}
               </div>
             </DropdownMenuItem>
           )

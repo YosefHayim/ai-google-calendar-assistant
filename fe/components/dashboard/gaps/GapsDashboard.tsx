@@ -89,7 +89,7 @@ const GapsDashboard: React.FC = () => {
 
   if (isError) {
     return (
-      <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500">
+      <div className="mx-auto w-full max-w-7xl p-3 duration-500 animate-in fade-in sm:p-4">
         <ErrorState
           title="Failed to load gaps analysis"
           message={error?.message || 'Unable to fetch your calendar gaps. Please try again.'}
@@ -102,26 +102,26 @@ const GapsDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="mx-auto w-full max-w-7xl p-3 duration-500 animate-in fade-in sm:p-4">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <Card key={i} className="p-4">
               <div className="animate-pulse">
-                <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-muted rounded w-1/2 mb-2"></div>
-                <div className="h-3 bg-muted rounded w-full"></div>
+                <div className="mb-2 h-4 w-3/4 rounded bg-muted"></div>
+                <div className="mb-2 h-8 w-1/2 rounded bg-muted"></div>
+                <div className="h-3 w-full rounded bg-muted"></div>
               </div>
             </Card>
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <Card key={i} className="p-4">
               <div className="animate-pulse space-y-3">
-                <div className="h-4 bg-muted rounded w-1/2"></div>
-                <div className="h-3 bg-muted rounded w-3/4"></div>
-                <div className="h-3 bg-muted rounded w-1/2"></div>
-                <div className="h-8 bg-muted rounded w-20"></div>
+                <div className="h-4 w-1/2 rounded bg-muted"></div>
+                <div className="h-3 w-3/4 rounded bg-muted"></div>
+                <div className="h-3 w-1/2 rounded bg-muted"></div>
+                <div className="h-8 w-20 rounded bg-muted"></div>
               </div>
             </Card>
           ))}
@@ -131,7 +131,7 @@ const GapsDashboard: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500 bg-muted dark:bg-secondary">
+    <div className="mx-auto w-full max-w-7xl bg-muted bg-secondary p-3 duration-500 animate-in fade-in sm:p-4">
       <GapsHeader
         analyzedRange={analyzedRange}
         totalGaps={totalCount}
@@ -143,7 +143,7 @@ const GapsDashboard: React.FC = () => {
 
       {/* Overview Stats */}
       <motion.div
-        className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6"
+        className="xs:grid-cols-2 mb-6 grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -200,18 +200,18 @@ const GapsDashboard: React.FC = () => {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 h-10 sm:h-11 mb-4">
-          <TabsTrigger value="gaps" className="text-xs sm:text-sm gap-1 sm:gap-2">
+        <TabsList className="mb-4 grid h-10 w-full grid-cols-3 sm:h-11">
+          <TabsTrigger value="gaps" className="gap-1 text-xs sm:gap-2 sm:text-sm">
             <Target className="h-4 w-4" />
-            <span className="hidden xs:inline">{t('gaps.tabs.gaps')}</span>
+            <span className="xs:inline hidden">{t('gaps.tabs.gaps')}</span>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="text-xs sm:text-sm gap-1 sm:gap-2">
+          <TabsTrigger value="analytics" className="gap-1 text-xs sm:gap-2 sm:text-sm">
             <TrendingUp className="h-4 w-4" />
-            <span className="hidden xs:inline">{t('gaps.tabs.analytics')}</span>
+            <span className="xs:inline hidden">{t('gaps.tabs.analytics')}</span>
           </TabsTrigger>
-          <TabsTrigger value="settings" className="text-xs sm:text-sm gap-1 sm:gap-2">
+          <TabsTrigger value="settings" className="gap-1 text-xs sm:gap-2 sm:text-sm">
             <Settings className="h-4 w-4" />
-            <span className="hidden xs:inline">{t('gaps.tabs.settings')}</span>
+            <span className="xs:inline hidden">{t('gaps.tabs.settings')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -227,7 +227,7 @@ const GapsDashboard: React.FC = () => {
             </Card>
           ) : (
             <motion.div
-              className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+              className="grid grid-cols-1 gap-4 lg:grid-cols-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}

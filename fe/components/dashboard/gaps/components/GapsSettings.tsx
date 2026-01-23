@@ -38,9 +38,9 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
   if (!settings) {
     return (
       <Card className="p-6">
-        <div className="text-center py-8">
-          <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Settings not available</h3>
+        <div className="py-8 text-center">
+          <Settings className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+          <h3 className="mb-2 text-lg font-semibold">Settings not available</h3>
           <p className="text-muted-foreground">Gap analysis settings could not be loaded.</p>
         </div>
       </Card>
@@ -73,12 +73,12 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
         </AlertDescription>
       </Alert>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Basic Settings */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
           <Card className="p-6">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Settings className="h-5 w-5" />
                 Basic Settings
               </CardTitle>
@@ -155,7 +155,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
           <Card className="p-6">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Zap className="h-5 w-5" />
                 Advanced Settings
               </CardTitle>
@@ -204,7 +204,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="p-6">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Calendar className="h-5 w-5" />
                 Calendar Settings
               </CardTitle>
@@ -248,7 +248,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Card className="p-6">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Clock className="h-5 w-5" />
                 Language Support
               </CardTitle>

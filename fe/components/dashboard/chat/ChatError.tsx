@@ -53,21 +53,19 @@ export const ChatError: React.FC<ChatErrorProps> = ({ error, className }) => {
 
   if (isSubscriptionError) {
     return (
-      <div className={cn('flex justify-center mb-4 sm:mb-6 px-4', className)}>
+      <div className={cn('mb-4 flex justify-center px-4 sm:mb-6', className)}>
         <div className="w-full max-w-2xl">
-          <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-destructive/10 border border-primary/20 dark:border-primary/30 rounded-lg p-4 sm:p-6">
+          <div className="border-primary/20/30 rounded-lg border bg-gradient-to-r from-primary/10 via-secondary/10 to-destructive/10 p-4 sm:p-6">
             <div className="flex items-start gap-3 sm:gap-4">
-              <div className="flex-shrink-0 mt-0.5">
-                <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20">
-                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              <div className="mt-0.5 flex-shrink-0">
+                <div className="bg-primary/10/20 flex h-8 w-8 items-center justify-center rounded-full sm:h-10 sm:w-10">
+                  <Sparkles className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
                 </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm sm:text-base font-semibold text-foreground dark:text-primary-foreground mb-1 sm:mb-2">
-                  {errorMessage}
-                </h3>
+              <div className="min-w-0 flex-1">
+                <h3 className="mb-1 text-sm font-semibold text-foreground sm:mb-2 sm:text-base">{errorMessage}</h3>
                 {features.length > 0 && (
-                  <ul className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground mb-3 sm:mb-4 space-y-1 sm:space-y-1.5">
+                  <ul className="mb-3 space-y-1 text-xs text-muted-foreground sm:mb-4 sm:space-y-1.5 sm:text-sm">
                     {features.map((feature, index) => (
                       <li key={index} className="flex items-center gap-2">
                         <span className="text-primary">•</span>
@@ -79,7 +77,7 @@ export const ChatError: React.FC<ChatErrorProps> = ({ error, className }) => {
                 <Button
                   onClick={handleUpgrade}
                   size="sm"
-                  className="bg-gradient-to-r from-secondary to-destructive hover:from-secondary hover:to-destructive text-white font-medium shadow-sm mt-2 sm:mt-3"
+                  className="mt-2 bg-gradient-to-r from-secondary to-destructive font-medium text-foreground shadow-sm hover:from-secondary hover:to-destructive sm:mt-3"
                 >
                   {t('chatError.upgradeNow')}
                   <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
@@ -94,9 +92,9 @@ export const ChatError: React.FC<ChatErrorProps> = ({ error, className }) => {
 
   // Fallback for other errors
   return (
-    <div className={cn('flex justify-center mb-4 sm:mb-6 px-4', className)}>
-      <div className="bg-destructive/5 dark:bg-destructive/20 border border-destructive/20 dark:border-destructive/30 text-destructive dark:text-destructive px-3 sm:px-4 py-2 sm:py-3 rounded-md flex items-center gap-2 text-xs sm:text-sm max-w-2xl">
-        <AlertCircle size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
+    <div className={cn('mb-4 flex justify-center px-4 sm:mb-6', className)}>
+      <div className="bg-destructive/5/20 border-destructive/20/30 flex max-w-2xl items-center gap-2 rounded-md border px-3 py-2 text-xs text-destructive sm:px-4 sm:py-3 sm:text-sm">
+        <AlertCircle size={14} className="flex-shrink-0 sm:h-4 sm:w-4" />
         <span className="break-words">{errorMessage}</span>
       </div>
     </div>

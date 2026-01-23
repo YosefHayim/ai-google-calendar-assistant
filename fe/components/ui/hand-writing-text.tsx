@@ -29,7 +29,7 @@ export const HandWrittenTitle: React.FC<HandWrittenTitleProps> = ({
   }
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto py-24 px-4">
+    <div className="relative mx-auto w-full max-w-4xl px-4 py-24">
       {!hideCircle && (
         <div className="absolute inset-0">
           <motion.svg
@@ -38,7 +38,7 @@ export const HandWrittenTitle: React.FC<HandWrittenTitleProps> = ({
             viewBox="0 0 1200 600"
             initial="hidden"
             animate="visible"
-            className="w-full h-full"
+            className="h-full w-full"
           >
             <title>Ally Highlight</title>
             <motion.path
@@ -49,14 +49,14 @@ export const HandWrittenTitle: React.FC<HandWrittenTitleProps> = ({
               strokeLinecap="round"
               strokeLinejoin="round"
               variants={draw}
-              className="text-black dark:text-white opacity-90"
+              className="text-foreground opacity-90"
             />
           </motion.svg>
         </div>
       )}
-      <div className="relative text-center z-10 flex flex-col items-center justify-center">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center">
         <motion.h1
-          className="text-3xl md:text-5xl lg:text-6xl text-black dark:text-white tracking-tighter font-medium max-w-3xl"
+          className="max-w-3xl text-3xl font-medium tracking-tighter text-foreground md:text-5xl lg:text-6xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
@@ -65,7 +65,7 @@ export const HandWrittenTitle: React.FC<HandWrittenTitleProps> = ({
         </motion.h1>
         {subtitle && (
           <motion.p
-            className="text-lg md:text-xl text-black/80 dark:text-white/80 mt-4 font-medium"
+            className="mt-4 text-lg font-medium text-foreground/80 md:text-xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.8 }}

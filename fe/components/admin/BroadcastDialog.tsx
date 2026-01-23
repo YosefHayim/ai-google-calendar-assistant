@@ -19,17 +19,17 @@ interface BroadcastDialogProps {
 
 const typeConfig: Record<BroadcastType, { icon: React.ReactNode; color: string; label: string }> = {
   info: {
-    icon: <Info className="w-4 h-4" />,
+    icon: <Info className="h-4 w-4" />,
     color: 'text-primary',
     label: 'Info',
   },
   warning: {
-    icon: <AlertTriangle className="w-4 h-4" />,
+    icon: <AlertTriangle className="h-4 w-4" />,
     color: 'text-secondary',
     label: 'Warning',
   },
   critical: {
-    icon: <AlertCircle className="w-4 h-4" />,
+    icon: <AlertCircle className="h-4 w-4" />,
     color: 'text-destructive',
     label: 'Critical',
   },
@@ -96,17 +96,17 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
                 <SelectContent>
                   <SelectItem value="info">
                     <span className="flex items-center gap-2 text-primary">
-                      <Info className="w-4 h-4" /> Info
+                      <Info className="h-4 w-4" /> Info
                     </span>
                   </SelectItem>
                   <SelectItem value="warning">
                     <span className="flex items-center gap-2 text-secondary">
-                      <AlertTriangle className="w-4 h-4" /> Warning
+                      <AlertTriangle className="h-4 w-4" /> Warning
                     </span>
                   </SelectItem>
                   <SelectItem value="critical">
                     <span className="flex items-center gap-2 text-destructive">
-                      <AlertCircle className="w-4 h-4" /> Critical
+                      <AlertCircle className="h-4 w-4" /> Critical
                     </span>
                   </SelectItem>
                 </SelectContent>
@@ -149,25 +149,23 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
               rows={3}
               maxLength={500}
             />
-            <p className="text-xs text-muted-foreground text-right">{message.length}/500</p>
+            <p className="text-right text-xs text-muted-foreground">{message.length}/500</p>
           </div>
 
           <div
-            className={`p-4 rounded-lg border ${
+            className={`rounded-lg border p-4 ${
               type === 'info'
-                ? 'bg-primary/5 border-primary/20 dark:bg-primary/30 dark:border-primary'
+                ? 'border-primary/20/30 bg-primary/5'
                 : type === 'warning'
-                  ? 'bg-secondary/5 border-secondary/20 dark:bg-secondary/30 dark:border-secondary'
-                  : 'bg-destructive/5 border-destructive/20 dark:bg-destructive/30 dark:border-destructive'
+                  ? 'border-secondary/20 bg-secondary/30 bg-secondary/5'
+                  : 'border-destructive/20/30 bg-destructive/5'
             }`}
           >
             <div className="flex items-start gap-3">
               <span className={typeConfig[type].color}>{typeConfig[type].icon}</span>
               <div>
-                <p className="font-medium text-sm text-foreground dark:text-white">{title || 'Preview Title'}</p>
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
-                  {message || 'Preview message will appear here'}
-                </p>
+                <p className="text-sm font-medium text-foreground">{title || 'Preview Title'}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{message || 'Preview message will appear here'}</p>
               </div>
             </div>
           </div>
@@ -178,7 +176,7 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
             Cancel
           </Button>
           <Button onClick={handleSend} disabled={isSending || !title.trim() || !message.trim()}>
-            {isSending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+            {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
             Send Broadcast
           </Button>
         </div>

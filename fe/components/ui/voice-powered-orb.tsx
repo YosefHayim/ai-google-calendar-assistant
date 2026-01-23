@@ -449,5 +449,5 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
     }
   }, [hue, voiceSensitivity, maxRotationSpeed, maxHoverIntensity])
 
-  return <div ref={ctnDom} className={cn('w-full h-full relative cursor-pointer', className)} />
+  return <div ref={ctnDom} className={cn('relative h-full w-full cursor-pointer', className)} />
 }

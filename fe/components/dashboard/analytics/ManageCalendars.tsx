@@ -24,23 +24,23 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-4 sm:p-6">
-        <div className="gap-2 mb-4 sm:mb-6 flex items-center justify-between">
+      <div className="rounded-md bg-background bg-secondary p-4 shadow-sm sm:p-6">
+        <div className="mb-4 flex items-center justify-between gap-2 sm:mb-6">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <Skeleton className="w-4 h-4" />
-              <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
+              <Skeleton className="h-4 w-4" />
+              <Skeleton className="h-4 w-28 sm:h-5 sm:w-36" />
             </div>
-            <Skeleton className="h-3 w-20 sm:w-24 mt-1" />
+            <Skeleton className="mt-1 h-3 w-20 sm:w-24" />
           </div>
-          <Skeleton className="h-7 w-7 sm:h-8 sm:w-8 rounded-md flex-shrink-0" />
+          <Skeleton className="h-7 w-7 flex-shrink-0 rounded-md sm:h-8 sm:w-8" />
         </div>
         <div className="space-y-1.5 sm:space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md">
-              <Skeleton className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0" />
-              <Skeleton className="flex-1 h-3 sm:h-4" />
-              <Skeleton className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+            <div key={i} className="flex items-center gap-2 rounded-md p-1.5 sm:gap-3 sm:p-2">
+              <Skeleton className="h-2 w-2 flex-shrink-0 rounded-full sm:h-2.5 sm:w-2.5" />
+              <Skeleton className="h-3 flex-1 sm:h-4" />
+              <Skeleton className="h-3 w-3 flex-shrink-0 sm:h-4 sm:w-4" />
             </div>
           ))}
         </div>
@@ -49,15 +49,15 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
   }
 
   return (
-    <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-4 sm:p-6">
-      <div className="gap-2 mb-4 sm:mb-6 flex items-center justify-between">
+    <div className="rounded-md bg-background bg-secondary p-4 shadow-sm sm:p-6">
+      <div className="mb-4 flex items-center justify-between gap-2 sm:mb-6">
         {/* Left Side: Text Stack */}
         <div className="min-w-0">
-          <h3 className="font-bold text-sm sm:text-base text-foreground dark:text-primary-foreground flex items-center gap-2">
-            <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+          <h3 className="flex items-center gap-2 text-sm font-bold text-foreground sm:text-base">
+            <CalendarDays className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground sm:h-4 sm:w-4" />
             <span className="truncate">Managed Calendars</span>
           </h3>
-          <div className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mt-0.5 sm:mt-1">
+          <div className="mt-0.5 text-[10px] text-muted-foreground sm:mt-1 sm:text-xs">
             <span>Total calendars:</span> {calendars?.length}
           </div>
         </div>
@@ -68,7 +68,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
           onClick={onCreateCalendar}
           size="icon"
           variant={'ghost'}
-          className="h-7 w-7 sm:h-8 sm:w-8 rounded-md border-dashed border-muted dark:border-muted text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary/30 hover:text-foreground dark:hover:text-primary-foreground transition-all active:scale-[0.98] flex-shrink-0"
+          className="h-7 w-7 flex-shrink-0 rounded-md border-dashed border-muted text-muted-foreground transition-all hover:bg-muted hover:bg-secondary/30 hover:text-foreground hover:text-primary-foreground active:scale-[0.98] sm:h-8 sm:w-8"
         >
           <Plus size={12} className="sm:hidden" />
           <Plus size={14} className="hidden sm:block" />
@@ -87,20 +87,20 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
             return (
               <div
                 key={calendar.id}
-                className="border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md hover:bg-muted dark:hover:bg-secondary/50 transition-colors group cursor-pointer"
+                className="group flex cursor-pointer items-center gap-2 rounded-md border-transparent p-1.5 transition-colors hover:border hover:border-black hover:bg-muted hover:bg-secondary/50 sm:gap-3 sm:p-2"
                 style={{ backgroundColor: bgColor }}
                 onClick={() => {
                   onCalendarClick(calendar)
                 }}
               >
                 <div
-                  className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shadow-sm group-hover:scale-125 transition-transform flex-shrink-0"
+                  className="h-2 w-2 flex-shrink-0 rounded-full shadow-sm transition-transform group-hover:scale-125 sm:h-2.5 sm:w-2.5"
                   style={{ backgroundColor: color }}
                 />
-                <span className="flex-1 text-xs sm:text-sm font-bold text-foreground dark:text-muted-foreground truncate">
+                <span className="flex-1 truncate text-xs font-bold text-foreground text-muted-foreground sm:text-sm">
                   {displayName}
                 </span>
-                <span className="font-bold text-primary dark:text-primary bg-primary/10 dark:bg-primary/30 rounded border-primary/20 dark:border-primary uppercase tracking-tighter flex-shrink-0">
+                <span className="bg-primary/10/30 flex-shrink-0 rounded border-primary/20 font-bold uppercase tracking-tighter text-primary">
                   <CheckCircle size={10} className="sm:hidden" />
                   <CheckCircle size={12} className="hidden sm:block" />
                 </span>
@@ -108,7 +108,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
             )
           })
         ) : (
-          <p className="text-xs sm:text-sm text-muted-foreground">No calendars found.</p>
+          <p className="text-xs text-muted-foreground sm:text-sm">No calendars found.</p>
         )}
       </div>
     </div>

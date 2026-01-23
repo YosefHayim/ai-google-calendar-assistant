@@ -171,7 +171,7 @@ export function EventDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto">
         {isCreating ? (
           <CreateEventForm
             newEvent={newEvent}

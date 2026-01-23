@@ -12,24 +12,24 @@ interface SlackChatProps {
 }
 
 export const SlackChat = ({ messages }: SlackChatProps) => (
-  <div className="h-full flex flex-col bg-[#1A1D21]">
-    <div className="bg-[#1A1D21] px-4 py-3 flex items-center gap-3 border-b border-[#313338]">
-      <div className="flex items-center gap-2 flex-1">
-        <Hash className="w-5 h-5 text-[#B9BBBE]" />
-        <span className="text-white font-semibold text-sm">ally-assistant</span>
+  <div className="flex h-full flex-col bg-[#1A1D21]">
+    <div className="flex items-center gap-3 border-b border-[#313338] bg-[#1A1D21] px-4 py-3">
+      <div className="flex flex-1 items-center gap-2">
+        <Hash className="h-5 w-5 text-[#B9BBBE]" />
+        <span className="text-sm font-semibold text-foreground">ally-assistant</span>
       </div>
       <div className="flex items-center gap-3 text-[#B9BBBE]">
-        <AtSign className="w-5 h-5" />
-        <MoreVertical className="w-5 h-5" />
+        <AtSign className="h-5 w-5" />
+        <MoreVertical className="h-5 w-5" />
       </div>
     </div>
 
-    <div className="bg-[#222529] px-4 py-2 border-b border-[#313338] flex items-center gap-2">
-      <div className="w-2 h-2 rounded-full bg-primary" />
+    <div className="flex items-center gap-2 border-b border-[#313338] bg-[#222529] px-4 py-2">
+      <div className="h-2 w-2 rounded-full bg-primary" />
       <span className="text-xs text-[#B9BBBE]">Ally is online</span>
     </div>
 
-    <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-[#1A1D21]">
+    <div className="flex-1 space-y-4 overflow-y-auto bg-[#1A1D21] p-4">
       {messages.map((msg, i) => (
         <motion.div
           key={i}
@@ -40,18 +40,18 @@ export const SlackChat = ({ messages }: SlackChatProps) => (
         >
           {msg.type === 'user' ? (
             <>
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-accent flex items-center justify-center flex-shrink-0">
-                <User className="w-5 h-5 text-white" />
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent">
+                <User className="h-5 w-5 text-foreground" />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-semibold text-sm">You</span>
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 flex items-center gap-2">
+                  <span className="text-sm font-semibold text-foreground">You</span>
                   <span className="text-[10px] text-[#72767D]">{msg.time}</span>
                 </div>
                 {msg.isVoice ? (
-                  <div className="flex items-center gap-2 bg-[#2B2D31] rounded-lg p-2 w-fit">
-                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-                      <Mic className="w-4 h-4 text-accent" />
+                  <div className="flex w-fit items-center gap-2 rounded-lg bg-[#2B2D31] p-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/20">
+                      <Mic className="h-4 w-4 text-accent" />
                     </div>
                     <VoiceWaveform />
                     <span className="text-xs text-[#72767D]">0:03</span>
@@ -63,13 +63,13 @@ export const SlackChat = ({ messages }: SlackChatProps) => (
             </>
           ) : (
             <>
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
-                <AllyLogo className="w-5 h-5 text-white" />
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
+                <AllyLogo className="h-5 w-5 text-foreground" />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-semibold text-sm">Ally</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#5865F2] text-white">APP</span>
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 flex items-center gap-2">
+                  <span className="text-sm font-semibold text-foreground">Ally</span>
+                  <span className="rounded bg-[#5865F2] px-1.5 py-0.5 text-[10px] text-foreground">APP</span>
                   <span className="text-[10px] text-[#72767D]">{msg.time}</span>
                 </div>
                 {msg.showTyping ? <TypingIndicator /> : <div className="text-sm text-[#DCDDDE]">{msg.content}</div>}
@@ -80,11 +80,11 @@ export const SlackChat = ({ messages }: SlackChatProps) => (
       ))}
     </div>
 
-    <div className="px-4 py-3 border-t border-[#313338]">
-      <div className="bg-[#383A40] rounded-lg px-4 py-3 flex items-center gap-3">
-        <Plus className="w-5 h-5 text-[#B9BBBE]" />
-        <span className="text-sm text-[#72767D] flex-1">Message #ally-assistant</span>
-        <AtSign className="w-5 h-5 text-[#B9BBBE]" />
+    <div className="border-t border-[#313338] px-4 py-3">
+      <div className="flex items-center gap-3 rounded-lg bg-[#383A40] px-4 py-3">
+        <Plus className="h-5 w-5 text-[#B9BBBE]" />
+        <span className="flex-1 text-sm text-[#72767D]">Message #ally-assistant</span>
+        <AtSign className="h-5 w-5 text-[#B9BBBE]" />
       </div>
     </div>
   </div>

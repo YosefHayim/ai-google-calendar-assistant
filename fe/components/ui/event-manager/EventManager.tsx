@@ -199,9 +199,9 @@ export function EventManager({
   return (
     <div className={cn('flex flex-col gap-3 sm:gap-4', className)}>
       {/* Mobile Layout - Compact header */}
-      <div className="block md:hidden space-y-3">
-        <div className="flex items-center justify-between flex-wrap">
-          <h2 className="text-lg font-semibold truncate min-w-0 flex-1 mr-2">{getDateLabel(view, currentDate)}</h2>
+      <div className="block space-y-3 md:hidden">
+        <div className="flex flex-wrap items-center justify-between">
+          <h2 className="mr-2 min-w-0 flex-1 truncate text-lg font-semibold">{getDateLabel(view, currentDate)}</h2>
           <div className="flex items-center gap-1">
             <Button variant="outline" size="icon" onClick={() => navigateDate('prev')} className="h-8 w-8">
               <ChevronLeft className="h-3 w-3" />
@@ -215,9 +215,9 @@ export function EventManager({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-wrap items-center gap-2">
           <ViewToggle view={view} onViewChange={setView} />
-          <Button onClick={handleNewEventClick} className="flex-1 h-9 text-sm">
+          <Button onClick={handleNewEventClick} className="h-9 flex-1 text-sm">
             <Plus className="mr-1 h-4 w-4" />
             New Event
           </Button>
@@ -227,7 +227,7 @@ export function EventManager({
       {/* Tablet and Desktop Layout */}
       <div className="hidden md:flex md:flex-col md:gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-          <h2 className="text-xl font-semibold sm:text-2xl min-w-[180px] sm:min-w-[220px]">
+          <h2 className="min-w-[180px] text-xl font-semibold sm:min-w-[220px] sm:text-2xl">
             {getDateLabel(view, currentDate)}
           </h2>
           <div className="flex items-center gap-2">

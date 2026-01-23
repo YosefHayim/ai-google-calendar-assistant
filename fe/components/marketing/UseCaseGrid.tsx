@@ -19,12 +19,12 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
     key: 'intelligentScheduling',
     illustration: (t) => (
       <div className="space-y-2">
-        <div className="text-xs font-medium bg-secondary text-white dark:bg-secondary dark:text-foreground p-2 rounded-md rounded-br-none self-end flex items-center gap-2 max-w-max ml-auto">
+        <div className="ml-auto flex max-w-max items-center gap-2 self-end rounded-md rounded-br-none bg-secondary p-2 text-xs font-medium text-secondary-foreground">
           <User size={16} />
           <span>{t('useCases.intelligentScheduling.userMessage')}</span>
         </div>
-        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-foreground dark:text-muted-foreground p-2 rounded-md rounded-bl-none self-start flex items-center gap-2 max-w-max mr-auto">
-          <AllyLogo className="w-4 h-4" />
+        <div className="mr-auto flex max-w-max items-center gap-2 self-start rounded-md rounded-bl-none bg-secondary p-2 text-xs font-medium text-foreground text-muted-foreground">
+          <AllyLogo className="h-4 w-4" />
           <div className="flex flex-col">
             <span>{t('useCases.intelligentScheduling.allyResponse')}</span>
             <div className="flex items-center gap-1 text-primary">
@@ -41,10 +41,10 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
     key: 'focusProtection',
     illustration: (t) => (
       <div className="space-y-2">
-        <div className="text-xs font-medium bg-secondary text-white dark:bg-secondary dark:text-foreground p-2 rounded-md rounded-br-none self-end max-w-max ml-auto">
+        <div className="ml-auto max-w-max self-end rounded-md rounded-br-none bg-secondary p-2 text-xs font-medium text-secondary-foreground">
           {t('useCases.focusProtection.userMessage')}
         </div>
-        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-secondary-foreground dark:text-secondary-foreground p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
+        <div className="mr-auto max-w-max self-start rounded-md rounded-bl-none bg-secondary p-2 text-xs font-medium text-secondary-foreground">
           {t('useCases.focusProtection.allyResponse')}
           <span className="font-bold text-primary"> {t('useCases.focusProtection.focusModeActive')}</span>
         </div>
@@ -56,11 +56,11 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
     key: 'travelAgent',
     illustration: (t) => (
       <div className="space-y-2">
-        <div className="text-xs font-medium bg-destructive text-white p-2 rounded-md">
+        <div className="rounded-md bg-destructive p-2 text-xs font-medium text-foreground">
           {t('useCases.travelAgent.delayAlert')}
         </div>
-        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-secondary-foreground dark:text-secondary-foreground p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto flex items-center gap-2">
-          <AllyLogo className="w-4 h-4" />
+        <div className="mr-auto flex max-w-max items-center gap-2 self-start rounded-md rounded-bl-none bg-secondary p-2 text-xs font-medium text-secondary-foreground">
+          <AllyLogo className="h-4 w-4" />
           <span>{t('useCases.travelAgent.allyResponse')}</span>
         </div>
       </div>
@@ -71,19 +71,19 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
     key: 'voiceToAction',
     illustration: (t) => (
       <div className="space-y-2">
-        <div className="text-xs font-medium bg-secondary text-white dark:bg-secondary dark:text-foreground p-2 rounded-md rounded-br-none self-end max-w-max ml-auto flex items-center gap-2">
-          <div className="flex items-center gap-0.5 h-3">
+        <div className="ml-auto flex max-w-max items-center gap-2 self-end rounded-md rounded-br-none bg-secondary p-2 text-xs font-medium text-secondary-foreground">
+          <div className="flex h-3 items-center gap-0.5">
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="w-0.5 bg-primary/80 wave-bar rounded-md"
+                className="wave-bar w-0.5 rounded-md bg-primary/80"
                 style={{ animationDelay: `${i * 0.1}s` }}
               />
             ))}
           </div>
           <span>{t('useCases.voiceToAction.userMessage')}</span>
         </div>
-        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-secondary-foreground dark:text-secondary-foreground p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
+        <div className="mr-auto max-w-max self-start rounded-md rounded-bl-none bg-secondary p-2 text-xs font-medium text-secondary-foreground">
           {t('useCases.voiceToAction.allyResponse')}
         </div>
       </div>
@@ -95,8 +95,8 @@ const UseCaseGrid = () => {
   const { t } = useTranslation()
 
   return (
-    <div className="w-full max-w-5xl mx-auto mt-20 relative px-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="relative mx-auto mt-20 w-full max-w-5xl px-4">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {USE_CASE_CONFIG.map((useCase, i) => {
           const Icon = useCase.icon
           return (
@@ -106,22 +106,18 @@ const UseCaseGrid = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-muted dark:bg-secondary/50 rounded-xl p-6 flex flex-col justify-between hover:border-primary/30 dark:hover:border-primary/30 transition-colors"
+              className="flex flex-col justify-between rounded-xl bg-muted bg-secondary/50 p-6 transition-colors hover:border-primary/30"
             >
               <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-background dark:bg-secondary rounded-lg flex items-center justify-center ">
-                    <Icon className="w-5 h-5 text-primary" />
+                <div className="mb-3 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background bg-secondary">
+                    <Icon className="h-5 w-5 text-primary" />
                   </div>
-                  <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground">
-                    {t(`useCases.${useCase.key}.title`)}
-                  </h3>
+                  <h3 className="text-lg font-medium text-foreground">{t(`useCases.${useCase.key}.title`)}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-6">
-                  {t(`useCases.${useCase.key}.description`)}
-                </p>
+                <p className="mb-6 text-sm text-muted-foreground">{t(`useCases.${useCase.key}.description`)}</p>
               </div>
-              <div className="bg-background dark:bg-secondary/50 p-4 rounded-md  min-h-[100px] flex flex-col justify-center">
+              <div className="flex min-h-[100px] flex-col justify-center rounded-md bg-background bg-secondary/50 p-4">
                 {useCase.illustration(t)}
               </div>
             </motion.div>

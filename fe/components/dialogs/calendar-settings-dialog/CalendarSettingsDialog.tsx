@@ -32,23 +32,21 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="max-w-2xl w-full p-0 overflow-hidden border-none shadow-xl"
+        className="w-full max-w-2xl overflow-hidden border-none p-0 shadow-xl"
         style={{ borderTop: `4px solid ${calendarColor}` }}
       >
         <div className="max-h-[85vh] overflow-y-auto p-6">
           <DialogHeader className="mb-6 text-left">
             <div className="flex items-center gap-3">
               <div
-                className="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md"
                 style={{ backgroundColor: calendarColor, opacity: 0.2 }}
               >
-                <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
+                <CalendarDays className="h-5 w-5" style={{ color: calendarColor }} />
               </div>
               <div className="flex-1">
-                <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">
-                  {displayName}
-                </DialogTitle>
-                <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">Calendar Settings</p>
+                <DialogTitle className="text-xl font-bold text-foreground">{displayName}</DialogTitle>
+                <p className="mt-1 text-xs text-muted-foreground">Calendar Settings</p>
               </div>
             </div>
           </DialogHeader>
@@ -59,9 +57,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
               tooltipTitle="Unique Calendar Identifier"
               tooltipDescription="A unique ID assigned by Google Calendar to identify this calendar. Used internally for API calls and syncing."
             >
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground font-mono break-all">
-                {calendar.id}
-              </p>
+              <p className="break-all font-mono text-sm text-muted-foreground">{calendar.id}</p>
             </InfoSection>
 
             {calendar.summary && (
@@ -70,7 +66,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Name"
                 tooltipDescription="The display name of this calendar as shown in Google Calendar."
               >
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{calendar.summary}</p>
+                <p className="text-sm text-muted-foreground">{calendar.summary}</p>
               </InfoSection>
             )}
 
@@ -80,7 +76,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Description"
                 tooltipDescription="A user-defined description explaining the purpose or content of this calendar."
               >
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{calendar.description}</p>
+                <p className="text-sm text-muted-foreground">{calendar.description}</p>
               </InfoSection>
             )}
 
@@ -90,7 +86,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Location"
                 tooltipDescription="The geographic location associated with this calendar. Useful for region-specific calendars."
               >
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{calendarEntry.location}</p>
+                <p className="text-sm text-muted-foreground">{calendarEntry.location}</p>
               </InfoSection>
             )}
 
@@ -100,7 +96,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Timezone"
                 tooltipDescription="The default timezone for events in this calendar. All-day events and recurring events use this timezone."
               >
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{calendar.timeZone}</p>
+                <p className="text-sm text-muted-foreground">{calendar.timeZone}</p>
               </InfoSection>
             )}
 
@@ -110,9 +106,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Your Access Level"
                 tooltipDescription="Your permission level: Owner (full control), Writer (edit events), Reader (view only), or FreeBusyReader (availability only)."
               >
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground capitalize">
-                  {calendar.accessRole}
-                </p>
+                <p className="text-sm capitalize text-muted-foreground">{calendar.accessRole}</p>
               </InfoSection>
             )}
 
@@ -126,7 +120,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Primary Calendar Status"
                 tooltipDescription="Indicates whether this is your primary calendar. The primary calendar is typically your main personal calendar."
                 value={calendar.primary}
-                icon={<Star className="w-4 h-4 text-muted-foreground" />}
+                icon={<Star className="h-4 w-4 text-muted-foreground" />}
               />
             )}
 
@@ -136,7 +130,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Selection Status"
                 tooltipDescription="Indicates whether this calendar is currently selected and visible in your calendar view."
                 value={calendar.selected}
-                icon={<CheckCircle className="w-4 h-4 text-muted-foreground" />}
+                icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
               />
             )}
 

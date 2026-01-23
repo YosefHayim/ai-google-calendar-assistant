@@ -20,13 +20,13 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
   const PRIMARY_COLOR = 'hsl(var(--primary))'
 
   if (!data || data.length === 0) {
-    return <div ref={containerRef} className="w-full h-full" />
+    return <div ref={containerRef} className="h-full w-full" />
   }
 
   const { width, height } = dimensions
 
   if (width === 0 || height === 0) {
-    return <div ref={containerRef} className="w-full h-full" />
+    return <div ref={containerRef} className="h-full w-full" />
   }
 
   const padding = 10
@@ -83,10 +83,10 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
   }
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div ref={containerRef} className="relative h-full w-full">
       <svg
         viewBox={`0 0 ${width} ${height}`}
-        className="w-full h-full cursor-crosshair overflow-visible"
+        className="h-full w-full cursor-crosshair overflow-visible"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -138,7 +138,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
               cy={hoveredData.y}
               r="5"
               fill={PRIMARY_COLOR}
-              className="stroke-white dark:stroke-secondary"
+              className="stroke-secondary"
               strokeWidth="2"
             />
           </g>
@@ -148,7 +148,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
       {/* Tooltip Overlay */}
       {hoveredData && (
         <div
-          className="absolute p-2.5 text-xs bg-secondary dark:bg-secondary text-primary-foreground rounded-lg shadow-xl pointer-events-none border-border"
+          className="pointer-events-none absolute rounded-lg border-border bg-secondary p-2.5 text-xs text-primary-foreground shadow-xl"
           style={{
             left: `${(hoveredData.x / width) * 100}%`,
             top: `${(hoveredData.y / height) * 100}%`,
@@ -158,9 +158,9 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
           }}
         >
           <div className="flex flex-col gap-0.5">
-            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{hoveredData.day}</span>
-            <span className="text-sm font-bold text-white flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{hoveredData.day}</span>
+            <span className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               {formatHours(hoveredData.hours)} saved
             </span>
           </div>

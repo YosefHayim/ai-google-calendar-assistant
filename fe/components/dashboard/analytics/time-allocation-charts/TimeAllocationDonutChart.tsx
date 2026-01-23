@@ -45,12 +45,12 @@ export const TimeAllocationDonutChart: React.FC<TimeAllocationDonutChartProps> =
             if (active && payload && payload.length > 0) {
               const item = payload[0].payload as CalendarBreakdownItem & { percentage: number }
               return (
-                <div className="rounded-lg border-border bg-secondary dark:bg-secondary px-3 py-2 text-primary-foreground shadow-xl">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getValidHexColor(item.color) }} />
-                    <span className="font-medium text-sm">{item.category}</span>
+                <div className="rounded-lg border-border bg-secondary px-3 py-2 text-primary-foreground shadow-xl">
+                  <div className="mb-1 flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: getValidHexColor(item.color) }} />
+                    <span className="text-sm font-medium">{item.category}</span>
                   </div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-xs text-muted-foreground">
                     {formatHours(item.hours, 1)} ({item.percentage}%)
                   </div>
                 </div>
@@ -79,11 +79,7 @@ export const TimeAllocationDonutChart: React.FC<TimeAllocationDonutChartProps> =
               if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                 return (
                   <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                    <tspan
-                      x={viewBox.cx}
-                      y={viewBox.cy}
-                      className="fill-foreground dark:fill-foreground text-3xl font-bold"
-                    >
+                    <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-bold">
                       {formatHours(totalHours)}
                     </tspan>
                     <tspan

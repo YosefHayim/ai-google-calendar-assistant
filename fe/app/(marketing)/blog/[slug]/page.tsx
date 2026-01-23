@@ -61,7 +61,7 @@ function ShareButtons({ title, url }: { title: string; url: string }) {
   return (
     <>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-muted-foreground dark:text-muted-foreground mr-2">Share:</span>
+        <span className="mr-2 text-sm text-muted-foreground dark:text-muted-foreground">Share:</span>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleTwitterShare}>
           <Twitter className="h-4 w-4" />
         </Button>
@@ -74,7 +74,7 @@ function ShareButtons({ title, url }: { title: string; url: string }) {
       </div>
 
       {toastMessage && (
-        <div className="fixed bottom-4 right-4 bg-secondary dark:bg-secondary text-white dark:text-foreground px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="fixed bottom-4 right-4 rounded-lg bg-secondary px-4 py-2 text-white shadow-lg duration-300 animate-in fade-in slide-in-from-bottom-2 dark:bg-secondary dark:text-foreground">
           {toastMessage}
         </div>
       )}
@@ -99,7 +99,7 @@ export default function BlogPostPage() {
   if (isLoading) {
     return (
       <MarketingLayout>
-        <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="flex min-h-[60vh] items-center justify-center">
           <LoadingSpinner size="lg" />
         </div>
       </MarketingLayout>
@@ -171,38 +171,38 @@ export default function BlogPostPage() {
       <JsonLd data={[breadcrumbSchema, articleSchema]} />
 
       {imageSrc && (
-        <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden">
+        <div className="relative h-[300px] w-full overflow-hidden md:h-[400px] lg:h-[500px]">
           <Image src={imageSrc} alt={post.title} fill sizes="100vw" className="object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-950 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent dark:from-zinc-950" />
         </div>
       )}
 
-      <article className={`py-16 md:py-24 px-4 sm:px-6 ${imageSrc ? '-mt-24 relative z-10' : ''}`}>
-        <div className="max-w-3xl mx-auto">
+      <article className={`px-4 py-16 sm:px-6 md:py-24 ${imageSrc ? 'relative z-10 -mt-24' : ''}`}>
+        <div className="mx-auto max-w-3xl">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground hover:text-primary mb-8 transition-colors"
+            className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary dark:text-muted-foreground"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="h-4 w-4" />
             Back to Blog
           </Link>
 
           <header className="mb-12">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="mb-6 flex items-center gap-3">
               <Badge variant="default">{post.category}</Badge>
               {post.featured && <Badge variant="secondary">Featured</Badge>}
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-6 leading-tight">
+            <h1 className="mb-6 text-3xl font-medium leading-tight tracking-tight text-foreground dark:text-primary-foreground md:text-4xl lg:text-5xl">
               {post.title}
             </h1>
 
-            <p className="text-xl text-muted-foreground dark:text-muted-foreground mb-8">{post.excerpt}</p>
+            <p className="mb-8 text-xl text-muted-foreground dark:text-muted-foreground">{post.excerpt}</p>
 
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground dark:text-muted-foreground pb-8 border-b border ">
+            <div className="flex flex-wrap items-center gap-6 border border-b pb-8 text-sm text-muted-foreground dark:text-muted-foreground">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <User className="w-5 h-5 text-primary" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <User className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="font-medium text-foreground dark:text-primary-foreground">{author.name}</p>
@@ -210,35 +210,24 @@ export default function BlogPostPage() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="h-4 w-4" />
                 {formatBlogDate(getPublishedAt(post))}
               </div>
               <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
+                <Clock className="h-4 w-4" />
                 {getReadTime(post)}
               </div>
             </div>
           </header>
 
           <div
-            className="prose prose-zinc dark:prose-invert prose-lg max-w-none
-              prose-headings:font-medium prose-headings:tracking-tight
-              prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
-              prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-              prose-p:leading-relaxed prose-p:mb-4
-              prose-li:leading-relaxed
-              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-foreground dark:prose-strong:text-primary-foreground
-              prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-              prose-pre:bg-secondary prose-pre:border prose-pre:border
-              prose-blockquote:border-primary prose-blockquote:bg-muted dark:prose-blockquote:bg-secondary prose-blockquote:py-1 prose-blockquote:px-6 prose-blockquote:rounded-r-lg
-              prose-ul:my-4 prose-ol:my-4"
+            className="prose prose-lg prose-zinc max-w-none dark:prose-invert prose-headings:font-medium prose-headings:tracking-tight prose-h2:mb-4 prose-h2:mt-12 prose-h2:text-2xl prose-h3:mb-3 prose-h3:mt-8 prose-h3:text-xl prose-p:mb-4 prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:rounded-r-lg prose-blockquote:border-primary prose-blockquote:bg-muted prose-blockquote:px-6 prose-blockquote:py-1 prose-strong:text-foreground prose-code:rounded prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-primary prose-pre:border prose-pre:bg-secondary prose-ol:my-4 prose-ul:my-4 prose-li:leading-relaxed dark:prose-blockquote:bg-secondary dark:prose-strong:text-primary-foreground"
             dangerouslySetInnerHTML={{ __html: formatMarkdownToHtml(post.content) }}
           />
 
-          <div className="mt-12 pt-8 border-t border ">
+          <div className="mt-12 border border-t pt-8">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-muted-foreground dark:text-muted-foreground mr-2">Tags:</span>
+              <span className="mr-2 text-sm text-muted-foreground dark:text-muted-foreground">Tags:</span>
               {post.tags.map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">
                   {tag}
@@ -247,12 +236,12 @@ export default function BlogPostPage() {
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t flex items-center justify-between">
+          <div className="mt-8 flex items-center justify-between border-t pt-8">
             <ShareButtons title={post.title} url={postUrl} />
             <Link href="/register">
               <Button className="gap-2">
                 Try Ask Ally Free
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -260,27 +249,27 @@ export default function BlogPostPage() {
       </article>
 
       {relatedPosts.length > 0 && (
-        <section className="py-16 md:py-24 px-4 sm:px-6 bg-muted dark:bg-secondary/50">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-8">
+        <section className="bg-muted px-4 py-16 dark:bg-secondary/50 sm:px-6 md:py-24">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="mb-8 text-2xl font-medium text-foreground dark:text-primary-foreground md:text-3xl">
               Related Articles
             </h2>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid gap-6 md:grid-cols-3">
               {relatedPosts.map((relatedPost) => (
                 <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
-                  <Card className="h-full overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
-                    <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
+                  <Card className="group h-full overflow-hidden transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
+                    <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
                       {getImageSrc(relatedPost) ? (
                         <Image
                           src={getImageSrc(relatedPost)!}
                           alt={relatedPost.title}
                           fill
                           sizes="(max-width: 768px) 100vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <BookOpen className="w-12 h-12 text-zinc-300 dark:text-zinc-700 group-hover:text-primary/50 transition-colors" />
+                          <BookOpen className="h-12 w-12 text-zinc-300 transition-colors group-hover:text-primary/50 dark:text-zinc-700" />
                         </div>
                       )}
                     </div>
@@ -288,10 +277,10 @@ export default function BlogPostPage() {
                       <Badge variant="secondary" className="mb-3">
                         {relatedPost.category}
                       </Badge>
-                      <h3 className="font-medium text-foreground dark:text-primary-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                      <h3 className="mb-2 line-clamp-2 font-medium text-foreground transition-colors group-hover:text-primary dark:text-primary-foreground">
                         {relatedPost.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground dark:text-muted-foreground line-clamp-2">
+                      <p className="line-clamp-2 text-sm text-muted-foreground dark:text-muted-foreground">
                         {relatedPost.excerpt}
                       </p>
                     </CardContent>
@@ -303,19 +292,19 @@ export default function BlogPostPage() {
         </section>
       )}
 
-      <section className="py-16 md:py-24 px-4 sm:px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">
+      <section className="px-4 py-16 sm:px-6 md:py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="mb-4 text-2xl font-medium text-foreground dark:text-primary-foreground md:text-3xl">
             Ready to transform your calendar?
           </h2>
-          <p className="text-muted-foreground dark:text-muted-foreground mb-8">
+          <p className="mb-8 text-muted-foreground dark:text-muted-foreground">
             Join thousands of professionals who use Ask Ally to manage their time more effectively.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/register">
-              <Button size="lg" className="gap-2 w-full sm:w-auto">
+              <Button size="lg" className="w-full gap-2 sm:w-auto">
                 Get Started Free
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/blog">

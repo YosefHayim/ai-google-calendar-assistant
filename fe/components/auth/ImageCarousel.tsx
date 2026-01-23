@@ -35,12 +35,12 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, interval = 5000 }
           priority={index === 0}
         />
       ))}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+      <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 space-x-2">
         {images.map((_, index) => (
           <div
             key={index}
             className={`h-2 w-2 rounded-full transition-all duration-300 ${
-              index === currentIndex ? 'bg-primary scale-125' : 'bg-background/50 dark:bg-zinc-700/50'
+              index === currentIndex ? 'scale-125 bg-primary' : 'bg-background/50 bg-muted/50'
             }`}
           />
         ))}

@@ -76,30 +76,28 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   }
 
   return (
-    <div className="flex-1 mt-4 px-4 overflow-y-auto flex flex-col">
-      <div className="flex items-center justify-between mb-2 px-2">
-        <p className="text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
-          Recent Chats
-        </p>
+    <div className="mt-4 flex flex-1 flex-col overflow-y-auto px-4">
+      <div className="mb-2 flex items-center justify-between px-2">
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Recent Chats</p>
       </div>
 
       <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+        <Search className="absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
           value={localSearchValue}
           onChange={onSearchChange}
           placeholder="Search conversations..."
-          className="w-full pl-9 pr-8 bg-secondary dark:bg-secondary border-0"
+          className="w-full border-0 bg-secondary pl-9 pr-8"
         />
         {localSearchValue && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onClearSearch}
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground"
+            className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground"
           >
-            <X className="w-3 h-3" />
+            <X className="h-3 w-3" />
           </Button>
         )}
       </div>
@@ -107,16 +105,16 @@ export const ConversationList: React.FC<ConversationListProps> = ({
       {isLoading || isSearching ? (
         <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="animate-pulse h-12 bg-secondary dark:bg-secondary rounded-md" />
+            <div key={i} className="h-12 animate-pulse rounded-md bg-secondary" />
           ))}
         </div>
       ) : conversations.length === 0 ? (
-        <div className="text-center py-4 text-muted-foreground dark:text-muted-foreground">
-          <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
+        <div className="py-4 text-center text-muted-foreground">
+          <MessageSquare className="mx-auto mb-2 h-8 w-8 opacity-50" />
           <p className="text-xs">{localSearchValue ? 'No matching conversations' : 'No conversations yet'}</p>
         </div>
       ) : (
-        <div className="space-y-1 flex-1 overflow-y-auto">
+        <div className="flex-1 space-y-1 overflow-y-auto">
           {conversations.slice(0, 15).map((conversation) => (
             <div
               key={conversation.id}
@@ -124,22 +122,20 @@ export const ConversationList: React.FC<ConversationListProps> = ({
               tabIndex={0}
               onClick={() => onSelectConversation(conversation)}
               onKeyDown={(e) => e.key === 'Enter' && onSelectConversation(conversation)}
-              className={`w-full text-left p-2 rounded-md transition-colors group cursor-pointer ${
-                selectedConversationId === conversation.id
-                  ? 'bg-secondary dark:bg-secondary'
-                  : 'hover:bg-muted dark:hover:bg-secondary/50'
+              className={`group w-full cursor-pointer rounded-md p-2 text-left transition-colors ${
+                selectedConversationId === conversation.id ? 'bg-secondary' : 'hover:bg-muted hover:bg-secondary/50'
               }`}
             >
               <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground dark:text-primary-foreground truncate">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-foreground">
                     <StreamingTitle
                       title={conversation.title}
                       isStreaming={streamingTitleConversationId === conversation.id}
                     />
                   </p>
-                  <div className="flex items-center gap-1 mt-0.5 text-xs text-muted-foreground">
-                    <Clock className="w-3 h-3" />
+                  <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
                     <span>{formatRelativeDate(conversation.lastUpdated)}</span>
                   </div>
                 </div>
@@ -148,9 +144,9 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground"
+                      className="h-6 w-6 text-muted-foreground opacity-0 hover:text-foreground group-hover:opacity-100"
                     >
-                      <MoreHorizontal className="w-3 h-3" />
+                      <MoreHorizontal className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
@@ -160,11 +156,11 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                       className="cursor-pointer"
                     >
                       {copiedId === conversation.id ? (
-                        <Check className="w-4 h-4 mr-2 text-primary" />
+                        <Check className="mr-2 h-4 w-4 text-primary" />
                       ) : sharingId === conversation.id ? (
-                        <Copy className="w-4 h-4 mr-2 animate-pulse" />
+                        <Copy className="mr-2 h-4 w-4 animate-pulse" />
                       ) : (
-                        <Link className="w-4 h-4 mr-2" />
+                        <Link className="mr-2 h-4 w-4" />
                       )}
                       {copiedId === conversation.id ? 'Link copied!' : 'Share conversation'}
                     </DropdownMenuItem>
@@ -172,7 +168,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                       onClick={(e) => onInitiateArchive(e, conversation.id)}
                       className="cursor-pointer text-destructive focus:text-destructive"
                     >
-                      <Archive className="w-4 h-4 mr-2" />
+                      <Archive className="mr-2 h-4 w-4" />
                       Archive conversation
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -180,7 +176,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                       onClick={(e) => onInitiateDelete(e, conversation.id)}
                       className="cursor-pointer text-destructive focus:text-destructive"
                     >
-                      <Trash2 className="w-4 h-4 mr-2" />
+                      <Trash2 className="mr-2 h-4 w-4" />
                       Delete conversation
                     </DropdownMenuItem>
                   </DropdownMenuContent>

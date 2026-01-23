@@ -727,31 +727,31 @@ function ChangelogPage() {
   return (
     <MarketingLayout>
       <JsonLd data={[breadcrumbSchema, pageSchema]} />
-      <section className="py-16 md:py-24 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
+      <section className="px-4 py-16 sm:px-6 md:py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-16 text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+              <Sparkles className="h-4 w-4" />
               What&apos;s New
             </div>
-            <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4">
+            <h1 className="mb-4 text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground md:text-5xl">
               Changelog
             </h1>
-            <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground dark:text-muted-foreground">
               Stay up to date with the latest features, improvements, and fixes we&apos;ve shipped for Ask Ally.
             </p>
           </div>
 
           <div className="relative">
-            <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-accent dark:bg-secondary md:-translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 top-0 w-px bg-accent dark:bg-secondary md:left-1/2 md:-translate-x-1/2" />
 
             <div className="space-y-12">
               {CHANGELOG_DATA.map((entry) => (
                 <div key={entry.version} className="relative">
-                  <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-12">
-                    <div className="md:w-1/2 md:text-right md:pr-12">
+                  <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-12">
+                    <div className="md:w-1/2 md:pr-12 md:text-right">
                       <div className="sticky top-24">
-                        <div className="inline-flex items-center gap-3 mb-2">
+                        <div className="mb-2 inline-flex items-center gap-3">
                           <span className="text-2xl font-semibold text-foreground dark:text-primary-foreground">
                             v{entry.version}
                           </span>
@@ -760,22 +760,22 @@ function ChangelogPage() {
                       </div>
                     </div>
 
-                    <div className="absolute left-0 md:left-1/2 top-2 w-3 h-3 rounded-full bg-primary border-4 border-white -zinc-950 md:-translate-x-1/2 z-10" />
+                    <div className="-zinc-950 absolute left-0 top-2 z-10 h-3 w-3 rounded-full border-4 border-white bg-primary md:left-1/2 md:-translate-x-1/2" />
 
-                    <div className="md:w-1/2 pl-6 md:pl-12 space-y-4">
+                    <div className="space-y-4 pl-6 md:w-1/2 md:pl-12">
                       {entry.changes.map((change, changeIndex) => (
                         <div
                           key={changeIndex}
-                          className="bg-background dark:bg-secondary rounded-xl  p-5 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+                          className="rounded-xl bg-background p-5 transition-colors hover:border-zinc-300 dark:bg-secondary dark:hover:border-zinc-700"
                         >
                           <div className="flex items-start gap-4">
                             {change.icon && (
-                              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <change.icon className="w-5 h-5 text-primary" />
+                              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                <change.icon className="h-5 w-5 text-primary" />
                               </div>
                             )}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-2 flex flex-wrap items-center gap-2">
                                 <Badge variant={BADGE_STYLES[change.type].variant}>
                                   {BADGE_STYLES[change.type].label}
                                 </Badge>

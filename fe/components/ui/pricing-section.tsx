@@ -20,13 +20,13 @@ export function PricingSection({ title, subtitle, tiers, frequencies, currentPla
   const visibleTiers = useMemo(() => (isPerUse ? tiers.filter((tier) => tier.highlighted) : tiers), [tiers, isPerUse])
 
   return (
-    <section className="flex flex-col items-center gap-10 py-10 w-full">
+    <section className="flex w-full flex-col items-center gap-10 py-10">
       <div className="space-y-2 text-center">
         <div className="space-y-2">
-          <h1 className="text-4xl font-medium md:text-5xl text-foreground dark:text-primary-foreground">{title}</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground">{subtitle}</p>
+          <h1 className="text-4xl font-medium text-foreground md:text-5xl">{title}</h1>
+          <p className="text-muted-foreground">{subtitle}</p>
         </div>
-        <div className="mx-auto flex w-fit rounded-full bg-secondary dark:bg-secondary p-1">
+        <div className="mx-auto flex w-fit rounded-full bg-secondary p-1">
           {frequencies.map((freq) => (
             <Tab
               key={freq}

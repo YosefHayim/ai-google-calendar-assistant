@@ -75,17 +75,17 @@ export default function ApplyPage({ params }: PageProps) {
   if (!position) {
     return (
       <MarketingLayout>
-        <section className="relative py-24 md:py-32 px-4 sm:px-6">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">
+        <section className="relative px-4 py-24 sm:px-6 md:py-32">
+          <div className="mx-auto max-w-2xl text-center">
+            <h1 className="mb-4 text-3xl font-medium text-foreground dark:text-primary-foreground">
               Position Not Found
             </h1>
-            <p className="text-muted-foreground dark:text-muted-foreground mb-8">
+            <p className="mb-8 text-muted-foreground dark:text-muted-foreground">
               The position you are looking for does not exist or is no longer available.
             </p>
             <Link href="/careers">
               <Button>
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Careers
               </Button>
             </Link>
@@ -98,30 +98,30 @@ export default function ApplyPage({ params }: PageProps) {
   if (isSubmitted) {
     return (
       <MarketingLayout>
-        <section className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
+        <section className="relative overflow-hidden px-4 py-24 sm:px-6 md:py-32">
           <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-transparent dark:from-emerald-500/10" />
-          <div className="absolute top-20 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
+          <div className="absolute left-1/4 top-20 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
 
           <motion.div
-            className="relative z-10 max-w-2xl mx-auto text-center"
+            className="relative z-10 mx-auto max-w-2xl text-center"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
+              <CheckCircle2 className="h-10 w-10 text-emerald-500" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">
+            <h1 className="mb-4 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-4xl">
               Application Received!
             </h1>
-            <p className="text-lg text-muted-foreground dark:text-muted-foreground mb-8">
+            <p className="mb-8 text-lg text-muted-foreground dark:text-muted-foreground">
               Thank you for your interest in the{' '}
               <span className="font-medium text-zinc-700 dark:text-zinc-300">{position.title}</span> position. We will
               review your application and get back to you soon.
             </p>
             <Link href="/careers">
               <Button variant="outline" size="lg">
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Careers
               </Button>
             </Link>
@@ -133,11 +133,11 @@ export default function ApplyPage({ params }: PageProps) {
 
   return (
     <MarketingLayout>
-      <section className="relative py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
+      <section className="relative overflow-hidden px-4 py-16 sm:px-6 md:py-24">
         <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 via-transparent to-transparent dark:from-red-500/10" />
-        <div className="absolute top-20 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute right-1/4 top-20 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
 
-        <div className="relative z-10 max-w-3xl mx-auto">
+        <div className="relative z-10 mx-auto max-w-3xl">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -146,9 +146,9 @@ export default function ApplyPage({ params }: PageProps) {
           >
             <Link
               href="/careers"
-              className="inline-flex items-center text-sm text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground transition-colors"
+              className="inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground dark:text-muted-foreground dark:hover:text-primary-foreground"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Back to all positions
             </Link>
           </motion.div>
@@ -156,28 +156,28 @@ export default function ApplyPage({ params }: PageProps) {
           <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
             <motion.div variants={fadeInUp} className="mb-8">
               <Card className="relative overflow-hidden">
-                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${position.gradient}`} />
+                <div className={`absolute left-0 right-0 top-0 h-1 bg-gradient-to-r ${position.gradient}`} />
                 <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="mb-2 flex items-center gap-2">
                     <Badge variant="secondary" className="text-xs">
                       {position.department}
                     </Badge>
-                    <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-xs">
-                      <Sparkles className="w-3 h-3 mr-1" />
+                    <Badge className="border-emerald-500/20 bg-emerald-500/10 text-xs text-emerald-600 dark:text-emerald-400">
+                      <Sparkles className="mr-1 h-3 w-3" />
                       Now Hiring
                     </Badge>
                   </div>
                   <CardTitle className="text-2xl md:text-3xl">{position.title}</CardTitle>
-                  <CardDescription className="text-base mt-2">{position.description}</CardDescription>
+                  <CardDescription className="mt-2 text-base">{position.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground dark:text-muted-foreground">
                     <div className="flex items-center gap-1.5">
-                      <Briefcase className="w-4 h-4" />
+                      <Briefcase className="h-4 w-4" />
                       <span>{position.type}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <MapPin className="w-4 h-4" />
+                      <MapPin className="h-4 w-4" />
                       <span>{position.location}</span>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ export default function ApplyPage({ params }: PageProps) {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="fullName" className="text-zinc-700 dark:text-zinc-300">
                           Full Name <span className="text-destructive">*</span>
@@ -217,7 +217,7 @@ export default function ApplyPage({ params }: PageProps) {
                       </div>
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="phone" className="text-zinc-700 dark:text-zinc-300">
                           Phone Number
@@ -254,21 +254,21 @@ export default function ApplyPage({ params }: PageProps) {
                     <div className="space-y-2">
                       <Label className="text-zinc-700 dark:text-zinc-300">Resume</Label>
                       <div className="relative">
-                        <div className="flex items-center justify-center w-full h-32 border-2 border-dashed  rounded-xl bg-muted dark:bg-secondary/50 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors cursor-pointer">
+                        <div className="flex h-32 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed bg-muted transition-colors hover:border-zinc-300 dark:bg-secondary/50 dark:hover:border-zinc-600">
                           <div className="text-center">
-                            <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                            <Upload className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
                             <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                               <span className="font-medium text-zinc-700 dark:text-zinc-300">Click to upload</span> or
                               drag and drop
                             </p>
-                            <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
+                            <p className="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
                               PDF, DOC, or DOCX (max 10MB)
                             </p>
                           </div>
                         </div>
                         <input
                           type="file"
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                           accept=".pdf,.doc,.docx"
                         />
                       </div>
@@ -290,9 +290,9 @@ export default function ApplyPage({ params }: PageProps) {
                       <Button
                         type="submit"
                         size="lg"
-                        className="w-full sm:w-auto h-12 px-8 bg-secondary hover:bg-secondary dark:bg-secondary dark:hover:bg-accent dark:text-foreground"
+                        className="h-12 w-full bg-secondary px-8 hover:bg-secondary dark:bg-secondary dark:text-foreground dark:hover:bg-accent sm:w-auto"
                       >
-                        <Send className="w-4 h-4 mr-2" />
+                        <Send className="mr-2 h-4 w-4" />
                         Submit Application
                       </Button>
                     </div>

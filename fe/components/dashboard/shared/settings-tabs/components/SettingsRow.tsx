@@ -19,7 +19,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 min-h-[48px] py-3',
+        'flex min-h-[48px] flex-col gap-2 py-3',
         'sm:grid sm:grid-cols-[1fr_auto] sm:items-center sm:gap-4',
         className,
       )}
@@ -27,12 +27,9 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
       aria-labelledby={id ? `${id}-label` : undefined}
     >
       <div className="flex items-center justify-between gap-1 sm:justify-start">
-        <div className="flex items-center gap-1 min-w-0">
-          {icon && <span className="flex-shrink-0 mr-1.5">{icon}</span>}
-          <span
-            id={id ? `${id}-label` : undefined}
-            className="text-sm font-medium text-foreground dark:text-primary-foreground truncate"
-          >
+        <div className="flex min-w-0 items-center gap-1">
+          {icon && <span className="mr-1.5 flex-shrink-0">{icon}</span>}
+          <span id={id ? `${id}-label` : undefined} className="truncate text-sm font-medium text-foreground">
             {title}
           </span>
         </div>
@@ -43,10 +40,10 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-foreground flex-shrink-0"
+                className="h-5 w-5 flex-shrink-0 text-muted-foreground hover:text-foreground sm:h-6 sm:w-6"
                 aria-label={`More info about ${title}`}
               >
-                <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <HelpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-center">
@@ -56,7 +53,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
         </TooltipProvider>
       </div>
 
-      <div className="flex justify-end w-full sm:w-auto">{control}</div>
+      <div className="flex w-full justify-end sm:w-auto">{control}</div>
     </div>
   )
 }

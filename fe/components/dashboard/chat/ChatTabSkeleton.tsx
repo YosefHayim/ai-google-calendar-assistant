@@ -6,9 +6,9 @@ import React from 'react'
 
 const ChatTabSkeleton: React.FC = () => {
   return (
-    <div className="flex flex-col h-full max-w-4xl mx-auto w-full relative overflow-hidden">
+    <div className="relative mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden">
       {/* Chat Messages Area */}
-      <div className="h-full overflow-y-auto px-4 pt-24 pb-32">
+      <div className="h-full overflow-y-auto px-4 pb-32 pt-24">
         <div className="space-y-8">
           {/* Assistant message skeleton */}
           <SkeletonMessageBubble isUser={false} />
@@ -25,11 +25,11 @@ const ChatTabSkeleton: React.FC = () => {
       </div>
 
       {/* Input Section Skeleton */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 z-20 bg-gradient-to-t from-white dark:from-zinc-950 via-white/80 to-transparent">
-        <div className="relative flex items-center bg-background dark:bg-secondary rounded-2xl shadow-2xl p-2 gap-2">
-          <Skeleton className="w-12 h-12 rounded-xl" />
-          <Skeleton className="flex-1 h-12 rounded-lg" />
-          <Skeleton className="w-12 h-12 rounded-xl" />
+      <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent p-4">
+        <div className="relative flex items-center gap-2 rounded-2xl bg-background bg-secondary p-2 shadow-2xl">
+          <Skeleton className="h-12 w-12 rounded-xl" />
+          <Skeleton className="h-12 flex-1 rounded-lg" />
+          <Skeleton className="h-12 w-12 rounded-xl" />
         </div>
       </div>
     </div>

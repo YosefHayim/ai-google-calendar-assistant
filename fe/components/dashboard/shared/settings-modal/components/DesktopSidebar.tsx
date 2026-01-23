@@ -18,20 +18,20 @@ export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
   const settingsTabs = useSettingsTabs()
 
   return (
-    <div className="hidden sm:flex w-52 bg-secondary dark:bg-secondary/50 border-r border-border -border flex-col p-3 flex-shrink-0">
-      <div className="flex items-center gap-2 mb-4 px-2">
-        <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-primary-foreground">
-          <AllyLogo className="w-5 h-5" />
+    <div className="-border hidden w-52 flex-shrink-0 flex-col border-r border-border bg-secondary/50 p-3 sm:flex">
+      <div className="mb-4 flex items-center gap-2 px-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-background bg-secondary text-primary-foreground">
+          <AllyLogo className="h-5 w-5" />
         </div>
-        <h2 className="font-semibold text-foreground dark:text-primary-foreground text-sm">{t('settings.title')}</h2>
+        <h2 className="text-sm font-semibold text-foreground">{t('settings.title')}</h2>
       </div>
 
-      <TabsList className="flex-1 flex flex-col h-full justify-start bg-transparent p-0 gap-1">
+      <TabsList className="flex h-full flex-1 flex-col justify-start gap-1 bg-transparent p-0">
         {settingsTabs.map((tab) => (
           <TabsTrigger
             key={tab.id}
             value={tab.id}
-            className="w-full justify-start gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            className="w-full justify-start gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           >
             <tab.icon size={14} />
             {tab.label}
@@ -42,7 +42,7 @@ export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
       <Button
         variant="ghost"
         onClick={onSignOut}
-        className="w-full justify-start gap-2 px-2 py-1.5 text-muted-foreground text-xs font-medium mt-auto hover:bg-destructive/10 hover:text-destructive"
+        className="mt-auto w-full justify-start gap-2 px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
       >
         <LogOut size={14} /> {t('auth.signOut')}
       </Button>

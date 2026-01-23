@@ -200,26 +200,26 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
       />
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85dvh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-background dark:bg-secondary [&>button]:hidden">
+        <DialogContent className="h-[85dvh] w-[calc(100%-2rem)] max-w-3xl gap-0 overflow-hidden bg-background bg-secondary p-0 sm:h-[600px] [&>button]:hidden">
           <DialogHeader className="sr-only">
             <DialogTitle>Settings</DialogTitle>
             <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>
           </DialogHeader>
 
-          <Tabs defaultValue="general" className="flex flex-col sm:flex-row w-full h-full" orientation="vertical">
+          <Tabs defaultValue="general" className="flex h-full w-full flex-col sm:flex-row" orientation="vertical">
             <MobileHeader onClose={onClose} />
             <MobileTabBar />
             <DesktopSidebar onSignOut={onSignOut} />
 
-            <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
-              <div className="hidden sm:flex items-center justify-end p-3 pb-0 flex-shrink-0">
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+              <div className="hidden flex-shrink-0 items-center justify-end p-3 pb-0 sm:flex">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={onClose}
                   className="h-8 w-8 text-muted-foreground hover:text-foreground"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
 

@@ -26,7 +26,7 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
         ref={ref}
         disabled={isLoading || props.disabled}
         className={cn(
-          'group relative h-9 cursor-pointer overflow-hidden rounded-lg bg-background dark:bg-secondary px-3 py-2 text-center font-semibold text-foreground dark:text-primary-foreground transition-all duration-300',
+          'group relative h-9 cursor-pointer overflow-hidden rounded-lg bg-background bg-secondary px-3 py-2 text-center font-semibold text-foreground transition-all duration-300',
           isLoading && 'cursor-wait border-primary/50',
           className,
         )}
@@ -35,8 +35,8 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
         {/* Initial state text and icon */}
         <div
           className={cn(
-            'relative z-10 flex items-center justify-center gap-2 translate-x-1 transition-all duration-300',
-            isLoading ? 'opacity-0 -translate-y-4' : 'group-hover:translate-x-12 group-hover:opacity-0',
+            'relative z-10 flex translate-x-1 items-center justify-center gap-2 transition-all duration-300',
+            isLoading ? '-translate-y-4 opacity-0' : 'group-hover:translate-x-12 group-hover:opacity-0',
           )}
         >
           {Icon && <div className="shrink-0">{Icon}</div>}
@@ -46,7 +46,7 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
         {/* Hover/Loading state content */}
         <div
           className={cn(
-            'absolute inset-0 z-20 flex items-center justify-center gap-2 text-white transition-all duration-300',
+            'absolute inset-0 z-20 flex items-center justify-center gap-2 text-foreground transition-all duration-300',
             isLoading
               ? 'translate-x-0 opacity-100'
               : 'translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100',
@@ -60,7 +60,7 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
             ) : Icon ? (
               Icon
             ) : (
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="h-5 w-5" />
             )}
           </div>
         </div>
@@ -73,7 +73,7 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
               animate={{ x: '100%' }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-0 z-10 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12"
+              className="absolute inset-0 z-10 skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent"
             />
           )}
         </AnimatePresence>
@@ -81,7 +81,7 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
         {/* Background expansion seed (The dot) */}
         <div
           className={cn(
-            'absolute left-[10%] top-1/2 -translate-y-1/2 h-2 w-2 rounded-lg bg-primary transition-all duration-500 z-0',
+            'absolute left-[10%] top-1/2 z-0 h-2 w-2 -translate-y-1/2 rounded-lg bg-primary transition-all duration-500',
             isLoading
               ? 'left-0 top-0 h-full w-full scale-[2.5] bg-primary opacity-100'
               : 'group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[2.5] group-hover:bg-primary',

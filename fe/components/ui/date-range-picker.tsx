@@ -162,10 +162,8 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
     <Button
       variant={activePreset === presetKey ? 'default' : 'ghost'}
       className={cn(
-        'justify-start font-normal w-auto lg:w-full',
-        activePreset === presetKey
-          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-          : 'hover:bg-secondary dark:hover:bg-secondary',
+        'w-auto justify-start font-normal lg:w-full',
+        activePreset === presetKey ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'hover:bg-secondary',
       )}
       onClick={() => setPreset(presetKey)}
     >
@@ -180,7 +178,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
           <Button
             id="date"
             variant={'outline'}
-            className={cn('w-full sm:w-[300px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+            className={cn('w-full justify-start text-left font-normal sm:w-[300px]', !date && 'text-muted-foreground')}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
@@ -198,10 +196,10 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
         </PopoverTrigger>
 
         <PopoverContent className="w-auto p-0" align="start">
-          <div className="flex flex-col sm:flex-row h-full">
+          <div className="flex h-full flex-col sm:flex-row">
             {/* --- LEFT SIDEBAR (Presets) --- */}
-            <div className="flex flex-row flex-wrap gap-1.5 p-3 border-b border-border lg:flex-col lg:gap-1 lg:border-r lg:border-b-0 lg:min-w-[150px]">
-              <span className="text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2 w-full lg:w-auto">
+            <div className="flex flex-row flex-wrap gap-1.5 border-b border-border p-3 lg:min-w-[150px] lg:flex-col lg:gap-1 lg:border-b-0 lg:border-r">
+              <span className="mb-1 w-full px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground lg:w-auto">
                 Presets
               </span>
               {renderPresetButton('Yesterday', 'yesterday')}
@@ -215,19 +213,19 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
 
               {/* Custom Date Range - Only visible when Custom preset is active */}
               {activePreset === 'custom' && (
-                <div className="mt-3 pt-3 border-t border-border">
-                  <span className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider px-2 block">
+                <div className="mt-3 border-t border-border pt-3">
+                  <span className="mb-2 block px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Custom Range
                   </span>
                   <div className="space-y-2 px-1">
                     <div>
-                      <Label className="text-xs text-muted-foreground mb-1 block">From</Label>
+                      <Label className="mb-1 block text-xs text-muted-foreground">From</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             className={cn(
-                              'w-full h-8 justify-start text-left font-normal text-xs',
+                              'h-8 w-full justify-start text-left text-xs font-normal',
                               !internalDate?.from && 'text-muted-foreground',
                             )}
                           >
@@ -260,13 +258,13 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                       </Popover>
                     </div>
                     <div>
-                      <Label className="text-xs text-muted-foreground mb-1 block">To</Label>
+                      <Label className="mb-1 block text-xs text-muted-foreground">To</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             className={cn(
-                              'w-full h-8 justify-start text-left font-normal text-xs',
+                              'h-8 w-full justify-start text-left text-xs font-normal',
                               !internalDate?.to && 'text-muted-foreground',
                             )}
                           >
@@ -304,7 +302,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
             {/* --- RIGHT SIDE (Calendars) --- */}
             <div className="flex flex-col">
               {/* Dual Calendar Container */}
-              <div className="flex items-start p-3 gap-4">
+              <div className="flex items-start gap-4 p-3">
                 {/* Left Calendar (Past) */}
                 <div className="relative">
                   <Calendar
@@ -322,7 +320,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                 </div>
 
                 {/* Vertical Separator */}
-                <div className="w-[1px] bg-border self-stretch" />
+                <div className="w-[1px] self-stretch bg-border" />
 
                 {/* Right Calendar (Future/Present) */}
                 <div className="relative">
@@ -342,12 +340,12 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
               </div>
 
               {/* --- FOOTER (Toggle & Actions) --- */}
-              <div className="p-3 border-t border-border flex items-center justify-between bg-background/50">
+              <div className="flex items-center justify-between border-t border-border bg-background/50 p-3">
                 <div className="flex items-center gap-3">
                   <CinematicGlowToggle id="compare-toggle" checked={isCompareEnabled} onChange={handleCompareToggle} />
                   <HoverCard>
                     <HoverCardTrigger asChild>
-                      <Info className="w-4 h-4 text-muted-foreground  opacity-70 hover:opacity-100 transition-opacity" />
+                      <Info className="h-4 w-4 text-muted-foreground opacity-70 transition-opacity hover:opacity-100" />
                     </HoverCardTrigger>
                     <HoverCardContent className="w-80">
                       <div className="space-y-2">
@@ -376,7 +374,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                     disabled={!internalDate?.from || !internalDate?.to}
                     className={cn(
                       'bg-primary hover:bg-primary/90',
-                      !internalDate?.from || (!internalDate?.to && 'opacity-50 cursor-not-allowed'),
+                      !internalDate?.from || (!internalDate?.to && 'cursor-not-allowed opacity-50'),
                     )}
                   >
                     Apply Range

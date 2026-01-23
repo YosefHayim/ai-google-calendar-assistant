@@ -43,7 +43,7 @@ export function MonthView({
   const hasNoEvents = events.length === 0
 
   return (
-    <Card className="overflow-hidden relative">
+    <Card className="relative overflow-hidden">
       {hasNoEvents && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <EmptyState
@@ -72,7 +72,7 @@ export function MonthView({
             <div
               key={index}
               className={cn(
-                'min-h-16 border-b border-r p-1 transition-colors last:border-r-0 touch-manipulation',
+                'min-h-16 touch-manipulation border-b border-r p-1 transition-colors last:border-r-0',
                 'sm:min-h-20 md:min-h-24',
                 'sm:p-1.5 md:p-2',
                 !isCurrentMonth && 'bg-muted/30',
@@ -86,7 +86,7 @@ export function MonthView({
                   'mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
                   'sm:h-6 sm:w-6 sm:text-sm',
                   'md:h-7 md:w-7 md:text-sm',
-                  isToday && 'bg-primary text-primary-foreground font-semibold',
+                  isToday && 'bg-primary font-semibold text-primary-foreground',
                 )}
               >
                 {day.getDate()}
@@ -104,7 +104,7 @@ export function MonthView({
                   />
                 ))}
                 {dayEvents.length > (window.innerWidth < 640 ? 2 : 3) && (
-                  <div className="text-[9px] text-muted-foreground sm:text-[10px] md:text-xs truncate">
+                  <div className="truncate text-[9px] text-muted-foreground sm:text-[10px] md:text-xs">
                     +{dayEvents.length - (window.innerWidth < 640 ? 2 : 3)} more
                   </div>
                 )}

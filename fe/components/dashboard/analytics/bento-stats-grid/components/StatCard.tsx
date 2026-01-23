@@ -22,26 +22,24 @@ export function StatCard({ icon, label, value, suffix, description, trend }: Sta
   return (
     <motion.div
       variants={ITEM_VARIANTS}
-      className="bg-background dark:bg-secondary border-border rounded-xl p-3 sm:p-5 shadow-sm hover:shadow-md hover:border-border transition-all overflow-hidden"
+      className="overflow-hidden rounded-xl border-border bg-background bg-secondary p-3 shadow-sm transition-all hover:border-border hover:shadow-md sm:p-5"
     >
-      <div className="flex items-center gap-2 mb-2 sm:mb-3 min-w-0">
-        <div className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center">
+      <div className="mb-2 flex min-w-0 items-center gap-2 sm:mb-3">
+        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-secondary sm:h-8 sm:w-8">
           {icon}
         </div>
-        <span className="text-[10px] sm:text-xs font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider truncate">
+        <span className="truncate text-[10px] font-bold uppercase tracking-wider text-muted-foreground sm:text-xs">
           {label}
         </span>
       </div>
-      <div className="flex items-baseline gap-1 sm:gap-2 flex-wrap">
-        <p className="text-2xl sm:text-3xl font-bold text-foreground dark:text-primary-foreground">
+      <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
+        <p className="text-2xl font-bold text-foreground sm:text-3xl">
           {typeof value === 'number' ? <NumberFlow value={value} /> : value}
-          {suffix && <span className="text-sm sm:text-lg font-medium text-muted-foreground">{suffix}</span>}
+          {suffix && <span className="text-sm font-medium text-muted-foreground sm:text-lg">{suffix}</span>}
         </p>
         {trend && <TrendBadge direction={trend.direction} percentage={trend.percentage} />}
       </div>
-      <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mt-1 truncate">
-        {description}
-      </p>
+      <p className="mt-1 truncate text-[10px] text-muted-foreground sm:text-xs">{description}</p>
     </motion.div>
   )
 }

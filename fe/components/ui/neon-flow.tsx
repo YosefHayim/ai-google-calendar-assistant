@@ -79,11 +79,11 @@ export function TubesBackground({ children, className, enableClickInteraction = 
 
   return (
     <div
-      className={cn('relative w-full h-full min-h-[400px] overflow-hidden bg-background', className)}
+      className={cn('relative h-full min-h-[400px] w-full overflow-hidden bg-background', className)}
       onClick={handleClick}
     >
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" style={{ touchAction: 'none' }} />
-      <div className="relative z-10 w-full h-full pointer-events-none">{children}</div>
+      <canvas ref={canvasRef} className="absolute inset-0 block h-full w-full" style={{ touchAction: 'none' }} />
+      <div className="pointer-events-none relative z-10 h-full w-full">{children}</div>
     </div>
   )
 }

@@ -16,11 +16,11 @@ function OnboardingLayoutContent({ children, currentStep, totalSteps, title, sub
   const progress = (currentStep / totalSteps) * 100
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex flex-col">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-muted/20">
       {/* Progress bar at top */}
-      <div className="w-full bg-background/80 backdrop-blur-sm border-b">
-        <div className="max-w-2xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+      <div className="w-full border-b bg-background/80 backdrop-blur-sm">
+        <div className="mx-auto max-w-2xl px-6 py-4">
+          <div className="mb-2 flex items-center justify-between text-sm text-muted-foreground">
             <span>
               Step {currentStep} of {totalSteps}
             </span>
@@ -31,20 +31,20 @@ function OnboardingLayoutContent({ children, currentStep, totalSteps, title, sub
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-2xl mx-auto"
+          className="mx-auto w-full max-w-2xl"
         >
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="mb-8 text-center">
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-3xl font-bold tracking-tight mb-2"
+              className="mb-2 text-3xl font-bold tracking-tight"
             >
               {title}
             </motion.h1>

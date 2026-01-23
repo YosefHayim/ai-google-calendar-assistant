@@ -14,7 +14,7 @@ interface ViewToggleProps {
 export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   return (
     <>
-      <div className="sm:hidden w-full sm:w-auto">
+      <div className="w-full sm:hidden sm:w-auto">
         <Select value={view} onValueChange={(value: ViewType) => onViewChange(value)}>
           <SelectTrigger className="w-full">
             <SelectValue />
@@ -54,7 +54,7 @@ export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
         </Select>
       </div>
 
-      <div className="hidden sm:flex items-center gap-1 rounded-lg border bg-background p-1">
+      <div className="hidden items-center gap-1 rounded-lg border bg-background p-1 sm:flex">
         <Button
           variant={view === 'year' ? 'secondary' : 'ghost'}
           size="sm"

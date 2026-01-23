@@ -142,8 +142,8 @@ function flattenAllCalendarEvents(
 
 function GoogleCalendarNotConnected({ authUrl }: { authUrl?: string }) {
   return (
-    <div className="flex-1 flex items-center justify-center p-6">
-      <div className="flex flex-col items-center justify-center text-center gap-4 max-w-md">
+    <div className="flex flex-1 items-center justify-center p-6">
+      <div className="flex max-w-md flex-col items-center justify-center gap-4 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
           <CalendarDays className="h-8 w-8 text-primary" />
         </div>
@@ -156,7 +156,7 @@ function GoogleCalendarNotConnected({ authUrl }: { authUrl?: string }) {
           </p>
         </div>
         {authUrl && (
-          <Button onClick={() => (window.location.href = authUrl)} className="gap-2 mt-2">
+          <Button onClick={() => (window.location.href = authUrl)} className="mt-2 gap-2">
             <Link2 className="h-4 w-4" />
             Connect Google Calendar
           </Button>
@@ -287,7 +287,7 @@ function CalendarContent() {
 
   if (statusError) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-6">
         <ErrorState
           title="Connection Error"
           message="Unable to check Google Calendar connection status. Please try again."
@@ -299,7 +299,7 @@ function CalendarContent() {
 
   if (!isGoogleCalendarConnected) {
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex h-full flex-col">
         <GoogleCalendarNotConnected authUrl={googleCalendarStatus?.authUrl} />
         <AIAllySidebar
           isOpen={isAllySidebarOpen}
@@ -319,7 +319,7 @@ function CalendarContent() {
 
     if (isAuthError) {
       return (
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           <GoogleCalendarNotConnected authUrl={googleCalendarStatus?.authUrl} />
           <AIAllySidebar
             isOpen={isAllySidebarOpen}
@@ -331,7 +331,7 @@ function CalendarContent() {
     }
 
     return (
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-6">
         <ErrorState
           title="Failed to load calendar"
           message={eventsError.message || 'Unable to fetch your calendar events. Please try again.'}
@@ -343,7 +343,7 @@ function CalendarContent() {
 
   if (calendarsError) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-6">
         <ErrorState
           title="Failed to load calendars"
           message={
@@ -360,11 +360,11 @@ function CalendarContent() {
   const isMutating = isCreating || isUpdating || isDeleting
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
         {/* Mobile Header - Compact */}
         <div className="mb-4 block md:hidden">
-          <div className="flex items-center justify-between mb-3 flex-wrap">
+          <div className="mb-3 flex flex-wrap items-center justify-between">
             <h1 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Calendar</h1>
             <Button
               variant="outline"
@@ -386,7 +386,7 @@ function CalendarContent() {
         </div>
 
         {/* Tablet and Desktop Header */}
-        <div className="mb-4 hidden md:flex md:items-center md:justify-between gap-3">
+        <div className="mb-4 hidden gap-3 md:flex md:items-center md:justify-between">
           <h1 className="text-xl font-semibold text-foreground dark:text-primary-foreground">Calendar</h1>
           <div className="flex items-center gap-2">
             <Button
@@ -397,9 +397,9 @@ function CalendarContent() {
               className="h-9"
             >
               {eventsFetching ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <RefreshCw className="h-4 w-4 mr-2" />
+                <RefreshCw className="mr-2 h-4 w-4" />
               )}
               {eventsFetching ? 'Syncing...' : 'Sync'}
             </Button>
@@ -420,7 +420,7 @@ function CalendarContent() {
           categories={['Meeting', 'Task', 'Reminder', 'Personal', 'Focus Time', 'Travel']}
           availableTags={['Important', 'Urgent', 'Work', 'Personal', 'Team', 'Client']}
           defaultView="month"
-          className={isMutating ? 'opacity-75 pointer-events-none' : ''}
+          className={isMutating ? 'pointer-events-none opacity-75' : ''}
         />
         <QuickEventDialog
           isOpen={isQuickEventDialogOpen}

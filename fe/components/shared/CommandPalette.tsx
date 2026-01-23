@@ -69,7 +69,7 @@ export function CommandPalette() {
     {
       id: 'dashboard',
       label: 'Dashboard',
-      icon: <Home className="w-4 h-4" />,
+      icon: <Home className="h-4 w-4" />,
       action: () => navigate('/dashboard'),
       keywords: ['home', 'main'],
       group: 'navigation',
@@ -77,7 +77,7 @@ export function CommandPalette() {
     {
       id: 'calendar',
       label: 'Calendar',
-      icon: <Calendar className="w-4 h-4" />,
+      icon: <Calendar className="h-4 w-4" />,
       action: () => navigate('/dashboard/calendar'),
       keywords: ['events', 'schedule'],
       group: 'navigation',
@@ -85,7 +85,7 @@ export function CommandPalette() {
     {
       id: 'chat',
       label: 'Chat with Ally',
-      icon: <MessageSquare className="w-4 h-4" />,
+      icon: <MessageSquare className="h-4 w-4" />,
       action: () => navigate('/dashboard/chat'),
       keywords: ['ai', 'assistant', 'message'],
       group: 'navigation',
@@ -93,7 +93,7 @@ export function CommandPalette() {
     {
       id: 'voice',
       label: 'Voice Mode',
-      icon: <Mic className="w-4 h-4" />,
+      icon: <Mic className="h-4 w-4" />,
       action: () => navigate('/dashboard/voice'),
       keywords: ['speak', 'talk', 'audio'],
       group: 'navigation',
@@ -101,7 +101,7 @@ export function CommandPalette() {
     {
       id: 'settings',
       label: 'Settings',
-      icon: <Settings className="w-4 h-4" />,
+      icon: <Settings className="h-4 w-4" />,
       action: () => navigate('/dashboard/settings'),
       keywords: ['preferences', 'config'],
       group: 'navigation',
@@ -109,7 +109,7 @@ export function CommandPalette() {
     {
       id: 'profile',
       label: 'Profile',
-      icon: <User className="w-4 h-4" />,
+      icon: <User className="h-4 w-4" />,
       action: () => navigate('/dashboard/profile'),
       keywords: ['account', 'me'],
       group: 'navigation',
@@ -117,7 +117,7 @@ export function CommandPalette() {
     {
       id: 'billing',
       label: 'Billing & Subscription',
-      icon: <CreditCard className="w-4 h-4" />,
+      icon: <CreditCard className="h-4 w-4" />,
       action: () => navigate('/dashboard/billing'),
       keywords: ['payment', 'plan', 'upgrade'],
       group: 'navigation',
@@ -125,7 +125,7 @@ export function CommandPalette() {
     {
       id: 'help',
       label: 'Help & Support',
-      icon: <HelpCircle className="w-4 h-4" />,
+      icon: <HelpCircle className="h-4 w-4" />,
       action: () => navigate('/help'),
       keywords: ['support', 'faq', 'contact'],
       group: 'help',
@@ -133,7 +133,7 @@ export function CommandPalette() {
     {
       id: 'logout',
       label: 'Sign Out',
-      icon: <LogOut className="w-4 h-4" />,
+      icon: <LogOut className="h-4 w-4" />,
       action: async () => {
         await logout()
         navigate('/login')
@@ -148,7 +148,7 @@ export function CommandPalette() {
         {
           id: 'admin-dashboard',
           label: 'Admin Dashboard',
-          icon: <Shield className="w-4 h-4" />,
+          icon: <Shield className="h-4 w-4" />,
           action: () => navigate('/admin'),
           keywords: ['admin', 'management'],
           group: 'admin',
@@ -156,7 +156,7 @@ export function CommandPalette() {
         {
           id: 'admin-users',
           label: 'User Management',
-          icon: <Users className="w-4 h-4" />,
+          icon: <Users className="h-4 w-4" />,
           action: () => navigate('/admin/users'),
           keywords: ['admin', 'users', 'accounts'],
           group: 'admin',
@@ -164,7 +164,7 @@ export function CommandPalette() {
         {
           id: 'admin-subscriptions',
           label: 'Subscriptions',
-          icon: <CreditCard className="w-4 h-4" />,
+          icon: <CreditCard className="h-4 w-4" />,
           action: () => navigate('/admin/subscriptions'),
           keywords: ['admin', 'billing', 'plans'],
           group: 'admin',
@@ -172,7 +172,7 @@ export function CommandPalette() {
         {
           id: 'admin-payments',
           label: 'Payments',
-          icon: <BarChart3 className="w-4 h-4" />,
+          icon: <BarChart3 className="h-4 w-4" />,
           action: () => navigate('/admin/payments'),
           keywords: ['admin', 'revenue', 'transactions'],
           group: 'admin',
@@ -180,7 +180,7 @@ export function CommandPalette() {
         {
           id: 'admin-audit',
           label: 'Audit Logs',
-          icon: <FileText className="w-4 h-4" />,
+          icon: <FileText className="h-4 w-4" />,
           action: () => navigate('/admin/audit-logs'),
           keywords: ['admin', 'logs', 'history'],
           group: 'admin',
@@ -211,18 +211,18 @@ export function CommandPalette() {
   return (
     <div className="fixed inset-0 z-[9999]">
       <div className="fixed inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
-      <div className="fixed left-1/2 top-1/4 -translate-x-1/2 w-full max-w-lg">
-        <Command className="rounded-xl bg-background dark:bg-secondary shadow-2xl overflow-hidden">
+      <div className="fixed left-1/2 top-1/4 w-full max-w-lg -translate-x-1/2">
+        <Command className="overflow-hidden rounded-xl bg-background bg-secondary shadow-2xl">
           <div className="flex items-center border-b px-4">
-            <Search className="w-4 h-4 text-muted-foreground mr-3" />
+            <Search className="mr-3 h-4 w-4 text-muted-foreground" />
             <Command.Input
               value={search}
               onValueChange={setSearch}
               placeholder="Search commands..."
-              className="flex-1 py-4 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+              className="flex-1 bg-transparent py-4 text-sm outline-none placeholder:text-muted-foreground"
               autoFocus
             />
-            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded  bg-secondary dark:bg-secondary px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <kbd className="hidden h-5 select-none items-center gap-1 rounded bg-secondary px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:inline-flex">
               ESC
             </kbd>
           </div>
@@ -239,7 +239,7 @@ export function CommandPalette() {
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-foreground dark:text-muted-foreground aria-selected:bg-secondary dark:aria-selected:bg-secondary"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground text-muted-foreground aria-selected:bg-secondary"
                   >
                     <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}
@@ -258,7 +258,7 @@ export function CommandPalette() {
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-foreground dark:text-muted-foreground aria-selected:bg-secondary dark:aria-selected:bg-secondary"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground text-muted-foreground aria-selected:bg-secondary"
                   >
                     <span className="text-accent">{cmd.icon}</span>
                     {cmd.label}
@@ -277,7 +277,7 @@ export function CommandPalette() {
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-foreground dark:text-muted-foreground aria-selected:bg-secondary dark:aria-selected:bg-secondary"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground text-muted-foreground aria-selected:bg-secondary"
                   >
                     <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}
@@ -296,7 +296,7 @@ export function CommandPalette() {
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-foreground dark:text-muted-foreground aria-selected:bg-secondary dark:aria-selected:bg-secondary"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground text-muted-foreground aria-selected:bg-secondary"
                   >
                     <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}
@@ -305,10 +305,10 @@ export function CommandPalette() {
               </Command.Group>
             )}
           </Command.List>
-          <div className="border-t px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center justify-between border-t px-4 py-2 text-xs text-muted-foreground">
             <span>Navigate with arrow keys</span>
             <span>
-              <kbd className="px-1.5 py-0.5 rounded bg-secondary dark:bg-secondary font-mono">Enter</kbd> to select
+              <kbd className="rounded bg-secondary px-1.5 py-0.5 font-mono">Enter</kbd> to select
             </span>
           </div>
         </Command>

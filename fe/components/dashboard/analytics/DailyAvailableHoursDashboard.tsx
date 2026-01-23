@@ -41,28 +41,28 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
 
   if (isLoading) {
     return (
-      <Card className="lg:col-span-3 bg-background dark:bg-secondary py-0">
+      <Card className="bg-background bg-secondary py-0 lg:col-span-3">
         <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
-          <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
+          <div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 pt-4 sm:!py-4">
             <div className="flex items-center gap-2">
-              <Skeleton className="w-5 h-5" />
+              <Skeleton className="h-5 w-5" />
               <Skeleton className="h-5 w-40" />
             </div>
-            <Skeleton className="h-4 w-56 mt-1" />
+            <Skeleton className="mt-1 h-4 w-56" />
           </div>
           <div className="flex">
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 sm:border-l sm:border-t-0 sm:px-8 sm:py-6">
               <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-8 w-16 mt-1" />
+              <Skeleton className="mt-1 h-8 w-16" />
             </div>
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 border-l border-t px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
               <Skeleton className="h-3 w-20" />
-              <Skeleton className="h-8 w-16 mt-1" />
+              <Skeleton className="mt-1 h-8 w-16" />
             </div>
           </div>
         </CardHeader>
         <CardContent className="px-2 sm:p-6">
-          <div className="flex justify-end mb-4">
+          <div className="mb-4 flex justify-end">
             <Skeleton className="h-8 w-48" />
           </div>
           <Skeleton className="h-[250px] w-full" />
@@ -73,10 +73,10 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
 
   if (!data || data.length === 0) {
     return (
-      <Card className="lg:col-span-3 bg-background dark:bg-secondary border ">
+      <Card className="border bg-background bg-secondary lg:col-span-3">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-primary" />
+            <Clock className="h-5 w-5 text-primary" />
             {t('analytics.charts.dailyHours')}
           </CardTitle>
           <CardDescription>{t('common.noData')}</CardDescription>
@@ -106,50 +106,46 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
   }
 
   return (
-    <Card className="lg:col-span-3 bg-background dark:bg-secondary py-0">
+    <Card className="bg-background bg-secondary py-0 lg:col-span-3">
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
-          <CardTitle className="flex items-center gap-2 text-foreground dark:text-primary-foreground">
-            <Clock className="w-5 h-5 text-primary" />
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 pb-3 pt-4 sm:!py-4">
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <Clock className="h-5 w-5 text-primary" />
             {t('analytics.charts.dailyHours')}
             <HoverCard>
               <HoverCardTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground"
+                  className="h-6 w-6 text-muted-foreground hover:text-muted-foreground"
                 >
                   <Info size={16} />
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-sm">{t('analytics.charts.dailyHours')}</h4>
-                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                  <h4 className="text-sm font-semibold">{t('analytics.charts.dailyHours')}</h4>
+                  <p className="text-xs text-muted-foreground">
                     {t('analytics.charts.dailyHoursTooltip', { hours: CALENDAR_CONSTANTS.WAKING_HOURS_PER_DAY })}
                   </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
           </CardTitle>
-          <CardDescription className="text-muted-foreground dark:text-muted-foreground text-xs font-medium italic">
+          <CardDescription className="text-xs font-medium italic text-muted-foreground">
             {t('analytics.charts.dailyHoursDescription')}
           </CardDescription>
         </div>
         <div className="flex">
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
-            <span className="text-muted-foreground dark:text-muted-foreground text-xs">
-              {t('analytics.charts.totalAvailable')}
-            </span>
-            <span className="text-lg leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-l sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+            <span className="text-xs text-muted-foreground">{t('analytics.charts.totalAvailable')}</span>
+            <span className="text-lg font-bold leading-none text-foreground sm:text-xl lg:text-3xl">
               {formatNumber(totalAvailableHours, 1)}H
             </span>
           </div>
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
-            <span className="text-muted-foreground dark:text-muted-foreground text-xs">
-              {t('analytics.charts.dailyAvg')}
-            </span>
-            <span className="text-lg leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-l border-t px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+            <span className="text-xs text-muted-foreground">{t('analytics.charts.dailyAvg')}</span>
+            <span className="text-lg font-bold leading-none text-foreground sm:text-xl lg:text-3xl">
               {formatNumber(averageAvailableHours, 1)}H
             </span>
           </div>

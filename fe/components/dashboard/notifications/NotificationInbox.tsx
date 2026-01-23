@@ -28,9 +28,9 @@ export function NotificationInbox({ triggerClassName }: NotificationInboxProps) 
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className={cn('relative', triggerClassName)}>
-          <Bell className="w-5 h-5" />
+          <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-semibold text-white bg-destructive rounded-full">
+            <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-foreground">
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
@@ -38,9 +38,9 @@ export function NotificationInbox({ triggerClassName }: NotificationInboxProps) 
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-80 sm:w-96 p-0">
-        <div className="flex items-center justify-between px-4 py-3 border-b border ">
-          <h3 className="font-semibold text-foreground dark:text-primary-foreground">Notifications</h3>
+      <DropdownMenuContent align="end" className="w-80 p-0 sm:w-96">
+        <div className="flex items-center justify-between border border-b px-4 py-3">
+          <h3 className="font-semibold text-foreground">Notifications</h3>
           {notifications.length > 0 && (
             <div className="flex items-center gap-1">
               <Button
@@ -50,7 +50,7 @@ export function NotificationInbox({ triggerClassName }: NotificationInboxProps) 
                 onClick={markAllAsRead}
                 disabled={unreadCount === 0}
               >
-                <CheckCheck className="w-3.5 h-3.5 mr-1" />
+                <CheckCheck className="mr-1 h-3.5 w-3.5" />
                 Mark all read
               </Button>
             </div>
@@ -58,17 +58,17 @@ export function NotificationInbox({ triggerClassName }: NotificationInboxProps) 
         </div>
 
         {notifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-secondary dark:bg-secondary flex items-center justify-center mb-3">
-              <Bell className="w-6 h-6 text-muted-foreground" />
+          <div className="flex flex-col items-center justify-center px-4 py-8 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
+              <Bell className="h-6 w-6 text-muted-foreground" />
             </div>
-            <p className="text-sm font-medium text-foreground dark:text-primary-foreground">No notifications yet</p>
-            <p className="text-xs text-muted-foreground mt-1">We'll let you know when something important happens</p>
+            <p className="text-sm font-medium text-foreground">No notifications yet</p>
+            <p className="mt-1 text-xs text-muted-foreground">We'll let you know when something important happens</p>
           </div>
         ) : (
           <>
             <ScrollArea className="max-h-[400px]">
-              <div className="p-2 space-y-1">
+              <div className="space-y-1 p-2">
                 {notifications.map((notification) => (
                   <NotificationItem
                     key={notification.id}
@@ -82,10 +82,10 @@ export function NotificationInbox({ triggerClassName }: NotificationInboxProps) 
 
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="justify-center text-destructive hover:text-destructive cursor-pointer"
+              className="cursor-pointer justify-center text-destructive hover:text-destructive"
               onClick={clearAllNotifications}
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash2 className="mr-2 h-4 w-4" />
               Clear all notifications
             </DropdownMenuItem>
           </>

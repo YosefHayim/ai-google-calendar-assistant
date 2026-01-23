@@ -23,12 +23,12 @@ export function SearchInput({ value, onChange, onClear }: SearchInputProps) {
           placeholder={t('dialogs.eventSearch.placeholder', 'Search by title or description...')}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="pl-9 pr-9 h-9 text-sm"
+          className="h-9 pl-9 pr-9 text-sm"
         />
         {value && (
           <button
             onClick={onClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
           >
             <X size={14} />
           </button>

@@ -50,13 +50,13 @@ const getGoogleCalendarStatusBadge = (
   if (status?.isSynced) {
     if (status.isActive && !status.isExpired) {
       return (
-        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+        <Badge className="bg-green-900/30 text-green-300">
           <CheckCircle2 size={14} className="mr-1" /> Connected
         </Badge>
       )
     }
     return (
-      <Badge variant="outline" className="text-muted-foreground border-muted-foreground/20">
+      <Badge variant="outline" className="border-muted-foreground/20 text-muted-foreground">
         <AlertTriangle size={14} className="mr-1" /> {status.isExpired ? 'Expired' : 'Inactive'}
       </Badge>
     )
@@ -122,7 +122,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               control={getGoogleCalendarStatusBadge(isGoogleCalendarLoading, googleCalendarStatus)}
             />
 
-            <div className="flex flex-wrap gap-2 pl-0 py-2 sm:flex-nowrap">
+            <div className="flex flex-wrap gap-2 py-2 pl-0 sm:flex-nowrap">
               {googleIsConnected ? (
                 <>
                   <Button
@@ -139,7 +139,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
                     size="sm"
                     onClick={onDisconnect}
                     disabled={isGoogleCalendarBusy}
-                    className="flex-1 text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
+                    className="flex-1 border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive"
                   >
                     {isDisconnecting ? (
                       <Loader2 size={14} className="mr-2 animate-spin" />
@@ -222,7 +222,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               id="slack"
               title="Slack"
               tooltip="Connect Ally to your Slack workspace to manage your calendar directly from Slack"
-              icon={<FaSlack size={18} className="text-purple-600 dark:text-purple-400" />}
+              icon={<FaSlack size={18} className="text-purple-400" />}
               control={
                 <Button variant="outline" size="sm" asChild>
                   <a className="w-full" href={SOCIAL_LINKS.SLACK} target="_blank" rel="noreferrer">

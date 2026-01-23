@@ -70,28 +70,26 @@ export function DayEventsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
+      <DialogContent className="flex max-h-[90vh] max-w-3xl flex-col gap-0 overflow-hidden p-0">
         <div className="h-1 w-full shrink-0 bg-primary" />
 
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 bg-primary/20">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/20">
               <Sun size={20} className="text-primary" />
             </div>
             <div className="flex-1 text-left">
-              <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">
-                {formattedDate}
-              </DialogTitle>
+              <DialogTitle className="text-xl font-bold text-foreground">{formattedDate}</DialogTitle>
               <DialogDescription className="sr-only">Events and availability for {formattedDate}</DialogDescription>
 
-              <div className="flex flex-wrap gap-4 mt-2">
-                <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
+              <div className="mt-2 flex flex-wrap gap-4">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock size={12} className="text-primary" />
                   <span>
                     {t('dialogs.dayEvents.available', 'Available')}: {formatHours(availableHours)}
                   </span>
                 </div>
-                <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Hourglass size={12} className="text-primary" />
                   <span>
                     {isFiltering
@@ -102,7 +100,7 @@ export function DayEventsDialog({
                       : `${t('dialogs.dayEvents.busy', 'Busy')}: ${formatHours(busyHours)}`}
                   </span>
                 </div>
-                <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Hash size={12} className="text-primary" />
                   <span>
                     {isFiltering
@@ -121,7 +119,7 @@ export function DayEventsDialog({
         <TimelineVisualization events={events} calendarMap={calendarMap} />
 
         {events.length > 0 && (
-          <div className="px-6 py-2 border-b border ">
+          <div className="border border-b px-6 py-2">
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -129,12 +127,12 @@ export function DayEventsDialog({
                 placeholder={t('dialogs.eventSearch.placeholder', 'Search by title or description...')}
                 value={inputValue}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-9 pr-9 h-9 text-sm"
+                className="h-9 pl-9 pr-9 text-sm"
               />
               {inputValue && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                 >
                   <X size={14} />
                 </button>
@@ -144,7 +142,7 @@ export function DayEventsDialog({
         )}
 
         <div className="flex-1 overflow-y-auto p-6 pt-4">
-          <h4 className="text-sm font-semibold text-foreground dark:text-muted-foreground mb-3">
+          <h4 className="mb-3 text-sm font-semibold text-foreground text-muted-foreground">
             {t('dialogs.dayEvents.eventsTitle', 'Events')}
           </h4>
           {isLoading ? (

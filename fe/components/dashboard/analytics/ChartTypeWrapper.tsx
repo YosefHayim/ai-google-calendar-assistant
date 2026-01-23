@@ -70,7 +70,7 @@ export function ChartTypeWrapper<T extends string>({
 
   return (
     <div className={className}>
-      <div className={cn('flex mb-4', tabsPosition === 'right' ? 'justify-end' : 'justify-start')}>
+      <div className={cn('mb-4 flex', tabsPosition === 'right' ? 'justify-end' : 'justify-start')}>
         <Tabs value={chartType} onValueChange={(value) => setChartType(value as T)}>
           <TabsList className="h-8">
             {chartTypes.map((type) => {
@@ -79,7 +79,7 @@ export function ChartTypeWrapper<T extends string>({
               const label =
                 labels[type] || t(`analytics.chartTypes.${type}`) || type.charAt(0).toUpperCase() + type.slice(1)
               return (
-                <TabsTrigger key={type} value={type} className="h-7 px-2 text-xs gap-1" title={label}>
+                <TabsTrigger key={type} value={type} className="h-7 gap-1 px-2 text-xs" title={label}>
                   <IconComponent size={14} />
                   <span className="hidden sm:inline">{label}</span>
                 </TabsTrigger>

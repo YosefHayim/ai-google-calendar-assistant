@@ -30,7 +30,7 @@ const BentoGridSection = React.memo(() => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
           <Image
             src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=800&h=600&auto=format&fit=crop"
-            className="absolute right-[-10%] top-[-10%] opacity-10 dark:opacity-20 grayscale group-hover:grayscale-0 transition-all duration-500"
+            className="absolute right-[-10%] top-[-10%] opacity-20 grayscale transition-all duration-500 group-hover:grayscale-0"
             alt="Focus"
             width={800}
             height={600}
@@ -48,8 +48,8 @@ const BentoGridSection = React.memo(() => {
       href: '/dashboard',
       cta: t('bento.features.flexibleScheduling.cta'),
       background: (
-        <div className="absolute inset-0 flex items-center justify-center overflow-hidden opacity-60 group-hover:opacity-100 transition-opacity">
-          <div className="scale-[0.4] origin-center translate-y-8">
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden opacity-60 transition-opacity group-hover:opacity-100">
+          <div className="origin-center translate-y-8 scale-[0.4]">
             <ThreeDWallCalendar
               events={MOCK_EVENTS}
               panelWidth={140}
@@ -59,7 +59,7 @@ const BentoGridSection = React.memo(() => {
               maxDays={12}
             />
           </div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-background dark:from-background/50 to-transparent opacity-40"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-background from-background/50 to-transparent opacity-40"></div>
         </div>
       ),
       className: 'md:col-start-2 md:col-end-4 md:row-start-1 md:row-end-2',
@@ -75,7 +75,7 @@ const BentoGridSection = React.memo(() => {
           <RotatingEarth
             width={320}
             height={320}
-            className="opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700"
+            className="opacity-40 grayscale transition-all duration-700 group-hover:grayscale-0"
             hideControls={true}
           />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
@@ -90,7 +90,7 @@ const BentoGridSection = React.memo(() => {
       href: '/dashboard',
       cta: t('bento.features.chatToDone.cta'),
       background: (
-        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 bg-primary/5 opacity-0 transition-opacity group-hover:opacity-100" />
       ),
       className: 'md:col-start-3 md:col-end-4 md:row-start-2 md:row-end-3',
     },
@@ -102,7 +102,7 @@ const BentoGridSection = React.memo(() => {
       cta: t('bento.features.secure.cta'),
       background: (
         <div className="absolute inset-0 flex items-end justify-end p-4">
-          <Lock className="w-32 h-32 text-primary-foreground dark:text-muted-foreground/40 -mr-8 -mb-8" />
+          <Lock className="-mb-8 -mr-8 h-32 w-32 text-muted-foreground/40 text-primary-foreground" />
         </div>
       ),
       className: 'md:col-start-3 md:col-end-4 md:row-start-3 md:row-end-4',
@@ -110,11 +110,11 @@ const BentoGridSection = React.memo(() => {
   ]
 
   return (
-    <section className="bg-background dark:bg-[#030303] px-4 py-24">
-      <div className="max-w-7xl w-full mx-auto">
-        <div className="text-center mb-16">
+    <section className="bg-background px-4 py-24">
+      <div className="mx-auto w-full max-w-7xl">
+        <div className="mb-16 text-center">
           <motion.h2
-            className="text-4xl md:text-6xl font-medium tracking-normal mb-4 text-foreground dark:text-primary-foreground"
+            className="mb-4 text-4xl font-medium tracking-normal text-foreground md:text-6xl"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.8 }}
@@ -122,7 +122,7 @@ const BentoGridSection = React.memo(() => {
             {t('bento.title')}
           </motion.h2>
           <motion.p
-            className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium"
+            className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.8 }}

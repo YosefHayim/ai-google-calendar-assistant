@@ -50,11 +50,11 @@ export function AdminAppSidebar() {
       <SidebarHeader className="border-b border-sidebar-border">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="hover:bg-transparent cursor-default">
+            <SidebarMenuButton size="lg" className="cursor-default hover:bg-transparent">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <Shield className="h-4 w-4" />
               </div>
-              {!isCollapsed && <span className="font-bold text-lg">Admin Panel</span>}
+              {!isCollapsed && <span className="text-lg font-bold">Admin Panel</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

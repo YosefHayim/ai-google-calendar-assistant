@@ -30,15 +30,15 @@ const TooltipAvatar: React.FC<AvatarProps & { index: number }> = ({ src, name, f
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 5, scale: 0.95 }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover dark:bg-popover text-popover-foreground dark:text-popover-foreground text-xs font-bold rounded shadow-xl whitespace-nowrap z-50 pointer-events-none"
+            className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-popover px-2 py-1 text-xs font-bold text-popover-foreground shadow-xl"
           >
             {name}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-popover dark:border-t-popover" />
+            <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-popover" />
           </motion.div>
         )}
       </AnimatePresence>
       <div
-        className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white dark:border-muted-foreground bg-secondary dark:bg-secondary transition-transform hover:scale-110 hover:z-10 cursor-pointer"
+        className="border-white-foreground relative flex h-10 w-10 shrink-0 cursor-pointer overflow-hidden rounded-full border-2 bg-secondary transition-transform hover:z-10 hover:scale-110"
         style={{ marginLeft: index === 0 ? 0 : '-12px' }}
       >
         {src ? (
@@ -69,13 +69,13 @@ const AvatarTooltipGroup = () => {
           ))}
         </div>
         <div className="ml-4 flex flex-col items-start">
-          <div className="flex items-center gap-0.5 mb-0.5">
+          <div className="mb-0.5 flex items-center gap-0.5">
             {[...Array(5)].map((_, index) => (
               <Star key={index} className="size-3.5 fill-primary text-primary" />
             ))}
           </div>
-          <p className="text-xs text-left font-medium text-muted-foreground dark:text-muted-foreground leading-none">
-            Trusted by <strong className="text-foreground dark:text-primary-foreground">5,000+</strong> Business Owners
+          <p className="text-left text-xs font-medium leading-none text-muted-foreground">
+            Trusted by <strong className="text-foreground">5,000+</strong> Business Owners
           </p>
         </div>
       </div>

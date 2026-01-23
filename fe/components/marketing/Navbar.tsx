@@ -92,28 +92,28 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${
-          isScrolled ? 'py-3 bg-background/80 backdrop-blur-md border-b border shadow-sm' : 'py-6 bg-transparent'
+        className={`fixed left-0 right-0 top-0 z-[60] transition-all duration-300 ${
+          isScrolled ? 'border border-b bg-background/80 py-3 shadow-sm backdrop-blur-md' : 'bg-transparent py-6'
         }`}
       >
-        <div className="container mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
-          <Link href="/" className="flex items-center gap-2 group flex-wrap">
-            <div className="w-8 h-8 bg-foreground dark:bg-background rounded-md flex items-center justify-center text-background dark:text-foreground shadow-sm group-hover:scale-110 transition-transform">
-              <AllyLogo className="w-5 h-5" />
+        <div className="container mx-auto flex flex-wrap items-center justify-between gap-2 px-4">
+          <Link href="/" className="group flex flex-wrap items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-background bg-foreground text-background shadow-sm transition-transform group-hover:scale-110">
+              <AllyLogo className="h-5 w-5" />
             </div>
-            <span className="font-medium text-xl tracking-tight flex items-center text-foreground">
+            <span className="flex items-center text-xl font-medium tracking-tight text-foreground">
               Ally <BetaBadge />
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden items-center gap-8 md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  pathname === link.href ? 'text-primary' : 'text-muted-foreground dark:text-muted-foreground'
+                  pathname === link.href ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
                 {link.name}
@@ -121,7 +121,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden items-center gap-3 md:flex">
             <LanguageDropdown />
             <ThemeToggle className="scale-90" />
             {isAuthenticated && !isLoading ? (
@@ -129,11 +129,11 @@ const Navbar = () => {
                 <div className="flex items-center gap-2 px-2">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={avatarUrl} alt={name} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                    <AvatarFallback className="bg-primary/10 text-xs font-medium text-primary">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium text-foreground dark:text-muted-foreground max-w-[120px] truncate">
+                  <span className="max-w-[120px] truncate text-sm font-medium text-foreground text-muted-foreground">
                     {name}
                   </span>
                 </div>
@@ -146,24 +146,24 @@ const Navbar = () => {
               <>
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-muted-foreground dark:text-muted-foreground hover:text-primary dark:hover:text-primary-foreground transition-colors"
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary hover:text-primary-foreground"
                 >
                   {t('navbar.login')}
                 </Link>
                 <InteractiveHoverButton
                   text={t('navbar.getStarted')}
-                  className="w-40 h-10 text-sm"
+                  className="h-10 w-40 text-sm"
                   onClick={() => router.push('/register')}
                 />
               </>
             )}
           </div>
 
-          <div className={`flex items-center gap-2 md:hidden flex-wrap ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`flex flex-wrap items-center gap-2 md:hidden ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
             {isAuthenticated && !isLoading && (
               <Avatar className="h-7 w-7">
                 <AvatarImage src={avatarUrl} alt={name} />
-                <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-medium">
+                <AvatarFallback className="bg-primary/10 text-[10px] font-medium text-primary">
                   {initials}
                 </AvatarFallback>
               </Avatar>
@@ -185,7 +185,7 @@ const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-foreground/40 backdrop-blur-sm z-[70] md:hidden"
+              className="fixed inset-0 z-[70] bg-foreground/40 backdrop-blur-sm md:hidden"
             />
 
             {/* Left Sidebar */}
@@ -194,27 +194,27 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-[80%] max-w-sm z-[80] md:hidden shadow-2xl border-r flex flex-col p-6 pt-10 bg-[#ffffff] dark:bg-[#09090b]"
+              className="fixed inset-y-0 left-0 z-[80] flex w-[80%] max-w-sm flex-col border-r bg-[#09090b] p-6 pt-10 shadow-2xl md:hidden"
             >
-              <div className="flex items-center mb-10">
+              <div className="mb-10 flex items-center">
                 <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-white dark:text-foreground">
-                    <AllyLogo className="w-5 h-5" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-background bg-secondary text-foreground">
+                    <AllyLogo className="h-5 w-5" />
                   </div>
-                  <span className="font-medium text-xl tracking-tight flex items-center text-foreground dark:text-primary-foreground">
+                  <span className="flex items-center text-xl font-medium tracking-tight text-foreground">
                     Ally <BetaBadge />
                   </span>
                 </Link>
               </div>
 
-              <div className="flex flex-col gap-6 flex-1 overflow-hidden">
+              <div className="flex flex-1 flex-col gap-6 overflow-hidden">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
                     href={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`text-xl font-medium transition-colors ${
-                      pathname === link.href ? 'text-primary' : 'text-foreground dark:text-primary-foreground'
+                      pathname === link.href ? 'text-primary' : 'text-foreground'
                     }`}
                   >
                     {link.name}
@@ -223,60 +223,56 @@ const Navbar = () => {
               </div>
 
               {/* Social Icons added above the separator */}
-              <div className="flex items-center gap-4 mb-6 flex-wrap">
+              <div className="mb-6 flex flex-wrap items-center gap-4">
                 <a
                   href="https://discord.gg"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
+                  className="rounded-lg bg-secondary p-2.5 text-muted-foreground transition-colors hover:text-primary"
                   title="Discord"
                 >
-                  <DiscordIcon className="w-5 h-5" />
+                  <DiscordIcon className="h-5 w-5" />
                 </a>
                 <a
                   href="https://t.me"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
+                  className="rounded-lg bg-secondary p-2.5 text-muted-foreground transition-colors hover:text-primary"
                   title="Telegram"
                 >
-                  <TelegramIcon className="w-5 h-5" />
+                  <TelegramIcon className="h-5 w-5" />
                 </a>
                 <a
                   href="https://wa.me"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
+                  className="rounded-lg bg-secondary p-2.5 text-muted-foreground transition-colors hover:text-primary"
                   title="WhatsApp"
                 >
-                  <WhatsAppIcon className="w-5 h-5" />
+                  <WhatsAppIcon className="h-5 w-5" />
                 </a>
                 <a
                   href="mailto:hello@askally.io"
-                  className="p-2.5 bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
+                  className="rounded-lg bg-secondary p-2.5 text-muted-foreground transition-colors hover:text-primary"
                   title="Email"
                 >
-                  <Mail className="w-5 h-5" />
+                  <Mail className="h-5 w-5" />
                 </a>
               </div>
 
-              <div className="flex flex-col gap-4 pt-8 border-t border-border ">
+              <div className="flex flex-col gap-4 border-t border-border pt-8">
                 {isAuthenticated && !isLoading ? (
                   <>
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="mb-2 flex items-center gap-3">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={avatarUrl} alt={name} />
-                        <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+                        <AvatarFallback className="bg-primary/10 text-sm font-medium text-primary">
                           {initials}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground dark:text-primary-foreground truncate">
-                          {name}
-                        </p>
-                        <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">
-                          {user?.email}
-                        </p>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-foreground">{name}</p>
+                        <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
                       </div>
                     </div>
                     <Button
@@ -284,7 +280,7 @@ const Navbar = () => {
                         setIsMobileMenuOpen(false)
                         router.push('/dashboard')
                       }}
-                      className="w-full h-14 text-lg gap-2 overflow-hidden"
+                      className="h-14 w-full gap-2 overflow-hidden text-lg"
                     >
                       {t('navbar.dashboard', 'Dashboard')}
                       <ArrowRight className="h-5 w-5" />
@@ -294,7 +290,7 @@ const Navbar = () => {
                   <>
                     <InteractiveHoverButton
                       text={t('navbar.login')}
-                      className="w-full h-14 text-lg bg-primary text-black border-primary border-2"
+                      className="h-14 w-full border-2 border-primary bg-primary text-lg text-primary-foreground"
                       dotClassName="bg-foreground group-hover:bg-foreground"
                       hoverContentClassName="text-primary"
                       onClick={() => {
@@ -304,7 +300,7 @@ const Navbar = () => {
                     />
                     <InteractiveHoverButton
                       text={t('navbar.getStarted')}
-                      className="w-full h-14 text-lg"
+                      className="h-14 w-full text-lg"
                       onClick={() => {
                         setIsMobileMenuOpen(false)
                         router.push('/register')

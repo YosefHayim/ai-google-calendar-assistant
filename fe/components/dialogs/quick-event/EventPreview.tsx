@@ -12,20 +12,20 @@ interface EventPreviewProps {
 
 export const EventPreview: React.FC<EventPreviewProps> = ({ event, calendarName }) => {
   return (
-    <div className="bg-background dark:bg-secondary rounded-lg p-3 space-y-2 mb-3 text-left">
+    <div className="mb-3 space-y-2 rounded-lg bg-background bg-secondary p-3 text-left">
       <div className="flex items-start gap-2">
-        <FileText className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+        <FileText className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground">Event</p>
-          <p className="text-sm font-medium text-foreground dark:text-primary-foreground truncate">{event.summary}</p>
+          <p className="truncate text-sm font-medium text-foreground">{event.summary}</p>
         </div>
       </div>
       {(event.date || event.time) && (
         <div className="flex items-start gap-2">
-          <Clock className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+          <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
           <div>
             <p className="text-xs text-muted-foreground">When</p>
-            <p className="text-sm text-foreground dark:text-primary-foreground">
+            <p className="text-sm text-foreground">
               {event.date} {event.time && `at ${event.time}`}
               {event.duration && ` (${event.duration})`}
             </p>
@@ -34,19 +34,19 @@ export const EventPreview: React.FC<EventPreviewProps> = ({ event, calendarName 
       )}
       {event.location && (
         <div className="flex items-start gap-2">
-          <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+          <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
           <div>
             <p className="text-xs text-muted-foreground">Location</p>
-            <p className="text-sm text-foreground dark:text-primary-foreground">{event.location}</p>
+            <p className="text-sm text-foreground">{event.location}</p>
           </div>
         </div>
       )}
       {calendarName && (
         <div className="flex items-start gap-2">
-          <Calendar className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+          <Calendar className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
           <div>
             <p className="text-xs text-muted-foreground">Calendar</p>
-            <p className="text-sm text-foreground dark:text-primary-foreground">{calendarName}</p>
+            <p className="text-sm text-foreground">{calendarName}</p>
           </div>
         </div>
       )}

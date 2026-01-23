@@ -21,9 +21,9 @@ export function YearView({ currentDate, events, onEventClick, onMonthClick, getC
   const hasNoEvents = events.length === 0
 
   return (
-    <Card className="p-4 relative">
+    <Card className="relative p-4">
       {hasNoEvents && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm">
           <EmptyState
             icon={<CalendarDays />}
             title="No events this year"
@@ -32,7 +32,7 @@ export function YearView({ currentDate, events, onEventClick, onMonthClick, getC
           />
         </div>
       )}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {months.map((month) => {
           const monthEvents = getEventsForMonth(events, month)
           const days = getMonthDays(month)
@@ -40,15 +40,15 @@ export function YearView({ currentDate, events, onEventClick, onMonthClick, getC
           return (
             <div
               key={month.getTime()}
-              className="cursor-pointer hover:bg-accent/50 rounded-lg p-2 transition-colors"
+              className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-accent/50"
               onClick={() => onMonthClick(month)}
             >
-              <h3 className="text-sm font-semibold mb-2 text-center">
+              <h3 className="mb-2 text-center text-sm font-semibold">
                 {month.toLocaleDateString('en-US', { month: 'short' })}
               </h3>
               <div className="grid grid-cols-7 gap-px text-[8px]">
                 {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                  <div key={i} className="text-center text-muted-foreground font-medium">
+                  <div key={i} className="text-center font-medium text-muted-foreground">
                     {d}
                   </div>
                 ))}
@@ -61,9 +61,9 @@ export function YearView({ currentDate, events, onEventClick, onMonthClick, getC
                     <div
                       key={idx}
                       className={cn(
-                        'aspect-square flex flex-col items-center justify-center relative text-[9px]',
+                        'relative flex aspect-square flex-col items-center justify-center text-[9px]',
                         !isCurrentMonth && 'text-muted-foreground/30',
-                        isToday && 'bg-primary text-primary-foreground rounded-full font-bold',
+                        isToday && 'rounded-full bg-primary font-bold text-primary-foreground',
                       )}
                     >
                       {day.getDate()}
@@ -73,7 +73,7 @@ export function YearView({ currentDate, events, onEventClick, onMonthClick, getC
                             <div
                               key={i}
                               className={cn(
-                                'w-1 h-1 rounded-full',
+                                'h-1 w-1 rounded-full',
                                 typeof color === 'string' && !color.startsWith('#') && color,
                               )}
                               style={color.startsWith('#') ? { backgroundColor: color } : undefined}
@@ -86,7 +86,7 @@ export function YearView({ currentDate, events, onEventClick, onMonthClick, getC
                 })}
               </div>
               {monthEvents.length > 0 && (
-                <div className="mt-1 text-[10px] text-muted-foreground text-center">
+                <div className="mt-1 text-center text-[10px] text-muted-foreground">
                   {monthEvents.length} event{monthEvents.length !== 1 ? 's' : ''}
                 </div>
               )}

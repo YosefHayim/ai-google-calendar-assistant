@@ -77,7 +77,7 @@ export function DailyBriefingSection() {
       <TabHeader
         title="Daily Briefing"
         tooltip="Receive a summary of your day's schedule every morning via email"
-        icon={<Mail className="w-5 h-5 text-foreground dark:text-primary" />}
+        icon={<Mail className="h-5 w-5 text-foreground" />}
       />
       <CardContent>
         {isLoadingBriefing ? (
@@ -89,7 +89,7 @@ export function DailyBriefingSection() {
                 id="briefing-enabled"
                 title="Enable Daily Briefing"
                 tooltip="When enabled, you'll receive an email each morning with your schedule for the day"
-                icon={<CalendarDays size={18} className="text-foreground dark:text-primary" />}
+                icon={<CalendarDays size={18} className="text-foreground" />}
                 control={
                   <CinematicGlowToggle
                     id={dailyBriefingToggleId}
@@ -102,7 +102,7 @@ export function DailyBriefingSection() {
 
             {briefingSettings.enabled && (
               <div className="space-y-4 pt-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Delivery Time</label>
                     <TimePicker id="briefing-time" value={briefingSettings.time} onChange={handleBriefingTimeChange} />
@@ -126,7 +126,7 @@ export function DailyBriefingSection() {
             <Button
               onClick={handleSaveBriefing}
               disabled={!isBriefingDirty || isUpdatingBriefing}
-              className="w-full mt-4"
+              className="mt-4 w-full"
             >
               {isUpdatingBriefing ? (
                 <>

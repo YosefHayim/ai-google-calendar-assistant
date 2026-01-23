@@ -11,7 +11,7 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(({ classNam
   <div
     ref={ref}
     className={cn(
-      'relative overflow-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent',
+      'scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent relative overflow-auto',
       className,
     )}
     {...props}

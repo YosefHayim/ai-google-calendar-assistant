@@ -68,30 +68,30 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="max-w-xl w-full p-0 overflow-hidden gap-0 border-none shadow-xl"
+        className="w-full max-w-xl gap-0 overflow-hidden border-none p-0 shadow-xl"
         // Applying the dynamic border color to the top of the modal content
         style={{ borderTop: `4px solid ${calendarColor}` }}
       >
         {/* Scrollable Container */}
-        <div className="max-h-[85vh] overflow-y-auto p-6 space-y-6">
+        <div className="max-h-[85vh] space-y-6 overflow-y-auto p-6">
           {/* Header Section */}
-          <DialogHeader className="p-0 space-y-0 text-left">
+          <DialogHeader className="space-y-0 p-0 text-left">
             <div className="flex items-start gap-4 pr-8">
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl shadow-sm"
                 style={{ backgroundColor: `${calendarColor}20` }}
               >
-                <CalendarDays className="w-6 h-6" style={{ color: calendarColor }} />
+                <CalendarDays className="h-6 w-6" style={{ color: calendarColor }} />
               </div>
               <div className="space-y-1.5">
-                <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground leading-tight">
+                <DialogTitle className="text-xl font-bold leading-tight text-foreground">
                   {event.summary || 'No Title'}
                 </DialogTitle>
 
-                <div className="flex flex-wrap gap-2 items-center">
+                <div className="flex flex-wrap items-center gap-2">
                   {calendarName && (
                     <span
-                      className="text-xs font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
+                      className="rounded border px-2 py-0.5 text-xs font-bold uppercase tracking-wider"
                       style={{
                         color: calendarColor,
                         borderColor: `${calendarColor}40`,
@@ -103,7 +103,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   )}
                   {event.status && (
                     <span
-                      className="text-xs font-bold px-2 py-0.5 rounded border uppercase tracking-wider flex items-center gap-1"
+                      className="flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-bold uppercase tracking-wider"
                       style={{
                         color: statusStyle.text,
                         borderColor: `${statusStyle.text}40`,
@@ -126,24 +126,24 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           </DialogHeader>
 
           {/* Primary Info Grid (Time & Location) */}
-          <div className="bg-muted dark:bg-secondary/50 rounded-lg border-border p-4 space-y-2">
+          <div className="space-y-2 rounded-lg border-border bg-muted bg-secondary/50 p-4">
             {/* Time Range */}
             <div className="flex items-center gap-3 text-sm">
-              <div className="w-5 flex justify-center">
-                <CalendarClock className="w-4 h-4 text-muted-foreground" />
+              <div className="flex w-5 justify-center">
+                <CalendarClock className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-foreground font-medium">
+              <div className="flex flex-col gap-1 font-medium text-foreground sm:flex-row sm:items-center sm:gap-2">
                 <span>{formatDate(event.start.dateTime || event.start.date)}</span>
-                <ArrowRight className="w-3 h-3 text-muted-foreground hidden sm:block" />
-                <span className="sm:hidden text-xs text-muted-foreground">to</span>
+                <ArrowRight className="hidden h-3 w-3 text-muted-foreground sm:block" />
+                <span className="text-xs text-muted-foreground sm:hidden">to</span>
                 <span>{formatDate(event.end.dateTime || event.end.date)}</span>
               </div>
             </div>
 
             {/* Duration & Timezone */}
             <div className="flex items-center gap-3 text-sm">
-              <div className="w-5 flex justify-center">
-                <Hourglass className="w-4 h-4 text-muted-foreground" />
+              <div className="flex w-5 justify-center">
+                <Hourglass className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <span>
@@ -153,7 +153,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   )}
                 </span>
                 {event.start.timeZone && (
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-accent dark:bg-secondary text-muted-foreground">
+                  <span className="rounded bg-accent bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground">
                     {event.start.timeZone}
                   </span>
                 )}
@@ -162,15 +162,15 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
 
             {/* Location */}
             {event.location && (
-              <div className="flex items-start gap-3 text-sm pt-1">
-                <div className="w-5 flex justify-center mt-0.5">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
+              <div className="flex items-start gap-3 pt-1 text-sm">
+                <div className="mt-0.5 flex w-5 justify-center">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <a
                   href={`https://maps.google.com/?q=$?q=${encodeURIComponent(event.location)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-muted-foreground hover:text-primary underline decoration-dotted underline-offset-4"
+                  className="text-muted-foreground underline decoration-dotted underline-offset-4 hover:text-primary"
                 >
                   {event.location}
                 </a>
@@ -181,10 +181,10 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           {/* Description */}
           {event.description && (
             <div className="flex gap-3">
-              <div className="w-5 flex justify-center shrink-0 mt-1">
-                <AlignLeft className="w-4 h-4 text-muted-foreground" />
+              <div className="mt-1 flex w-5 shrink-0 justify-center">
+                <AlignLeft className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed overflow-hidden">
+              <div className="overflow-hidden whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
                 <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(event.description) }} />
               </div>
             </div>
@@ -192,46 +192,44 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
 
           {/* People Section */}
           {(event.organizer || (event.attendees && event.attendees.length > 0)) && (
-            <div className="border-t border-border pt-4 space-y-4">
+            <div className="space-y-4 border-t border-border pt-4">
               {event.organizer && (
                 <div className="flex items-center gap-3">
-                  <div className="w-5 flex justify-center">
-                    <User className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex w-5 justify-center">
+                    <User className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <div className="text-sm w-auto overflow-hidden">
-                    <span className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-bold mr-2">
-                      Organizer
-                    </span>
-                    <span className="text-foreground font-medium ">{event.organizer.email}</span>
+                  <div className="w-auto overflow-hidden text-sm">
+                    <span className="mr-2 text-xs font-bold uppercase text-muted-foreground">Organizer</span>
+                    <span className="font-medium text-foreground">{event.organizer.email}</span>
                   </div>
                 </div>
               )}
 
               {event.attendees && event.attendees.length > 0 && (
                 <div className="flex items-start gap-3">
-                  <div className="w-5 flex justify-center mt-1">
-                    <Users className="w-4 h-4 text-muted-foreground" />
+                  <div className="mt-1 flex w-5 justify-center">
+                    <Users className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-bold mb-2">
+                    <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">
                       Attendees ({event.attendees.length})
                     </div>
-                    <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="custom-scrollbar grid max-h-32 grid-cols-1 gap-2 overflow-y-auto pr-2">
                       {event.attendees.map((attendee, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center justify-between text-sm bg-muted dark:bg-secondary/50 rounded px-2 py-1.5"
+                          className="flex items-center justify-between rounded bg-muted bg-secondary/50 px-2 py-1.5 text-sm"
                         >
-                          <span className="text-muted-foreground truncate max-w-[200px]" title={attendee.email}>
+                          <span className="max-w-[200px] truncate text-muted-foreground" title={attendee.email}>
                             {attendee.email}
                           </span>
                           {attendee.responseStatus && (
                             <span
-                              className={`text-xs px-1.5 py-0.5 rounded capitalize ${
+                              className={`rounded px-1.5 py-0.5 text-xs capitalize ${
                                 attendee.responseStatus === 'accepted'
-                                  ? 'bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary'
+                                  ? 'bg-primary/10 text-primary/30'
                                   : attendee.responseStatus === 'declined'
-                                    ? 'bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive'
+                                    ? 'bg-destructive/10 text-destructive/30'
                                     : 'bg-accent text-muted-foreground'
                               }`}
                             >
@@ -248,7 +246,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           )}
 
           {/* Footer Meta */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-border">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4">
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               {event.created && (
                 <div className="flex items-center gap-1" title="Date Created">
@@ -269,7 +267,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   href={event.htmlLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold hover:underline transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold transition-colors hover:underline"
                   style={{ color: calendarColor }}
                 >
                   Open in Google Calendar

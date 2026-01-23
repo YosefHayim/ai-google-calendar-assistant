@@ -17,12 +17,8 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ title, tooltip, icon }) =>
   return (
     <CardHeader>
       <div className="flex items-center gap-2">
-        {icon && (
-          <div className="p-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10">
-            {icon}
-          </div>
-        )}
-        <CardTitle className="text-lg flex items-center gap-1.5">
+        {icon && <div className="rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 p-2">{icon}</div>}
+        <CardTitle className="flex items-center gap-1.5 text-lg">
           {title}
           <TooltipProvider delayDuration={200}>
             <Tooltip>
@@ -34,7 +30,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ title, tooltip, icon }) =>
                   className="h-5 w-5 text-muted-foreground hover:text-foreground"
                   aria-label={`More info about ${title}`}
                 >
-                  <Info className="w-3.5 h-3.5" />
+                  <Info className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[280px]">

@@ -36,7 +36,7 @@ export function StatusDot({ color = 'green', size = 'sm', pulse = false, classNa
   return (
     <span
       className={cn(
-        'inline-block rounded-full shrink-0',
+        'inline-block shrink-0 rounded-full',
         colorClasses[color],
         sizeClasses[size],
         pulse && 'animate-pulse',
@@ -68,7 +68,7 @@ export function StatusIndicator({ status, size = 'sm', showLabel = false, classN
   return (
     <span className={cn('inline-flex items-center gap-1.5', className)}>
       <StatusDot color={config.color} size={size} pulse={status === 'online' || status === 'active'} />
-      {showLabel && <span className="text-xs text-muted-foreground dark:text-muted-foreground">{config.label}</span>}
+      {showLabel && <span className="text-xs text-muted-foreground">{config.label}</span>}
     </span>
   )
 }

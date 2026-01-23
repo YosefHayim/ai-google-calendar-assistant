@@ -8,18 +8,18 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon: Icon, title, value, des
   const selectedColor = getInsightColorClasses(color)
 
   return (
-    <div className="min-w-0 bg-background dark:bg-secondary rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4 transition-all hover:shadow-md hover:-translate-y-1">
-      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+    <div className="flex min-w-0 flex-col gap-2 rounded-md bg-background bg-secondary p-3 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md sm:gap-3 sm:p-4 md:gap-4 md:p-6">
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         <div
-          className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-md shrink-0 ${selectedColor.bg} ${selectedColor.text}`}
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md sm:h-8 sm:w-8 ${selectedColor.bg} ${selectedColor.text}`}
         >
-          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
-        <h3 className="min-w-0 font-semibold text-muted-foreground text-xs sm:text-sm line-clamp-2">{title}</h3>
+        <h3 className="line-clamp-2 min-w-0 text-xs font-semibold text-muted-foreground sm:text-sm">{title}</h3>
       </div>
       <div>
-        <p className="text-xl sm:text-2xl font-bold text-foreground dark:text-primary-foreground">{value}</p>
-        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-medium line-clamp-2">
+        <p className="text-xl font-bold text-foreground sm:text-2xl">{value}</p>
+        <p className="line-clamp-2 text-xs font-medium leading-relaxed text-muted-foreground sm:text-sm">
           {description}
         </p>
       </div>

@@ -31,27 +31,27 @@ export const DailyHoursBarChart: React.FC<DailyHoursBarChartProps> = ({ data, on
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
       <BarChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12 }}>
-        <CartesianGrid vertical={false} className="stroke-muted dark:stroke-muted" />
+        <CartesianGrid vertical={false} className="stroke-muted" />
         <XAxis
           dataKey="formattedDate"
           tickLine={false}
           axisLine={false}
           tickMargin={8}
           minTickGap={32}
-          className="text-muted-foreground dark:text-muted-foreground"
+          className="text-muted-foreground"
           tick={{ fill: 'currentColor', fontSize: 12 }}
         />
         <ChartTooltip
           content={
             <ChartTooltipContent
-              className="w-[180px] bg-secondary dark:bg-secondary text-primary-foreground border-border"
+              className="w-[180px] border-border bg-secondary text-primary-foreground"
               nameKey="hours"
               labelFormatter={(value, payload) => {
                 if (payload && payload[0]) {
                   const point = payload[0].payload as DailyAvailableHoursDataPoint
                   return (
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-xs">Day {point.day}</span>
+                      <span className="text-xs text-muted-foreground">Day {point.day}</span>
                       <span className="font-medium">{format(new Date(point.date), 'MMM dd, yyyy')}</span>
                     </div>
                   )

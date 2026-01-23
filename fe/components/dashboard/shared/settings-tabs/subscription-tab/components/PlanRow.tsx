@@ -34,12 +34,12 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
 
   const getPlanIcon = () => {
     if (plan.isHighlighted) {
-      return <Crown className="w-5 h-5 text-primary" />
+      return <Crown className="h-5 w-5 text-primary" />
     }
     if (plan.isPopular) {
-      return <Zap className="w-5 h-5 text-primary" />
+      return <Zap className="h-5 w-5 text-primary" />
     }
-    return <Shield className="w-5 h-5 text-muted-foreground" />
+    return <Shield className="h-5 w-5 text-muted-foreground" />
   }
 
   const adjustCredits = (delta: number) => {
@@ -50,23 +50,18 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
     <Card
       className={cn(
         'transition-all duration-200',
-        isHighlighted && 'bg-secondary dark:bg-primary border-none',
+        isHighlighted && 'border-none bg-secondary',
         isPopular && !isHighlighted && 'ring-1 ring-primary',
         isCurrentPlan && 'ring-1 ring-primary',
       )}
     >
       <CardContent className="p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="flex items-start gap-3 min-w-0 flex-1">
-            <div className="flex-shrink-0 mt-0.5">{getPlanIcon()}</div>
+          <div className="flex min-w-0 flex-1 items-start gap-3">
+            <div className="mt-0.5 flex-shrink-0">{getPlanIcon()}</div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={cn(
-                    'font-semibold',
-                    isHighlighted ? 'text-white dark:text-foreground' : 'text-foreground dark:text-white',
-                  )}
-                >
+                <span className={cn('font-semibold', isHighlighted ? 'text-foreground' : 'text-foreground')}>
                   {plan.name}
                 </span>
                 {isPopular && (
@@ -74,19 +69,19 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                     className={cn(
                       'text-xs',
                       isHighlighted
-                        ? 'bg-background/20 text-white dark:bg-secondary/20 dark:text-foreground'
+                        ? 'bg-background/20 bg-secondary/20 text-secondary-foreground'
                         : 'bg-primary/20 text-primary',
                     )}
                   >
                     Popular
                   </Badge>
                 )}
-                {isCurrentPlan && <Badge className="bg-green-500/20 text-green-600 text-xs">Current</Badge>}
+                {isCurrentPlan && <Badge className="bg-green-500/20 text-xs text-green-600">Current</Badge>}
               </div>
               <p
                 className={cn(
-                  'text-xs mt-0.5 line-clamp-2',
-                  isHighlighted ? 'text-white/70 dark:text-foreground/70' : 'text-muted-foreground',
+                  'mt-0.5 line-clamp-2 text-xs',
+                  isHighlighted ? 'text-foreground/70/70' : 'text-muted-foreground',
                 )}
               >
                 {plan.description}
@@ -94,7 +89,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-3 sm:justify-end sm:flex-shrink-0">
+          <div className="flex items-center justify-between gap-3 sm:flex-shrink-0 sm:justify-end">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${plan.id}-${selectedFrequency}`}
@@ -104,12 +99,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                 className="text-left sm:text-right"
               >
                 {isFree ? (
-                  <span
-                    className={cn(
-                      'text-lg font-bold',
-                      isHighlighted ? 'text-white dark:text-foreground' : 'text-foreground dark:text-white',
-                    )}
-                  >
+                  <span className={cn('text-lg font-bold', isHighlighted ? 'text-foreground' : 'text-foreground')}>
                     Free
                   </span>
                 ) : (
@@ -122,16 +112,10 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                         maximumFractionDigits: 0,
                       }}
                       value={price}
-                      className={cn(
-                        'text-lg font-bold',
-                        isHighlighted ? 'text-white dark:text-foreground' : 'text-foreground dark:text-white',
-                      )}
+                      className={cn('text-lg font-bold', isHighlighted ? 'text-foreground' : 'text-foreground')}
                     />
                     <span
-                      className={cn(
-                        'text-xs ml-1',
-                        isHighlighted ? 'text-white/60 dark:text-foreground/60' : 'text-muted-foreground',
-                      )}
+                      className={cn('ml-1 text-xs', isHighlighted ? 'text-foreground/60/60' : 'text-muted-foreground')}
                     >
                       {isPerUse ? '/pack' : '/mo'}
                     </span>
@@ -142,12 +126,12 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
 
             {isCurrentPlan ? (
               <Button disabled size="sm" className="min-w-20 sm:min-w-24">
-                <Check className="w-3 h-3 mr-1" />
+                <Check className="mr-1 h-3 w-3" />
                 Current
               </Button>
             ) : isLoading ? (
               <Button disabled size="sm" className="min-w-20 sm:min-w-24">
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               </Button>
             ) : actionType === 'upgrade' ? (
               <Button
@@ -159,7 +143,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                 )}
               >
                 {isPerUse ? 'Buy' : 'Upgrade'}
-                <ArrowRight className="w-3 h-3 ml-1" />
+                <ArrowRight className="ml-1 h-3 w-3" />
               </Button>
             ) : (
               <Button
@@ -168,27 +152,27 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                 size="sm"
                 className={cn(
                   'min-w-20 sm:min-w-24',
-                  isHighlighted && 'border-white/30 text-white hover:bg-background/10',
+                  isHighlighted && 'border-white/30 text-foreground hover:bg-background/10',
                 )}
               >
                 {isPerUse ? 'Buy' : 'Downgrade'}
-                <ArrowDown className="w-3 h-3 ml-1" />
+                <ArrowDown className="ml-1 h-3 w-3" />
               </Button>
             )}
           </div>
         </div>
 
         {isPerUse && isCustomTier && (
-          <div className="mt-3 pt-3 border-t border-white/10">
+          <div className="mt-3 border-t border-white/10 pt-3">
             <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
               <button
                 type="button"
                 onClick={() => adjustCredits(-100)}
-                className="w-7 h-7 rounded-full bg-background/20 flex items-center justify-center hover:bg-background/30 transition-colors text-white dark:text-foreground"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-background/20 text-foreground transition-colors hover:bg-background/30"
               >
                 <Minus size={12} />
               </button>
-              <div className="flex-1 min-w-24">
+              <div className="min-w-24 flex-1">
                 <input
                   type="range"
                   min={100}
@@ -196,22 +180,19 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                   step={100}
                   value={customCredits}
                   onChange={(e) => setCustomCredits(parseInt(e.target.value))}
-                  className="w-full h-1 bg-background/20 rounded-full appearance-none cursor-pointer accent-amber-400"
+                  className="h-1 w-full cursor-pointer appearance-none rounded-full bg-background/20 accent-amber-400"
                 />
               </div>
               <button
                 type="button"
                 onClick={() => adjustCredits(100)}
-                className="w-7 h-7 rounded-full bg-background/20 flex items-center justify-center hover:bg-background/30 transition-colors text-white dark:text-foreground"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-background/20 text-foreground transition-colors hover:bg-background/30"
               >
                 <Plus size={12} />
               </button>
-              <div className="text-right min-w-20">
-                <NumberFlow
-                  value={customCredits}
-                  className="text-sm font-bold font-mono text-white dark:text-foreground"
-                />
-                <p className="text-xs text-white/50 dark:text-foreground/50">credits</p>
+              <div className="min-w-20 text-right">
+                <NumberFlow value={customCredits} className="font-mono text-sm font-bold text-foreground" />
+                <p className="text-foreground/50/50 text-xs">credits</p>
               </div>
             </div>
           </div>
@@ -222,13 +203,13 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
             <span
               key={index}
               className={cn(
-                'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full',
+                'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs',
                 isHighlighted
-                  ? 'bg-background/10 text-white/80 dark:bg-secondary/10 dark:text-foreground/80'
-                  : 'bg-secondary dark:bg-secondary text-muted-foreground',
+                  ? 'bg-secondary/10/80 bg-background/10 text-foreground/80'
+                  : 'bg-secondary text-muted-foreground',
               )}
             >
-              <BadgeCheck className="w-3 h-3" />
+              <BadgeCheck className="h-3 w-3" />
               {feature}
             </span>
           ))}

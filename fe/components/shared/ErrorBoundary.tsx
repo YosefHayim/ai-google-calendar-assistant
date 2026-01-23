@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="flex min-h-[400px] items-center justify-center p-4">
           <Card className="w-full max-w-lg">
             <CardHeader>
-              <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 dark:bg-red-900/20">
+              <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-900/20">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -73,7 +73,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="h-6 w-6 text-destructive dark:text-red-400"
+                  className="h-6 w-6 text-red-400"
                 >
                   <circle cx="12" cy="12" r="10" />
                   <line x1="12" y1="8" x2="12" y2="12" />
@@ -87,17 +87,17 @@ export class ErrorBoundary extends Component<Props, State> {
             </CardHeader>
             <CardContent>
               <details className="group">
-                <summary className="cursor-pointer text-sm font-medium text-zinc-700 hover:text-foreground dark:text-zinc-300 dark:hover:text-primary-foreground">
+                <summary className="cursor-pointer text-sm font-medium text-muted-foreground text-zinc-700 hover:text-foreground hover:text-primary-foreground">
                   View error details
                 </summary>
                 <div className="mt-3 space-y-2">
-                  <div className="rounded-md bg-destructive/5 p-3 dark:bg-red-900/10">
-                    <p className="text-sm font-medium text-red-800 dark:text-red-300">
+                  <div className="rounded-md bg-destructive/5 bg-red-900/10 p-3">
+                    <p className="text-sm font-medium text-red-300">
                       {this.state.error?.name}: {this.state.error?.message}
                     </p>
                   </div>
                   {this.state.error?.stack && (
-                    <pre className="max-h-48 overflow-auto rounded-md bg-secondary p-3 text-xs text-zinc-700 dark:bg-secondary dark:text-zinc-300">
+                    <pre className="max-h-48 overflow-auto rounded-md bg-secondary p-3 text-xs text-muted-foreground text-zinc-700">
                       {this.state.error.stack}
                     </pre>
                   )}

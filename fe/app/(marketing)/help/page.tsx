@@ -208,43 +208,43 @@ export function HelpCenterPage() {
   return (
     <MarketingLayout>
       <JsonLd data={[faqSchema, breadcrumbSchema, pageSchema]} />
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-900/50 dark:to-transparent">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <HelpCircle className="w-4 h-4" />
+      <section className="bg-gradient-to-b from-zinc-50 to-white px-4 py-16 dark:from-zinc-900/50 dark:to-transparent sm:px-6 md:py-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+            <HelpCircle className="h-4 w-4" />
             Help Center
           </div>
-          <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4">
+          <h1 className="mb-4 text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground md:text-5xl">
             How can we help you?
           </h1>
-          <p className="text-lg text-muted-foreground dark:text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground dark:text-muted-foreground">
             Find answers to common questions, learn how to use Ask Ally, and get the support you need.
           </p>
-          <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <div className="relative mx-auto max-w-xl">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search for help articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-12 text-base"
+              className="h-12 pl-12 text-base"
             />
           </div>
         </div>
       </section>
 
-      <section className="py-12 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-6">Popular Topics</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <section className="px-4 py-12 sm:px-6">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-6 text-xl font-medium text-foreground dark:text-primary-foreground">Popular Topics</h2>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {POPULAR_TOPICS.map((topic) => (
               <a
                 key={topic.title}
                 href={topic.href}
-                className="flex items-center gap-3 p-4 rounded-xl bg-background dark:bg-secondary hover:border-primary/50 dark:hover:border-primary/50 transition-colors"
+                className="flex items-center gap-3 rounded-xl bg-background p-4 transition-colors hover:border-primary/50 dark:bg-secondary dark:hover:border-primary/50"
               >
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <topic.icon className="w-5 h-5 text-primary" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  <topic.icon className="h-5 w-5 text-primary" />
                 </div>
                 <span className="font-medium text-foreground dark:text-primary-foreground">{topic.title}</span>
               </a>
@@ -253,24 +253,24 @@ export function HelpCenterPage() {
         </div>
       </section>
 
-      <section className="py-12 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-6">Browse by Category</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+      <section className="px-4 py-12 sm:px-6">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-6 text-xl font-medium text-foreground dark:text-primary-foreground">Browse by Category</h2>
+          <div className="mb-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
-                className={`text-left p-6 rounded-xl border transition-all ${
+                className={`rounded-xl border p-6 text-left transition-all ${
                   activeCategory === category.id
-                    ? 'bg-primary/5 border-primary/50 -primary/50'
-                    : 'bg-background dark:bg-secondary hover:border-zinc-300 dark:hover:border-zinc-700'
+                    ? '-primary/50 border-primary/50 bg-primary/5'
+                    : 'bg-background hover:border-zinc-300 dark:bg-secondary dark:hover:border-zinc-700'
                 }`}
               >
-                <div className={`w-12 h-12 rounded-xl ${category.color} flex items-center justify-center mb-4`}>
-                  <category.icon className="w-6 h-6" />
+                <div className={`h-12 w-12 rounded-xl ${category.color} mb-4 flex items-center justify-center`}>
+                  <category.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">
+                <h3 className="mb-1 text-lg font-medium text-foreground dark:text-primary-foreground">
                   {category.title}
                 </h3>
                 <p className="text-sm text-muted-foreground dark:text-muted-foreground">{category.description}</p>
@@ -279,8 +279,8 @@ export function HelpCenterPage() {
           </div>
 
           {activeCategory && FAQ_DATA[activeCategory as keyof typeof FAQ_DATA] && (
-            <div className="bg-background dark:bg-secondary rounded-2xl p-6 md:p-8">
-              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-6">
+            <div className="rounded-2xl bg-background p-6 dark:bg-secondary md:p-8">
+              <h3 className="mb-6 text-xl font-medium text-foreground dark:text-primary-foreground">
                 {HELP_CATEGORIES.find((c) => c.id === activeCategory)?.title} FAQs
               </h3>
               <Accordion type="single" collapsible className="space-y-2">
@@ -290,10 +290,10 @@ export function HelpCenterPage() {
                     value={`item-${index}`}
                     className="rounded-lg px-4 data-[state=open]:bg-muted dark:data-[state=open]:bg-secondary/50"
                   >
-                    <AccordionTrigger className="text-left text-foreground dark:text-primary-foreground hover:no-underline py-4">
+                    <AccordionTrigger className="py-4 text-left text-foreground hover:no-underline dark:text-primary-foreground">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground dark:text-muted-foreground pb-4">
+                    <AccordionContent className="pb-4 text-muted-foreground dark:text-muted-foreground">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -304,21 +304,21 @@ export function HelpCenterPage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-muted dark:bg-secondary/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <MessageCircle className="w-8 h-8 text-primary" />
+      <section className="bg-muted px-4 py-16 dark:bg-secondary/50 sm:px-6 md:py-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+            <MessageCircle className="h-8 w-8 text-primary" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">
+          <h2 className="mb-4 text-2xl font-medium text-foreground dark:text-primary-foreground md:text-3xl">
             Still need help?
           </h2>
-          <p className="text-muted-foreground dark:text-muted-foreground mb-8 max-w-xl mx-auto">
+          <p className="mx-auto mb-8 max-w-xl text-muted-foreground dark:text-muted-foreground">
             Can&apos;t find what you&apos;re looking for? Our support team is here to help you with any questions.
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2">
               Contact Support
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </div>

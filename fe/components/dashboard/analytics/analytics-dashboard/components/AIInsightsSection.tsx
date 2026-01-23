@@ -21,22 +21,18 @@ interface AIInsightsSectionProps {
 export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }: AIInsightsSectionProps) {
   return (
     <div>
-      <h3 className="text-base sm:text-lg font-semibold text-foreground dark:text-primary-foreground mb-3 sm:mb-4 flex items-center gap-2">
+      <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-foreground sm:mb-4 sm:text-lg">
         AI Insights
         <HoverCard>
           <HoverCardTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 text-muted-foreground hover:text-muted-foreground dark:hover:text-muted-foreground"
-            >
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-muted-foreground">
               <Info size={16} />
             </Button>
           </HoverCardTrigger>
           <HoverCardContent>
             <div className="space-y-2">
-              <h4 className="font-semibold text-sm">Performance Intelligence</h4>
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+              <h4 className="text-sm font-semibold">Performance Intelligence</h4>
+              <p className="text-xs text-muted-foreground">
                 AI-powered insights about your productivity patterns, focus velocity, and schedule optimization
                 opportunities.
               </p>
@@ -44,12 +40,12 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
           </HoverCardContent>
         </HoverCard>
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
         {isLoading ? (
           Array.from({ length: 5 }).map((_, i) => <InsightCardSkeleton key={i} />)
         ) : isError ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-background dark:bg-secondary rounded-xl">
-            <p className="text-muted-foreground dark:text-muted-foreground mb-4">Failed to load insights</p>
+          <div className="col-span-full flex flex-col items-center justify-center rounded-xl bg-background bg-secondary py-8">
+            <p className="mb-4 text-muted-foreground">Failed to load insights</p>
             <Button onClick={onRetry} size="sm">
               Retry
             </Button>
@@ -66,7 +62,7 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
             />
           ))
         ) : (
-          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-background dark:bg-secondary rounded-xl">
+          <div className="col-span-full flex flex-col items-center justify-center rounded-xl bg-background bg-secondary py-8">
             <EmptyState
               icon={<Lightbulb />}
               title="No insights yet"

@@ -47,13 +47,13 @@ export const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, on
     <button
       onClick={onClick}
       className={cn(
-        'relative flex items-center justify-center w-10 h-10 rounded-md hover:bg-secondary dark:hover:bg-secondary transition-colors focus:outline-none group',
+        'group relative flex h-10 w-10 items-center justify-center rounded-md transition-colors hover:bg-secondary focus:outline-none',
         className,
       )}
       aria-label={isOpen ? 'Close menu' : 'Open menu'}
     >
       <motion.div
-        className="relative w-6 h-[14px]"
+        className="relative h-[14px] w-6"
         animate={isOpen ? 'opened' : 'closed'}
         variants={containerVariants}
         transition={{
@@ -64,21 +64,21 @@ export const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, on
         }}
       >
         <motion.span
-          className="absolute left-0 w-full bg-foreground dark:bg-foreground rounded-full"
+          className="absolute left-0 w-full rounded-full bg-foreground"
           style={{ height: barHeight }}
           variants={topBarVariants}
           transition={{ duration: 0.2 }}
         />
 
         <motion.span
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-full bg-foreground dark:bg-foreground rounded-full"
+          className="absolute left-0 top-1/2 w-full -translate-y-1/2 rounded-full bg-foreground"
           style={{ height: barHeight }}
           variants={middleBarVariants}
           transition={{ duration: 0.1 }}
         />
 
         <motion.span
-          className="absolute left-0 w-full bg-foreground dark:bg-foreground rounded-full"
+          className="absolute left-0 w-full rounded-full bg-foreground"
           style={{ height: barHeight }}
           variants={bottomBarVariants}
           transition={{

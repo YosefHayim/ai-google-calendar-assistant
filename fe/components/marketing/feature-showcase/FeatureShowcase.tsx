@@ -36,28 +36,28 @@ export const FeatureShowcase = React.memo(function FeatureShowcase() {
 
   return (
     <section>
-      <div className="absolute inset-0 z-0 opacity-30 pointer-events-none" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-30" aria-hidden="true">
         <div className="absolute bottom-0 left-[-10%] top-[20%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(var(--primary-rgb,34,197,94),0.2),rgba(255,255,255,0))]" />
         <div className="absolute bottom-0 right-[-10%] top-[10%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(139,92,246,0.15),rgba(255,255,255,0))]" />
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="relative z-10 mx-auto max-w-7xl">
         <PlatformToggle platform={platform} onToggle={setPlatform} />
         <div className="relative" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
           <button
             onClick={prevSlide}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-muted-foreground dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all "
+            className="absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 bg-secondary/80 text-muted-foreground shadow-xl backdrop-blur-sm transition-all hover:scale-110 hover:text-primary sm:left-4 sm:h-12 sm:w-12"
           >
-            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-muted-foreground dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all "
+            className="absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 bg-secondary/80 text-muted-foreground shadow-xl backdrop-blur-sm transition-all hover:scale-110 hover:text-primary sm:right-4 sm:h-12 sm:w-12"
           >
-            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
 
-          <div className="relative w-full h-[450px] sm:h-[500px] md:h-[550px] flex items-center justify-center [perspective:1200px]">
+          <div className="relative flex h-[450px] w-full items-center justify-center [perspective:1200px] sm:h-[500px] md:h-[550px]">
             {FEATURES.map((feature, index) => {
               const offset = index - activeIndex
               const total = FEATURES.length
@@ -72,7 +72,7 @@ export const FeatureShowcase = React.memo(function FeatureShowcase() {
               return (
                 <div
                   key={feature.id}
-                  className={cn('absolute transition-all duration-500 ease-out flex items-center justify-center')}
+                  className={cn('absolute flex items-center justify-center transition-all duration-500 ease-out')}
                   style={{
                     transform: `
                       translateX(${pos * 55}%) 
@@ -97,7 +97,7 @@ export const FeatureShowcase = React.memo(function FeatureShowcase() {
                           exit={{ opacity: 0, y: -10, scale: 0.9 }}
                           transition={{ duration: 0.3 }}
                           className={cn(
-                            'absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg z-20 whitespace-nowrap',
+                            'absolute -top-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium text-foreground shadow-lg',
                             platform === 'telegram'
                               ? 'bg-gradient-to-r from-[#0088cc] to-[#00a2e8] shadow-[#0088cc]/30'
                               : platform === 'slack'
@@ -107,17 +107,17 @@ export const FeatureShowcase = React.memo(function FeatureShowcase() {
                         >
                           {platform === 'telegram' ? (
                             <>
-                              <TelegramIcon className="w-3.5 h-3.5" />
+                              <TelegramIcon className="h-3.5 w-3.5" />
                               <span>Telegram Bot</span>
                             </>
                           ) : platform === 'slack' ? (
                             <>
-                              <SlackIcon className="w-3.5 h-3.5" />
+                              <SlackIcon className="h-3.5 w-3.5" />
                               <span>Slack App</span>
                             </>
                           ) : (
                             <>
-                              <WhatsAppIcon className="w-3.5 h-3.5" />
+                              <WhatsAppIcon className="h-3.5 w-3.5" />
                               <span>WhatsApp</span>
                             </>
                           )}
@@ -154,12 +154,12 @@ export const FeatureShowcase = React.memo(function FeatureShowcase() {
             })}
           </div>
 
-          <div className="flex justify-center gap-2 mt-8">
+          <div className="mt-8 flex justify-center gap-2">
             {FEATURES.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setActiveIndex(index)}
-                className="h-2 rounded-full overflow-hidden bg-accent dark:bg-secondary transition-all duration-300"
+                className="h-2 overflow-hidden rounded-full bg-accent bg-secondary transition-all duration-300"
                 style={{ width: index === activeIndex ? 48 : 12 }}
               >
                 <motion.div

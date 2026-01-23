@@ -45,9 +45,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const isEmpty = messages.length === 0 && !isLoading
 
   return (
-    <div className="h-full overflow-y-auto px-3 sm:px-4 pt-20 sm:pt-24 pb-24 sm:pb-32">
+    <div className="h-full overflow-y-auto px-3 pb-24 pt-20 sm:px-4 sm:pb-32 sm:pt-24">
       {isEmpty ? (
-        <div className="flex items-center justify-center h-full min-h-[250px] sm:min-h-[300px] px-4">
+        <div className="flex h-full min-h-[250px] items-center justify-center px-4 sm:min-h-[300px]">
           <EmptyState
             icon={<MessageSquare />}
             title="Start a conversation"
@@ -74,7 +74,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 />
                 {!isEditing && (
                   <div className={cn('flex w-full', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
-                    <div className="max-w-[90%] sm:max-w-[85%] md:max-w-[75%] w-full">
+                    <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[75%]">
                       <MessageActions
                         msg={msg}
                         isSpeaking={isSpeaking && speakingMessageId === msg.id}

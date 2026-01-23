@@ -36,7 +36,7 @@ export function FeatureCarousel() {
 
   return (
     <div
-      className="w-full relative group/carousel"
+      className="group/carousel relative w-full"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -44,24 +44,24 @@ export function FeatureCarousel() {
         variant="outline"
         size="icon"
         onClick={prev}
-        className="absolute left-2 lg:-left-6 top-1/2 -translate-y-1/2 z-30 rounded-full bg-background/90 dark:bg-secondary/90 backdrop-blur-sm  shadow-xl text-muted-foreground hover:text-primary opacity-100 lg:opacity-0 lg:group-hover/carousel:opacity-100 hover:scale-110 active:scale-95"
+        className="absolute left-2 top-1/2 z-30 -translate-y-1/2 rounded-full bg-background/90 bg-secondary/90 text-muted-foreground opacity-100 shadow-xl backdrop-blur-sm hover:scale-110 hover:text-primary active:scale-95 lg:-left-6 lg:opacity-0 lg:group-hover/carousel:opacity-100"
       >
-        <ChevronLeft className="w-5 h-5" />
+        <ChevronLeft className="h-5 w-5" />
       </Button>
 
       <Button
         variant="outline"
         size="icon"
         onClick={next}
-        className="absolute right-2 lg:-right-6 top-1/2 -translate-y-1/2 z-30 rounded-full bg-background/90 dark:bg-secondary/90 backdrop-blur-sm  shadow-xl text-muted-foreground hover:text-primary opacity-100 lg:opacity-0 lg:group-hover/carousel:opacity-100 hover:scale-110 active:scale-95"
+        className="absolute right-2 top-1/2 z-30 -translate-y-1/2 rounded-full bg-background/90 bg-secondary/90 text-muted-foreground opacity-100 shadow-xl backdrop-blur-sm hover:scale-110 hover:text-primary active:scale-95 lg:-right-6 lg:opacity-0 lg:group-hover/carousel:opacity-100"
       >
-        <ChevronRight className="w-5 h-5" />
+        <ChevronRight className="h-5 w-5" />
       </Button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-muted dark:bg-secondary/50 rounded-[2.5rem] p-8 md:p-12 lg:p-16 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+      <div className="relative grid grid-cols-1 items-center gap-12 overflow-hidden rounded-[2.5rem] bg-muted bg-secondary/50 p-8 md:p-12 lg:grid-cols-12 lg:p-16">
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-primary/5 to-transparent" />
 
-        <div className="lg:col-span-5 flex flex-col gap-6 relative z-10">
+        <div className="relative z-10 flex flex-col gap-6 lg:col-span-5">
           <div className="flex flex-col gap-4">
             <AnimatePresence mode="wait">
               <motion.div
@@ -73,32 +73,30 @@ export function FeatureCarousel() {
                 className="flex flex-col gap-4"
               >
                 <div
-                  className={`w-12 h-12 rounded-xl bg-background dark:bg-secondary  flex items-center justify-center shadow-sm ${translatedFeatures[active].color}`}
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl bg-background bg-secondary shadow-sm ${translatedFeatures[active].color}`}
                 >
                   {React.createElement(translatedFeatures[active].icon, { className: 'w-6 h-6' })}
                 </div>
-                <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground leading-tight">
+                <h3 className="text-3xl font-medium leading-tight tracking-tight text-foreground md:text-4xl">
                   {translatedFeatures[active].title}
                 </h3>
-                <p className="text-lg text-muted-foreground dark:text-muted-foreground font-medium leading-relaxed">
+                <p className="text-lg font-medium leading-relaxed text-muted-foreground">
                   {translatedFeatures[active].description}
                 </p>
               </motion.div>
             </AnimatePresence>
           </div>
 
-          <div className="flex items-center gap-4 mt-4">
-            <div className="flex gap-2 flex-wrap max-w-xs">
+          <div className="mt-4 flex items-center gap-4">
+            <div className="flex max-w-xs flex-wrap gap-2">
               {translatedFeatures.map((_, i) => (
                 <Button
                   key={i}
                   variant="ghost"
                   onClick={() => setActive(i)}
                   className={cn(
-                    'h-1.5 p-0 rounded-full transition-all duration-500 mb-2 min-w-0',
-                    i === active
-                      ? 'w-8 bg-primary hover:bg-primary'
-                      : 'w-2 bg-accent dark:bg-secondary hover:bg-secondary',
+                    'mb-2 h-1.5 min-w-0 rounded-full p-0 transition-all duration-500',
+                    i === active ? 'w-8 bg-primary hover:bg-primary' : 'w-2 bg-accent bg-secondary hover:bg-secondary',
                   )}
                 />
               ))}
@@ -106,7 +104,7 @@ export function FeatureCarousel() {
           </div>
         </div>
 
-        <div className="lg:col-span-7 flex items-center justify-center relative">
+        <div className="relative flex items-center justify-center lg:col-span-7">
           <AnimatePresence mode="wait">
             <motion.div
               key={translatedFeatures[active].id}

@@ -54,43 +54,43 @@ function SlackCallbackContent() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-secondary">
+      <div className="flex min-h-screen items-center justify-center bg-muted dark:bg-secondary">
         <LoadingSpinner size="lg" text="Processing Slack connection..." />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-secondary p-4">
-      <div className="bg-background dark:bg-secondary rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+    <div className="flex min-h-screen items-center justify-center bg-muted p-4 dark:bg-secondary">
+      <div className="w-full max-w-md rounded-lg bg-background p-8 text-center shadow-lg dark:bg-secondary">
         <div
-          className={`w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center ${
+          className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full ${
             status === 'success' ? 'bg-green-100 dark:bg-green-900/30' : 'bg-destructive/10 dark:bg-red-900/30'
           }`}
         >
           {status === 'success' ? (
-            <CheckCircle2 className="w-8 h-8 text-green-600" />
+            <CheckCircle2 className="h-8 w-8 text-green-600" />
           ) : (
-            <XCircle className="w-8 h-8 text-destructive" />
+            <XCircle className="h-8 w-8 text-destructive" />
           )}
         </div>
 
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <FaSlack className="w-6 h-6 text-[#4A154B]" />
+        <div className="mb-4 flex items-center justify-center gap-2">
+          <FaSlack className="h-6 w-6 text-[#4A154B]" />
           <h1 className="text-xl font-semibold text-foreground dark:text-primary-foreground">
             {status === 'success' ? 'Connected to Slack!' : 'Connection Failed'}
           </h1>
         </div>
 
-        <p className="text-muted-foreground dark:text-muted-foreground mb-2">{message}</p>
+        <p className="mb-2 text-muted-foreground dark:text-muted-foreground">{message}</p>
 
         {status === 'success' && teamName && (
-          <p className="text-sm text-muted-foreground mb-6">
+          <p className="mb-6 text-sm text-muted-foreground">
             Workspace: <span className="font-medium text-zinc-600 dark:text-zinc-300">{teamName}</span>
           </p>
         )}
 
-        <div className="flex flex-col gap-3 mt-6">
+        <div className="mt-6 flex flex-col gap-3">
           {status === 'success' ? (
             <Button onClick={handleGoToIntegrations} className="w-full">
               Go to Integrations
@@ -113,7 +113,7 @@ function SlackCallbackContent() {
 
 function SlackCallbackLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-secondary">
+    <div className="flex min-h-screen items-center justify-center bg-muted dark:bg-secondary">
       <LoadingSpinner size="lg" text="Loading..." />
     </div>
   )

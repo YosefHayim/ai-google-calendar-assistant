@@ -115,10 +115,10 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
   }
 
   return (
-    <div className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
       {/* Overlay: Simple Dim on Mobile, Hole-punch on Desktop */}
       <motion.div
-        className="absolute inset-0 bg-foreground/70 backdrop-blur-[2px] pointer-events-auto transition-all duration-500"
+        className="pointer-events-auto absolute inset-0 bg-foreground/70 backdrop-blur-[2px] transition-all duration-500"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         style={{
@@ -142,8 +142,8 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
           }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className={`fixed pointer-events-auto w-[92%] max-w-80 bg-background dark:bg-secondary rounded-2xl shadow-2xl p-6 flex flex-col gap-4 ${
-            isMobile || stepConfig.position === 'center' || !spotlightRect ? 'top-1/2 left-1/2' : 'absolute'
+          className={`pointer-events-auto fixed flex w-[92%] max-w-80 flex-col gap-4 rounded-2xl bg-background bg-secondary p-6 shadow-2xl ${
+            isMobile || stepConfig.position === 'center' || !spotlightRect ? 'left-1/2 top-1/2' : 'absolute'
           }`}
           style={
             !isMobile && stepConfig.position !== 'center' && spotlightRect
@@ -170,21 +170,17 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-foreground dark:text-primary-foreground mb-2 tracking-tight">
-              {step.title}
-            </h3>
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground font-medium leading-relaxed">
-              {step.content}
-            </p>
+            <h3 className="mb-2 text-xl font-bold tracking-tight text-foreground">{step.title}</h3>
+            <p className="text-sm font-medium leading-relaxed text-muted-foreground">{step.content}</p>
           </div>
 
-          <div className="flex items-center justify-between mt-4">
+          <div className="mt-4 flex items-center justify-between">
             <div className="flex gap-1.5">
               {TOUR_STEP_CONFIGS.map((_, i) => (
                 <div
                   key={i}
                   className={`h-1 rounded-full transition-all duration-300 ${
-                    i === currentStep ? 'w-6 bg-primary' : 'w-1 bg-accent dark:bg-secondary'
+                    i === currentStep ? 'w-6 bg-primary' : 'w-1 bg-accent bg-secondary'
                   }`}
                 />
               ))}
@@ -195,7 +191,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
                   <ChevronLeft size={16} />
                 </Button>
               )}
-              <Button onClick={next} className="shadow-lg shadow-primary/20 font-bold">
+              <Button onClick={next} className="font-bold shadow-lg shadow-primary/20">
                 {currentStep === TOUR_STEP_CONFIGS.length - 1 ? t('onboarding.startAudit') : t('onboarding.next')}
                 {currentStep < TOUR_STEP_CONFIGS.length - 1 && <ChevronRight size={16} />}
               </Button>

@@ -29,20 +29,20 @@ export const InputView: React.FC<InputViewProps> = ({ state }) => (
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
-    className="flex-1 flex flex-col items-center justify-center text-center"
+    className="flex flex-1 flex-col items-center justify-center text-center"
   >
     <div
-      className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
-        state === 'recording' ? 'bg-destructive/10 dark:bg-destructive/30' : 'bg-accent dark:bg-secondary'
+      className={`mb-4 flex h-16 w-16 items-center justify-center rounded-full ${
+        state === 'recording' ? 'bg-destructive/10/30' : 'bg-accent bg-secondary'
       }`}
     >
       {state === 'recording' ? (
-        <Mic className="w-8 h-8 text-destructive animate-pulse" />
+        <Mic className="h-8 w-8 animate-pulse text-destructive" />
       ) : (
-        <Calendar className="w-8 h-8 text-muted-foreground" />
+        <Calendar className="h-8 w-8 text-muted-foreground" />
       )}
     </div>
-    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+    <p className="text-sm text-muted-foreground">
       {state === 'recording' ? 'Listening... Speak your event details' : 'Type or speak your event details'}
     </p>
   </motion.div>
@@ -58,10 +58,10 @@ export const LoadingView: React.FC<LoadingViewProps> = ({ message }) => (
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
-    className="flex-1 flex flex-col items-center justify-center text-center"
+    className="flex flex-1 flex-col items-center justify-center text-center"
   >
-    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-      <Loader2 className="w-8 h-8 text-primary animate-spin" />
+    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
     </div>
     <p className="text-sm text-muted-foreground">{message}</p>
   </motion.div>
@@ -80,12 +80,12 @@ export const ConfirmView: React.FC<ConfirmViewProps> = ({ event, calendarName, m
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
-    className="flex-1 flex flex-col"
+    className="flex flex-1 flex-col"
   >
-    <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4">{message}</p>
+    <p className="mb-4 text-sm text-muted-foreground">{message}</p>
     <EventPreview event={event} calendarName={calendarName} />
-    <Button onClick={onConfirm} className="w-full bg-primary hover:bg-primary-hover text-white">
-      <Check className="w-4 h-4 mr-2" />
+    <Button onClick={onConfirm} className="w-full bg-primary text-foreground hover:bg-primary-hover">
+      <Check className="mr-2 h-4 w-4" />
       Add to Calendar
     </Button>
   </motion.div>
@@ -113,22 +113,22 @@ export const ConflictView: React.FC<ConflictViewProps> = ({
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
-    className="flex-1 flex flex-col"
+    className="flex flex-1 flex-col"
   >
-    <p className="text-sm text-secondary dark:text-secondary mb-3">{message}</p>
+    <p className="mb-3 text-sm text-secondary">{message}</p>
     <EventPreview event={event} calendarName={calendarName} />
     {conflicts.length > 0 && (
-      <div className="mb-3 p-2 bg-secondary/5 dark:bg-secondary/20 rounded border-secondary/20 dark:border-secondary">
-        <p className="text-xs font-medium text-secondary dark:text-secondary mb-1">Conflicts with:</p>
+      <div className="mb-3 rounded border-secondary/20 bg-secondary/20 bg-secondary/5 p-2">
+        <p className="mb-1 text-xs font-medium text-secondary">Conflicts with:</p>
         {conflicts.slice(0, 3).map((c) => (
-          <p key={c.id} className="text-xs text-secondary dark:text-secondary">
+          <p key={c.id} className="text-xs text-secondary">
             • {c.summary}
           </p>
         ))}
       </div>
     )}
     <div className="space-y-2">
-      <Button onClick={onConfirm} className="w-full bg-secondary hover:bg-secondary text-white">
+      <Button onClick={onConfirm} className="w-full bg-secondary text-foreground hover:bg-secondary">
         Create Anyway
       </Button>
       <Button onClick={onCancel} variant="outline" className="w-full">
@@ -151,21 +151,21 @@ export const SuccessView: React.FC<SuccessViewProps> = ({ message, calendarName,
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
     exit={{ opacity: 0, scale: 0.9 }}
-    className="flex-1 flex flex-col items-center justify-center text-center"
+    className="flex flex-1 flex-col items-center justify-center text-center"
   >
-    <div className="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/30 flex items-center justify-center mb-4">
-      <Check className="w-8 h-8 text-primary dark:text-primary" />
+    <div className="bg-primary/10/30 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+      <Check className="h-8 w-8 text-primary" />
     </div>
-    <p className="text-sm font-medium text-primary dark:text-primary">{message}</p>
-    {calendarName && <p className="text-xs text-muted-foreground mt-1">Added to {calendarName}</p>}
+    <p className="text-sm font-medium text-primary">{message}</p>
+    {calendarName && <p className="mt-1 text-xs text-muted-foreground">Added to {calendarName}</p>}
     {eventUrl && (
       <a
         href={eventUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-3 text-sm text-primary hover:underline flex items-center gap-1"
+        className="mt-3 flex items-center gap-1 text-sm text-primary hover:underline"
       >
-        <ExternalLink className="w-4 h-4" />
+        <ExternalLink className="h-4 w-4" />
         View in Google Calendar
       </a>
     )}
@@ -186,12 +186,12 @@ export const ErrorView: React.FC<ErrorViewProps> = ({ message, onRetry }) => (
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
-    className="flex-1 flex flex-col items-center justify-center text-center"
+    className="flex flex-1 flex-col items-center justify-center text-center"
   >
-    <div className="w-16 h-16 rounded-full bg-destructive/10 dark:bg-destructive/30 flex items-center justify-center mb-4">
-      <AlertCircle className="w-8 h-8 text-destructive dark:text-destructive" />
+    <div className="bg-destructive/10/30 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+      <AlertCircle className="h-8 w-8 text-destructive" />
     </div>
-    <p className="text-sm text-destructive dark:text-destructive mb-4">{message}</p>
+    <p className="mb-4 text-sm text-destructive">{message}</p>
     <Button onClick={onRetry} variant="outline" size="sm">
       Try Again
     </Button>

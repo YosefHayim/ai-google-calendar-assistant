@@ -31,31 +31,27 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
+      <DialogContent className="flex max-h-[85vh] max-w-lg flex-col gap-0 overflow-hidden p-0">
         <div className="h-1 w-full shrink-0 bg-primary" />
 
         <DialogHeader className="p-6 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 bg-primary/20">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/20">
               <CalendarDays size={20} className="text-primary" />
             </div>
             <div className="flex-1 text-left">
-              <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">
-                {title}
-              </DialogTitle>
+              <DialogTitle className="text-xl font-bold text-foreground">{title}</DialogTitle>
               <DialogDescription className="sr-only">Events for {title}</DialogDescription>
-              {subtitle && (
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-0.5">{subtitle}</p>
-              )}
+              {subtitle && <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>}
 
-              <div className="flex flex-wrap gap-4 mt-2">
-                <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
+              <div className="mt-2 flex flex-wrap gap-4">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Hash size={12} className="text-primary" />
                   <span>
                     {events.length} event{events.length !== 1 ? 's' : ''}
                   </span>
                 </div>
-                <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Hourglass size={12} className="text-primary" />
                   <span>Total: {formatHours(totalHours)}</span>
                 </div>
@@ -78,45 +74,45 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                   key={event.id}
                   onClick={() => handleEventClick(event.htmlLink)}
                   className={cn(
-                    'flex items-start gap-3 group rounded-lg p-3 bg-muted dark:bg-secondary/50 transition-colors',
-                    event.htmlLink && 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary',
+                    'group flex items-start gap-3 rounded-lg bg-muted bg-secondary/50 p-3 transition-colors',
+                    event.htmlLink && 'cursor-pointer hover:bg-secondary',
                   )}
                 >
                   <div
-                    className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                    className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md"
                     style={{ backgroundColor: `${event.calendarColor}20` }}
                   >
                     <CalendarDays size={16} style={{ color: event.calendarColor }} />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-foreground truncate flex-1">{event.summary}</p>
+                      <p className="flex-1 truncate text-sm font-semibold text-foreground">{event.summary}</p>
                       {event.htmlLink && (
-                        <ExternalLink className="w-3.5 h-3.5 text-muted-foreground dark:text-muted-foreground shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                      <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-1">
+                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <CalendarDays size={12} />
                         <span>{formatDate(event.eventDate, 'WEEKDAY_SHORT')}</span>
                       </div>
                       <span className="text-muted-foreground">•</span>
-                      <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-1">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Clock size={12} />
                         <span>{formatTimeRange(event.startTime, event.endTime)}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-1">
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Hourglass size={12} />
                         <span className="font-medium">{formatDuration(event.durationMinutes)}</span>
                       </div>
                       <span className="text-muted-foreground">•</span>
-                      <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-1">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Calendar size={12} />
-                        <span className="truncate max-w-[150px]">{event.calendarName}</span>
+                        <span className="max-w-[150px] truncate">{event.calendarName}</span>
                       </div>
                     </div>
                   </div>

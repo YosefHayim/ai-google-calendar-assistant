@@ -209,27 +209,25 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
         <CardDescription>{t('settings.generalDescription', 'Manage your profile and preferences.')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="flex flex-wrap items-center gap-4 pb-4 border-b   sm:flex-nowrap">
+        <div className="flex flex-wrap items-center gap-4 border-b pb-4 sm:flex-nowrap">
           {avatarUrl ? (
             <Image
               src={avatarUrl}
               alt={fullName}
               width={56}
               height={56}
-              className="rounded-xl object-cover flex-shrink-0"
+              className="flex-shrink-0 rounded-xl object-cover"
             />
           ) : (
-            <div className="h-14 w-14 rounded-xl bg-accent flex items-center justify-center flex-shrink-0">
+            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-accent">
               <span className="text-lg font-medium text-foreground">{initials}</span>
             </div>
           )}
-          <div className="flex-1 min-w-0">
-            <h4 className="text-base font-semibold text-foreground dark:text-primary-foreground truncate">
-              {fullName}
-            </h4>
-            <p className="text-sm text-muted-foreground truncate">{email}</p>
+          <div className="min-w-0 flex-1">
+            <h4 className="truncate text-base font-semibold text-foreground">{fullName}</h4>
+            <p className="truncate text-sm text-muted-foreground">{email}</p>
             {createdAt && (
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {t('settings.memberSince', 'Member since')}{' '}
                 {new Date(createdAt).toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })}
               </p>
@@ -247,7 +245,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="language"
             title={t('settings.language', 'Language')}
             tooltip={t('settings.languageTooltip', 'Choose your preferred language for the interface')}
-            icon={<Languages size={18} className="text-foreground dark:text-primary" />}
+            icon={<Languages size={18} className="text-foreground" />}
             control={
               <SettingsDropdown
                 id="language-dropdown"
@@ -262,18 +260,18 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="appearance"
             title={t('settings.appearance', 'Appearance')}
             tooltip={t('settings.appearanceTooltip', 'Choose your preferred color theme for the interface')}
-            icon={<Palette size={18} className="text-foreground dark:text-primary" />}
+            icon={<Palette size={18} className="text-foreground" />}
             control={
               <SettingsDropdown
                 id="appearance-dropdown"
                 value={appearance}
                 options={[
-                  { value: 'light', label: t('settings.themeLight', 'Light'), icon: <Sun className="w-4 h-4" /> },
-                  { value: 'dark', label: t('settings.themeDark', 'Dark'), icon: <Moon className="w-4 h-4" /> },
+                  { value: 'light', label: t('settings.themeLight', 'Light'), icon: <Sun className="h-4 w-4" /> },
+                  { value: 'dark', label: t('settings.themeDark', 'Dark'), icon: <Moon className="h-4 w-4" /> },
                   {
                     value: 'system',
                     label: t('settings.themeSystem', 'System'),
-                    icon: <Monitor className="w-4 h-4" />,
+                    icon: <Monitor className="h-4 w-4" />,
                   },
                 ]}
                 onChange={handleAppearanceChange}
@@ -288,7 +286,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
               'settings.timezoneTooltip',
               'Events will be scheduled in this timezone unless specified otherwise',
             )}
-            icon={<Globe size={18} className="text-foreground dark:text-primary" />}
+            icon={<Globe size={18} className="text-foreground" />}
             control={
               <SettingsDropdown
                 id="timezone-dropdown"
@@ -307,7 +305,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="time-format"
             title={t('settings.timeFormat', 'Time Format')}
             tooltip={t('settings.timeFormatTooltip', 'Display format for event times throughout the app')}
-            icon={<Clock size={18} className="text-foreground dark:text-primary" />}
+            icon={<Clock size={18} className="text-foreground" />}
             control={
               <SettingsDropdown
                 id="time-format-dropdown"
@@ -330,7 +328,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
               'settings.realTimeLocationTooltip',
               'When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)',
             )}
-            icon={<MapPin size={18} className="text-foreground dark:text-primary" />}
+            icon={<MapPin size={18} className="text-foreground" />}
             control={
               <CinematicGlowToggle
                 id={geoLocationToggleId}

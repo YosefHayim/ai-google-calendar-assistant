@@ -79,10 +79,10 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   }
 
   return (
-    <div className="absolute inset-0 z-10 dark:bg-secondary flex flex-col items-center p-4 overflow-hidden">
+    <div className="absolute inset-0 z-10 flex flex-col items-center overflow-hidden bg-secondary p-4">
       <div
         className={cn(
-          'flex flex-col items-center justify-center transition-all duration-700 w-full shrink-0',
+          'flex w-full shrink-0 flex-col items-center justify-center transition-all duration-700',
           hasConversation ? 'h-[35%] min-h-[180px]' : 'flex-1',
         )}
       >
@@ -101,7 +101,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col flex-1 w-full items-center justify-center"
+            className="flex w-full flex-1 flex-col items-center justify-center"
           >
             <EmptyState
               icon={<MessageSquare />}
@@ -116,25 +116,25 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="flex flex-col w-full flex-1 border-t px-4 sm:px-8 py-4 overflow-y-auto"
+            className="flex w-full flex-1 flex-col overflow-y-auto border-t px-4 py-4 sm:px-8"
           >
-            <div className="flex items-center gap-2 mb-4 text-muted-foreground font-bold text-xs uppercase tracking-widest">
-              <MessageSquare className="w-3.5 h-3.5" /> {t('chat.avatarView.liveContext')}
+            <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              <MessageSquare className="h-3.5 w-3.5" /> {t('chat.avatarView.liveContext')}
             </div>
             <div className="flex-1 space-y-2">
               {messages.map((msg) => {
                 const isEditing = editingMessageId === msg.id
 
                 return (
-                  <div key={msg.id} className="animate-in fade-in slide-in-from-bottom-2 duration-300 flex flex-col">
+                  <div key={msg.id} className="flex flex-col duration-300 animate-in fade-in slide-in-from-bottom-2">
                     {isEditing ? (
-                      <div className="flex flex-col gap-2 ml-auto mr-0 max-w-[90%] w-full">
+                      <div className="ml-auto mr-0 flex w-full max-w-[90%] flex-col gap-2">
                         <textarea
                           ref={editInputRef}
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
                           onKeyDown={handleKeyDown}
-                          className="p-3 rounded-xl text-xs leading-relaxed bg-primary/10 text-foreground dark:text-primary-foreground border-2 border-primary rounded-tr-none resize-none min-h-[60px] focus:outline-none focus:ring-2 focus:ring-primary/50"
+                          className="min-h-[60px] resize-none rounded-xl rounded-tr-none border-2 border-primary bg-primary/10 p-3 text-xs leading-relaxed text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                           rows={Math.min(5, editText.split('\n').length + 1)}
                         />
                         <div className="flex justify-end gap-2">
@@ -160,10 +160,10 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                     ) : (
                       <div
                         className={cn(
-                          'p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm',
+                          'max-w-[90%] rounded-xl p-3 text-xs leading-relaxed shadow-sm',
                           msg.role === 'assistant'
-                            ? 'bg-secondary dark:bg-secondary text-foreground ml-0 mr-auto rounded-tl-none'
-                            : 'bg-primary text-white ml-auto mr-0 rounded-tr-none',
+                            ? 'ml-0 mr-auto rounded-tl-none bg-secondary text-foreground'
+                            : 'ml-auto mr-0 rounded-tr-none bg-primary text-primary-foreground',
                         )}
                       >
                         {msg.content}

@@ -57,15 +57,15 @@ const LazyImage = ({ src, alt, className, whileHover, transition }: LazyImagePro
   const handleError = () => setHasError(true)
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div ref={containerRef} className="relative h-full w-full">
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 bg-muted animate-pulse rounded-xl flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin opacity-50" />
+        <div className="absolute inset-0 flex animate-pulse items-center justify-center rounded-xl bg-muted">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent opacity-50" />
         </div>
       )}
       {hasError && (
-        <div className="absolute inset-0 bg-muted rounded-xl flex items-center justify-center">
-          <div className="text-muted-foreground text-sm">Failed to load image</div>
+        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-muted">
+          <div className="text-sm text-muted-foreground">Failed to load image</div>
         </div>
       )}
       {isInView && (
@@ -126,7 +126,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
       <section
         ref={ref}
         className={cn(
-          'w-full max-w-6xl mx-auto p-6 md:p-12 rounded-2xl bg-muted dark:bg-secondary  overflow-hidden',
+          'mx-auto w-full max-w-6xl overflow-hidden rounded-2xl bg-muted bg-secondary p-6 md:p-12',
           className,
         )}
         aria-labelledby={uniqueHeadingId}
@@ -134,7 +134,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
       >
         <div
           className={cn(
-            'grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center',
+            'grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-12',
             reverse && 'md:[&>*:first-child]:order-2',
           )}
         >
@@ -143,7 +143,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="flex flex-col space-y-4 md:space-y-6 text-center md:text-left items-center md:items-start"
+            className="flex flex-col items-center space-y-4 text-center md:items-start md:space-y-6 md:text-left"
           >
             <div className="flex items-center space-x-2 text-sm font-medium text-primary">
               {preheaderIcon}
@@ -151,7 +151,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
             </div>
             <motion.h2
               id={uniqueHeadingId}
-              className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-foreground dark:text-primary-foreground"
+              className="text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -160,7 +160,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
               {heading}
             </motion.h2>
             <motion.p
-              className="text-base md:text-lg text-muted-foreground dark:text-muted-foreground leading-relaxed"
+              className="text-base leading-relaxed text-muted-foreground md:text-lg"
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -183,7 +183,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
           </motion.div>
 
           <motion.div
-            className="relative w-full min-h-[200px] md:min-h-[280px] flex items-center justify-center"
+            className="relative flex min-h-[200px] w-full items-center justify-center md:min-h-[280px]"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{ perspective: 1000 }}
@@ -197,12 +197,12 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
                 transformStyle: 'preserve-3d',
               }}
               transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-              className="w-full max-w-sm relative"
+              className="relative w-full max-w-sm"
             >
               <LazyImage
                 src={imageUrl}
                 alt={imageAlt}
-                className="w-full object-contain rounded-xl"
+                className="w-full rounded-xl object-contain"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
               />

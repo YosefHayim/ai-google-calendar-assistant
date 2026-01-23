@@ -83,11 +83,11 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
     >
-      <Card className="h-full hover:shadow-md transition-shadow">
+      <Card className="h-full transition-shadow hover:shadow-md">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base font-semibold">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 {formatDuration(gap.durationMinutes)}
               </CardTitle>
@@ -110,7 +110,7 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
             <div className="flex flex-col items-end gap-2">
               <Badge
                 variant="secondary"
-                className={`text-xs font-medium ${getConfidenceColor(gap.confidence)} text-white`}
+                className={`text-xs font-medium ${getConfidenceColor(gap.confidence)} text-foreground`}
               >
                 {getConfidenceLabel(gap.confidence)} ({confidencePercentage}%)
               </Badge>
@@ -123,14 +123,14 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
           <div className="space-y-3">
             {gap.precedingEventSummary && (
               <div className="flex items-center gap-2 text-sm">
-                <ArrowRight className="h-3 w-3 text-muted-foreground rotate-90" />
+                <ArrowRight className="h-3 w-3 rotate-90 text-muted-foreground" />
                 <span className="text-muted-foreground">After:</span>
                 <span className="truncate">{gap.precedingEventSummary}</span>
               </div>
             )}
 
             <div className="flex items-center gap-2 text-sm">
-              <ArrowRight className="h-3 w-3 text-muted-foreground -rotate-90" />
+              <ArrowRight className="h-3 w-3 -rotate-90 text-muted-foreground" />
               <span className="text-muted-foreground">Before:</span>
               <span className="truncate">{gap.followingEventSummary}</span>
             </div>
@@ -138,11 +138,11 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
 
           {/* Suggestion */}
           {gap.suggestion && (
-            <div className="bg-primary/5 dark:bg-primary/10 rounded-lg p-3">
+            <div className="bg-primary/5/10 rounded-lg p-3">
               <div className="flex items-start gap-2">
-                <Zap className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <Zap className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                 <div>
-                  <p className="text-sm font-medium text-primary mb-1">AI Suggestion</p>
+                  <p className="mb-1 text-sm font-medium text-primary">AI Suggestion</p>
                   <p className="text-sm text-primary/80">{gap.suggestion}</p>
                 </div>
               </div>

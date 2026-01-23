@@ -194,14 +194,14 @@ export function AIVoiceInput({
 
   return (
     <div className={cn('w-full py-4', className)}>
-      <div className="relative max-w-xl w-full mx-auto flex items-center flex-col gap-2">
+      <div className="relative mx-auto flex w-full max-w-xl flex-col items-center gap-2">
         <button
           className={cn(
-            'group w-16 h-16 rounded-xl flex items-center justify-center transition-colors',
+            'group flex h-16 w-16 items-center justify-center rounded-xl transition-colors',
             isRecordingProp
               ? 'bg-none' // No specific background when active, the spinner is the focus
-              : 'bg-none hover:bg-foreground/10 dark:hover:bg-background/10',
-            isButtonDisabled && 'opacity-50 cursor-not-allowed',
+              : 'bg-none hover:bg-background/10 hover:bg-foreground/10',
+            isButtonDisabled && 'cursor-not-allowed opacity-50',
           )}
           type="button"
           onClick={handleClick}
@@ -210,32 +210,30 @@ export function AIVoiceInput({
         >
           {isRecordingProp ? (
             <div
-              className="w-6 h-6 rounded-sm animate-spin bg-primary dark:bg-primary cursor-pointer pointer-events-auto"
+              className="pointer-events-auto h-6 w-6 animate-spin cursor-pointer rounded-sm bg-primary"
               style={{ animationDuration: '3s' }}
             />
           ) : (
-            <Mic className="w-6 h-6 text-black/70 dark:text-white/70" />
+            <Mic className="h-6 w-6 text-foreground/70" />
           )}
         </button>
 
         <span
           className={cn(
             'font-mono text-sm transition-opacity duration-300',
-            isRecordingProp ? 'text-black/70 dark:text-white/70' : 'text-black/30 dark:text-white/30',
+            isRecordingProp ? 'text-foreground/70' : 'text-foreground/30',
           )}
         >
           {formatTime(time)}
         </span>
 
-        <div className="h-8 w-64 flex items-center justify-center gap-0.5">
+        <div className="flex h-8 w-64 items-center justify-center gap-0.5">
           {audioLevels.map((level, i) => (
             <div
               key={i}
               className={cn(
                 'w-0.5 rounded-full transition-all',
-                isRecordingProp
-                  ? 'bg-primary dark:bg-primary duration-75'
-                  : 'bg-foreground/10 dark:bg-background/10 duration-300 h-1',
+                isRecordingProp ? 'bg-primary duration-75' : 'h-1 bg-background/10 bg-foreground/10 duration-300',
               )}
               style={
                 isRecordingProp && isClient
@@ -248,7 +246,7 @@ export function AIVoiceInput({
           ))}
         </div>
 
-        <p className="h-4 text-xs text-black/70 dark:text-white/70">
+        <p className="h-4 text-xs text-foreground/70">
           {speechRecognitionError ? (
             <span className="text-destructive">{speechRecognitionError}</span>
           ) : isRecordingProp ? (

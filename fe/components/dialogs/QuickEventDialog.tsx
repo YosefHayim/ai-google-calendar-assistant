@@ -207,19 +207,17 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl w-[95vw] sm:w-full p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border ">
+      <DialogContent className="w-[95vw] max-w-2xl gap-0 overflow-hidden border bg-background bg-secondary p-0 sm:w-full">
         <DialogHeader className="sr-only">
           <DialogTitle>{t('dialogs.quickEvent.title')}</DialogTitle>
           <DialogDescription>{t('dialogs.quickEvent.description')}</DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col sm:flex-row min-h-[400px] sm:min-h-[500px]">
-          <div className="flex-1 p-4 sm:p-6 flex flex-col border-r sm:border-r">
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">
-                {t('dialogs.quickEvent.title')}
-              </h3>
+        <div className="flex min-h-[400px] flex-col sm:min-h-[500px] sm:flex-row">
+          <div className="flex flex-1 flex-col border-r p-4 sm:border-r sm:p-6">
+            <div className="mb-4 flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary" />
+              <h3 className="text-lg font-semibold text-foreground">{t('dialogs.quickEvent.title')}</h3>
             </div>
 
             <div className="relative flex-1">
@@ -233,7 +231,7 @@ ${t('dialogs.quickEvent.examples')}
 • ${t('dialogs.quickEvent.example1')}
 • ${t('dialogs.quickEvent.example2')}
 • ${t('dialogs.quickEvent.example3')}`}
-                className="w-full h-full resize-none bg-muted dark:bg-secondary rounded-lg p-4 pr-12 text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="h-full w-full resize-none rounded-lg bg-muted bg-secondary p-4 pr-12 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 disabled={isDisabled}
               />
               <Button
@@ -244,15 +242,15 @@ ${t('dialogs.quickEvent.examples')}
                 disabled={isDisabled}
                 className={`absolute right-3 top-3 rounded-full ${
                   state === 'recording'
-                    ? 'bg-destructive text-white animate-pulse hover:bg-destructive'
+                    ? 'animate-pulse bg-destructive text-foreground hover:bg-destructive'
                     : 'bg-accent text-muted-foreground hover:bg-muted'
                 }`}
               >
-                {state === 'recording' ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                {state === 'recording' ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
               </Button>
             </div>
 
-            <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-muted-foreground">
                 {state === 'recording' ? t('dialogs.quickEvent.recording') : t('dialogs.quickEvent.pressEnter')}
               </p>
@@ -265,12 +263,12 @@ ${t('dialogs.quickEvent.examples')}
               >
                 {state === 'parsing' || state === 'transcribing' ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     {t('dialogs.quickEvent.processing')}
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 mr-2" />
+                    <Sparkles className="mr-2 h-4 w-4" />
                     {t('dialogs.quickEvent.createEvent')}
                   </>
                 )}
@@ -278,15 +276,13 @@ ${t('dialogs.quickEvent.examples')}
             </div>
           </div>
 
-          <div className="w-full sm:w-72 p-4 sm:p-6 bg-muted dark:bg-secondary/50 flex flex-col border-t sm:border-t-0 sm:border-l border ">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-secondary dark:bg-background rounded-lg flex items-center justify-center">
-                <AllyLogo className="w-6 h-6 text-white dark:text-foreground" />
+          <div className="flex w-full flex-col border border-t bg-muted bg-secondary/50 p-4 sm:w-72 sm:border-l sm:border-t-0 sm:p-6">
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background bg-secondary">
+                <AllyLogo className="h-6 w-6 text-foreground" />
               </div>
               <div>
-                <h4 className="font-semibold text-foreground dark:text-primary-foreground">
-                  {t('dialogs.quickEvent.ally')}
-                </h4>
+                <h4 className="font-semibold text-foreground">{t('dialogs.quickEvent.ally')}</h4>
                 <p className="text-xs text-muted-foreground">{t('dialogs.quickEvent.yourAIAssistant')}</p>
               </div>
             </div>

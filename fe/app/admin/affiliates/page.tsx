@@ -57,7 +57,7 @@ export default function AdminAffiliatesPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-2xl text-foreground dark:text-white">Affiliate Program</h1>
+          <h1 className="text-2xl font-bold text-foreground dark:text-white">Affiliate Program</h1>
           <p className="mt-1 text-muted-foreground dark:text-muted-foreground">
             View affiliates and program settings. Manage affiliates in Lemon Squeezy.
           </p>
@@ -92,56 +92,56 @@ export default function AdminAffiliatesPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 -emerald-900/30 dark:from-emerald-950/20 dark:to-zinc-900">
+        <Card className="-emerald-900/30 border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 dark:from-emerald-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-emerald-100 p-2.5 dark:bg-emerald-900/40">
               <Percent className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground">Commission Rate</p>
-              <p className="font-bold text-2xl text-foreground dark:text-white">
+              <p className="text-2xl font-bold text-foreground dark:text-white">
                 {settingsLoading ? '—' : `${settingsData?.settings.commissionRate}%`}
               </p>
             </div>
           </div>
         </Card>
 
-        <Card className="border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 -blue-900/30 dark:from-blue-950/20 dark:to-zinc-900">
+        <Card className="-blue-900/30 border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 dark:from-blue-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-primary/10 p-2.5 dark:bg-blue-900/40">
               <Clock className="h-5 w-5 text-primary dark:text-blue-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground">Tracking Length</p>
-              <p className="font-bold text-2xl text-foreground dark:text-white">
+              <p className="text-2xl font-bold text-foreground dark:text-white">
                 {settingsLoading ? '—' : `${settingsData?.settings.trackingLength} days`}
               </p>
             </div>
           </div>
         </Card>
 
-        <Card className="border-amber-100 bg-gradient-to-br from-amber-50 to-white p-5 -amber-900/30 dark:from-amber-950/20 dark:to-zinc-900">
+        <Card className="-amber-900/30 border-amber-100 bg-gradient-to-br from-amber-50 to-white p-5 dark:from-amber-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-amber-100 p-2.5 dark:bg-amber-900/40">
               <DollarSign className="h-5 w-5 text-amber-700 dark:text-amber-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground">Minimum Payout</p>
-              <p className="font-bold text-2xl text-foreground dark:text-white">
+              <p className="text-2xl font-bold text-foreground dark:text-white">
                 {settingsLoading ? '—' : formatCurrency(settingsData?.settings.minimumPayout ?? 0)}
               </p>
             </div>
           </div>
         </Card>
 
-        <Card className="border-violet-100 bg-gradient-to-br from-violet-50 to-white p-5 -violet-900/30 dark:from-violet-950/20 dark:to-zinc-900">
+        <Card className="-violet-900/30 border-violet-100 bg-gradient-to-br from-violet-50 to-white p-5 dark:from-violet-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-violet-100 p-2.5 dark:bg-violet-900/40">
               <Users2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground">Total Affiliates</p>
-              <p className="font-bold text-2xl text-foreground dark:text-white">
+              <p className="text-2xl font-bold text-foreground dark:text-white">
                 {isLoading ? '—' : (data?.total ?? 0)}
               </p>
             </div>
@@ -178,7 +178,7 @@ export default function AdminAffiliatesPage() {
       <Card className="p-4">
         <div className="flex flex-wrap gap-4">
           <div className="relative min-w-48 flex-1">
-            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               className="pl-10"
               onChange={(e) => {
@@ -190,7 +190,7 @@ export default function AdminAffiliatesPage() {
             />
           </div>
           <select
-            className="rounded-md border bg-background px-3 py-2 text-sm -zinc-700 dark:bg-secondary"
+            className="-zinc-700 rounded-md border bg-background px-3 py-2 text-sm dark:bg-secondary"
             onChange={(e) => {
               setStatusFilter(e.target.value as AffiliateStatus | '')
               setPage(1)
@@ -207,14 +207,14 @@ export default function AdminAffiliatesPage() {
 
       <Card>
         {isLoading ? (
-          <div className="p-8 flex justify-center">
+          <div className="flex justify-center p-8">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b -zinc-700">
+                <thead className="-zinc-700 border-b">
                   <tr>
                     <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
                       Affiliate
@@ -239,13 +239,13 @@ export default function AdminAffiliatesPage() {
                 <tbody>
                   {data?.affiliates.map((affiliate) => (
                     <tr
-                      className="border-zinc-100 border-b hover:bg-muted  dark:hover:bg-secondary/50"
+                      className="border-b border-zinc-100 hover:bg-muted dark:hover:bg-secondary/50"
                       key={affiliate.id}
                     >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent dark:bg-zinc-700">
-                            <span className="font-medium text-sm text-zinc-600 dark:text-zinc-300">
+                            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
                               {affiliate.userName?.[0]?.toUpperCase() || affiliate.userEmail[0].toUpperCase()}
                             </span>
                           </div>
@@ -260,10 +260,10 @@ export default function AdminAffiliatesPage() {
                       <td className="p-4">
                         <StatusBadge status={affiliate.status} />
                       </td>
-                      <td className="p-4 font-medium text-sm text-foreground dark:text-white">
+                      <td className="p-4 text-sm font-medium text-foreground dark:text-white">
                         {formatCurrency(affiliate.totalEarnings)}
                       </td>
-                      <td className="p-4 font-medium text-sm text-foreground dark:text-white">
+                      <td className="p-4 text-sm font-medium text-foreground dark:text-white">
                         {formatCurrency(affiliate.unpaidEarnings)}
                       </td>
                       <td className="p-4">
@@ -287,7 +287,7 @@ export default function AdminAffiliatesPage() {
               </table>
             </div>
 
-            <div className="flex items-center justify-between border-t p-4 -zinc-700">
+            <div className="-zinc-700 flex items-center justify-between border-t p-4">
               <p className="text-sm text-muted-foreground">
                 Showing {data?.affiliates.length || 0} of {data?.total || 0} affiliates
               </p>
@@ -374,7 +374,7 @@ function AffiliateSettingsContent({
         </div>
         <p className="text-sm text-muted-foreground">Anyone can apply to be your affiliate with this link</p>
         <div className="flex items-center gap-2">
-          <div className="flex-1 rounded-md border bg-muted px-3 py-2 font-mono text-sm -zinc-700 dark:bg-secondary">
+          <div className="-zinc-700 flex-1 rounded-md border bg-muted px-3 py-2 font-mono text-sm dark:bg-secondary">
             {settings.affiliateHubUrl}
           </div>
           <CopyButton label="Copy" text={settings.affiliateHubUrl} />
@@ -397,9 +397,9 @@ function AffiliateSettingsContent({
         </div>
         <p className="text-sm text-muted-foreground">Set your default affiliate URL</p>
         <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-md border bg-muted -zinc-700 dark:bg-secondary">
+          <div className="-zinc-700 flex items-center rounded-md border bg-muted dark:bg-secondary">
             <span className="px-3 py-2 text-sm text-muted-foreground">https://</span>
-            <div className="border-l px-3 py-2 font-mono text-sm -zinc-700">{settings.storeDomain}</div>
+            <div className="-zinc-700 border-l px-3 py-2 font-mono text-sm">{settings.storeDomain}</div>
           </div>
           <CopyButton label="Copy" text={`https://${settings.storeDomain}`} />
         </div>
@@ -423,16 +423,16 @@ function AffiliateSettingsContent({
           Copy and paste the tracking code into the {'<head>'} or before the closing body tag of your website
         </p>
         <div className="relative">
-          <pre className="overflow-x-auto rounded-md border bg-secondary p-4 font-mono text-sm text-primary-foreground -zinc-700">
+          <pre className="-zinc-700 overflow-x-auto rounded-md border bg-secondary p-4 font-mono text-sm text-primary-foreground">
             <code>{settings.trackingScript}</code>
           </pre>
-          <div className="absolute top-2 right-2">
+          <div className="absolute right-2 top-2">
             <CopyButton label="Copy Code" text={settings.trackingScript} />
           </div>
         </div>
       </div>
 
-      <div className="border-t pt-4 -zinc-700">
+      <div className="-zinc-700 border-t pt-4">
         <p className="mb-3 text-sm text-muted-foreground">Manage your affiliate program in Lemon Squeezy</p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">

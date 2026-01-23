@@ -43,7 +43,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
   }
 
   return (
-    <div className="space-y-6 max-h-[calc(83vh-10rem)] overflow-y-auto h-full">
+    <div className="h-full max-h-[calc(83vh-10rem)] space-y-6 overflow-y-auto">
       <AllyBrainSection toggleId={allyBrainToggleId} />
       <MemoryManagementSection toggleId={contextualToggleId} />
       <VoiceSettingsSection toggleId={voiceToggleId} />

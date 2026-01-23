@@ -34,7 +34,7 @@ export function WeekView({
   const hasNoEvents = events.length === 0
 
   return (
-    <Card className="overflow-auto relative">
+    <Card className="relative overflow-auto">
       {hasNoEvents && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <EmptyState
@@ -72,7 +72,7 @@ export function WeekView({
                 <div
                   key={`${day.toISOString()}-${hour}`}
                   className={cn(
-                    'min-h-10 border-b border-r p-0.5 transition-colors last:border-r-0 touch-manipulation',
+                    'min-h-10 touch-manipulation border-b border-r p-0.5 transition-colors last:border-r-0',
                     'sm:min-h-12 md:min-h-16',
                     'sm:p-0.5 md:p-1',
                     'hover:bg-accent/50 active:bg-accent/70',

@@ -18,15 +18,15 @@ export function StepContent({ step }: StepContentProps) {
         transition={{ duration: 0.3 }}
         className="text-center"
       >
-        <div className="flex justify-center mb-6">
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 text-primary">
+        <div className="mb-6 flex justify-center">
+          <div className="rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 p-4 text-primary">
             {step.icon}
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-foreground dark:text-white mb-2">{step.title}</h2>
-        <p className="text-sm text-primary font-medium mb-4">{step.description}</p>
-        <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">{step.content}</p>
+        <h2 className="mb-2 text-2xl font-bold text-foreground">{step.title}</h2>
+        <p className="mb-4 text-sm font-medium text-primary">{step.description}</p>
+        <p className="leading-relaxed text-muted-foreground">{step.content}</p>
       </motion.div>
     </AnimatePresence>
   )

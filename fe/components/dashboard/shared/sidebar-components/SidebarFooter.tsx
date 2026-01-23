@@ -42,24 +42,24 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   const avatarUrl = userInfo?.avatarUrl
 
   return (
-    <div className="p-4 border-t border ">
+    <div className="border border-t p-4">
       <div className={cn('flex items-center gap-2', !isOpen && 'md:justify-center')}>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <UserProfileCard isOpen={isOpen} />
         </div>
         {isOpen && (
-          <NotificationInbox triggerClassName="text-muted-foreground dark:text-muted-foreground flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0" />
+          <NotificationInbox triggerClassName="text-muted-foreground text-muted-foreground flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0" />
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="text-muted-foreground dark:text-muted-foreground flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0"
+              className="min-h-[44px] min-w-[44px] flex-shrink-0 text-muted-foreground md:min-h-0 md:min-w-0"
               onClick={(e) => e.stopPropagation()}
               suppressHydrationWarning
             >
-              <MoreHorizontal className="w-5 h-5" />
+              <MoreHorizontal className="h-5 w-5" />
               <span className="sr-only">More options</span>
             </Button>
           </DropdownMenuTrigger>
@@ -72,14 +72,14 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                     alt={fullName}
                     width={32}
                     height={32}
-                    className="rounded-lg object-cover flex-shrink-0 h-8 w-8"
+                    className="h-8 w-8 flex-shrink-0 rounded-lg object-cover"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-accent">
                     <span className="text-xs font-medium text-muted-foreground">{initials}</span>
                   </div>
                 )}
-                <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
+                <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{fullName}</span>
                   <span className="truncate text-xs text-muted-foreground">{email}</span>
                 </div>
@@ -89,7 +89,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
 
             <DropdownMenuGroup>
               <DropdownMenuItem className="cursor-pointer">
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="h-4 w-4" />
                 <span>Upgrade to Pro</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -97,7 +97,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
 
             <DropdownMenuGroup>
               <DropdownMenuItem className="cursor-pointer">
-                <BadgeCheck className="w-4 h-4" />
+                <BadgeCheck className="h-4 w-4" />
                 <span>Account</span>
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -107,7 +107,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                   onClose()
                 }}
               >
-                <CreditCard className="w-4 h-4" />
+                <CreditCard className="h-4 w-4" />
                 <span>Billing</span>
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -117,7 +117,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                   onClose()
                 }}
               >
-                <Settings className="w-4 h-4" />
+                <Settings className="h-4 w-4" />
                 <span>Notification Settings</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -131,7 +131,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
               }}
               className="cursor-pointer"
             >
-              <Settings className="w-4 h-4" />
+              <Settings className="h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
 
@@ -142,7 +142,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                   onClick={onSignOut}
                   className="cursor-pointer hover:bg-destructive/5 hover:text-destructive"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
               </>

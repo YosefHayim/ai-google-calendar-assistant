@@ -18,15 +18,15 @@ interface SidebarHeaderProps {
 
 export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, onToggle, onNewChat }) => {
   return (
-    <div className={cn('flex items-center px-4 py-3 border-b border ', isOpen ? 'justify-between' : 'justify-center')}>
+    <div className={cn('flex items-center border border-b px-4 py-3', isOpen ? 'justify-between' : 'justify-center')}>
       {isOpen && (
         <div className="flex items-center gap-2">
           <AnimatedHamburger isOpen={true} onClick={onClose} className="md:hidden" />
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-white dark:text-foreground">
-              <AllyLogo className="w-5 h-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-background bg-secondary text-foreground">
+              <AllyLogo className="h-5 w-5" />
             </div>
-            <span className="font-medium text-lg tracking-normal flex items-center text-foreground dark:text-primary-foreground">
+            <span className="flex items-center text-lg font-medium tracking-normal text-foreground">
               Ally <BetaBadge />
             </span>
           </Link>
@@ -37,12 +37,12 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
           size="icon"
           onClick={onNewChat}
           title="New Chat"
-          className="ml-2 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0"
+          className="ml-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={onToggle} className="text-muted-foreground hidden md:flex">
-          {isOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+        <Button variant="ghost" size="icon" onClick={onToggle} className="hidden text-muted-foreground md:flex">
+          {isOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
         </Button>
       </div>
     </div>

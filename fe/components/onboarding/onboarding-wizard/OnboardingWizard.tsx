@@ -158,16 +158,16 @@ export function OnboardingWizard({ isOpen, onClose, onComplete }: OnboardingWiza
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 onboarding-overlay"
+          className="onboarding-overlay fixed inset-0 z-[100] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-background dark:bg-secondary rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-background bg-secondary shadow-2xl"
           >
-            <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+            <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="icon"
@@ -176,13 +176,13 @@ export function OnboardingWizard({ isOpen, onClose, onComplete }: OnboardingWiza
                 title={audioEnabled ? 'Disable audio' : 'Enable audio'}
               >
                 {audioEnabled ? (
-                  <Volume2 className={cn('w-4 h-4', isPlaying && 'text-primary animate-pulse')} />
+                  <Volume2 className={cn('h-4 w-4', isPlaying && 'animate-pulse text-primary')} />
                 ) : (
-                  <VolumeX className="w-4 h-4 text-muted-foreground" />
+                  <VolumeX className="h-4 w-4 text-muted-foreground" />
                 )}
               </Button>
               <Button variant="ghost" size="icon" onClick={handleSkip} className="h-8 w-8 rounded-full">
-                <X className="w-4 h-4" />
+                <X className="h-4 w-4" />
               </Button>
             </div>
 
@@ -191,14 +191,14 @@ export function OnboardingWizard({ isOpen, onClose, onComplete }: OnboardingWiza
               <StepContent step={step} />
             </div>
 
-            <div className="px-8 pb-8 flex items-center justify-between">
+            <div className="flex items-center justify-between px-8 pb-8">
               <Button
                 variant="ghost"
                 onClick={handlePrevious}
                 disabled={isFirstStep}
                 className={cn(isFirstStep && 'invisible')}
               >
-                <ChevronLeft className="w-4 h-4 mr-1" />
+                <ChevronLeft className="mr-1 h-4 w-4" />
                 Back
               </Button>
 
@@ -219,7 +219,7 @@ export function OnboardingWizard({ isOpen, onClose, onComplete }: OnboardingWiza
                   ) : (
                     <>
                       Next
-                      <ChevronRight className="w-4 h-4 ml-1" />
+                      <ChevronRight className="ml-1 h-4 w-4" />
                     </>
                   )}
                 </Button>

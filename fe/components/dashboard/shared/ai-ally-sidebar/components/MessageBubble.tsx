@@ -22,8 +22,8 @@ export function MessageBubble({ message, index }: MessageBubbleProps) {
         className={cn(
           'max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm',
           message.isUser
-            ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-md'
-            : 'bg-secondary dark:bg-secondary/80 text-foreground dark:text-primary-foreground rounded-bl-md border-border/50',
+            ? 'rounded-br-md bg-gradient-to-br from-primary to-orange-500 text-foreground'
+            : 'rounded-bl-md border-border/50 bg-secondary/80 text-foreground',
         )}
       >
         <p className="text-sm leading-relaxed">{message.text}</p>

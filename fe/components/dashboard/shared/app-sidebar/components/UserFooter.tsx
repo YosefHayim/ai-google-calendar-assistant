@@ -76,14 +76,14 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                       alt={fullName}
                       width={32}
                       height={32}
-                      className="rounded-lg object-cover flex-shrink-0 h-8 w-8"
+                      className="h-8 w-8 flex-shrink-0 rounded-lg object-cover"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-accent">
                       <span className="text-xs font-medium text-muted-foreground">{initials}</span>
                     </div>
                   )}
-                  <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
+                  <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{fullName}</span>
                     <span className="truncate text-xs text-muted-foreground">{email}</span>
                   </div>
@@ -100,7 +100,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                     })
                   }
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="h-4 w-4" />
                   <span>{t('sidebar.upgradeToPro')}</span>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
@@ -108,7 +108,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
 
               <DropdownMenuGroup>
                 <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuAction(onOpenSettings)}>
-                  <BadgeCheck className="w-4 h-4" />
+                  <BadgeCheck className="h-4 w-4" />
                   <span>{t('sidebar.account')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -119,11 +119,11 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                     })
                   }
                 >
-                  <CreditCard className="w-4 h-4" />
+                  <CreditCard className="h-4 w-4" />
                   <span>{t('sidebar.billing')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuAction(onOpenSettings)}>
-                  <Bell className="w-4 h-4" />
+                  <Bell className="h-4 w-4" />
                   <span>{t('sidebar.notifications')}</span>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
@@ -134,7 +134,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                 onClick={() => handleMenuAction(onOpenSettings)}
                 className="cursor-pointer"
               >
-                <Settings className="w-4 h-4" />
+                <Settings className="h-4 w-4" />
                 <span>{t('sidebar.settings')}</span>
               </DropdownMenuItem>
 
@@ -145,7 +145,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                     onClick={() => handleMenuAction(onSignOut)}
                     className="cursor-pointer hover:bg-destructive/5 hover:text-destructive"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="h-4 w-4" />
                     <span>{t('sidebar.logOut')}</span>
                   </DropdownMenuItem>
                 </>

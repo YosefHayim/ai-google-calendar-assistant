@@ -146,18 +146,18 @@ function CallbackContent() {
   }, [searchParams, t, posthog])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-secondary">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background dark:bg-secondary">
       <div className="flex flex-col items-center gap-6">
         {error ? (
-          <div className="text-center flex flex-col items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-destructive/10 dark:bg-red-900/20 flex items-center justify-center">
-              <svg className="w-6 h-6 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 dark:bg-red-900/20">
+              <svg className="h-6 w-6 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
             <div>
-              <p className="text-destructive dark:text-red-400 font-medium text-lg">{error}</p>
-              <p className="text-muted-foreground dark:text-muted-foreground text-sm mt-1">
+              <p className="text-lg font-medium text-destructive dark:text-red-400">{error}</p>
+              <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
                 {t('callback.redirectingToLogin')}
               </p>
             </div>
@@ -169,7 +169,7 @@ function CallbackContent() {
             <AnimatePresence mode="wait">
               <motion.p
                 key={messageIndex}
-                className="text-zinc-600 dark:text-muted-foreground font-medium text-base"
+                className="text-base font-medium text-zinc-600 dark:text-muted-foreground"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
@@ -189,7 +189,7 @@ function CallbackFallback() {
   const { t } = useTranslation()
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-secondary">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background dark:bg-secondary">
       <LoadingSpinner size="lg" text={t('callback.loading')} />
     </div>
   )

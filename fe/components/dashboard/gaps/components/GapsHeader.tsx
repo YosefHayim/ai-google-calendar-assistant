@@ -27,36 +27,32 @@ interface GapsHeaderProps {
 export function GapsHeader({ analyzedRange, totalGaps, onRefresh, isRefreshing, date, setDate }: GapsHeaderProps) {
   const { t } = useTranslation()
   return (
-    <header className="flex flex-col gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <header className="mb-4 flex flex-col gap-2 sm:mb-6 sm:gap-3 md:gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
             <Target className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-semibold text-foreground dark:text-primary-foreground">
-              {t('gaps.title')}
-            </h1>
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground">{t('gaps.subtitle')}</p>
+            <h1 className="text-xl font-semibold text-foreground sm:text-2xl">{t('gaps.title')}</h1>
+            <p className="text-sm text-muted-foreground">{t('gaps.subtitle')}</p>
           </div>
         </div>
       </div>
 
       {date?.from && date?.to && (
-        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-baseline gap-1 sm:gap-1.5 md:gap-2">
-          <span className="text-xs sm:text-sm md:text-base text-muted-foreground dark:text-muted-foreground">
-            {t('gaps.analyzingPeriod')}
-          </span>
-          <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground dark:text-primary-foreground truncate">
+        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-1.5 md:gap-2">
+          <span className="text-xs text-muted-foreground sm:text-sm md:text-base">{t('gaps.analyzingPeriod')}</span>
+          <span className="truncate text-xs font-semibold text-foreground sm:text-sm md:text-base">
             {format(date.from, 'MMM dd, yyyy')} - {format(date.to, 'MMM dd, yyyy')}
           </span>
-          <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground dark:text-muted-foreground">
+          <span className="text-[10px] text-muted-foreground sm:text-xs md:text-sm">
             ({getDaysBetween(date.from, date.to)} {t('common.days', 'days')})
           </span>
         </div>
       )}
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2 md:gap-3 items-stretch sm:items-center">
+      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 md:gap-3">
         <div className="w-full sm:w-auto sm:min-w-[240px]">
           <DatePickerWithRange date={date} setDate={setDate} />
         </div>
