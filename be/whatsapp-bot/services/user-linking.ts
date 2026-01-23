@@ -17,6 +17,8 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const OTP_CLEANUP_REGEX = /[\s-]/g
 const OTP_FORMAT_REGEX = /^\d{6}$/
 
+const otpVerificationInProgress = new Set<string>()
+
 type OnboardingStep =
   | "welcome"
   | "awaiting_choice"
@@ -69,12 +71,16 @@ export const resolveWhatsAppUser = async (
     const onboardingStep =
       (existingUser.onboarding_step as OnboardingStep) || "welcome"
 
+    // PRIORITY: If user is fully linked with user_id, skip ALL onboarding
+    // This prevents auth loops after successful OTP verification
+    const isFullyLinked = existingUser.is_linked && existingUser.user_id
+    
     return {
       user: existingUser,
       isLinked: existingUser.is_linked ?? false,
-      needsOnboarding: !existingUser.is_linked || onboardingStep !== "complete",
+      needsOnboarding: !isFullyLinked && onboardingStep !== "complete",
       email,
-      onboardingStep,
+      onboardingStep: isFullyLinked ? "complete" : onboardingStep,
     }
   }
 
@@ -334,18 +340,37 @@ const resendOtp = async (
   return { handled: true }
 }
 
-/**
- * Handles OTP verification
- */
 const handleOtpVerification = async (
   phoneNumber: string,
   otp: string
 ): Promise<{ handled: boolean; nextStep?: OnboardingStep }> => {
-  // Get pending email
+  if (otpVerificationInProgress.has(phoneNumber)) {
+    logger.debug(`WhatsApp: OTP verification already in progress for ${phoneNumber}`)
+    return { handled: true }
+  }
+
+  otpVerificationInProgress.add(phoneNumber)
+
+  try {
+    return await executeOtpVerification(phoneNumber, otp)
+  } finally {
+    otpVerificationInProgress.delete(phoneNumber)
+  }
+}
+
+const executeOtpVerification = async (
+  phoneNumber: string,
+  otp: string
+): Promise<{ handled: boolean; nextStep?: OnboardingStep }> => {
   const { data: waUser } = await SUPABASE.from("whatsapp_users")
-    .select("pending_email")
+    .select("pending_email, is_linked, user_id")
     .eq("whatsapp_phone", phoneNumber)
     .single()
+
+  if (waUser?.is_linked && waUser?.user_id) {
+    logger.info(`WhatsApp: User ${phoneNumber} already linked, skipping OTP`)
+    return { handled: false, nextStep: "complete" }
+  }
 
   if (!waUser?.pending_email) {
     await sendTextMessage(
@@ -356,7 +381,6 @@ const handleOtpVerification = async (
     return { handled: true, nextStep: "email_input" }
   }
 
-  // Clean OTP (remove spaces, dashes)
   const cleanOtp = otp.replace(OTP_CLEANUP_REGEX, "").trim()
 
   if (!OTP_FORMAT_REGEX.test(cleanOtp)) {
@@ -385,21 +409,6 @@ const handleOtpVerification = async (
     return { handled: true }
   }
 
-  // Link accounts
-  await SUPABASE.from("whatsapp_users")
-    .update({
-      user_id: authData.user.id,
-      is_linked: true,
-      pending_email: null,
-      onboarding_step: "google_auth",
-    })
-    .eq("whatsapp_phone", phoneNumber)
-
-  logger.info(
-    `WhatsApp: Successfully linked ${phoneNumber} to user ${authData.user.id}`
-  )
-
-  // Check if user has Google Calendar connected
   const { data: oauthToken } = await SUPABASE.from("oauth_tokens")
     .select("id")
     .eq("user_id", authData.user.id)
@@ -407,12 +416,34 @@ const handleOtpVerification = async (
     .eq("is_valid", true)
     .maybeSingle()
 
-  if (oauthToken) {
-    // Already has Google Calendar
-    await SUPABASE.from("whatsapp_users")
-      .update({ onboarding_step: "complete" })
-      .eq("whatsapp_phone", phoneNumber)
+  const hasGoogleCalendar = !!oauthToken
+  const finalStep = hasGoogleCalendar ? "complete" : "google_auth"
 
+  const { error: updateError } = await SUPABASE.from("whatsapp_users")
+    .update({
+      user_id: authData.user.id,
+      is_linked: true,
+      pending_email: null,
+      onboarding_step: finalStep,
+    })
+    .eq("whatsapp_phone", phoneNumber)
+
+  if (updateError) {
+    logger.error(
+      `WhatsApp: Failed to link account for ${phoneNumber}: ${updateError.message}`
+    )
+    await sendTextMessage(
+      phoneNumber,
+      "Sorry, something went wrong linking your account. Please try again."
+    )
+    return { handled: true }
+  }
+
+  logger.info(
+    `WhatsApp: Successfully linked ${phoneNumber} to user ${authData.user.id}, step: ${finalStep}`
+  )
+
+  if (oauthToken) {
     await sendTextMessage(
       phoneNumber,
       "*Account linked successfully!* Your Google Calendar is already connected.\n\nTry asking me:\n- _What's on my calendar today?_\n- _Schedule a meeting tomorrow at 2pm_\n- _Show me my week_"
