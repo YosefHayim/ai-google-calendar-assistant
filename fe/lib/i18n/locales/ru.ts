@@ -22,6 +22,8 @@ export const ru: TranslationShape = {
     comingSoon: 'Скоро',
     online: 'Онлайн',
     offline: 'Офлайн',
+    event: 'событие',
+    events: 'события',
   },
 
   auth: {

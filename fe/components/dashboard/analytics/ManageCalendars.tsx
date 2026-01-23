@@ -80,13 +80,15 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
           calendars.map((calendar) => {
             const calendarInfo = calendarMap.get(calendar.id)
             const displayName = calendar.summary || calendar.id.split('@')[0]
-            const color = calendar.backgroundColor || calendarInfo?.color || 'hsl(var(--primary))'
+            const color = calendar.backgroundColor || calendarInfo?.color || '#6366f1'
+            const isHexColor = color.startsWith('#')
+            const bgColor = isHexColor ? `${color}08` : 'transparent'
 
             return (
               <div
                 key={calendar.id}
                 className="border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md hover:bg-muted dark:hover:bg-secondary/50 transition-colors group cursor-pointer"
-                style={{ backgroundColor: `${color}08` }}
+                style={{ backgroundColor: bgColor }}
                 onClick={() => {
                   onCalendarClick(calendar)
                 }}

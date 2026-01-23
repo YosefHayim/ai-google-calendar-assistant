@@ -184,31 +184,36 @@ export async function createSupportTicket(input: CreateTicketInput): Promise<Cre
 }
 
 export async function getTicketsByUser(userId: string): Promise<SupportTicket[]> {
-  const { data, error } = await SUPABASE.from("support_tickets")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
+  try {
+    const { data, error } = await SUPABASE.from("support_tickets")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
 
-  if (error || !data) {
-    logger.error(`[SupportService] Failed to fetch tickets for user ${userId}: ${error?.message}`)
+    if (error || !data) {
+      logger.error(`[SupportService] Failed to fetch tickets for user ${userId}: ${error?.message}`)
+      return []
+    }
+
+    return data.map((row) => ({
+      id: row.id,
+      ticketNumber: row.ticket_number,
+      userId: row.user_id,
+      userEmail: row.user_email,
+      userName: row.user_name,
+      subject: row.subject,
+      description: row.description,
+      category: row.category,
+      priority: row.priority,
+      status: row.status,
+      attachments: (row.attachments || []) as Array<{ url: string; filename: string }>,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }))
+  } catch (error) {
+    logger.error(`[SupportService] Unexpected error fetching tickets for user ${userId}: ${error}`)
     return []
   }
-
-  return data.map((row) => ({
-    id: row.id,
-    ticketNumber: row.ticket_number,
-    userId: row.user_id,
-    userEmail: row.user_email,
-    userName: row.user_name,
-    subject: row.subject,
-    description: row.description,
-    category: row.category,
-    priority: row.priority,
-    status: row.status,
-    attachments: (row.attachments || []) as Array<{ url: string; filename: string }>,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-  }))
 }
 
 export async function getTicketById(ticketId: string, userId?: string): Promise<SupportTicket | null> {

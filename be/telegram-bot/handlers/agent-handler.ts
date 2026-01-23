@@ -112,7 +112,10 @@ export const handleAgentRequest = async (
       return
     }
 
-    const effectivePrompt = dpoResult.effectivePrompt
+    // Use base prompt when DPO doesn't optimize to preserve all context
+    const effectivePrompt = dpoResult.wasOptimized
+      ? dpoResult.effectivePrompt
+      : prompt
 
     const result = await activateAgent(ORCHESTRATOR_AGENT, effectivePrompt, {
       email: ctx.session.email,
@@ -225,20 +228,20 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
       return
     }
 
-    const result = await activateAgent(
-      ORCHESTRATOR_AGENT,
-      dpoResult.effectivePrompt,
-      {
-        email: ctx.session.email,
-        session: userUuid
-          ? {
-              userId: userUuid,
-              agentName: ORCHESTRATOR_AGENT.name,
-              taskId: chatId.toString(),
-            }
-          : undefined,
-      }
-    )
+    const effectivePrompt = dpoResult.wasOptimized
+      ? dpoResult.effectivePrompt
+      : prompt
+
+    const result = await activateAgent(ORCHESTRATOR_AGENT, effectivePrompt, {
+      email: ctx.session.email,
+      session: userUuid
+        ? {
+            userId: userUuid,
+            agentName: ORCHESTRATOR_AGENT.name,
+            taskId: chatId.toString(),
+          }
+        : undefined,
+    })
     const finalOutput = result.finalOutput || ""
 
     if (!finalOutput) {

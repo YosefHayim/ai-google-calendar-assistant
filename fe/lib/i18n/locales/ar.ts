@@ -22,6 +22,8 @@ export const ar: TranslationShape = {
     comingSoon: 'قريباً',
     online: 'متصل',
     offline: 'غير متصل',
+    event: 'حدث',
+    events: 'أحداث',
   },
 
   auth: {

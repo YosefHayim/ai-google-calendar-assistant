@@ -26,7 +26,7 @@ CREATE INDEX idx_support_tickets_user_email ON support_tickets(user_email);
 CREATE INDEX idx_support_tickets_status ON support_tickets(status);
 CREATE INDEX idx_support_tickets_priority ON support_tickets(priority);
 CREATE INDEX idx_support_tickets_created_at ON support_tickets(created_at DESC);
-CREATE INDEX idx_support_tickets_ticket_number ON support_tickets(ticket_number);
+
 
 CREATE TRIGGER update_support_tickets_updated_at
   BEFORE UPDATE ON support_tickets
@@ -58,6 +58,7 @@ DECLARE
   seq_num INTEGER;
 BEGIN
   year_month := to_char(NOW(), 'YYMM');
+  PERFORM pg_advisory_xact_lock(hashtext('support_ticket_number_' || year_month));
   SELECT COALESCE(MAX(CAST(SUBSTRING(ticket_number FROM 8) AS INTEGER)), 0) + 1
   INTO seq_num
   FROM support_tickets

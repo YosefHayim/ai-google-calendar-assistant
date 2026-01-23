@@ -64,6 +64,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     setInternalLoading(true)
     try {
       await onConfirm()
+    } catch (error) {
+      console.error('Confirmation action failed:', error)
     } finally {
       setInternalLoading(false)
     }

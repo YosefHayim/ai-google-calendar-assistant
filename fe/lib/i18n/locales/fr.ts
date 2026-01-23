@@ -22,6 +22,8 @@ export const fr: TranslationShape = {
     comingSoon: 'Bientôt disponible',
     online: 'En ligne',
     offline: 'Hors ligne',
+    event: 'événement',
+    events: 'événements',
   },
 
   auth: {

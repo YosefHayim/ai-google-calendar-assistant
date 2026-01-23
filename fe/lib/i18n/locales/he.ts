@@ -23,6 +23,8 @@ export const he: TranslationShape = {
     comingSoon: 'בקרוב',
     online: 'מחובר',
     offline: 'לא מחובר',
+    event: 'אירוע',
+    events: 'אירועים',
   },
 
   // Authentication

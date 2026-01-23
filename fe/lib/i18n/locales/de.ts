@@ -22,6 +22,8 @@ export const de: TranslationShape = {
     comingSoon: 'Demnächst',
     online: 'Online',
     offline: 'Offline',
+    event: 'Ereignis',
+    events: 'Ereignisse',
   },
 
   auth: {

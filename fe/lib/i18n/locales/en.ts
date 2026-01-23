@@ -21,6 +21,8 @@ export const en = {
     comingSoon: 'Coming Soon',
     online: 'Online',
     offline: 'Offline',
+    event: 'event',
+    events: 'events',
   },
 
   // Authentication

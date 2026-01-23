@@ -675,8 +675,9 @@ const collectWarnings = (access: UserAccess): string[] => {
     access.trial_days_left > 0
 
   if (hasTrialWarning) {
+    const daysText = access.trial_days_left === 1 ? "day" : "days"
     warnings.push(
-      `Your trial ends in ${access.trial_days_left} days. Upgrade to continue using Ally.`
+      `Your trial ends in ${access.trial_days_left} ${daysText}. Upgrade to continue using Ally.`
     )
   }
 

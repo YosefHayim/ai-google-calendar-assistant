@@ -66,7 +66,7 @@ export const EventConfirmationCard = ({
 
     return startStr
   }
-  const eventText = eventCount === 1 ? 'event' : 'events'
+  const eventText = eventCount === 1 ? t('common.event') : t('common.events')
 
   return (
     <Card className={cn('w-full max-w-lg border-primary/20', className)}>

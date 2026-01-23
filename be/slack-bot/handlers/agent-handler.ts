@@ -243,23 +243,23 @@ export const handleConfirmation = async (
         `Slack Bot: DPO rejected confirmation for user ${slackUserId}`,
         { reason: dpoResult.judgeOutput?.reasoning }
       )
-      return "Your request was flagged for safety review. Please try again."
+      return "Your request was flagged for safety review. Please start over with a new event request."
     }
 
-    const result = await activateAgent(
-      ORCHESTRATOR_AGENT,
-      dpoResult.effectivePrompt,
-      {
-        email,
-        session: userUuid
-          ? {
-              userId: userUuid,
-              agentName: ORCHESTRATOR_AGENT.name,
-              taskId: `slack-${slackUserId}`,
-            }
-          : undefined,
-      }
-    )
+    const effectivePrompt = dpoResult.wasOptimized
+      ? dpoResult.effectivePrompt
+      : prompt
+
+    const result = await activateAgent(ORCHESTRATOR_AGENT, effectivePrompt, {
+      email,
+      session: userUuid
+        ? {
+            userId: userUuid,
+            agentName: ORCHESTRATOR_AGENT.name,
+            taskId: `slack-${slackUserId}`,
+          }
+        : undefined,
+    })
     const finalOutput = result.finalOutput || ""
 
     return finalOutput || "Event created successfully."
