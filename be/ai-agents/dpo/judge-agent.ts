@@ -1,6 +1,6 @@
 import { Agent, run } from "@openai/agents"
 import { z } from "zod"
-import { MODELS } from "@/config"
+import { MODELS } from "@/config/constants/ai"
 import { logger } from "@/lib/logger"
 import type { OptimizerOutput } from "./optimizer-agent"
 

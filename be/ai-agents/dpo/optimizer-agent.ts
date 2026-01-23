@@ -1,6 +1,6 @@
 import { Agent, run } from "@openai/agents"
 
-import { MODELS } from "@/config"
+import { MODELS } from "@/config/constants/ai"
 import { logger } from "@/lib/logger"
 import { z } from "zod"
 
