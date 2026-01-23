@@ -380,6 +380,7 @@ export const ar: TranslationShape = {
     logout: 'تسجيل الخروج',
     chatWithAlly: 'تحدث مع Ally',
     minimize: 'تصغير',
+    toggleSidebar: 'تبديل الشريط الجانبي',
     // User Footer items
     upgradeToPro: 'الترقية إلى الإصدار الاحترافي',
     billing: 'الفوترة',
@@ -528,6 +529,8 @@ export const ar: TranslationShape = {
       avatar: 'ثنائي الأبعاد',
       threeDee: 'ثلاثي الأبعاد',
       threeDeeComingSoon: 'ثلاثي الأبعاد (قريباً)',
+      chatView: 'عرض المحادثة',
+      avatarView: 'عرض الصورة الرمزية ثنائي الأبعاد',
     },
 
     actions: {
@@ -1276,4 +1279,4 @@ export const ar: TranslationShape = {
         failed: 'فشل في منح الرصيد: {{error}}',
       },
     },
-}
+} as const

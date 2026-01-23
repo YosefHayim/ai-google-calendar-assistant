@@ -86,7 +86,9 @@ export function RescheduleDialog({
 
         {/* Time Preference Selector */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">{t('rescheduleDialog.preferredTimeOfDay')}</label>
+          <label className="text-sm font-medium text-muted-foreground">
+            {t('rescheduleDialog.preferredTimeOfDay')}
+          </label>
           <div className="flex flex-wrap gap-2">
             {(['any', 'morning', 'afternoon', 'evening'] as const).map((time) => (
               <Button
@@ -107,7 +109,9 @@ export function RescheduleDialog({
           <div className="rounded-lg border bg-muted/50 p-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
-              <span>{t('rescheduleDialog.current')} {eventInfo.start}</span>
+              <span>
+                {t('rescheduleDialog.current')} {eventInfo.start}
+              </span>
               <ArrowRight className="h-3 w-3" />
               <span>{eventInfo.end}</span>
               <Badge variant="secondary" className="ml-auto">

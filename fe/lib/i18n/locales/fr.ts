@@ -399,6 +399,7 @@ export const fr: TranslationShape = {
     logout: 'Déconnexion',
     chatWithAlly: 'Discuter avec Ally',
     minimize: 'Réduire',
+    toggleSidebar: 'Basculer la barre latérale',
     // User Footer items
     upgradeToPro: 'Passer à Pro',
     billing: 'Facturation',
@@ -550,6 +551,8 @@ export const fr: TranslationShape = {
       avatar: '2D',
       threeDee: '3D',
       threeDeeComingSoon: '3D (Bientôt)',
+      chatView: 'Vue Chat',
+      avatarView: 'Vue Avatar 2D',
     },
 
     actions: {

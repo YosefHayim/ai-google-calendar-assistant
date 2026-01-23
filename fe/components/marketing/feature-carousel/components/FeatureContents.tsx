@@ -40,8 +40,7 @@ export function WhatsAppContent() {
             <WhatsAppIcon className="w-4 h-4" />
             <span className="text-xs opacity-70 font-bold uppercase tracking-wider">Ally AI</span>
           </div>
-          <span>
-          &quot;Move the board call back 15 mins and notify stakeholders.&quot;</span>
+          <span>&quot;Move the board call back 15 mins and notify stakeholders.&quot;</span>
         </div>
       </div>
       <div className="flex justify-end">

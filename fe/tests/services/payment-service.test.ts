@@ -214,9 +214,9 @@ describe('paymentService', () => {
         data: { status: 'success', data: { checkoutUrl: null } },
       })
 
-      await expect(
-        createSubscriptionCheckout({ planSlug: 'pro', interval: 'monthly' })
-      ).rejects.toThrow('Failed to create checkout')
+      await expect(createSubscriptionCheckout({ planSlug: 'pro', interval: 'monthly' })).rejects.toThrow(
+        'Failed to create checkout',
+      )
     })
   })
 
@@ -267,9 +267,7 @@ describe('paymentService', () => {
         data: { status: 'success', data: { portalUrl: null } },
       })
 
-      await expect(createBillingPortalSession()).rejects.toThrow(
-        'Failed to create billing portal session'
-      )
+      await expect(createBillingPortalSession()).rejects.toThrow('Failed to create billing portal session')
     })
   })
 

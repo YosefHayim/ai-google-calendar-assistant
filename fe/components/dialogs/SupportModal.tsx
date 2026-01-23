@@ -1,12 +1,7 @@
 'use client'
 
 import { CheckCircle, Keyboard, Loader2, Mic, Send, X } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
@@ -118,15 +113,9 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
                 <CheckCircle className="h-12 w-12 text-emerald-500" />
               </div>
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  {t('support.modal.submitSuccessDescription')}
-                </p>
-                <p className="text-2xl font-bold text-foreground font-mono tracking-wide">
-                  {successTicketNumber}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {t('support.modal.ticketNumber')}
-                </p>
+                <p className="text-sm text-muted-foreground">{t('support.modal.submitSuccessDescription')}</p>
+                <p className="text-2xl font-bold text-foreground font-mono tracking-wide">{successTicketNumber}</p>
+                <p className="text-sm text-muted-foreground">{t('support.modal.ticketNumber')}</p>
               </div>
             </div>
           </div>
@@ -164,7 +153,7 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
                     'flex items-center gap-1.5 px-3 py-1.5 rounded-l-full text-sm font-medium transition-all',
                     inputMode === 'type'
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                      : 'bg-muted/50 text-muted-foreground hover:bg-muted',
                   )}
                 >
                   <Keyboard className="h-3.5 w-3.5" />
@@ -179,7 +168,7 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
                     inputMode === 'voice'
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted/50 text-muted-foreground hover:bg-muted',
-                    !speechRecognitionSupported && 'opacity-50 cursor-not-allowed'
+                    !speechRecognitionSupported && 'opacity-50 cursor-not-allowed',
                   )}
                 >
                   <Mic className="h-3.5 w-3.5" />
@@ -223,29 +212,22 @@ export function SupportModal({ isOpen, onClose, onSuccess }: SupportModalProps) 
 
             <div className="flex flex-col">
               <div className="flex items-center justify-center mb-3">
-                <span className="text-sm font-medium text-muted-foreground">{t('support.modal.whatAllyUnderstood')}</span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t('support.modal.whatAllyUnderstood')}
+                </span>
               </div>
               <div className="flex-1 bg-muted/30 rounded-xl p-4 border border-muted/50">
                 {message.trim() ? (
-                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                    {message}
-                  </p>
+                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{message}</p>
                 ) : (
-                  <p className="text-sm text-muted-foreground/60 italic">
-                    {t('support.modal.messageWillAppear')}
-                  </p>
+                  <p className="text-sm text-muted-foreground/60 italic">{t('support.modal.messageWillAppear')}</p>
                 )}
               </div>
             </div>
           </div>
 
           <div className="mt-6 flex justify-center">
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || !message.trim()}
-              className="px-8 gap-2"
-              size="lg"
-            >
+            <Button onClick={handleSubmit} disabled={isSubmitting || !message.trim()} className="px-8 gap-2" size="lg">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />

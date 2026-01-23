@@ -233,7 +233,7 @@ export class ConversationService {
       user_id: userId,
       source: this.source,
       is_active: true,
-      message_count: initialMessage ? 1 : 0,
+      message_count: initialMessage?.content ? 1 : 0,
     }
 
     if (this.source === "telegram" && externalChatId) {

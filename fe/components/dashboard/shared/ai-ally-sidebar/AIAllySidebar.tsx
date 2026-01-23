@@ -223,10 +223,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
         )}
       </AnimatePresence>
 
-      <SupportModal
-        isOpen={isSupportModalOpen}
-        onClose={() => setIsSupportModalOpen(false)}
-      />
+      <SupportModal isOpen={isSupportModalOpen} onClose={() => setIsSupportModalOpen(false)} />
     </div>
   )
 }

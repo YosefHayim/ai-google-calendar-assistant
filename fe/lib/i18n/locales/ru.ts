@@ -397,6 +397,7 @@ export const ru: TranslationShape = {
     logout: 'Выйти',
     chatWithAlly: 'Чат с Ally',
     minimize: 'Свернуть',
+    toggleSidebar: 'Переключить боковую панель',
     // User Footer items
     upgradeToPro: 'Обновить до Pro',
     billing: 'Оплата',
@@ -546,6 +547,8 @@ export const ru: TranslationShape = {
       avatar: '2D',
       threeDee: '3D',
       threeDeeComingSoon: '3D (Скоро)',
+      chatView: 'Вид чата',
+      avatarView: '2D вид аватара',
     },
 
     actions: {

@@ -16,7 +16,7 @@ export function FeatureCarousel() {
   const [isPaused, setIsPaused] = useState(false)
 
   // Create translated features
-  const translatedFeatures = FEATURES.map(feature => ({
+  const translatedFeatures = FEATURES.map((feature) => ({
     ...feature,
     title: t(`featureCarousel.${feature.id}.title`),
     description: t(`featureCarousel.${feature.id}.description`),

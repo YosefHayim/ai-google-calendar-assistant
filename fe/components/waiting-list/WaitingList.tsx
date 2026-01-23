@@ -97,7 +97,7 @@ const WaitingList: React.FC = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="mb-8"
         >
-            <Badge
+          <Badge
             variant="outline"
             className="px-4 py-1.5 text-xs uppercase tracking-widest border-primary/30 text-primary bg-primary/5 dark:bg-primary/10 backdrop-blur-sm"
           >
@@ -178,16 +178,12 @@ const WaitingList: React.FC = () => {
               transition={{ duration: 0.3 }}
               className="mt-6 p-4 rounded-lg bg-primary/10 border-primary/20"
             >
-              <p className="text-center text-primary font-medium">
-                {t('waitingList.positionMessage', { position })}
-              </p>
+              <p className="text-center text-primary font-medium">{t('waitingList.positionMessage', { position })}</p>
             </motion.div>
           )}
         </form>
 
-        <p className="mt-6 text-xs text-muted-foreground font-medium">
-          {t('waitingList.footerText')}
-        </p>
+        <p className="mt-6 text-xs text-muted-foreground font-medium">{t('waitingList.footerText')}</p>
 
         {/* Trust Indicators */}
         <motion.div

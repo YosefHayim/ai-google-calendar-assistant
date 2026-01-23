@@ -29,9 +29,9 @@ export default function SubProcessorsPage() {
                 1. Introduction
               </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
-                Ally Technologies Inc. (&quot;we,&quot; &quot;our,&quot; or &quot;Ally&quot;) uses various third-party service providers
-                (sub-processors) to help us deliver our AI-powered calendar assistant service. This page lists our
-                sub-processors and explains our requirements for them.
+                Ally Technologies Inc. (&quot;we,&quot; &quot;our,&quot; or &quot;Ally&quot;) uses various third-party
+                service providers (sub-processors) to help us deliver our AI-powered calendar assistant service. This
+                page lists our sub-processors and explains our requirements for them.
               </p>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 We carefully select sub-processors that meet our high standards for security, privacy, and compliance.
@@ -49,13 +49,27 @@ export default function SubProcessorsPage() {
                 Before engaging any sub-processor, we require them to meet the following minimum standards:
               </p>
               <ul className="list-disc pl-6 text-zinc-600 dark:text-zinc-300 space-y-2 mb-4">
-                <li><strong>Security Certifications:</strong> SOC 2 Type II, ISO 27001, or equivalent certification</li>
-                <li><strong>GDPR Compliance:</strong> Valid data processing agreements and GDPR compliance</li>
-                <li><strong>Data Protection:</strong> Industry-standard encryption and security measures</li>
-                <li><strong>Audit Rights:</strong> Right to audit their security and compliance practices</li>
-                <li><strong>Incident Response:</strong> 24-hour incident notification and response procedures</li>
-                <li><strong>Data Deletion:</strong> Ability to delete customer data upon request or termination</li>
-                <li><strong>Regular Assessments:</strong> Annual security audits and vulnerability assessments</li>
+                <li>
+                  <strong>Security Certifications:</strong> SOC 2 Type II, ISO 27001, or equivalent certification
+                </li>
+                <li>
+                  <strong>GDPR Compliance:</strong> Valid data processing agreements and GDPR compliance
+                </li>
+                <li>
+                  <strong>Data Protection:</strong> Industry-standard encryption and security measures
+                </li>
+                <li>
+                  <strong>Audit Rights:</strong> Right to audit their security and compliance practices
+                </li>
+                <li>
+                  <strong>Incident Response:</strong> 24-hour incident notification and response procedures
+                </li>
+                <li>
+                  <strong>Data Deletion:</strong> Ability to delete customer data upon request or termination
+                </li>
+                <li>
+                  <strong>Regular Assessments:</strong> Annual security audits and vulnerability assessments
+                </li>
               </ul>
             </section>
 
@@ -67,13 +81,13 @@ export default function SubProcessorsPage() {
 
               <div className="space-y-6">
                 <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
-                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
-                    Supabase
-                  </h3>
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">Supabase</h3>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">Database hosting, authentication, and real-time features</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        Database hosting, authentication, and real-time features
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
@@ -85,7 +99,9 @@ export default function SubProcessorsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">User profiles, calendar data, conversation history</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        User profiles, calendar data, conversation history
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -97,7 +113,9 @@ export default function SubProcessorsPage() {
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">Calendar API, cloud infrastructure, and data processing</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        Calendar API, cloud infrastructure, and data processing
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
@@ -145,7 +163,9 @@ export default function SubProcessorsPage() {
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">Cloud hosting and infrastructure for the application backend</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        Cloud hosting and infrastructure for the application backend
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
@@ -157,7 +177,9 @@ export default function SubProcessorsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">Application infrastructure and temporary processing data</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        Application infrastructure and temporary processing data
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -178,7 +200,9 @@ export default function SubProcessorsPage() {
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">Large Language Model processing for AI assistant features</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        Large Language Model processing for AI assistant features
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
@@ -190,7 +214,9 @@ export default function SubProcessorsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">No permanent storage - data processed in sessions only</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        No permanent storage - data processed in sessions only
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -214,15 +240,15 @@ export default function SubProcessorsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">Payment information (we don't store card details)</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        Payment information (we don't store card details)
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
-                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
-                    Vercel
-                  </h3>
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">Vercel</h3>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
@@ -244,9 +270,7 @@ export default function SubProcessorsPage() {
                 </div>
 
                 <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
-                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
-                    Resend
-                  </h3>
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">Resend</h3>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
@@ -268,13 +292,13 @@ export default function SubProcessorsPage() {
                 </div>
 
                 <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
-                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
-                    LiveKit
-                  </h3>
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">LiveKit</h3>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">Real-time audio and voice processing for the AI assistant</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">
+                        Real-time audio and voice processing for the AI assistant
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
@@ -301,9 +325,7 @@ export default function SubProcessorsPage() {
 
               <div className="space-y-6">
                 <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
-                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
-                    Sentry
-                  </h3>
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">Sentry</h3>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
@@ -325,9 +347,7 @@ export default function SubProcessorsPage() {
                 </div>
 
                 <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
-                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
-                    PostHog
-                  </h3>
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">PostHog</h3>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
@@ -374,8 +394,8 @@ export default function SubProcessorsPage() {
                 7. Changes to Sub-Processors
               </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
-                We may update our list of sub-processors from time to time to improve our service. When we add or
-                change sub-processors, we will:
+                We may update our list of sub-processors from time to time to improve our service. When we add or change
+                sub-processors, we will:
               </p>
               <ul className="list-disc pl-6 text-zinc-600 dark:text-zinc-300 space-y-2 mb-4">
                 <li>Update this page with the new sub-processor information</li>

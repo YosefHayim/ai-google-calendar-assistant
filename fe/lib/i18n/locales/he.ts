@@ -396,6 +396,7 @@ export const he: TranslationShape = {
     logout: 'התנתקות',
     chatWithAlly: 'שוחח עם אלי',
     minimize: 'מזער',
+    toggleSidebar: 'החלף סרגל צדדי',
     // User Footer items
     upgradeToPro: 'שדרג לפרו',
     billing: 'חיוב',
@@ -555,6 +556,8 @@ export const he: TranslationShape = {
       avatar: '2D',
       threeDee: '3D',
       threeDeeComingSoon: '3D (בקרוב)',
+      chatView: 'תצוגת צ\'אט',
+      avatarView: 'תצוגת אווטאר 2D',
     },
 
     // Message actions
