@@ -7,6 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.144] - 2026-01-23
+
+### Features
+
+- **Support Ticket System**: Complete support infrastructure with user-facing components
+  - New `SupportModal` component for creating and managing support tickets
+  - Support service integration for API communication
+  - Enhanced internationalization support for support features across all languages
+  - Integration with dashboard navigation and error handling
+
+- **DPO Safety Integration**: Frontend components updated for Dynamic Prompt Optimization
+  - Enhanced analytics dashboard components with DPO safety indicators
+  - Updated feature showcase components to reflect safety enhancements
+  - Improved integrations dashboard with safety monitoring capabilities
+
+### Improvements
+
+- **Component Styling**: Updated component styles for improved consistency and accessibility
+  - Enhanced visual hierarchy and user experience across dashboard components
+  - Improved responsive design and accessibility compliance
+
+- **Internationalization**: Enhanced user language support and calendar event handling
+  - Improved locale handling and language detection
+  - Better calendar event localization and timezone support
+
+### Files Changed
+
+#### New Components
+
+- `components/dialogs/SupportModal.tsx` - Support ticket creation and management modal
+- `services/support-service.ts` - API service for support ticket operations
+
+#### Modified Components
+
+- `components/dashboard/IntegrationsDashboard.tsx` - Enhanced with DPO safety features
+- `components/dashboard/analytics/` - Multiple analytics components updated for safety integration
+- `components/dashboard/shared/ConfirmDialog.tsx` - UI improvements for consistency
+- `components/dashboard/chat/EventConfirmationCard.tsx` - Enhanced event handling
+- `components/marketing/feature-showcase/` - Updated showcase components
+- `lib/i18n/locales/` - Enhanced localization across all supported languages
+
+#### New Services
+
+- `services/support-service.ts` - Support ticket API integration
+
+#### New Endpoints
+
+- `lib/api/endpoints.ts` - Added support ticket management endpoints
+
+---
+
 ## [1.0.141] - 2026-01-16
 
 ### Features

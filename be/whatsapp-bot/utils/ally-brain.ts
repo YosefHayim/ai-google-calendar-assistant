@@ -10,7 +10,9 @@ import {
 } from "@/domains/settings/services/user-preferences-service"
 import { SUPABASE } from "@/infrastructure/supabase/supabase"
 import { logger } from "@/lib/logger"
+import type { SupportedLocale } from "@/whatsapp-bot/i18n/config"
 import { getUserIdFromWhatsApp } from "./conversation-history"
+import { detectLanguageFromPhone } from "./language-detection"
 
 export type {
   AllyBrainPreference,
@@ -117,11 +119,9 @@ export const updateVoicePreferenceForWhatsApp = async (
   }
 }
 
-const DEFAULT_LANGUAGE = "en"
-
 export const getLanguagePreferenceForWhatsApp = async (
   phoneNumber: string
-): Promise<string> => {
+): Promise<SupportedLocale> => {
   try {
     const { data, error } = await SUPABASE.from("whatsapp_users")
       .select("language_code")
@@ -129,13 +129,15 @@ export const getLanguagePreferenceForWhatsApp = async (
       .single()
 
     if (error || !data?.language_code) {
-      return DEFAULT_LANGUAGE
+      const detectedLanguage = detectLanguageFromPhone(phoneNumber)
+      await updateLanguagePreferenceForWhatsApp(phoneNumber, detectedLanguage)
+      return detectedLanguage
     }
 
-    return data.language_code
+    return data.language_code as SupportedLocale
   } catch (error) {
     logger.error(`WhatsApp: language-preference: Failed to get: ${error}`)
-    return DEFAULT_LANGUAGE
+    return detectLanguageFromPhone(phoneNumber)
   }
 }
 

@@ -23,6 +23,7 @@ export interface ConfirmDialogProps {
   confirmLabel?: string
   cancelLabel?: string
   variant?: 'destructive' | 'warning' | 'default'
+  isLoading?: boolean
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -34,13 +35,15 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   confirmLabel,
   cancelLabel,
   variant = 'destructive',
+  isLoading: externalLoading,
 }) => {
   const { t } = useTranslation()
-  const [isLoading, setIsLoading] = useState(false)
+  const [internalLoading, setInternalLoading] = useState(false)
+  const isLoading = externalLoading ?? internalLoading
 
   useEffect(() => {
     if (!isOpen) {
-      setIsLoading(false)
+      setInternalLoading(false)
     }
   }, [isOpen])
 
@@ -58,11 +61,11 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   const handleConfirm = useCallback(async () => {
     if (isLoading) return
 
-    setIsLoading(true)
+    setInternalLoading(true)
     try {
       await onConfirm()
     } finally {
-      setIsLoading(false)
+      setInternalLoading(false)
     }
   }, [isLoading, onConfirm])
 

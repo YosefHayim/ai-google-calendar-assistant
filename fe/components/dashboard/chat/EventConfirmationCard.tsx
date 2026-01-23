@@ -35,23 +35,6 @@ const confidenceColors = {
   low: 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive',
 }
 
-const formatEventTime = (startTime: string, endTime?: string, isAllDay?: boolean): string => {
-  if (isAllDay) {
-    return t('eventConfirmation.allDay')
-  }
-
-  const start = new Date(startTime)
-  const startStr = formatDate(start, 'TIME')
-
-  if (endTime) {
-    const end = new Date(endTime)
-    const endStr = formatDate(end, 'TIME')
-    return `${startStr} - ${endStr}`
-  }
-
-  return startStr
-}
-
 const formatEventDate = (startTime: string): string => {
   const date = new Date(startTime)
   return formatDate(date, 'FULL')
@@ -66,6 +49,23 @@ export const EventConfirmationCard = ({
 }: EventConfirmationCardProps) => {
   const { t } = useTranslation()
   const eventCount = events.length
+
+  const formatEventTime = (startTime: string, endTime?: string, isAllDay?: boolean): string => {
+    if (isAllDay) {
+      return t('eventConfirmation.allDay')
+    }
+
+    const start = new Date(startTime)
+    const startStr = formatDate(start, 'TIME')
+
+    if (endTime) {
+      const end = new Date(endTime)
+      const endStr = formatDate(end, 'TIME')
+      return `${startStr} - ${endStr}`
+    }
+
+    return startStr
+  }
   const eventText = eventCount === 1 ? 'event' : 'events'
 
   return (

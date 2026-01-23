@@ -7,6 +7,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.144] - 2026-01-23
+
+### Features
+
+- **Bot Subscription Management**: Added subscription command across all bot platforms (Slack, Telegram, WhatsApp)
+  - Users can now view their subscription status, trial information, and usage limits directly in chat
+  - Enhanced internationalization support for subscription-related messages
+  - Integrated subscription management links for easy upgrades
+
+- **DPO Safety Integration**: Implemented Dynamic Prompt Optimization safety checks in messaging handlers
+  - Enhanced content safety across all bot platforms with automatic request flagging
+  - Comprehensive logging for safety violations with detailed reasoning
+  - Improved user feedback for rejected requests with clear messaging
+
+- **Support Ticket System**: Complete support ticket infrastructure with API integration
+  - New support ticket types and database schema for organized issue tracking
+  - API endpoints for ticket creation, retrieval, and management
+  - Support modal and UI components for seamless user interaction
+  - Enhanced internationalization support for support features
+
+- **Slack Integration Enhancement**: Added slack_workspaces table migration for OAuth flow stability
+  - Fixed "Failed to save workspace token" error during Slack OAuth authentication
+  - Improved workspace token management and persistence
+
+- **Contacts Management & OCR**: Implemented comprehensive contacts management system
+  - OCR capabilities for extracting contact information from images
+  - Enhanced file processing and chat input functionality
+  - Streamlined OCR file handling across the application
+
+- **Agent Registry System**: New agent management infrastructure for AI agents
+  - Agent registry service and controller for managing AI agent configurations
+  - Enhanced session key retrieval logic for improved bot functionality
+  - Parameter type handling improvements for better agent reliability
+
+- **CI/CD Infrastructure**: Comprehensive development workflow enhancements
+  - Local CI scripts and package configuration updates
+  - GitHub Actions workflows for automated CI/CD pipelines
+  - Pre-commit hooks and lint-staged configuration for code quality
+  - GitHub Actions cleanup workflow for managing workflow history
+
+- **Package Management**: Pnpm lock file support and dependency updates
+  - Added pnpm lock files for both backend and frontend
+  - Updated dependencies and added Husky for improved code quality
+  - Enhanced package configurations across the monorepo
+
+- **Security Enhancements**: Added security.txt file for vulnerability reporting
+  - Standardized security vulnerability disclosure process
+  - Enhanced security infrastructure and reporting capabilities
+
+### Bug Fixes
+
+- **i18n Corrections**: Fixed indentation issues in French translation files for toast messages
+- **Conversation Logic**: Updated message_count logic to properly check for content presence
+- **Bot Stability**: Prevented Telegram and Jobs services from crashing on initialization failure
+- **Slack Production**: Fixed Slack bot crashes in production environment
+- **User Queries**: Replaced language_code with locale in user query operations
+- **Authentication**: Resolved logout redirect race condition for smoother user experience
+
+### Technical
+
+- **42 commits** across multiple modules since previous version
+- **New API Endpoints**: Support ticket management endpoints, agent registry APIs
+- **Database Changes**: support_tickets table, slack_workspaces table, DPO logging enhancements
+- **New Components**: SupportModal, enhanced bot command handlers, OCR processing components
+- **Infrastructure**: GitHub Actions CI/CD workflows, pnpm lock files, security.txt
+- **Performance**: Component style optimizations, improved bot stability, enhanced error handling
+
+---
+
 ## [1.0.143] - 2026-01-21
 
 ### Features
