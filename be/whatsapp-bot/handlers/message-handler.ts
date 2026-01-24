@@ -220,6 +220,7 @@ const processNaturalLanguageMessage = async (
       ORCHESTRATOR_AGENT,
       dpoResult.effectivePrompt,
       {
+        email: userEmail,
         session: userId
           ? {
               userId,

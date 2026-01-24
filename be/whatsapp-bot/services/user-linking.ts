@@ -6,10 +6,7 @@
 import { env } from "@/config/env"
 
 import type { Database } from "@/database.types"
-import {
-  isRedisConnected,
-  redisClient,
-} from "@/infrastructure/redis/redis"
+import { isRedisConnected, redisClient } from "@/infrastructure/redis/redis"
 import { SUPABASE } from "@/infrastructure/supabase/supabase"
 import { logger } from "@/lib/logger"
 import { getTranslatorFromLanguageCode } from "../i18n/translator"
@@ -35,7 +32,13 @@ const acquireOnboardingLock = async (phoneNumber: string): Promise<boolean> => {
 
   try {
     const key = `${ONBOARDING_LOCK_PREFIX}${phoneNumber}`
-    const result = await redisClient.set(key, "1", "EX", ONBOARDING_LOCK_TTL_SECONDS, "NX")
+    const result = await redisClient.set(
+      key,
+      "1",
+      "EX",
+      ONBOARDING_LOCK_TTL_SECONDS,
+      "NX"
+    )
     return result === "OK"
   } catch (error) {
     logger.error(`WhatsApp: Failed to acquire onboarding lock: ${error}`)
@@ -79,14 +82,29 @@ export const resolveWhatsAppUser = async (
   phoneNumber: string,
   displayName?: string
 ): Promise<UserResolution> => {
-  // Try to find existing user with linked account info
-  const { data: existingUser } = await SUPABASE.from("whatsapp_users")
+  logger.debug(
+    `WhatsApp: resolveWhatsAppUser called with phone="${phoneNumber}", name="${displayName || "none"}"`
+  )
+
+  const { data: existingUser, error: fetchError } = await SUPABASE.from(
+    "whatsapp_users"
+  )
     .select("*")
     .eq("whatsapp_phone", phoneNumber)
     .single()
 
+  if (fetchError && fetchError.code !== "PGRST116") {
+    logger.warn(
+      `WhatsApp: Error fetching user for ${phoneNumber}: ${fetchError.message} (code: ${fetchError.code})`
+    )
+  }
+
   if (existingUser) {
-    // Update activity
+    logger.debug(
+      `WhatsApp: Found existing user for ${phoneNumber}: is_linked=${existingUser.is_linked}, ` +
+        `user_id=${existingUser.user_id || "null"}, step=${existingUser.onboarding_step}`
+    )
+
     await SUPABASE.from("whatsapp_users")
       .update({
         last_activity_at: new Date().toISOString(),
@@ -484,6 +502,10 @@ const executeOtpVerification = async (
   const hasGoogleCalendar = !!oauthToken
   const finalStep = hasGoogleCalendar ? "complete" : "google_auth"
 
+  logger.info(
+    `WhatsApp: Attempting to link ${phoneNumber} to user ${authData.user.id}, target step: ${finalStep}`
+  )
+
   const { data: updatedUsers, error: updateError } = await SUPABASE.from(
     "whatsapp_users"
   )
@@ -538,8 +560,31 @@ const executeOtpVerification = async (
     return { handled: true }
   }
 
+  const { data: verifyRow, error: verifyError } = await SUPABASE.from(
+    "whatsapp_users"
+  )
+    .select("is_linked, user_id, onboarding_step")
+    .eq("whatsapp_phone", phoneNumber)
+    .single()
+
+  if (verifyError || !verifyRow?.is_linked || !verifyRow?.user_id) {
+    logger.error(
+      `WhatsApp: CRITICAL - Update appeared to succeed but re-verification failed for ${phoneNumber}. ` +
+        `Expected: is_linked=true, user_id=${authData.user.id}. ` +
+        `Got: is_linked=${verifyRow?.is_linked}, user_id=${verifyRow?.user_id}. ` +
+        `Error: ${verifyError?.message || "none"}`
+    )
+    await sendTextMessage(
+      phoneNumber,
+      "Sorry, something went wrong linking your account. Please try again."
+    )
+    return { handled: true }
+  }
+
   logger.info(
-    `WhatsApp: Successfully linked ${phoneNumber} to user ${authData.user.id}, step: ${finalStep}, verified: is_linked=${updatedUser.is_linked}`
+    `WhatsApp: Successfully linked ${phoneNumber} to user ${authData.user.id}, ` +
+      `step: ${finalStep}, verified: is_linked=${verifyRow.is_linked}, ` +
+      `onboarding_step=${verifyRow.onboarding_step}`
   )
 
   if (oauthToken) {
