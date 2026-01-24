@@ -10,6 +10,7 @@ import { ImpersonationBanner } from '@/components/admin/ImpersonationBanner'
 import { ImpersonationProvider } from '@/contexts/ImpersonationContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { NotificationProvider } from '@/contexts/NotificationContext'
+import { PostHogProvider } from '@/contexts/PostHogContext'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { SocketProvider } from '@/contexts/SocketContext'
@@ -18,14 +19,6 @@ import { Toaster } from 'sonner'
 import { createQueryClient } from '@/lib/query'
 import dynamic from 'next/dynamic'
 import { initWebVitals } from '@/lib/web-vitals'
-
-const PostHogProvider = dynamic(
-  () => import('@/contexts/PostHogContext').then((mod) => ({ default: mod.PostHogProvider })),
-  {
-    loading: () => null,
-    ssr: false,
-  },
-)
 
 const PostHogPageview = dynamic(
   () => import('@/components/shared/PostHogPageview').then((mod) => mod.PostHogPageview),

@@ -58,6 +58,16 @@ const Navbar = () => {
   const { t } = useTranslation()
   const { isAuthenticated, user, isLoading } = useAuthContext()
   const { name, initials, avatarUrl } = getUserInfo(user)
+  const [isRTL, setIsRTL] = useState(false)
+
+  useEffect(() => {
+    const checkRTL = () => setIsRTL(document.documentElement.dir === 'rtl')
+    checkRTL()
+
+    const observer = new MutationObserver(checkRTL)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['dir'] })
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     setIsMounted(true)
@@ -188,13 +198,15 @@ const Navbar = () => {
               className="fixed inset-0 z-[70] bg-foreground/40 backdrop-blur-sm md:hidden"
             />
 
-            {/* Left Sidebar */}
+            {/* Sidebar - Left for LTR, Right for RTL */}
             <motion.div
-              initial={{ x: '-100%' }}
+              initial={{ x: isRTL ? '100%' : '-100%' }}
               animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
+              exit={{ x: isRTL ? '100%' : '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 z-[80] flex w-[80%] max-w-sm flex-col border-r bg-[#09090b] p-6 pt-10 shadow-2xl md:hidden"
+              className={`fixed inset-y-0 z-[80] flex w-[80%] max-w-sm flex-col bg-[#09090b] p-6 pt-10 shadow-2xl md:hidden ${
+                isRTL ? 'right-0 border-l' : 'left-0 border-r'
+              }`}
             >
               <div className="mb-10 flex items-center">
                 <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>

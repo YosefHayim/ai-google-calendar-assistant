@@ -59,8 +59,8 @@ const REQUIRED_SECRETS = [
 // ENVIRONMENT SETUP
 // ============================================================================
 
-import * as path from "node:path"
 import * as dotenv from "dotenv"
+import * as path from "node:path"
 
 // Load .env file only in development - production uses injected env vars
 if (process.env.NODE_ENV !== "production") {

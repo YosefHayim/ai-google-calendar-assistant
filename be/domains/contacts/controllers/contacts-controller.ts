@@ -2,6 +2,10 @@ import type { Request, Response } from "express"
 import { STATUS_RESPONSE } from "@/config"
 import { reqResAsyncHandler, sendR } from "@/lib/http"
 import {
+  mineContactsFromCalendar,
+  mineContactsInBackground,
+} from "../services/contact-mining-service"
+import {
   createContact,
   deleteContact,
   getContactById,

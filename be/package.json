@@ -11,6 +11,7 @@
     "ci:lint": "bunx biome check . && bunx tsc --noEmit",
     "ci:test": "TEST_ENV=true bun run jest --passWithNoTests",
     "db:seed:flags": "bun scripts/seed-feature-flags.ts",
+    "db:sync:agents": "bun scripts/sync-agent-prompts.ts",
     "check": "npx ultracite check",
     "dev": "bun --watch app.ts",
     "fix": "npx ultracite fix --unsafe",

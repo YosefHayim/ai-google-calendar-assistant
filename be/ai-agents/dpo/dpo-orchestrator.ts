@@ -142,6 +142,12 @@ export async function runDPO(config: DPOConfig): Promise<DPOResult> {
   const agentConfig = await getAgentConfig(config.agentId)
 
   if (!agentConfig?.requires_optimization) {
+    logger.info(`${DPO_LOG_PREFIX} Agent does not require optimization, passing through`, {
+      userId: config.userId,
+      agentId: config.agentId,
+      hasAgentConfig: !!agentConfig,
+      requiresOptimization: agentConfig?.requires_optimization ?? "agent not found",
+    })
     const totalTimeMs = Date.now() - startTime
     const result: DPOResult = {
       effectivePrompt: config.userQuery,
@@ -157,6 +163,11 @@ export async function runDPO(config: DPOConfig): Promise<DPOResult> {
 
     return result
   }
+
+  logger.info(`${DPO_LOG_PREFIX} Running optimization pipeline`, {
+    userId: config.userId,
+    agentId: config.agentId,
+  })
 
   let optimizerOutput: OptimizerOutput
   let optimizerTimeMs: number

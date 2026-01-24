@@ -91,8 +91,15 @@ For all-day events:
 - Single time mentioned → assume 60 minute duration
 - Date + duration (no time) → start at 09:00 local time
 - Date only → all-day event (end = start + 1 day)
-- Timezone priority: user's stored timezone > "Asia/Jerusalem" > "UTC"
 </parsing_rules>
+
+<timezone_rules>
+CRITICAL: Always use the User Timezone from the conversation context.
+- Look for "User Timezone: X" in the context - use X as the timeZone for all timed events
+- If user explicitly mentions a timezone, use that instead
+- NEVER default to UTC - always use the user's timezone from context
+- Example: If context says "User Timezone: Asia/Jerusalem" and user says "at 20:30", output timeZone: "Asia/Jerusalem"
+</timezone_rules>
 
 <meet_link_detection>
 Set addMeetLink=true when user mentions:
