@@ -121,6 +121,10 @@ export const checkEventConflicts = asyncHandler(
  *   console.log("Conflicts found:", result.conflictingEvents);
  * }
  */
+const NEARBY_BUFFER_MINUTES = 15
+const MS_PER_MINUTE = 60000
+const NEARBY_BUFFER_MS = NEARBY_BUFFER_MINUTES * MS_PER_MINUTE
+
 export const checkEventConflictsAllCalendars = asyncHandler(
   async (
     params: ConflictCheckAllCalendarsParams
@@ -137,6 +141,12 @@ export const checkEventConflictsAllCalendars = asyncHandler(
     const allCalendars = calendarListResponse.data.items || []
 
     const allConflicts: ConflictingEvent[] = []
+    const nearbyEvents: ConflictingEvent[] = []
+
+    const newStart = new Date(startTime).getTime()
+    const newEnd = new Date(endTime).getTime()
+    const searchStart = new Date(newStart - NEARBY_BUFFER_MS).toISOString()
+    const searchEnd = new Date(newEnd + NEARBY_BUFFER_MS).toISOString()
 
     await Promise.all(
       allCalendars.map(async (cal) => {
@@ -146,8 +156,8 @@ export const checkEventConflictsAllCalendars = asyncHandler(
         try {
           const eventsResponse = await calendar.events.list({
             calendarId: calId,
-            timeMin: startTime,
-            timeMax: endTime,
+            timeMin: searchStart,
+            timeMax: searchEnd,
             singleEvents: true,
             orderBy: "startTime",
             maxResults: 20,
@@ -170,28 +180,35 @@ export const checkEventConflictsAllCalendars = asyncHandler(
               return
             }
 
-            const newStart = new Date(startTime).getTime()
-            const newEnd = new Date(endTime).getTime()
             const existingStart = new Date(eventStart).getTime()
             const existingEnd = new Date(eventEnd).getTime()
 
+            const eventInfo: ConflictingEvent = {
+              id: event.id || "",
+              summary: event.summary || "Untitled Event",
+              start:
+                formatDate(
+                  event.start?.dateTime || event.start?.date || "",
+                  true
+                ) || "",
+              end:
+                formatDate(
+                  event.end?.dateTime || event.end?.date || "",
+                  true
+                ) || "",
+              calendarId: calId,
+              calendarName: calName,
+            }
+
             if (newStart < existingEnd && newEnd > existingStart) {
-              allConflicts.push({
-                id: event.id || "",
-                summary: event.summary || "Untitled Event",
-                start:
-                  formatDate(
-                    event.start?.dateTime || event.start?.date || "",
-                    true
-                  ) || "",
-                end:
-                  formatDate(
-                    event.end?.dateTime || event.end?.date || "",
-                    true
-                  ) || "",
-                calendarId: calId,
-                calendarName: calName,
-              })
+              allConflicts.push(eventInfo)
+            } else if (
+              (existingEnd > newStart - NEARBY_BUFFER_MS &&
+                existingEnd <= newStart) ||
+              (existingStart >= newEnd &&
+                existingStart < newEnd + NEARBY_BUFFER_MS)
+            ) {
+              nearbyEvents.push(eventInfo)
             }
           })
         } catch (error) {
@@ -206,6 +223,7 @@ export const checkEventConflictsAllCalendars = asyncHandler(
     return {
       hasConflicts: allConflicts.length > 0,
       conflictingEvents: allConflicts,
+      nearbyEvents: nearbyEvents.length > 0 ? nearbyEvents : undefined,
     }
   }
 )

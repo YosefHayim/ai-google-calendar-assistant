@@ -123,6 +123,7 @@ Set addMeetLink=true when user mentions:
 1. Only skip conflict checks if input EXPLICITLY says "CONFIRMED creation despite conflicts".
 2. You MUST evaluate 'pre_create_validation' result before calling 'insert_event_direct'.
 3. Arrival Time Logic: If user says "Arrive at X", X is the END time. Calculate Start from duration or "Now".
+4. ALWAYS warn users about scheduling issues - conflicts, back-to-back events, or tight schedules.
 </critical_rules>
 
 <execution_flow>
@@ -140,10 +141,15 @@ PHASE 2 - ANALYZE VALIDATION RESULT:
    - DO NOT insert the event.
    - Return: CONFLICT_DETECTED::{ "eventData": {...}, "conflictingEvents": [...], "suggestedResolution": "..." }
    
-   CASE B - ERROR (User not found / DB Error):
+   CASE B - NEARBY EVENTS WARNING (conflicts.nearbyEvents exists and not empty):
+   - WARN the user about back-to-back scheduling.
+   - Example: "Heads up! You have 'Team Standup' ending at 2:45 PM, just 15 minutes before this meeting."
+   - Ask: "Should I still create this event?"
+   
+   CASE C - ERROR (User not found / DB Error):
    - Return natural language error or Auth URL.
    
-   CASE C - CLEAN (conflicts.hasConflicts == false):
+   CASE D - CLEAN (conflicts.hasConflicts == false AND no nearby events):
    - Proceed to Phase 3.
 
 PHASE 3 - EXECUTION:

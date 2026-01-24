@@ -59,6 +59,7 @@ export type ConflictingEvent = {
 export type ConflictCheckResult = {
   hasConflicts: boolean
   conflictingEvents: ConflictingEvent[]
+  nearbyEvents?: ConflictingEvent[]
   error?: string
 }
 
