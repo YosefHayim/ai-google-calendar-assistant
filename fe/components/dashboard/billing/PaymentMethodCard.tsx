@@ -2,7 +2,6 @@
 
 import type { CardBrand, PaymentMethod } from '@/services/payment-service'
 
-import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import React from 'react'
 import { cn } from '@/lib/utils'
@@ -15,7 +14,7 @@ interface PaymentMethodCardProps {
 
 function VisaIcon({ className }: { className?: string }) {
   return (
-    <svg className={cn('h-6 w-10', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className={cn('h-8 w-12', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="48" height="32" rx="4" fill="#1A1F71" />
       <path
         d="M19.5 21H17L18.9 11H21.4L19.5 21ZM15.3 11L12.9 17.9L12.6 16.5L11.7 12.2C11.7 12.2 11.6 11 10 11H6.1L6 11.2C6 11.2 7.8 11.6 9.9 13L12.1 21H14.7L18 11H15.3ZM38 21L35.7 11H33.6C32.3 11 32 12 32 12L28.2 21H30.8L31.3 19.5H34.5L34.8 21H37.1H38ZM32.1 17.5L33.5 13.5L34.3 17.5H32.1ZM28.8 13.7L29.2 11.3C29.2 11.3 27.6 10.7 25.9 10.7C24.1 10.7 19.9 11.5 19.9 15.1C19.9 18.5 24.5 18.5 24.5 20.2C24.5 21.9 20.4 21.5 18.9 20.3L18.5 22.8C18.5 22.8 20.1 23.5 22.4 23.5C24.7 23.5 28.8 22.3 28.8 19C28.8 15.6 24.1 15.3 24.1 13.8C24.1 12.3 27.3 12.5 28.8 13.7Z"
@@ -27,7 +26,7 @@ function VisaIcon({ className }: { className?: string }) {
 
 function MastercardIcon({ className }: { className?: string }) {
   return (
-    <svg className={cn('h-6 w-10', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className={cn('h-8 w-12', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="48" height="32" rx="4" fill="#F5F5F5" />
       <circle cx="18" cy="16" r="10" fill="#EB001B" />
       <circle cx="30" cy="16" r="10" fill="#F79E1B" />
@@ -41,7 +40,7 @@ function MastercardIcon({ className }: { className?: string }) {
 
 function AmexIcon({ className }: { className?: string }) {
   return (
-    <svg className={cn('h-6 w-10', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className={cn('h-8 w-12', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="48" height="32" rx="4" fill="#006FCF" />
       <path
         d="M6 16L8.5 10H11L14 16L11 22H8.5L6 16ZM14 10H22L24 12L26 10H34L38 16L34 22H26L24 20L22 22H14L10 16L14 10ZM42 16L39.5 10H37L34 16L37 22H39.5L42 16Z"
@@ -53,7 +52,7 @@ function AmexIcon({ className }: { className?: string }) {
 
 function DiscoverIcon({ className }: { className?: string }) {
   return (
-    <svg className={cn('h-6 w-10', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className={cn('h-8 w-12', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="48" height="32" rx="4" fill="#F5F5F5" />
       <ellipse cx="32" cy="16" rx="10" ry="8" fill="#F47216" />
       <path d="M6 14H10V18H6V14Z" fill="#1A1F71" />
@@ -65,7 +64,7 @@ function DiscoverIcon({ className }: { className?: string }) {
 
 function GenericCardIcon({ className }: { className?: string }) {
   return (
-    <svg className={cn('h-6 w-10', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg className={cn('h-8 w-12', className)} viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="48" height="32" rx="4" fill="#71717A" />
       <rect x="6" y="8" width="12" height="8" rx="1" fill="#A1A1AA" />
       <rect x="6" y="20" width="20" height="4" rx="1" fill="#A1A1AA" />
@@ -85,17 +84,17 @@ const cardIcons: Record<CardBrand, React.FC<{ className?: string }>> = {
 export function PaymentMethodCard({ paymentMethod, onUpdate, className }: PaymentMethodCardProps) {
   if (!paymentMethod) {
     return (
-      <Card className={cn('p-6', className)}>
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="mb-1 text-lg font-semibold text-foreground">Payment Method</h3>
-            <p className="text-sm text-muted-foreground">No payment method on file</p>
-          </div>
+      <Card className={cn('overflow-hidden border border-border', className)}>
+        <div className="flex items-center justify-between border-b border-border p-6">
+          <h3 className="text-lg font-semibold text-foreground">Payment Method</h3>
           {onUpdate && (
-            <Button variant="outline" size="sm" onClick={onUpdate}>
+            <button onClick={onUpdate} className="text-sm font-medium text-primary hover:text-primary/80">
               Add Card
-            </Button>
+            </button>
           )}
+        </div>
+        <div className="p-6">
+          <p className="text-sm text-muted-foreground">No payment method on file</p>
         </div>
       </Card>
     )
@@ -103,46 +102,25 @@ export function PaymentMethodCard({ paymentMethod, onUpdate, className }: Paymen
 
   const CardIcon = cardIcons[paymentMethod.brand]
   const expiryMonth = paymentMethod.expiryMonth.toString().padStart(2, '0')
-  const expiryYear = paymentMethod.expiryYear.toString().slice(-2)
+  const expiryYear = paymentMethod.expiryYear.toString()
 
   return (
-    <Card className={cn('p-6', className)}>
-      <div className="mb-4 flex items-start justify-between">
+    <Card className={cn('overflow-hidden border border-border', className)}>
+      <div className="flex items-center justify-between border-b border-border p-6">
         <h3 className="text-lg font-semibold text-foreground">Payment Method</h3>
         {onUpdate && (
-          <Button variant="ghost" size="sm" onClick={onUpdate}>
-            Update
-          </Button>
+          <button onClick={onUpdate} className="text-sm font-medium text-primary hover:text-primary/80">
+            Edit
+          </button>
         )}
       </div>
-
-      <div className="rounded-xl bg-gradient-to-br from-secondary to-secondary p-4 shadow-lg">
-        <div className="mb-6 flex items-center justify-between">
-          <CardIcon className="h-8 w-12" />
-          {paymentMethod.isDefault && (
-            <span className="text-xs uppercase tracking-wider text-muted-foreground">Default</span>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="text-lg tracking-widest text-muted-foreground">••••</span>
-            <span className="text-lg tracking-widest text-muted-foreground">••••</span>
-            <span className="text-lg tracking-widest text-muted-foreground">••••</span>
-            <span className="font-mono text-lg tracking-widest text-foreground">{paymentMethod.last4}</span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="block text-xs uppercase text-muted-foreground">Expires</span>
-              <span className="font-mono text-foreground">
-                {expiryMonth}/{expiryYear}
-              </span>
-            </div>
-            <span className="text-xs uppercase text-muted-foreground">
-              {paymentMethod.brand.charAt(0).toUpperCase() + paymentMethod.brand.slice(1)}
-            </span>
-          </div>
+      <div className="flex items-center gap-4 p-6">
+        <CardIcon />
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-foreground">•••• •••• •••• {paymentMethod.last4}</p>
+          <p className="text-[13px] text-muted-foreground">
+            Expires {expiryMonth}/{expiryYear}
+          </p>
         </div>
       </div>
     </Card>

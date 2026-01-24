@@ -1,45 +1,40 @@
 'use client'
 
-import { CardHeader, CardTitle } from '@/components/ui/card'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-
-import { Button } from '@/components/ui/button'
-import { Info } from 'lucide-react'
 import React from 'react'
+import { cn } from '@/lib/utils'
 
 interface TabHeaderProps {
   title: string
-  tooltip: string
+  description?: string
+  /** @deprecated Use description instead */
+  tooltip?: string
   icon?: React.ReactNode
+  /** Variant for different header styles */
+  variant?: 'default' | 'card'
+  /** Custom class name */
+  className?: string
 }
 
-export const TabHeader: React.FC<TabHeaderProps> = ({ title, tooltip, icon }) => {
+export const TabHeader: React.FC<TabHeaderProps> = ({ title, description, icon, variant = 'default', className }) => {
+  if (variant === 'card') {
+    return (
+      <div className={cn('border-b border-border p-6', className)}>
+        <div className="flex items-center gap-2">
+          {icon && <div className="text-foreground">{icon}</div>}
+          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        </div>
+        {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
+      </div>
+    )
+  }
+
   return (
-    <CardHeader>
+    <div className={cn('space-y-1', className)}>
       <div className="flex items-center gap-2">
         {icon && <div className="rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 p-2">{icon}</div>}
-        <CardTitle className="flex items-center gap-1.5 text-lg">
-          {title}
-          <TooltipProvider delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-5 w-5 text-muted-foreground hover:text-foreground"
-                  aria-label={`More info about ${title}`}
-                >
-                  <Info className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[280px]">
-                <p className="text-sm">{tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </CardTitle>
+        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       </div>
-    </CardHeader>
+      {description && <p className="text-sm text-muted-foreground">{description}</p>}
+    </div>
   )
 }

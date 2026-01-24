@@ -374,6 +374,8 @@ export const fr: TranslationShape = {
   },
 
   sidebar: {
+    chat: 'Discussion',
+    chatDescription: 'Discutez avec Ally pour gérer votre agenda',
     assistant: 'Assistant',
     assistantDescription: 'Discutez avec votre assistant IA pour gérer événements et emplois du temps',
     admin: 'Admin',

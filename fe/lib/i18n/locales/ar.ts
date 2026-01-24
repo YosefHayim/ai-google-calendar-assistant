@@ -441,6 +441,8 @@ export const ar: TranslationShape = {
   },
 
   sidebar: {
+    chat: 'محادثة',
+    chatDescription: 'تحدث مع Ally لإدارة تقويمك',
     assistant: 'المساعد',
     assistantDescription: 'تحدث مع مساعدك الذكي لإدارة الأحداث والجداول',
     admin: 'المشرف',

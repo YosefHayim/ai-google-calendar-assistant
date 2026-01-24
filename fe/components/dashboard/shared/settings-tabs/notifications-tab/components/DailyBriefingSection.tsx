@@ -1,13 +1,12 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Mail, Check, Loader2, CalendarDays } from 'lucide-react'
+import { Mail, Check, Loader2, Clock, Globe } from 'lucide-react'
 import { toast } from 'sonner'
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
-import { SettingsRow, SettingsSection, TabHeader, TimePicker, TimezoneSelector } from '../../components'
+import { SettingsRow, SettingsSection, TimePicker, TimezoneSelector } from '../../components'
 import { useDailyBriefing, useUpdateDailyBriefing } from '@/hooks/queries'
 import { type DailyBriefingFormData, dailyBriefingDefaults } from '@/lib/validations/preferences'
 import { useTranslation } from 'react-i18next'
@@ -72,79 +71,71 @@ export function DailyBriefingSection() {
     }
   }
 
+  if (isLoadingBriefing) {
+    return <LoadingSection text="Loading daily briefing settings..." />
+  }
+
   return (
-    <Card>
-      <TabHeader
-        title="Daily Briefing"
-        tooltip="Receive a summary of your day's schedule every morning via email"
-        icon={<Mail className="h-5 w-5 text-foreground" />}
+    <SettingsSection
+      variant="card"
+      title={t('settings.dailyBriefing', 'Daily Briefing')}
+      description={t('settings.dailyBriefingCardDescription', 'Get a summary of your day delivered to your inbox')}
+      footer={
+        <Button onClick={handleSaveBriefing} disabled={!isBriefingDirty || isUpdatingBriefing}>
+          {isUpdatingBriefing ? (
+            <>
+              <Loader2 size={16} className="mr-2 animate-spin" />
+              Saving...
+            </>
+          ) : isBriefingSuccess && !isBriefingDirty ? (
+            <>
+              <Check size={16} className="mr-2" />
+              Saved
+            </>
+          ) : (
+            'Save Changes'
+          )}
+        </Button>
+      }
+    >
+      <SettingsRow
+        id="briefing-enabled"
+        title={t('settings.enableDailyBriefing', 'Enable Daily Briefing')}
+        description={t('settings.dailyBriefingDescription', 'Receive an email each morning with your schedule')}
+        icon={<Mail size={18} />}
+        control={
+          <CinematicGlowToggle
+            id={dailyBriefingToggleId}
+            checked={briefingSettings.enabled}
+            onChange={handleToggleBriefing}
+          />
+        }
       />
-      <CardContent>
-        {isLoadingBriefing ? (
-          <LoadingSection text="Loading daily briefing settings..." />
-        ) : (
-          <div className="space-y-4">
-            <SettingsSection>
-              <SettingsRow
-                id="briefing-enabled"
-                title="Enable Daily Briefing"
-                tooltip="When enabled, you'll receive an email each morning with your schedule for the day"
-                icon={<CalendarDays size={18} className="text-foreground" />}
-                control={
-                  <CinematicGlowToggle
-                    id={dailyBriefingToggleId}
-                    checked={briefingSettings.enabled}
-                    onChange={handleToggleBriefing}
-                  />
-                }
-              />
-            </SettingsSection>
 
-            {briefingSettings.enabled && (
-              <div className="space-y-4 pt-2">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Delivery Time</label>
-                    <TimePicker id="briefing-time" value={briefingSettings.time} onChange={handleBriefingTimeChange} />
-                    <p className="text-xs text-muted-foreground">
-                      Choose when you'd like to receive your daily briefing
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Timezone</label>
-                    <TimezoneSelector
-                      id="briefing-timezone"
-                      value={briefingSettings.timezone}
-                      onChange={handleBriefingTimezoneChange}
-                    />
-                    <p className="text-xs text-muted-foreground">Your briefing will be sent based on this timezone</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <Button
-              onClick={handleSaveBriefing}
-              disabled={!isBriefingDirty || isUpdatingBriefing}
-              className="mt-4 w-full"
-            >
-              {isUpdatingBriefing ? (
-                <>
-                  <Loader2 size={16} className="mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : isBriefingSuccess && !isBriefingDirty ? (
-                <>
-                  <Check size={16} className="mr-2" />
-                  Saved
-                </>
-              ) : (
-                'Save Changes'
-              )}
-            </Button>
+      {briefingSettings.enabled && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-muted-foreground" />
+              <label className="text-sm font-medium text-foreground">Delivery Time</label>
+            </div>
+            <TimePicker id="briefing-time" value={briefingSettings.time} onChange={handleBriefingTimeChange} />
+            <p className="text-xs text-muted-foreground">Choose when you'd like to receive your briefing</p>
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Globe size={16} className="text-muted-foreground" />
+              <label className="text-sm font-medium text-foreground">Timezone</label>
+            </div>
+            <TimezoneSelector
+              id="briefing-timezone"
+              value={briefingSettings.timezone}
+              onChange={handleBriefingTimezoneChange}
+            />
+            <p className="text-xs text-muted-foreground">Your briefing will be sent based on this timezone</p>
+          </div>
+        </div>
+      )}
+    </SettingsSection>
   )
 }

@@ -400,7 +400,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
               onSubmit={handleSubmit}
-              className="border/80 /80 relative overflow-hidden rounded-2xl bg-background/90 bg-secondary/90 shadow-2xl backdrop-blur-xl"
+              className="relative overflow-hidden rounded-xl border border-border bg-card"
             >
               <Input
                 ref={fileInputRef}
@@ -411,8 +411,55 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                 className="hidden"
               />
 
-              <div className="flex items-end gap-1 p-1.5 sm:gap-2 sm:p-2">
-                <div className="flex flex-col gap-1 pb-0.5">
+              <div className="flex items-center gap-3 p-3 sm:p-4">
+                <div className="relative min-w-0 flex-1">
+                  <textarea
+                    ref={combinedRef}
+                    value={input}
+                    onChange={(e) => onInputChange(e.target.value)}
+                    onPaste={handlePaste}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        handleSubmit()
+                      }
+                    }}
+                    maxLength={MAX_INPUT_LENGTH}
+                    placeholder={
+                      images.length > 0
+                        ? 'Add a message about your images...'
+                        : 'Ask Ally anything about your calendar...'
+                    }
+                    className={cn(
+                      'max-h-[120px] min-h-[24px] w-full resize-none overflow-y-auto',
+                      'border-0 bg-transparent shadow-none outline-none',
+                      'text-sm text-foreground',
+                      'placeholder:text-muted-foreground',
+                      inputDirection === 'rtl' && 'text-right',
+                      isInputTooLong && 'text-destructive',
+                    )}
+                    disabled={isDisabled}
+                    dir={inputDirection}
+                    rows={1}
+                  />
+                  <AnimatePresence>
+                    {input.length > MAX_INPUT_LENGTH * 0.8 && (
+                      <motion.span
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className={cn(
+                          'absolute bottom-1 right-2 font-mono text-xs',
+                          isInputTooLong ? 'text-destructive' : 'text-muted-foreground',
+                        )}
+                      >
+                        {input.length}/{MAX_INPUT_LENGTH}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="flex items-center gap-2">
                   {imageUpload && (
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -422,14 +469,13 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                           whileTap={{ scale: 0.95 }}
                           onClick={() => fileInputRef.current?.click()}
                           className={cn(
-                            'flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
+                            'flex h-9 w-9 items-center justify-center rounded-lg transition-colors',
                             'text-muted-foreground hover:text-foreground',
-                            'hover:bg-secondary',
                             (isDisabled || !canAddMoreImages) && 'cursor-not-allowed opacity-40',
                           )}
                           disabled={isDisabled || !canAddMoreImages}
                         >
-                          <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
+                          <Paperclip className="h-[18px] w-[18px]" />
                         </motion.button>
                       </TooltipTrigger>
                       <TooltipContent side="top">
@@ -447,15 +493,15 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                           whileTap={{ scale: 0.95 }}
                           onClick={onToggleRecording}
                           className={cn(
-                            'flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
+                            'flex h-9 w-9 items-center justify-center rounded-lg transition-colors',
                             isRecording
                               ? 'bg-destructive/5 text-destructive'
-                              : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+                              : 'text-muted-foreground hover:text-foreground',
                             (isDisabled || !speechRecognitionSupported) && 'cursor-not-allowed opacity-40',
                           )}
                           disabled={isDisabled || !speechRecognitionSupported}
                         >
-                          <Mic className="h-4 w-4 sm:h-5 sm:w-5" />
+                          <Mic className="h-[18px] w-[18px]" />
                         </motion.button>
                       </TooltipTrigger>
                       <TooltipContent side="top">{isRecording ? 'Stop recording' : 'Voice input'}</TooltipContent>
@@ -472,15 +518,15 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                               className={cn(
-                                'relative flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
+                                'relative flex h-9 w-9 items-center justify-center rounded-lg transition-colors',
                                 selectedAttendees.length > 0
                                   ? 'bg-primary/10 text-primary'
-                                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+                                  : 'text-muted-foreground hover:text-foreground',
                                 isDisabled && 'cursor-not-allowed opacity-40',
                               )}
                               disabled={isDisabled}
                             >
-                              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                              <Users className="h-[18px] w-[18px]" />
                               {selectedAttendees.length > 0 && (
                                 <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
                                   {selectedAttendees.length}
@@ -503,67 +549,18 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       </PopoverContent>
                     </Popover>
                   )}
-                </div>
 
-                <div className="relative min-w-0 flex-1">
-                  <textarea
-                    ref={combinedRef}
-                    value={input}
-                    onChange={(e) => onInputChange(e.target.value)}
-                    onPaste={handlePaste}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault()
-                        handleSubmit()
-                      }
-                    }}
-                    maxLength={MAX_INPUT_LENGTH}
-                    placeholder={
-                      images.length > 0
-                        ? 'Add a message about your images...'
-                        : "What do you have for me today? I'm ready to help you."
-                    }
-                    className={cn(
-                      'max-h-[200px] min-h-[100px] w-full resize-none overflow-y-auto',
-                      'border-0 bg-transparent shadow-none outline-none',
-                      'px-2 py-3 text-sm font-medium sm:px-3 sm:text-base',
-                      'placeholder:font-normal placeholder:italic placeholder:text-muted-foreground',
-                      'text-foreground',
-                      inputDirection === 'rtl' && 'text-right',
-                      isInputTooLong && 'text-destructive',
-                    )}
-                    disabled={isDisabled}
-                    dir={inputDirection}
-                  />
-                  <AnimatePresence>
-                    {input.length > MAX_INPUT_LENGTH * 0.8 && (
-                      <motion.span
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 5 }}
-                        className={cn(
-                          'absolute bottom-1 right-2 font-mono text-xs',
-                          isInputTooLong ? 'text-destructive' : 'text-muted-foreground',
-                        )}
-                      >
-                        {input.length}/{MAX_INPUT_LENGTH}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                <div className="pb-0.5">
                   {isLoading && onCancel ? (
                     <motion.button
                       type="button"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={onCancel}
-                      className="flex h-10 w-10 items-center justify-center rounded-xl bg-destructive text-foreground shadow-lg transition-colors hover:bg-destructive sm:h-12 sm:w-12"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-destructive text-destructive-foreground transition-colors"
                       title="Cancel AI response"
                     >
                       <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                        <Pause className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <Pause className="h-[18px] w-[18px]" />
                       </motion.div>
                     </motion.button>
                   ) : (
@@ -573,14 +570,14 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       whileTap={hasContent && !isLoading && !isInputTooLong ? { scale: 0.98 } : {}}
                       disabled={!hasContent || isLoading || isInputTooLong}
                       className={cn(
-                        'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 sm:h-12 sm:w-12',
+                        'flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200',
                         hasContent && !isLoading && !isInputTooLong
-                          ? 'bg-secondary text-foreground shadow-lg hover:shadow-xl'
-                          : 'bg-secondary text-muted-foreground',
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-primary/50 text-primary-foreground/50',
                       )}
                       title={isInputTooLong ? 'Message too long' : undefined}
                     >
-                      <ArrowUp className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <ArrowUp className="h-[18px] w-[18px]" />
                     </motion.button>
                   )}
                 </div>

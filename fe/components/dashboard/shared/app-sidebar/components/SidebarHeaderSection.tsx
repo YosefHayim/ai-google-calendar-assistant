@@ -24,7 +24,7 @@ export function SidebarHeaderSection() {
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-background bg-secondary text-foreground">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <AllyLogo className="h-5 w-5" />
               </div>
               <span className="flex items-center text-lg font-medium tracking-normal">

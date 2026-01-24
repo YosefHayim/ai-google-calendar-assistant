@@ -2,11 +2,10 @@
 
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Moon, Sun, Monitor, Palette, Globe, Clock, MapPin, Languages } from 'lucide-react'
+import { Globe, Clock, MapPin, Languages, Palette } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { SettingsRow, SettingsDropdown, SettingsSection, type DropdownOption } from './components'
+import { SettingsRow, SettingsDropdown, SettingsSection, TabHeader, type DropdownOption } from './components'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
 import { SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, type SupportedLanguageCode } from '@/lib/i18n/config'
@@ -17,7 +16,6 @@ import {
   useUpdateDisplayPreferences,
   useTimezonesList,
 } from '@/hooks/queries'
-import { AvatarUpload } from './components/AvatarUpload'
 import i18n from '@/lib/i18n/config'
 
 const GEO_PERMISSION_KEY = 'ally_geo_permission_granted'
@@ -31,7 +29,7 @@ interface GeneralTabProps {
 
 const LANGUAGE_OPTIONS: DropdownOption[] = SUPPORTED_LANGUAGES.map((lang) => ({
   value: lang.code,
-  label: `${lang.flag} ${lang.nativeName}`,
+  label: lang.nativeName,
 }))
 
 export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme, userData }) => {
@@ -49,7 +47,6 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
   const { updateDisplayPreferences, isUpdating: isUpdatingDisplayPreferences } = useUpdateDisplayPreferences()
   const { data: timezonesList, isLoading: isLoadingTimezones } = useTimezonesList()
 
-  // Initialize language from i18n
   useEffect(() => {
     setLanguage(i18n.language as SupportedLanguageCode)
   }, [])
@@ -139,9 +136,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
           },
           {
             onSuccess: () => {
-              toast.success(t('toast.realTimeLocationEnabled'), {
-                description: t('toast.locationAccessDeniedDescription'),
-              })
+              toast.success(t('toast.realTimeLocationEnabled'))
             },
             onError: () => {
               setGeoLocationEnabled(false)
@@ -154,9 +149,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
       const handleError = () => {
         localStorage.removeItem(GEO_PERMISSION_KEY)
         setGeoLocationEnabled(false)
-        toast.error(t('toast.locationAccessDenied'), {
-          description: t('toast.locationAccessDeniedDescription'),
-        })
+        toast.error(t('toast.locationAccessDenied'))
       }
 
       if (hasPermission) {
@@ -187,7 +180,6 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
     await i18n.changeLanguage(newLang)
     localStorage.setItem(LANGUAGE_STORAGE_KEY, newLang)
 
-    // Update document direction for RTL languages
     const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === newLang)
     document.documentElement.dir = langConfig?.dir || 'ltr'
     document.documentElement.lang = newLang
@@ -203,13 +195,18 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
   const createdAt = userInfo?.createdAt
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">{t('settings.general', 'General')}</CardTitle>
-        <CardDescription>{t('settings.generalDescription', 'Manage your profile and preferences.')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="flex flex-wrap items-center gap-4 border-b pb-4 sm:flex-nowrap">
+    <div className="space-y-6">
+      <TabHeader
+        title={t('settings.general', 'General')}
+        description={t('settings.generalDescription', 'Manage your profile and preferences.')}
+      />
+
+      <SettingsSection
+        variant="card"
+        title={t('settings.profile', 'Profile')}
+        description={t('settings.profileDescription', 'Your personal information and preferences')}
+      >
+        <div className="flex items-center gap-4">
           {avatarUrl ? (
             <Image
               src={avatarUrl}
@@ -219,126 +216,112 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
               className="flex-shrink-0 rounded-xl object-cover"
             />
           ) : (
-            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-accent">
-              <span className="text-lg font-medium text-foreground">{initials}</span>
+            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+              <span className="text-lg font-semibold">{initials}</span>
             </div>
           )}
           <div className="min-w-0 flex-1">
             <h4 className="truncate text-base font-semibold text-foreground">{fullName}</h4>
             <p className="truncate text-sm text-muted-foreground">{email}</p>
             {createdAt && (
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 {t('settings.memberSince', 'Member since')}{' '}
                 {new Date(createdAt).toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })}
               </p>
             )}
           </div>
         </div>
+      </SettingsSection>
 
-        {/* Avatar Upload Section */}
-        {/* <div className="py-4">
-          <AvatarUpload userData={userData} />
-        </div> */}
+      <SettingsSection
+        variant="card"
+        title={t('settings.preferences', 'Preferences')}
+        description={t('settings.preferencesDescription', 'Customize your experience')}
+      >
+        <SettingsRow
+          id="language"
+          title={t('settings.language', 'Language')}
+          description={t('settings.languageDescription', 'Choose your preferred interface language')}
+          icon={<Languages size={18} />}
+          control={
+            <SettingsDropdown
+              id="language-dropdown"
+              value={language}
+              options={LANGUAGE_OPTIONS}
+              onChange={handleLanguageChange}
+            />
+          }
+        />
 
-        <SettingsSection>
-          <SettingsRow
-            id="language"
-            title={t('settings.language', 'Language')}
-            tooltip={t('settings.languageTooltip', 'Choose your preferred language for the interface')}
-            icon={<Languages size={18} className="text-foreground" />}
-            control={
-              <SettingsDropdown
-                id="language-dropdown"
-                value={language}
-                options={LANGUAGE_OPTIONS}
-                onChange={handleLanguageChange}
-              />
-            }
-          />
+        <SettingsRow
+          id="appearance"
+          title={t('settings.appearance', 'Appearance')}
+          description={t('settings.appearanceDescription', 'Choose your preferred color theme')}
+          icon={<Palette size={18} />}
+          control={
+            <SettingsDropdown
+              id="appearance-dropdown"
+              value={appearance}
+              options={[
+                { value: 'light', label: t('settings.themeLight', 'Light') },
+                { value: 'dark', label: t('settings.themeDark', 'Dark') },
+              ]}
+              onChange={handleAppearanceChange}
+            />
+          }
+        />
 
-          <SettingsRow
-            id="appearance"
-            title={t('settings.appearance', 'Appearance')}
-            tooltip={t('settings.appearanceTooltip', 'Choose your preferred color theme for the interface')}
-            icon={<Palette size={18} className="text-foreground" />}
-            control={
-              <SettingsDropdown
-                id="appearance-dropdown"
-                value={appearance}
-                options={[
-                  { value: 'light', label: t('settings.themeLight', 'Light'), icon: <Sun className="h-4 w-4" /> },
-                  { value: 'dark', label: t('settings.themeDark', 'Dark'), icon: <Moon className="h-4 w-4" /> },
-                  {
-                    value: 'system',
-                    label: t('settings.themeSystem', 'System'),
-                    icon: <Monitor className="h-4 w-4" />,
-                  },
-                ]}
-                onChange={handleAppearanceChange}
-              />
-            }
-          />
+        <SettingsRow
+          id="timezone"
+          title={t('settings.defaultTimezone', 'Default Timezone')}
+          description={t('settings.timezoneDescription', 'Events will be scheduled in this timezone')}
+          icon={<Globe size={18} />}
+          control={
+            <SettingsDropdown
+              id="timezone-dropdown"
+              value={timezone}
+              options={timezoneOptions}
+              onChange={
+                isUpdatingDisplayPreferences || isLoadingDisplayPreferences || isLoadingTimezones
+                  ? () => {}
+                  : handleTimezoneChange
+              }
+            />
+          }
+        />
 
-          <SettingsRow
-            id="timezone"
-            title={t('settings.defaultTimezone', 'Default Timezone')}
-            tooltip={t(
-              'settings.timezoneTooltip',
-              'Events will be scheduled in this timezone unless specified otherwise',
-            )}
-            icon={<Globe size={18} className="text-foreground" />}
-            control={
-              <SettingsDropdown
-                id="timezone-dropdown"
-                value={timezone}
-                options={timezoneOptions}
-                onChange={
-                  isUpdatingDisplayPreferences || isLoadingDisplayPreferences || isLoadingTimezones
-                    ? () => {}
-                    : handleTimezoneChange
-                }
-              />
-            }
-          />
+        <SettingsRow
+          id="time-format"
+          title={t('settings.timeFormat', 'Time Format')}
+          description={t('settings.timeFormatDescription', 'Display format for event times')}
+          icon={<Clock size={18} />}
+          control={
+            <SettingsDropdown
+              id="time-format-dropdown"
+              value={timeFormat}
+              options={[
+                { value: '12h', label: t('settings.timeFormat12h', '12-hour (AM/PM)') },
+                { value: '24h', label: t('settings.timeFormat24h', '24-hour') },
+              ]}
+              onChange={isUpdatingDisplayPreferences || isLoadingDisplayPreferences ? () => {} : handleTimeFormatChange}
+            />
+          }
+        />
 
-          <SettingsRow
-            id="time-format"
-            title={t('settings.timeFormat', 'Time Format')}
-            tooltip={t('settings.timeFormatTooltip', 'Display format for event times throughout the app')}
-            icon={<Clock size={18} className="text-foreground" />}
-            control={
-              <SettingsDropdown
-                id="time-format-dropdown"
-                value={timeFormat}
-                options={[
-                  { value: '12h', label: t('settings.timeFormat12h', '12-hour (AM/PM)') },
-                  { value: '24h', label: t('settings.timeFormat24h', '24-hour') },
-                ]}
-                onChange={
-                  isUpdatingDisplayPreferences || isLoadingDisplayPreferences ? () => {} : handleTimeFormatChange
-                }
-              />
-            }
-          />
-
-          <SettingsRow
-            id="geo-location"
-            title={t('settings.realTimeLocation', 'Real-time Location')}
-            tooltip={t(
-              'settings.realTimeLocationTooltip',
-              'When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)',
-            )}
-            icon={<MapPin size={18} className="text-foreground" />}
-            control={
-              <CinematicGlowToggle
-                id={geoLocationToggleId}
-                checked={geoLocationEnabled}
-                onChange={isUpdatingGeoLocation || isLoadingGeoLocation ? () => {} : handleGeoLocationToggle}
-              />
-            }
-          />
-        </SettingsSection>
-      </CardContent>
-    </Card>
+        <SettingsRow
+          id="geo-location"
+          title={t('settings.realTimeLocation', 'Real-time Location')}
+          description={t('settings.realTimeLocationDescription', 'Use your location for context in event creation')}
+          icon={<MapPin size={18} />}
+          control={
+            <CinematicGlowToggle
+              id={geoLocationToggleId}
+              checked={geoLocationEnabled}
+              onChange={isUpdatingGeoLocation || isLoadingGeoLocation ? () => {} : handleGeoLocationToggle}
+            />
+          }
+        />
+      </SettingsSection>
+    </div>
   )
 }

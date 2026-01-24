@@ -391,6 +391,8 @@ export const en = {
 
   // Sidebar Navigation
   sidebar: {
+    chat: 'Chat',
+    chatDescription: 'Chat with Ally to manage your calendar',
     assistant: 'Assistant',
     assistantDescription: 'Chat with your AI calendar assistant to manage events and schedules',
     admin: 'Admin',

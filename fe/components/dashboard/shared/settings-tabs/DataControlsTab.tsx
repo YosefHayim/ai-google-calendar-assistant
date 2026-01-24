@@ -1,11 +1,10 @@
 'use client'
 
-import { Archive, Brain, Eraser, Loader2, MessageCircleX, MessageSquareX, Trash2, UserX } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { SettingsRow, SettingsSection, TabHeader } from './components'
-
-import { Button } from '@/components/ui/button'
 import React from 'react'
+import { Archive, Brain, Loader2, MessageSquare, Trash2, UserX } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { SettingsRow, SettingsSection, TabHeader } from './components'
+import { useTranslation } from 'react-i18next'
 
 interface DataControlsTabProps {
   onDeleteAllConversations: () => void
@@ -24,95 +23,92 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
   isResettingMemory,
   onDeleteAccount,
 }) => {
-  const handleExport = () => {
-    console.log('Exporting calendar data...')
-  }
+  const { t } = useTranslation()
 
   return (
-    <Card>
-      <TabHeader title="Data Controls" tooltip="Manage your data, conversations, and account" />
-      <CardContent>
-        <SettingsSection showDivider className="mt-4">
-          <SettingsRow
-            id="delete-conversations"
-            title="Delete All Conversations"
-            tooltip="Permanently delete all your chat history with Ally. This removes all messages, summaries, and conversation data. This cannot be undone."
-            icon={<MessageCircleX size={18} className="text-foreground" />}
-            control={
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onDeleteAllConversations}
-                disabled={isDeletingConversations}
-                className="gap-2 border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive"
-              >
-                {isDeletingConversations ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <MessageSquareX className="h-4 w-4" />
-                )}
-                Clear History
-              </Button>
-            }
-          />
-        </SettingsSection>
+    <div className="space-y-6">
+      <TabHeader
+        title={t('settings.dataControls', 'Data Controls')}
+        description={t('settings.dataControlsDescription', 'Manage your data, conversations, and account.')}
+      />
 
-        <SettingsSection showDivider className="mt-4">
-          <SettingsRow
-            id="archived-conversations"
-            title="Archived Conversations"
-            tooltip="View and restore conversations you've previously archived. Archived conversations are hidden from your main chat list."
-            icon={<Archive size={18} className="text-foreground" />}
-            control={
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onViewArchivedConversations}
-                className="gap-2 border-muted text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <Archive className="h-4 w-4" />
-                View Archived
-              </Button>
-            }
-          />
-        </SettingsSection>
+      <SettingsSection
+        variant="card"
+        title={t('settings.conversationData', 'Conversation Data')}
+        description={t('settings.conversationDataDescription', 'Manage your chat history and archived conversations')}
+      >
+        <SettingsRow
+          id="delete-conversations"
+          title={t('settings.deleteAllConversations', 'Delete All Conversations')}
+          description={t(
+            'settings.deleteConversationsDescription',
+            'Permanently delete all your chat history with Ally',
+          )}
+          icon={<MessageSquare size={18} />}
+          control={
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDeleteAllConversations}
+              disabled={isDeletingConversations}
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            >
+              {isDeletingConversations ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Clear History
+            </Button>
+          }
+        />
 
-        <SettingsSection showDivider className="mt-4">
-          <SettingsRow
-            id="reset-memory"
-            title="Reset Assistant Memory"
-            tooltip="Clear all learned scheduling patterns, preferred meeting durations, and location preferences. Ally will need to relearn your habits over time."
-            icon={<Eraser size={18} className="text-foreground" />}
-            control={
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onResetMemory}
-                disabled={isResettingMemory}
-                className="gap-2 border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive"
-              >
-                {isResettingMemory ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
-                Reset Memory
-              </Button>
-            }
-          />
-        </SettingsSection>
+        <SettingsRow
+          id="archived-conversations"
+          title={t('settings.archivedConversations', 'Archived Conversations')}
+          description={t('settings.archivedDescription', "View and restore conversations you've previously archived")}
+          icon={<Archive size={18} />}
+          control={
+            <Button variant="ghost" size="sm" onClick={onViewArchivedConversations}>
+              View Archived
+            </Button>
+          }
+        />
 
-        <SettingsSection showDivider className="mt-4">
-          <SettingsRow
-            id="delete-account"
-            title="Delete Account"
-            tooltip="Permanently delete your account including all data, conversations, preferences, and calendar connections. This action is irreversible."
-            icon={<UserX size={18} className="text-foreground" />}
-            control={
-              <Button variant="destructive" size="sm" onClick={onDeleteAccount} className="gap-2">
-                <Trash2 className="h-4 w-4" />
-                Delete Account
-              </Button>
-            }
-          />
-        </SettingsSection>
-      </CardContent>
-    </Card>
+        <SettingsRow
+          id="reset-memory"
+          title={t('settings.resetAssistantMemory', 'Reset Assistant Memory')}
+          description={t('settings.resetMemoryDescription', 'Clear all learned scheduling patterns and preferences')}
+          icon={<Brain size={18} />}
+          control={
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onResetMemory}
+              disabled={isResettingMemory}
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            >
+              {isResettingMemory ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Reset Memory
+            </Button>
+          }
+        />
+      </SettingsSection>
+
+      <SettingsSection
+        variant="danger"
+        title={t('settings.dangerZone', 'Danger Zone')}
+        description={t('settings.dangerZoneDescription', 'Irreversible and destructive actions')}
+      >
+        <SettingsRow
+          id="delete-account"
+          title={t('settings.deleteAccount', 'Delete Account')}
+          description={t('settings.deleteAccountDescription', 'Permanently delete your account including all data')}
+          icon={<UserX size={18} />}
+          control={
+            <Button variant="destructive" size="sm" onClick={onDeleteAccount}>
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Account
+            </Button>
+          }
+        />
+      </SettingsSection>
+    </div>
   )
 }

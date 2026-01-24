@@ -214,7 +214,7 @@ export const preferencesService = {
     return data
   },
 
-  async updatePersona(value: PersonaFormData): Promise<ApiResponse<PreferenceResponse<PersonaFormData>>> {
+  async updatePersona(value: Partial<PersonaFormData>): Promise<ApiResponse<PreferenceResponse<PersonaFormData>>> {
     const { data } = await apiClient.put<ApiResponse<PreferenceResponse<PersonaFormData>>>(
       ENDPOINTS.USER_PREFERENCES_BY_KEY('persona'),
       value,

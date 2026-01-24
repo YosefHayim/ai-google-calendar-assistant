@@ -1,6 +1,6 @@
 'use client'
 
-import { CalendarDays, Info, PieChart, Shield, Sparkles, Target } from 'lucide-react'
+import { CalendarDays, Info, LayoutDashboard, MessageCircle, PieChart, Shield, Target } from 'lucide-react'
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -20,11 +20,18 @@ export function NavSection() {
 
   const navItems = [
     {
+      href: '/dashboard/home',
+      icon: LayoutDashboard,
+      label: t('sidebar.dashboard') || 'Dashboard',
+      id: 'tour-dashboard',
+      description: t('sidebar.dashboardDescription') || 'Overview of your calendar and activity',
+    },
+    {
       href: '/dashboard',
-      icon: Sparkles,
-      label: t('sidebar.assistant'),
-      id: 'tour-assistant',
-      description: t('sidebar.assistantDescription'),
+      icon: MessageCircle,
+      label: t('sidebar.chat') || 'Chat',
+      id: 'tour-chat',
+      description: t('sidebar.chatDescription') || 'Chat with Ally to manage your calendar',
     },
     ...(isAdmin
       ? [

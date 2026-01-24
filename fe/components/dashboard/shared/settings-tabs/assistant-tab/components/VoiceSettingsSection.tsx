@@ -1,13 +1,12 @@
 'use client'
 
 import React, { useEffect, useState, useRef } from 'react'
-import { Loader2, Play, Square, Volume2, Mic, Music, Gauge } from 'lucide-react'
+import { Loader2, Play, Square, Volume2, Mic, Gauge } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
-import { SettingsRow, SettingsSection, SettingsDropdown, TabHeader } from '../../components'
+import { SettingsRow, SettingsSection, SettingsDropdown } from '../../components'
 import { voiceService } from '@/services/voice-service'
 import { useVoicePreference, useUpdateVoicePreference } from '@/hooks/queries'
 import { VOICE_OPTIONS, type TTSVoice, PLAYBACK_SPEED_OPTIONS, type PlaybackSpeed } from '@/lib/validations/preferences'
@@ -99,9 +98,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
     if (previewSourceRef.current) {
       try {
         previewSourceRef.current.stop()
-      } catch {
-        // Already stopped
-      }
+      } catch {}
       previewSourceRef.current = null
     }
     setIsPreviewPlaying(false)
@@ -160,92 +157,88 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
   }, [])
 
   return (
-    <Card>
-      <TabHeader
-        title="Voice Settings"
-        tooltip="Choose how Ally speaks to you in voice responses"
-        icon={<Volume2 className="h-5 w-5 text-foreground" />}
-      />
-      <CardContent className="space-y-4">
-        <SettingsSection>
-          <SettingsRow
-            id="voice-enabled"
-            title="Enable Voice Responses"
-            tooltip="When enabled, Ally will respond with voice in chat and when you send voice messages on Telegram"
-            icon={<Mic size={18} className="text-foreground" />}
-            control={
-              <CinematicGlowToggle
-                id={toggleId}
-                checked={voiceEnabled}
-                onChange={isUpdatingVoice ? () => {} : handleVoiceToggle}
-              />
-            }
-          />
-        </SettingsSection>
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Volume2 className="h-5 w-5 text-muted-foreground" />
+        <h3 className="text-base font-semibold text-foreground">Voice Settings</h3>
+      </div>
 
-        <AnimatePresence>
-          {voiceEnabled && (
-            <motion.div
-              initial={{ opacity: 0, transform: 'translateY(-10px)' }}
-              animate={{ opacity: 1, transform: 'translateY(0px)' }}
-              exit={{ opacity: 0, transform: 'translateY(-10px)' }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
-              <SettingsSection>
-                <SettingsRow
-                  id="voice-selection"
-                  title="Voice"
-                  tooltip="Choose which voice Ally uses for audio responses"
-                  icon={<Music size={18} className="text-foreground" />}
-                  control={
-                    <div className="flex w-full items-center gap-2 sm:w-auto">
-                      <SettingsDropdown
-                        value={selectedVoice}
-                        options={VOICE_DROPDOWN_OPTIONS}
-                        onChange={handleVoiceChange}
-                        className="flex-1 sm:min-w-52 sm:flex-none"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={playVoicePreview}
-                        disabled={isPreviewLoading || isUpdatingVoice}
-                        className="flex-shrink-0"
-                        aria-label={isPreviewPlaying ? 'Stop voice preview' : 'Preview voice'}
-                      >
-                        {isPreviewLoading ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : isPreviewPlaying ? (
-                          <Square className="h-4 w-4" />
-                        ) : (
-                          <Play className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  }
-                />
+      <SettingsSection>
+        <SettingsRow
+          id="voice-enabled"
+          title={t('settings.enableVoiceResponses', 'Enable Voice Responses')}
+          description={t('settings.voiceResponsesDescription', 'Ally will respond with voice in chat')}
+          icon={<Mic size={18} />}
+          control={
+            <CinematicGlowToggle
+              id={toggleId}
+              checked={voiceEnabled}
+              onChange={isUpdatingVoice ? () => {} : handleVoiceToggle}
+            />
+          }
+        />
+      </SettingsSection>
 
-                <SettingsRow
-                  id="playback-speed"
-                  title="Playback Speed"
-                  tooltip="Adjust how fast Ally speaks. Default is 1x (normal speed)"
-                  icon={<Gauge size={18} className="text-foreground" />}
-                  control={
+      <AnimatePresence>
+        {voiceEnabled && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <SettingsSection showDivider>
+              <SettingsRow
+                id="voice-selection"
+                title={t('settings.voice', 'Voice')}
+                description={t('settings.voiceDescription', "Choose Ally's voice for audio responses")}
+                icon={<Volume2 size={18} />}
+                control={
+                  <div className="flex items-center gap-2">
                     <SettingsDropdown
-                      value={selectedPlaybackSpeed.toString()}
-                      options={SPEED_DROPDOWN_OPTIONS}
-                      onChange={handlePlaybackSpeedChange}
-                      className="w-full sm:w-auto sm:min-w-32"
+                      value={selectedVoice}
+                      options={VOICE_DROPDOWN_OPTIONS}
+                      onChange={handleVoiceChange}
                     />
-                  }
-                />
-              </SettingsSection>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </CardContent>
-    </Card>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={playVoicePreview}
+                      disabled={isPreviewLoading || isUpdatingVoice}
+                      className="h-9 w-9 flex-shrink-0"
+                      aria-label={isPreviewPlaying ? 'Stop voice preview' : 'Preview voice'}
+                    >
+                      {isPreviewLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : isPreviewPlaying ? (
+                        <Square className="h-4 w-4" />
+                      ) : (
+                        <Play className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                }
+              />
+
+              <SettingsRow
+                id="playback-speed"
+                title={t('settings.playbackSpeed', 'Playback Speed')}
+                description={t('settings.playbackSpeedDescription', 'Adjust how fast Ally speaks')}
+                icon={<Gauge size={18} />}
+                control={
+                  <SettingsDropdown
+                    value={selectedPlaybackSpeed.toString()}
+                    options={SPEED_DROPDOWN_OPTIONS}
+                    onChange={handlePlaybackSpeedChange}
+                  />
+                }
+              />
+            </SettingsSection>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }

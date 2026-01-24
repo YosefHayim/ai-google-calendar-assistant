@@ -5,8 +5,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { ActiveTab } from './types'
 import { AvatarView } from '../AvatarView'
+import { ChatHeader } from '../ChatHeader'
 import { ChatView } from '../ChatView'
 import { EventConfirmationCard } from '../EventConfirmationCard'
+import { QuickSuggestions } from '../QuickSuggestions'
 import { SubscriptionBanner } from '../SubscriptionBanner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Message } from '@/types'
@@ -302,18 +304,23 @@ export function ChatInterface() {
     avatarScrollRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const handleClearChat = useCallback(() => {
+    setMessages([])
+  }, [setMessages])
+
+  const handleSuggestionClick = useCallback(
+    (suggestion: string) => {
+      handleSend(undefined, suggestion)
+    },
+    [handleSend],
+  )
+
   return (
     <div className="relative flex h-full w-full overflow-hidden">
       <div className="relative mx-auto flex h-full w-full flex-1 flex-col overflow-hidden">
         <SubscriptionBanner />
 
-        <div className="relative z-20 flex h-12 shrink-0 items-center justify-center border-b border-border/50 bg-background/95 backdrop-blur-sm md:hidden">
-          <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
-
-        <div className="hidden md:block">
-          <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
+        <ChatHeader onClearChat={handleClearChat} />
 
         {isLoadingConversation && <LoadingSpinner overlay />}
 
@@ -359,30 +366,33 @@ export function ChatInterface() {
           </div>
         )}
 
-        <ChatInput
-          ref={textInputRef}
-          input={input}
-          isLoading={isLoading || isOCRUploading}
-          isRecording={isRecording}
-          speechRecognitionSupported={speechRecognitionSupported}
-          speechRecognitionError={speechRecognitionError}
-          interimTranscription={interimTranscription}
-          images={images}
-          selectedAttendees={selectedAttendees}
-          onInputChange={setInput}
-          onSubmit={handleSend}
-          onToggleRecording={toggleRecording}
-          onStartRecording={startRecording}
-          onStopRecording={stopRecording}
-          onCancelRecording={cancelRecording}
-          onCancel={isLoading ? handleCancel : undefined}
-          onImagesChange={setImages}
-          onAttendeesChange={setSelectedAttendees}
-          shouldUseOCR={shouldUseOCR}
-          onOCRFilesSelected={handleOCRFilesSelected}
-          isOCRUploading={isOCRUploading}
-          data-onboarding="chat-input"
-        />
+        <div className="border-t border-border">
+          <ChatInput
+            ref={textInputRef}
+            input={input}
+            isLoading={isLoading || isOCRUploading}
+            isRecording={isRecording}
+            speechRecognitionSupported={speechRecognitionSupported}
+            speechRecognitionError={speechRecognitionError}
+            interimTranscription={interimTranscription}
+            images={images}
+            selectedAttendees={selectedAttendees}
+            onInputChange={setInput}
+            onSubmit={handleSend}
+            onToggleRecording={toggleRecording}
+            onStartRecording={startRecording}
+            onStopRecording={stopRecording}
+            onCancelRecording={cancelRecording}
+            onCancel={isLoading ? handleCancel : undefined}
+            onImagesChange={setImages}
+            onAttendeesChange={setSelectedAttendees}
+            shouldUseOCR={shouldUseOCR}
+            onOCRFilesSelected={handleOCRFilesSelected}
+            isOCRUploading={isOCRUploading}
+            data-onboarding="chat-input"
+          />
+          <QuickSuggestions onSuggestionClick={handleSuggestionClick} disabled={isLoading} className="px-6 pb-4" />
+        </div>
       </div>
     </div>
   )

@@ -13,35 +13,32 @@ import { formatMoney } from '@/lib/formatUtils'
 interface TransactionHistoryTableProps {
   transactions: Transaction[]
   className?: string
+  variant?: 'default' | 'compact'
 }
 
 const statusConfig: Record<TransactionStatus, { label: string; icon: typeof CheckCircle2; className: string }> = {
   succeeded: {
     label: 'Paid',
     icon: CheckCircle2,
-    className: 'bg-green-500/10 text-green-600 border-green-500/20 dark:text-green-400',
+    className: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
   },
   pending: {
     label: 'Pending',
     icon: Clock,
-    className: 'bg-secondary/10 bg-secondary/30 text-secondary-foreground border-secondary/20/80',
+    className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
   },
   failed: {
     label: 'Failed',
     icon: XCircle,
-    className: 'bg-destructive/5 text-destructive border-destructive/20',
+    className: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
   },
 }
 
 function StatusBadge({ status }: { status: TransactionStatus }) {
   const config = statusConfig[status]
-  const Icon = config.icon
 
   return (
-    <span
-      className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', config.className)}
-    >
-      <Icon className="h-3 w-3" />
+    <span className={cn('inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium', config.className)}>
       {config.label}
     </span>
   )
@@ -57,12 +54,12 @@ function MobileTransactionCard({
   onToggle: () => void
 }) {
   return (
-    <div className="overflow-hidden rounded-lg bg-background bg-secondary">
+    <div className="overflow-hidden rounded-lg bg-secondary">
       <Button
         type="button"
         variant="ghost"
         onClick={onToggle}
-        className="flex h-auto w-full items-center justify-between p-4 text-left hover:bg-muted hover:bg-secondary/50"
+        className="flex h-auto w-full items-center justify-between p-4 text-left hover:bg-secondary/50"
       >
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex items-center justify-between">
@@ -106,7 +103,28 @@ function MobileTransactionCard({
   )
 }
 
-export function TransactionHistoryTable({ transactions, className }: TransactionHistoryTableProps) {
+function CompactTransactionItem({ transaction }: { transaction: Transaction }) {
+  return (
+    <div className="flex items-center justify-between border-b border-border p-4 last:border-b-0">
+      <div className="space-y-0.5">
+        <p className="text-sm font-medium text-foreground">{format(new Date(transaction.date), 'MMM d, yyyy')}</p>
+        <p className="text-[13px] text-muted-foreground">{transaction.description}</p>
+      </div>
+      <div className="flex items-center gap-3">
+        <p className="text-sm font-semibold text-foreground">
+          {formatMoney(transaction.amount, { currency: transaction.currency })}
+        </p>
+        <StatusBadge status={transaction.status} />
+      </div>
+    </div>
+  )
+}
+
+export function TransactionHistoryTable({
+  transactions,
+  className,
+  variant = 'default',
+}: TransactionHistoryTableProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   if (transactions.length === 0) {
@@ -114,6 +132,17 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
       <div className={cn('py-12 text-center', className)}>
         <Receipt className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
         <p className="text-muted-foreground">No transactions yet</p>
+      </div>
+    )
+  }
+
+  if (variant === 'compact') {
+    const displayTransactions = transactions.slice(0, 3)
+    return (
+      <div className={className}>
+        {displayTransactions.map((transaction) => (
+          <CompactTransactionItem key={transaction.id} transaction={transaction} />
+        ))}
       </div>
     )
   }

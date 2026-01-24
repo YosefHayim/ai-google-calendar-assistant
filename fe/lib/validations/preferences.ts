@@ -188,6 +188,8 @@ export const displayPreferencesDefaults: DisplayPreferencesFormData = {
 export const personaSchema = z.object({
   persona: z.enum(['solopreneur', 'developer', 'manager', 'student', 'freelancer']).nullable(),
   painPoint: z.enum(['too_many_meetings', 'no_deep_work', 'forgetting_tasks', 'manual_scheduling']).nullable(),
+  workStyle: z.enum(['early_bird', 'night_owl', 'flexible']).nullable().optional(),
+  meetingLoad: z.enum(['light', 'moderate', 'busy']).nullable().optional(),
   notificationFrequency: z.enum(['realtime', 'daily_digest', 'weekly_summary']),
   onboardingCompleted: z.boolean(),
   onboardingCompletedAt: z.string().optional(),
@@ -199,6 +201,8 @@ export type PersonaPreference = PersonaFormData
 export const personaDefaults: PersonaFormData = {
   persona: null,
   painPoint: null,
+  workStyle: null,
+  meetingLoad: null,
   notificationFrequency: 'daily_digest',
   onboardingCompleted: false,
 }
