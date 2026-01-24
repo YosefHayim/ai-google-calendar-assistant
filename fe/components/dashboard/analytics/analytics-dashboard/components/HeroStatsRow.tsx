@@ -42,20 +42,20 @@ function HeroStatCard({
   progressValue,
 }: HeroStatCardProps) {
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+    <div className="flex flex-col gap-1.5 rounded-xl border border-border bg-card p-3 sm:gap-2 sm:p-5">
       <div className="flex items-center gap-1.5">
         <span className={iconColor}>{icon}</span>
-        <span className="text-[13px] font-medium text-muted-foreground">{label}</span>
+        <span className="truncate text-[11px] font-medium text-muted-foreground sm:text-[13px]">{label}</span>
       </div>
 
-      <div className="flex items-baseline gap-2">
-        <span className="text-[32px] font-bold leading-none text-foreground">{value}</span>
-        {unit && <span className="text-sm font-medium text-muted-foreground">{unit}</span>}
-        {maxValue && <span className="text-lg font-medium text-muted-foreground">/{maxValue}</span>}
+      <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
+        <span className="text-xl font-bold leading-none text-foreground sm:text-[32px]">{value}</span>
+        {unit && <span className="text-[10px] font-medium text-muted-foreground sm:text-sm">{unit}</span>}
+        {maxValue && <span className="text-sm font-medium text-muted-foreground sm:text-lg">/{maxValue}</span>}
       </div>
 
       {showProgressBar && progressValue !== undefined && (
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+        <div className="h-1 w-full overflow-hidden rounded-full bg-secondary sm:h-1.5">
           <div
             className={cn('h-full rounded-full transition-all', iconColor.replace('text-', 'bg-'))}
             style={{ width: `${Math.min(progressValue, 100)}%` }}
@@ -66,18 +66,27 @@ function HeroStatCard({
       {trend && (
         <div className="flex items-center gap-1">
           {trend.direction === 'up' ? (
-            <TrendingUp className={cn('h-3.5 w-3.5', trend.isPositive ? 'text-green-500' : 'text-red-500')} />
+            <TrendingUp
+              className={cn('h-3 w-3 sm:h-3.5 sm:w-3.5', trend.isPositive ? 'text-green-500' : 'text-red-500')}
+            />
           ) : trend.direction === 'down' ? (
-            <TrendingDown className={cn('h-3.5 w-3.5', trend.isPositive ? 'text-green-500' : 'text-red-500')} />
+            <TrendingDown
+              className={cn('h-3 w-3 sm:h-3.5 sm:w-3.5', trend.isPositive ? 'text-green-500' : 'text-red-500')}
+            />
           ) : null}
-          <span className={cn('text-xs font-medium', trend.isPositive ? 'text-green-500' : 'text-muted-foreground')}>
+          <span
+            className={cn(
+              'text-[10px] font-medium sm:text-xs',
+              trend.isPositive ? 'text-green-500' : 'text-muted-foreground',
+            )}
+          >
             {trend.direction === 'up' ? '+' : trend.direction === 'down' ? '' : ''}
             {trend.percentage}%{trend.label ? ` ${trend.label}` : ''}
           </span>
         </div>
       )}
 
-      {subtitle && !trend && <span className="text-xs text-muted-foreground">{subtitle}</span>}
+      {subtitle && !trend && <span className="text-[10px] text-muted-foreground sm:text-xs">{subtitle}</span>}
     </div>
   )
 }

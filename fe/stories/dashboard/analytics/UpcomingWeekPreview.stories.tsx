@@ -34,9 +34,11 @@ const createDay = (
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const dayShorts = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
+  const dateKey = date.toISOString().split('T')[0]
   return {
     date,
-    dateStr: date.toISOString().split('T')[0],
+    dateKey,
+    dateStr: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
     dayName: dayNames[date.getDay()],
     dayShort: dayShorts[date.getDay()],
     isToday: offset === 0,

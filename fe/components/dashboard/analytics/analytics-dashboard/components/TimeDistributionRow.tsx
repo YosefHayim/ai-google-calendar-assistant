@@ -2,7 +2,7 @@
 
 import { Calendar, ChevronRight, Clock } from 'lucide-react'
 
-import type { EnhancedAnalyticsData } from '@/types/analytics'
+import type { EnhancedAnalyticsData, TimeOfDayCategory } from '@/types/analytics'
 import React from 'react'
 import type { UpcomingWeekData } from '@/hooks/queries/analytics/useUpcomingWeekData'
 import { cn } from '@/lib/utils'
@@ -12,40 +12,39 @@ interface TimeDistributionRowProps {
   upcomingWeekData?: UpcomingWeekData
   isLoading?: boolean
   isUpcomingWeekLoading?: boolean
+  onDayClick?: (dateKey: string, totalHours: number) => void
+  onTimeOfDayClick?: (category: TimeOfDayCategory) => void
 }
 
-const TIME_PERIODS = [
-  { key: 'morning', label: 'Morning', timeRange: '6am-12pm', color: 'bg-amber-400' },
-  { key: 'afternoon', label: 'Afternoon', timeRange: '12pm-5pm', color: 'bg-orange-500' },
-  { key: 'evening', label: 'Evening', timeRange: '5pm-9pm', color: 'bg-purple-500' },
-  { key: 'night', label: 'Night', timeRange: '9pm-6am', color: 'bg-indigo-600' },
-]
+const TIME_PERIOD_COLORS: Record<string, string> = {
+  morning: 'bg-amber-400',
+  afternoon: 'bg-orange-500',
+  evening: 'bg-purple-500',
+  night: 'bg-indigo-600',
+}
 
-function TimeOfDayDistribution({ data, isLoading }: { data: EnhancedAnalyticsData; isLoading?: boolean }) {
-  const { timeOfDayDistribution, totalEvents } = data
+function TimeOfDayDistribution({
+  data,
+  isLoading,
+  onTimeOfDayClick,
+}: {
+  data: EnhancedAnalyticsData
+  isLoading?: boolean
+  onTimeOfDayClick?: (category: TimeOfDayCategory) => void
+}) {
+  const { timeOfDayCategories } = data
 
-  const getPercentage = (count: number) => {
-    if (totalEvents === 0) return 0
-    return Math.round((count / totalEvents) * 100)
-  }
-
-  const maxCount = Math.max(
-    timeOfDayDistribution.morning,
-    timeOfDayDistribution.afternoon,
-    timeOfDayDistribution.evening,
-    timeOfDayDistribution.night,
-    1,
-  )
+  const maxCount = Math.max(...timeOfDayCategories.map((c) => c.count), 1)
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-5 rounded-xl border border-border bg-card p-6">
-        <div className="h-5 w-40 animate-pulse rounded bg-muted" />
-        <div className="flex items-end justify-around gap-4">
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:gap-5 sm:p-6">
+        <div className="h-5 w-36 animate-pulse rounded bg-muted sm:w-40" />
+        <div className="flex items-end justify-around gap-2 sm:gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex flex-col items-center gap-2">
-              <div className="h-32 w-14 animate-pulse rounded bg-muted" />
-              <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+            <div key={i} className="flex flex-col items-center gap-1.5 sm:gap-2">
+              <div className="h-24 w-10 animate-pulse rounded bg-muted sm:h-32 sm:w-14" />
+              <div className="h-3.5 w-12 animate-pulse rounded bg-muted sm:h-4 sm:w-16" />
             </div>
           ))}
         </div>
@@ -54,29 +53,36 @@ function TimeOfDayDistribution({ data, isLoading }: { data: EnhancedAnalyticsDat
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-5 rounded-xl border border-border bg-card p-6">
+    <div className="flex flex-1 flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:gap-5 sm:p-6">
       <div className="flex items-center gap-2">
-        <Clock className="h-5 w-5 text-primary" />
-        <h4 className="text-base font-semibold text-foreground">Time of Day Distribution</h4>
+        <Clock className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+        <h4 className="text-sm font-semibold text-foreground sm:text-base">Time of Day Distribution</h4>
       </div>
 
-      <div className="flex items-end justify-around gap-4">
-        {TIME_PERIODS.map((period) => {
-          const count = timeOfDayDistribution[period.key as keyof typeof timeOfDayDistribution]
-          const height = maxCount > 0 ? (count / maxCount) * 140 : 20
+      <div className="flex items-end justify-around gap-2 sm:gap-4">
+        {timeOfDayCategories.map((category) => {
+          const height = maxCount > 0 ? (category.count / maxCount) * 140 : 20
+          const colorClass = TIME_PERIOD_COLORS[category.key] || 'bg-gray-400'
 
           return (
-            <div key={period.key} className="flex flex-col items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">{getPercentage(count)}%</span>
+            <button
+              key={category.key}
+              type="button"
+              onClick={() => onTimeOfDayClick?.(category)}
+              className="flex flex-col items-center gap-1.5 rounded-lg p-1 transition-colors hover:bg-muted sm:gap-2"
+            >
+              <span className="text-xs font-semibold text-foreground sm:text-sm">
+                {Math.round(category.percentage)}%
+              </span>
               <div
-                className={cn('w-14 rounded-t-lg transition-all', period.color)}
-                style={{ height: Math.max(20, height) }}
+                className={cn('w-10 rounded-t-lg transition-all sm:w-14', colorClass)}
+                style={{ height: Math.max(16, height * 0.7), minHeight: 16 }}
               />
               <div className="text-center">
-                <span className="block text-sm font-medium text-foreground">{period.label}</span>
-                <span className="text-[10px] text-muted-foreground">{period.timeRange}</span>
+                <span className="block text-[10px] font-medium text-foreground sm:text-sm">{category.label}</span>
+                <span className="hidden text-[10px] text-muted-foreground sm:block">{category.timeRange}</span>
               </div>
-            </div>
+            </button>
           )
         })}
       </div>
@@ -84,29 +90,36 @@ function TimeOfDayDistribution({ data, isLoading }: { data: EnhancedAnalyticsDat
   )
 }
 
-function UpcomingWeek({ data, isLoading }: { data?: UpcomingWeekData; isLoading?: boolean }) {
+function UpcomingWeek({
+  data,
+  isLoading,
+  onDayClick,
+}: {
+  data?: UpcomingWeekData
+  isLoading?: boolean
+  onDayClick?: (dateKey: string, totalHours: number) => void
+}) {
   // Map to only the properties we need to avoid accidentally rendering Date objects
   const weekData =
     data?.days && data.days.length > 0
       ? data.days.slice(0, 5).map((day) => ({
           dayName: day.dayName,
           dateStr: day.dateStr,
+          dateKey: day.dateKey,
           eventCount: day.eventCount,
           totalHours: day.totalHours,
         }))
       : null
 
-  console.log('weekData', weekData)
-
   if (isLoading) {
     return (
-      <div className="flex w-full flex-col gap-4 rounded-xl border border-border bg-card p-6 lg:w-[380px]">
-        <div className="h-5 w-32 animate-pulse rounded bg-muted" />
-        <div className="space-y-3">
+      <div className="flex w-full flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6 lg:w-[380px]">
+        <div className="h-5 w-28 animate-pulse rounded bg-muted sm:w-32" />
+        <div className="space-y-2.5 sm:space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex items-center justify-between">
-              <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-              <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+              <div className="h-3.5 w-20 animate-pulse rounded bg-muted sm:h-4 sm:w-24" />
+              <div className="h-3.5 w-14 animate-pulse rounded bg-muted sm:h-4 sm:w-16" />
             </div>
           ))}
         </div>
@@ -116,45 +129,50 @@ function UpcomingWeek({ data, isLoading }: { data?: UpcomingWeekData; isLoading?
 
   if (!weekData) {
     return (
-      <div className="flex w-full flex-col gap-4 rounded-xl border border-border bg-card p-6 lg:w-[380px]">
+      <div className="flex w-full flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6 lg:w-[380px]">
         <div className="flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-primary" />
-          <h4 className="text-base font-semibold text-foreground">Upcoming Week</h4>
+          <Calendar className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+          <h4 className="text-sm font-semibold text-foreground sm:text-base">Upcoming Week</h4>
         </div>
-        <div className="flex flex-col items-center justify-center py-8 text-center">
-          <Calendar className="mb-2 h-8 w-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No upcoming events</p>
-          <p className="text-xs text-muted-foreground/70">Your week preview will appear here</p>
+        <div className="flex flex-col items-center justify-center py-6 text-center sm:py-8">
+          <Calendar className="mb-2 h-6 w-6 text-muted-foreground/50 sm:h-8 sm:w-8" />
+          <p className="text-xs text-muted-foreground sm:text-sm">No upcoming events</p>
+          <p className="text-[10px] text-muted-foreground/70 sm:text-xs">Your week preview will appear here</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex w-full flex-col gap-4 rounded-xl border border-border bg-card p-6 lg:w-[380px]">
+    <div className="flex w-full flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6 lg:w-[380px]">
       <div className="flex items-center gap-2">
-        <Calendar className="h-5 w-5 text-primary" />
-        <h4 className="text-base font-semibold text-foreground">Upcoming Week</h4>
+        <Calendar className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+        <h4 className="text-sm font-semibold text-foreground sm:text-base">Upcoming Week</h4>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5 sm:gap-3">
         {weekData.map((day, index) => (
-          <div
+          <button
             key={index}
-            className="flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-muted"
+            type="button"
+            onClick={() => onDayClick?.(day.dateKey, day.totalHours)}
+            className="flex w-full items-center justify-between rounded-lg p-1.5 text-left transition-colors hover:bg-muted sm:p-2"
           >
             <div className="flex flex-col">
-              <span className="text-sm font-medium text-foreground">{day.dayName}</span>
-              <span className="text-xs text-muted-foreground">{day.dateStr}</span>
+              <span className="text-xs font-medium text-foreground sm:text-sm">{day.dayName}</span>
+              <span className="text-[10px] text-muted-foreground sm:text-xs">{day.dateStr}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <div className="text-right">
-                <span className="text-sm font-semibold text-foreground">{day.eventCount}</span>
-                <span className="text-xs text-muted-foreground"> event{day.eventCount !== 1 ? 's' : ''}</span>
+                <span className="text-xs font-semibold text-foreground sm:text-sm">{day.eventCount}</span>
+                <span className="text-[10px] text-muted-foreground sm:text-xs">
+                  {' '}
+                  event{day.eventCount !== 1 ? 's' : ''}
+                </span>
               </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground sm:h-4 sm:w-4" />
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </div>
@@ -166,11 +184,13 @@ export function TimeDistributionRow({
   upcomingWeekData,
   isLoading,
   isUpcomingWeekLoading,
+  onDayClick,
+  onTimeOfDayClick,
 }: TimeDistributionRowProps) {
   return (
     <div className="flex flex-col gap-4 lg:flex-row">
-      <TimeOfDayDistribution data={data} isLoading={isLoading} />
-      <UpcomingWeek data={upcomingWeekData} isLoading={isUpcomingWeekLoading} />
+      <TimeOfDayDistribution data={data} isLoading={isLoading} onTimeOfDayClick={onTimeOfDayClick} />
+      <UpcomingWeek data={upcomingWeekData} isLoading={isUpcomingWeekLoading} onDayClick={onDayClick} />
     </div>
   )
 }

@@ -1,26 +1,26 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import type { CalendarEvent } from '@/types/api'
-import { ErrorState } from '@/components/ui/error-state'
-
 import {
-  AnalyticsHeader,
   AIInsightsSection,
-  HeroStatsRow,
-  ChartsRow,
+  AnalyticsHeader,
   BottomRow,
+  ChartsRow,
   HealthFocusRow,
-  TimeDistributionRow,
+  HeroStatsRow,
   RecentDurationRow,
+  TimeDistributionRow,
 } from './components'
+import React, { useEffect, useState } from 'react'
 
 import AnalyticsDashboardSkeleton from '../AnalyticsDashboardSkeleton'
+import type { CalendarEvent } from '@/types/api'
 import CalendarEventsDialog from '@/components/dialogs/CalendarEventsDialog'
 import CalendarSettingsDialog from '@/components/dialogs/CalendarSettingsDialog'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
 import DayEventsDialog from '@/components/dialogs/DayEventsDialog'
+import { ErrorState } from '@/components/ui/error-state'
 import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
+import { TimeOfDayEventsDialog, EventDurationEventsDialog } from '@/components/dialogs/TimeOfDayEventsDialog'
 import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
 import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
 
@@ -72,6 +72,15 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
     selectedDayHours,
     selectedDayEvents,
     closeDayEventsDialog,
+    openDayEventsDialog,
+    isTimeOfDayDialogOpen,
+    selectedTimeOfDayCategory,
+    openTimeOfDayDialog,
+    closeTimeOfDayDialog,
+    isDurationDialogOpen,
+    selectedDurationCategory,
+    openDurationDialog,
+    closeDurationDialog,
     handleActivityClick,
     handleCalendarEventClick,
     upcomingWeekData,
@@ -111,7 +120,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
   const { recentActivities } = processedData
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6 overflow-y-auto bg-muted p-4 duration-500 animate-in fade-in sm:p-6 md:p-8">
+    <div className="mx-auto w-full max-w-7xl space-y-6 overflow-y-auto p-4 duration-500 animate-in fade-in sm:p-6 md:p-8">
       <AnalyticsHeader
         date={date}
         setDate={setDate}
@@ -143,12 +152,15 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
         upcomingWeekData={upcomingWeekData}
         isLoading={isAnalyticsFetching}
         isUpcomingWeekLoading={isUpcomingWeekLoading}
+        onDayClick={openDayEventsDialog}
+        onTimeOfDayClick={openTimeOfDayDialog}
       />
 
       <RecentDurationRow
         data={processedData}
         activities={recentActivities}
         onActivityClick={handleActivityClick}
+        onDurationCategoryClick={openDurationDialog}
         isLoading={isAnalyticsFetching}
       />
 
@@ -204,6 +216,18 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
         onEventClick={(event, calendarColor, calendarName) => {
           handleCalendarEventClick(event, calendarColor, calendarName)
         }}
+      />
+
+      <TimeOfDayEventsDialog
+        isOpen={isTimeOfDayDialogOpen}
+        category={selectedTimeOfDayCategory}
+        onClose={closeTimeOfDayDialog}
+      />
+
+      <EventDurationEventsDialog
+        isOpen={isDurationDialogOpen}
+        category={selectedDurationCategory}
+        onClose={closeDurationDialog}
       />
     </div>
   )

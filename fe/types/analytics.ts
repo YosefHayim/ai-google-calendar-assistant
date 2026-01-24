@@ -298,6 +298,16 @@ export interface TimeOfDayDistribution {
   night: number // 10pm - 6am
 }
 
+export interface TimeOfDayCategory {
+  key: 'morning' | 'afternoon' | 'evening' | 'night'
+  label: string
+  timeRange: string
+  color: string
+  count: number
+  percentage: number
+  events: PatternEventSummary[]
+}
+
 export interface EventDurationBreakdown {
   short: number // < 30 minutes
   medium: number // 30 min - 1 hour
@@ -335,6 +345,7 @@ export interface EnhancedAnalyticsData {
   weeklyPattern: WeeklyPatternDataPoint[]
   monthlyPattern: MonthlyPatternDataPoint[]
   timeOfDayDistribution: TimeOfDayDistribution
+  timeOfDayCategories: TimeOfDayCategory[]
   eventDurationBreakdown: EventDurationBreakdown
   eventDurationCategories: EventDurationCategory[]
   focusTimeMetrics: FocusTimeMetrics

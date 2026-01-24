@@ -17,6 +17,8 @@ import {
   type ComparisonResult,
   type AnalyticsResponse,
   type ProcessedActivity,
+  type TimeOfDayCategory,
+  type EventDurationCategory,
 } from '@/types/analytics'
 import type { CalendarEvent, CalendarListEntry, EventQueryParams } from '@/types/api'
 
@@ -106,6 +108,18 @@ interface AnalyticsContextValue {
   selectedDayEvents: CalendarEvent[]
   openDayEventsDialog: (dayDate: string, hours: number) => void
   closeDayEventsDialog: () => void
+
+  // Time of Day Events Dialog
+  isTimeOfDayDialogOpen: boolean
+  selectedTimeOfDayCategory: TimeOfDayCategory | null
+  openTimeOfDayDialog: (category: TimeOfDayCategory) => void
+  closeTimeOfDayDialog: () => void
+
+  // Event Duration Events Dialog
+  isDurationDialogOpen: boolean
+  selectedDurationCategory: EventDurationCategory | null
+  openDurationDialog: (category: EventDurationCategory) => void
+  closeDurationDialog: () => void
 
   // Helper to handle activity click (recent events)
   handleActivityClick: (activity: ProcessedActivity) => void
@@ -207,6 +221,14 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const [isDayEventsDialogOpen, setIsDayEventsDialogOpen] = useState(false)
   const [selectedDayDate, setSelectedDayDate] = useState<string | null>(null)
   const [selectedDayHours, setSelectedDayHours] = useState<number>(0)
+
+  // Time of day dialog state
+  const [isTimeOfDayDialogOpen, setIsTimeOfDayDialogOpen] = useState(false)
+  const [selectedTimeOfDayCategory, setSelectedTimeOfDayCategory] = useState<TimeOfDayCategory | null>(null)
+
+  // Event duration dialog state
+  const [isDurationDialogOpen, setIsDurationDialogOpen] = useState(false)
+  const [selectedDurationCategory, setSelectedDurationCategory] = useState<EventDurationCategory | null>(null)
 
   // Fetch calendars
   const { data: calendarsQueryData, isLoading: isCalendarsLoading } = useQuery({
@@ -418,6 +440,26 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     setSelectedDayDate(null)
   }, [])
 
+  const openTimeOfDayDialog = useCallback((category: TimeOfDayCategory) => {
+    setSelectedTimeOfDayCategory(category)
+    setIsTimeOfDayDialogOpen(true)
+  }, [])
+
+  const closeTimeOfDayDialog = useCallback(() => {
+    setIsTimeOfDayDialogOpen(false)
+    setSelectedTimeOfDayCategory(null)
+  }, [])
+
+  const openDurationDialog = useCallback((category: EventDurationCategory) => {
+    setSelectedDurationCategory(category)
+    setIsDurationDialogOpen(true)
+  }, [])
+
+  const closeDurationDialog = useCallback(() => {
+    setIsDurationDialogOpen(false)
+    setSelectedDurationCategory(null)
+  }, [])
+
   // Helper for activity click
   const handleActivityClick = useCallback(
     (activity: ProcessedActivity) => {
@@ -453,6 +495,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     weeklyPattern: [],
     monthlyPattern: [],
     timeOfDayDistribution: { morning: 0, afternoon: 0, evening: 0, night: 0 },
+    timeOfDayCategories: [],
     eventDurationBreakdown: { short: 0, medium: 0, long: 0, extended: 0 },
     eventDurationCategories: [],
     focusTimeMetrics: {
@@ -540,6 +583,18 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       openDayEventsDialog,
       closeDayEventsDialog,
 
+      // Time of Day Events Dialog
+      isTimeOfDayDialogOpen,
+      selectedTimeOfDayCategory,
+      openTimeOfDayDialog,
+      closeTimeOfDayDialog,
+
+      // Event Duration Events Dialog
+      isDurationDialogOpen,
+      selectedDurationCategory,
+      openDurationDialog,
+      closeDurationDialog,
+
       // Helpers
       handleActivityClick,
       handleCalendarEventClick,
@@ -592,6 +647,14 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       selectedDayEvents,
       openDayEventsDialog,
       closeDayEventsDialog,
+      isTimeOfDayDialogOpen,
+      selectedTimeOfDayCategory,
+      openTimeOfDayDialog,
+      closeTimeOfDayDialog,
+      isDurationDialogOpen,
+      selectedDurationCategory,
+      openDurationDialog,
+      closeDurationDialog,
       handleActivityClick,
       handleCalendarEventClick,
       upcomingWeekData,

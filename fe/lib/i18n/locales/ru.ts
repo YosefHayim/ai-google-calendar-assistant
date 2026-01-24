@@ -372,6 +372,8 @@ export const ru: TranslationShape = {
   },
 
   sidebar: {
+    dashboard: 'Панель',
+    dashboardDescription: 'Обзор вашего календаря и активности',
     chat: 'Чат',
     chatDescription: 'Общайтесь с Ally для управления календарём',
     assistant: 'Ассистент',

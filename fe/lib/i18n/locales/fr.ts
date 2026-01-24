@@ -374,6 +374,8 @@ export const fr: TranslationShape = {
   },
 
   sidebar: {
+    dashboard: 'Tableau de bord',
+    dashboardDescription: 'Aperçu de votre calendrier et activité',
     chat: 'Discussion',
     chatDescription: 'Discutez avec Ally pour gérer votre agenda',
     assistant: 'Assistant',

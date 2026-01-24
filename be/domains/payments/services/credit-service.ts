@@ -37,21 +37,36 @@ export async function checkUserCredits(
     }
   }
 
+  // Trial users (on_trial status with null interactions_remaining) have unlimited access
+  const isOnTrial = access.subscription_status === "on_trial"
+  if (isOnTrial && access.interactions_remaining === null) {
+    return {
+      hasCredits: true,
+      creditsRemaining: Number.POSITIVE_INFINITY,
+      userId,
+      source: "subscription",
+    }
+  }
+
   const usage = await getUserUsage(userId)
   const planSlug = access.plan_slug as PlanSlug
   const limits = getPlanLimits(planSlug)
 
-  const monthlyLimit = limits.aiInteractionsMonthly ?? 0
-  const subscriptionRemaining = Math.max(
-    0,
-    monthlyLimit - usage.aiInteractionsUsed
-  )
+  // For paid plans, null means unlimited
+  const monthlyLimit = limits.aiInteractionsMonthly
+  const subscriptionRemaining =
+    monthlyLimit === null
+      ? Number.POSITIVE_INFINITY
+      : Math.max(0, monthlyLimit - usage.aiInteractionsUsed)
   const creditPackRemaining = usage.creditsRemaining
 
   if (subscriptionRemaining > 0) {
     return {
       hasCredits: true,
-      creditsRemaining: subscriptionRemaining + creditPackRemaining,
+      creditsRemaining:
+        subscriptionRemaining === Number.POSITIVE_INFINITY
+          ? Number.POSITIVE_INFINITY
+          : subscriptionRemaining + creditPackRemaining,
       userId,
       source: "subscription",
     }

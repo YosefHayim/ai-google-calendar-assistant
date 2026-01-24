@@ -9,6 +9,7 @@ import type { CalendarEvent } from '@/types/api'
 
 export interface UpcomingDayData {
   date: Date
+  dateKey: string
   dateStr: string
   dayName: string
   dayShort: string
@@ -74,12 +75,12 @@ export function useUpcomingWeekData({ calendarMap, enabled = true }: UseUpcoming
         allEvents = response.data.allEvents
       }
 
-      // Initialize 7 days
       const days: UpcomingDayData[] = []
       for (let i = 0; i < 7; i++) {
         const date = addDays(today, i)
         days.push({
           date,
+          dateKey: format(date, 'yyyy-MM-dd'),
           dateStr: format(date, 'EEE, MMM d'),
           dayName: format(date, 'EEEE'),
           dayShort: format(date, 'EEE'),
@@ -113,8 +114,8 @@ export function useUpcomingWeekData({ calendarMap, enabled = true }: UseUpcoming
 
           if (!eventStart) return
 
-          const eventDateStr = format(eventStart, 'yyyy-MM-dd')
-          const dayData = days.find((d) => d.dateStr === eventDateStr)
+          const eventDateKey = format(eventStart, 'yyyy-MM-dd')
+          const dayData = days.find((d) => d.dateKey === eventDateKey)
 
           if (!dayData) return
 

@@ -18,6 +18,7 @@ import {
   type PatternEventSummary,
   type EventDurationCategory,
   type TimeOfDayDistribution,
+  type TimeOfDayCategory,
   type EventDurationBreakdown,
   type FocusTimeMetrics,
   type ProductivityMetrics,
@@ -78,6 +79,36 @@ function getEmptyEnhancedData(): EnhancedAnalyticsData {
       events: [],
     })),
     timeOfDayDistribution: { morning: 0, afternoon: 0, evening: 0, night: 0 },
+    timeOfDayCategories: [
+      {
+        key: 'morning',
+        label: 'Morning',
+        timeRange: '6am - 12pm',
+        color: '#fbbf24',
+        count: 0,
+        percentage: 0,
+        events: [],
+      },
+      {
+        key: 'afternoon',
+        label: 'Afternoon',
+        timeRange: '12pm - 6pm',
+        color: '#f97316',
+        count: 0,
+        percentage: 0,
+        events: [],
+      },
+      {
+        key: 'evening',
+        label: 'Evening',
+        timeRange: '6pm - 10pm',
+        color: '#8b5cf6',
+        count: 0,
+        percentage: 0,
+        events: [],
+      },
+      { key: 'night', label: 'Night', timeRange: '10pm - 6am', color: '#3b82f6', count: 0, percentage: 0, events: [] },
+    ],
     eventDurationBreakdown: { short: 0, medium: 0, long: 0, extended: 0 },
     eventDurationCategories: [
       { key: 'short', label: 'Short', range: '< 30 min', color: '#34d399', count: 0, percentage: 0, events: [] },
@@ -224,6 +255,13 @@ export function useAnalyticsData({
         extended: [],
       }
 
+      const timeOfDayEvents: Record<keyof TimeOfDayDistribution, PatternEventSummary[]> = {
+        morning: [],
+        afternoon: [],
+        evening: [],
+        night: [],
+      }
+
       const timeOfDay: TimeOfDayDistribution = { morning: 0, afternoon: 0, evening: 0, night: 0 }
       const durationBreakdown: EventDurationBreakdown = { short: 0, medium: 0, long: 0, extended: 0 }
 
@@ -304,6 +342,7 @@ export function useAnalyticsData({
 
             const timeCategory = getTimeOfDayCategory(startHour)
             timeOfDay[timeCategory]++
+            timeOfDayEvents[timeCategory].push(eventSummary)
 
             const durationCategory = getDurationCategory(durationMinutes)
             durationBreakdown[durationCategory]++
@@ -486,6 +525,45 @@ export function useAnalyticsData({
         },
       ]
 
+      const timeOfDayCategories: TimeOfDayCategory[] = [
+        {
+          key: 'morning',
+          label: 'Morning',
+          timeRange: '6am - 12pm',
+          color: '#fbbf24',
+          count: timeOfDay.morning,
+          percentage: totalEvents > 0 ? (timeOfDay.morning / totalEvents) * 100 : 0,
+          events: timeOfDayEvents.morning,
+        },
+        {
+          key: 'afternoon',
+          label: 'Afternoon',
+          timeRange: '12pm - 6pm',
+          color: '#f97316',
+          count: timeOfDay.afternoon,
+          percentage: totalEvents > 0 ? (timeOfDay.afternoon / totalEvents) * 100 : 0,
+          events: timeOfDayEvents.afternoon,
+        },
+        {
+          key: 'evening',
+          label: 'Evening',
+          timeRange: '6pm - 10pm',
+          color: '#8b5cf6',
+          count: timeOfDay.evening,
+          percentage: totalEvents > 0 ? (timeOfDay.evening / totalEvents) * 100 : 0,
+          events: timeOfDayEvents.evening,
+        },
+        {
+          key: 'night',
+          label: 'Night',
+          timeRange: '10pm - 6am',
+          color: '#3b82f6',
+          count: timeOfDay.night,
+          percentage: totalEvents > 0 ? (timeOfDay.night / totalEvents) * 100 : 0,
+          events: timeOfDayEvents.night,
+        },
+      ]
+
       return {
         totalEvents,
         totalDurationHours,
@@ -497,6 +575,7 @@ export function useAnalyticsData({
         weeklyPattern,
         monthlyPattern,
         timeOfDayDistribution: timeOfDay,
+        timeOfDayCategories,
         eventDurationBreakdown: durationBreakdown,
         eventDurationCategories,
         focusTimeMetrics,

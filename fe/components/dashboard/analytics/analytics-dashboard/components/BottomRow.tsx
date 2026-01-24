@@ -72,20 +72,20 @@ function TopCollaborators({
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 flex-col gap-4 rounded-xl border border-border bg-card p-6">
+      <div className="flex flex-1 flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
         <div className="flex items-center justify-between">
-          <div className="h-5 w-36 animate-pulse rounded bg-muted" />
-          <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+          <div className="h-5 w-32 animate-pulse rounded bg-muted sm:w-36" />
+          <div className="h-4 w-14 animate-pulse rounded bg-muted sm:w-16" />
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5 sm:gap-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <div className="h-10 w-10 animate-pulse rounded-full bg-muted" />
+            <div key={i} className="flex items-center gap-2.5 sm:gap-3">
+              <div className="h-8 w-8 animate-pulse rounded-full bg-muted sm:h-10 sm:w-10" />
               <div className="flex-1 space-y-1">
-                <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-                <div className="h-3 w-16 animate-pulse rounded bg-muted" />
+                <div className="h-3.5 w-20 animate-pulse rounded bg-muted sm:h-4 sm:w-24" />
+                <div className="h-3 w-14 animate-pulse rounded bg-muted sm:w-16" />
               </div>
-              <div className="h-1.5 w-20 animate-pulse rounded bg-muted" />
+              <div className="h-1.5 w-16 animate-pulse rounded bg-muted sm:w-20" />
             </div>
           ))}
         </div>
@@ -95,33 +95,33 @@ function TopCollaborators({
 
   if (collaborators.length === 0) {
     return (
-      <div className="flex flex-1 flex-col gap-4 rounded-xl border border-border bg-card p-6">
+      <div className="flex flex-1 flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
         <div className="flex items-center justify-between">
-          <h4 className="text-base font-semibold text-foreground">Top Collaborators</h4>
+          <h4 className="text-sm font-semibold text-foreground sm:text-base">Top Collaborators</h4>
         </div>
-        <div className="flex flex-col items-center justify-center py-8 text-center">
-          <Users className="mb-2 h-8 w-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No collaborators found</p>
-          <p className="text-xs text-muted-foreground/70">Events with attendees will appear here</p>
+        <div className="flex flex-col items-center justify-center py-6 text-center sm:py-8">
+          <Users className="mb-2 h-6 w-6 text-muted-foreground/50 sm:h-8 sm:w-8" />
+          <p className="text-xs text-muted-foreground sm:text-sm">No collaborators found</p>
+          <p className="text-[10px] text-muted-foreground/70 sm:text-xs">Events with attendees will appear here</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 rounded-xl border border-border bg-card p-6">
+    <div className="flex flex-1 flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
       <div className="flex items-center justify-between">
-        <h4 className="text-base font-semibold text-foreground">Top Collaborators</h4>
+        <h4 className="text-sm font-semibold text-foreground sm:text-base">Top Collaborators</h4>
         {collaborators.length > 5 && (
-          <button className="text-[13px] font-medium text-primary hover:underline">See all</button>
+          <button className="text-xs font-medium text-primary hover:underline sm:text-[13px]">See all</button>
         )}
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5 sm:gap-3">
         {collaborators.map((person, index) => (
-          <div key={person.email} className="flex items-center gap-3">
+          <div key={person.email} className="flex items-center gap-2.5 sm:gap-3">
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium text-white ${AVATAR_COLORS[index % AVATAR_COLORS.length]}`}
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium text-white sm:h-10 sm:w-10 sm:text-sm ${AVATAR_COLORS[index % AVATAR_COLORS.length]}`}
             >
               {person.name
                 .split(' ')
@@ -130,13 +130,13 @@ function TopCollaborators({
                 .slice(0, 2)
                 .toUpperCase()}
             </div>
-            <div className="flex flex-1 flex-col gap-0.5">
-              <span className="text-sm font-medium text-foreground">{person.name}</span>
-              <span className="text-xs text-muted-foreground">
+            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <span className="truncate text-xs font-medium text-foreground sm:text-sm">{person.name}</span>
+              <span className="text-[10px] text-muted-foreground sm:text-xs">
                 {person.meetings} meeting{person.meetings !== 1 ? 's' : ''} · {person.hours}h
               </span>
             </div>
-            <div className="h-1.5 w-20 overflow-hidden rounded-full bg-secondary">
+            <div className="h-1.5 w-16 flex-shrink-0 overflow-hidden rounded-full bg-secondary sm:w-20">
               <div
                 className={`h-full rounded-full ${AVATAR_COLORS[index % AVATAR_COLORS.length]}`}
                 style={{ width: `${(person.hours / maxHours) * 100}%` }}
@@ -208,19 +208,19 @@ function AllyRecommendations({ data, isLoading }: { data: EnhancedAnalyticsData;
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 flex-col gap-4 rounded-xl border border-border bg-card p-6">
+      <div className="flex flex-1 flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
         <div className="flex items-center gap-2">
-          <div className="h-[18px] w-[18px] animate-pulse rounded bg-muted" />
-          <div className="h-5 w-44 animate-pulse rounded bg-muted" />
+          <div className="h-4 w-4 animate-pulse rounded bg-muted sm:h-[18px] sm:w-[18px]" />
+          <div className="h-5 w-36 animate-pulse rounded bg-muted sm:w-44" />
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5 sm:gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 rounded-lg bg-muted p-4">
+            <div key={i} className="flex items-center gap-2.5 rounded-lg bg-muted p-3 sm:gap-3 sm:p-4">
               <div className="flex-1 space-y-1">
-                <div className="h-4 w-40 animate-pulse rounded bg-background" />
-                <div className="h-3 w-32 animate-pulse rounded bg-background" />
+                <div className="h-3.5 w-32 animate-pulse rounded bg-background sm:h-4 sm:w-40" />
+                <div className="h-3 w-28 animate-pulse rounded bg-background sm:w-32" />
               </div>
-              <div className="h-8 w-16 animate-pulse rounded bg-background" />
+              <div className="h-7 w-14 animate-pulse rounded bg-background sm:h-8 sm:w-16" />
             </div>
           ))}
         </div>
@@ -229,20 +229,27 @@ function AllyRecommendations({ data, isLoading }: { data: EnhancedAnalyticsData;
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 rounded-xl border border-border bg-card p-6">
+    <div className="flex flex-1 flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
       <div className="flex items-center gap-2">
-        <Sparkles className="h-[18px] w-[18px] text-primary" />
-        <h4 className="text-base font-semibold text-foreground">Ally's Recommendations</h4>
+        <Sparkles className="h-4 w-4 text-primary sm:h-[18px] sm:w-[18px]" />
+        <h4 className="text-sm font-semibold text-foreground sm:text-base">Ally's Recommendations</h4>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5 sm:gap-3">
         {recommendations.map((rec) => (
-          <div key={rec.title} className="flex items-center gap-3 rounded-lg bg-muted p-4">
-            <div className="flex flex-1 flex-col gap-1">
-              <span className="text-sm font-medium text-foreground">{rec.title}</span>
-              <span className="text-xs text-muted-foreground">{rec.description}</span>
+          <div
+            key={rec.title}
+            className="flex items-start gap-2.5 rounded-lg bg-muted p-3 sm:items-center sm:gap-3 sm:p-4"
+          >
+            <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:gap-1">
+              <span className="text-xs font-medium text-foreground sm:text-sm">{rec.title}</span>
+              <span className="text-[10px] leading-snug text-muted-foreground sm:text-xs">{rec.description}</span>
             </div>
-            <Button variant={rec.isPrimary ? 'default' : 'outline'} size="sm" className="h-8 px-3">
+            <Button
+              variant={rec.isPrimary ? 'default' : 'outline'}
+              size="sm"
+              className="h-7 flex-shrink-0 px-2.5 text-xs sm:h-8 sm:px-3 sm:text-sm"
+            >
               {rec.action}
             </Button>
           </div>

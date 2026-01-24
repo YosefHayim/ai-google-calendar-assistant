@@ -391,6 +391,8 @@ export const en = {
 
   // Sidebar Navigation
   sidebar: {
+    dashboard: 'Dashboard',
+    dashboardDescription: 'Overview of your calendar and activity',
     chat: 'Chat',
     chatDescription: 'Chat with Ally to manage your calendar',
     assistant: 'Assistant',

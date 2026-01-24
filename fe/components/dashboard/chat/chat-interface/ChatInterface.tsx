@@ -367,6 +367,7 @@ export function ChatInterface() {
         )}
 
         <div className="border-t border-border">
+          <QuickSuggestions onSuggestionClick={handleSuggestionClick} disabled={isLoading} className="px-6 pt-4" />
           <ChatInput
             ref={textInputRef}
             input={input}
@@ -391,7 +392,6 @@ export function ChatInterface() {
             isOCRUploading={isOCRUploading}
             data-onboarding="chat-input"
           />
-          <QuickSuggestions onSuggestionClick={handleSuggestionClick} disabled={isLoading} className="px-6 pb-4" />
         </div>
       </div>
     </div>

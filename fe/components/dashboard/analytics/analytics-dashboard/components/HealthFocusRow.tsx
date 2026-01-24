@@ -47,23 +47,23 @@ function ScheduleHealthCard({ data, isLoading }: { data: EnhancedAnalyticsData; 
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-6">
-        <div className="h-5 w-40 animate-pulse rounded bg-muted" />
-        <div className="h-40 w-40 animate-pulse rounded-full bg-muted" />
-        <div className="h-4 w-48 animate-pulse rounded bg-muted" />
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
+        <div className="h-5 w-36 animate-pulse rounded bg-muted sm:w-40" />
+        <div className="h-32 w-32 animate-pulse rounded-full bg-muted sm:h-40 sm:w-40" />
+        <div className="h-4 w-40 animate-pulse rounded bg-muted sm:w-48" />
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-6">
+    <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
       <div className="flex items-center gap-2">
-        <Activity className="h-5 w-5 text-primary" />
-        <h4 className="text-base font-semibold text-foreground">Schedule Health</h4>
+        <Activity className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+        <h4 className="text-sm font-semibold text-foreground sm:text-base">Schedule Health</h4>
       </div>
 
       <div className="relative">
-        <svg width="160" height="160" className="-rotate-90 transform">
+        <svg width="128" height="128" className="-rotate-90 transform sm:h-[160px] sm:w-[160px]" viewBox="0 0 160 160">
           <circle
             cx="80"
             cy="80"
@@ -89,11 +89,11 @@ function ScheduleHealthCard({ data, isLoading }: { data: EnhancedAnalyticsData; 
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={`text-4xl font-bold ${getScoreColor()}`}>{healthScore}</span>
+          <span className={`text-3xl font-bold sm:text-4xl ${getScoreColor()}`}>{healthScore}</span>
         </div>
       </div>
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-center text-[10px] text-muted-foreground sm:text-xs">
         {healthScore >= 80
           ? 'Excellent! Your schedule is well-balanced.'
           : healthScore >= 60
@@ -134,13 +134,13 @@ function FocusTimeCard({ data, isLoading }: { data: EnhancedAnalyticsData; isLoa
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
-        <div className="h-5 w-36 animate-pulse rounded bg-muted" />
-        <div className="space-y-3">
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
+        <div className="h-5 w-32 animate-pulse rounded bg-muted sm:w-36" />
+        <div className="space-y-2.5 sm:space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-center justify-between">
-              <div className="h-4 w-32 animate-pulse rounded bg-muted" />
-              <div className="h-4 w-12 animate-pulse rounded bg-muted" />
+              <div className="h-3.5 w-28 animate-pulse rounded bg-muted sm:h-4 sm:w-32" />
+              <div className="h-3.5 w-10 animate-pulse rounded bg-muted sm:h-4 sm:w-12" />
             </div>
           ))}
         </div>
@@ -150,30 +150,30 @@ function FocusTimeCard({ data, isLoading }: { data: EnhancedAnalyticsData; isLoa
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
       <div className="flex items-center gap-2">
-        <Target className="h-5 w-5 text-primary" />
-        <h4 className="text-base font-semibold text-foreground">Focus Time Tracker</h4>
+        <Target className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+        <h4 className="text-sm font-semibold text-foreground sm:text-base">Focus Time Tracker</h4>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5 sm:gap-3">
         {stats.map((stat) => (
           <div key={stat.label} className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">{stat.label}</span>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <stat.icon className="h-3.5 w-3.5 text-muted-foreground sm:h-4 sm:w-4" />
+              <span className="text-xs text-muted-foreground sm:text-sm">{stat.label}</span>
             </div>
-            <span className="text-sm font-semibold text-foreground">{stat.value}</span>
+            <span className="text-xs font-semibold text-foreground sm:text-sm">{stat.value}</span>
           </div>
         ))}
       </div>
 
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-xs">
+      <div className="space-y-1 sm:space-y-1.5">
+        <div className="flex items-center justify-between text-[10px] sm:text-xs">
           <span className="text-muted-foreground">Focus time ratio</span>
           <span className="font-medium text-foreground">{focusTimeMetrics.focusTimePercentage}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-secondary">
+        <div className="h-1.5 overflow-hidden rounded-full bg-secondary sm:h-2">
           <div
             className="h-full rounded-full bg-orange-500 transition-all"
             style={{ width: `${focusTimeMetrics.focusTimePercentage}%` }}
@@ -189,12 +189,12 @@ function ProductivityScoreCard({ data, isLoading }: { data: EnhancedAnalyticsDat
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-6">
-        <div className="h-5 w-36 animate-pulse rounded bg-muted" />
-        <div className="h-16 w-24 animate-pulse rounded bg-muted" />
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
+        <div className="h-5 w-32 animate-pulse rounded bg-muted sm:w-36" />
+        <div className="h-12 w-20 animate-pulse rounded bg-muted sm:h-16 sm:w-24" />
         <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-3 w-32 animate-pulse rounded bg-muted" />
+            <div key={i} className="h-3 w-28 animate-pulse rounded bg-muted sm:w-32" />
           ))}
         </div>
       </div>
@@ -208,22 +208,26 @@ function ProductivityScoreCard({ data, isLoading }: { data: EnhancedAnalyticsDat
   ]
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-6">
+    <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-4 sm:gap-4 sm:p-6">
       <div className="flex items-center gap-2">
-        <TrendingUp className="h-5 w-5 text-primary" />
-        <h4 className="text-base font-semibold text-foreground">Productivity Score</h4>
+        <TrendingUp className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+        <h4 className="text-sm font-semibold text-foreground sm:text-base">Productivity Score</h4>
       </div>
 
       <div className="text-center">
-        <span className="text-5xl font-bold text-foreground">{score}</span>
-        <span className="text-lg text-muted-foreground">/100</span>
+        <span className="text-4xl font-bold text-foreground sm:text-5xl">{score}</span>
+        <span className="text-base text-muted-foreground sm:text-lg">/100</span>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5 sm:gap-2">
         {achievements.map((achievement) => (
-          <div key={achievement.label} className="flex items-center gap-2">
-            <CheckCircle className={`h-4 w-4 ${achievement.done ? 'text-green-500' : 'text-muted-foreground/30'}`} />
-            <span className={`text-xs ${achievement.done ? 'text-foreground' : 'text-muted-foreground/50'}`}>
+          <div key={achievement.label} className="flex items-center gap-1.5 sm:gap-2">
+            <CheckCircle
+              className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${achievement.done ? 'text-green-500' : 'text-muted-foreground/30'}`}
+            />
+            <span
+              className={`text-[10px] sm:text-xs ${achievement.done ? 'text-foreground' : 'text-muted-foreground/50'}`}
+            >
               {achievement.label}
             </span>
           </div>

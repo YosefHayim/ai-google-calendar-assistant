@@ -372,6 +372,8 @@ export const he: TranslationShape = {
 
   // Sidebar Navigation
   sidebar: {
+    dashboard: 'לוח בקרה',
+    dashboardDescription: 'סקירה כללית של היומן והפעילות שלך',
     chat: "צ'אט",
     chatDescription: 'שוחח עם אלי לניהול היומן שלך',
     assistant: 'עוזרת',

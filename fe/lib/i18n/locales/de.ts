@@ -460,6 +460,8 @@ export const de: TranslationShape = {
   },
 
   sidebar: {
+    dashboard: 'Dashboard',
+    dashboardDescription: 'Übersicht über Ihren Kalender und Aktivitäten',
     chat: 'Chat',
     chatDescription: 'Chatten Sie mit Ally um Ihren Kalender zu verwalten',
     assistant: 'Assistent',

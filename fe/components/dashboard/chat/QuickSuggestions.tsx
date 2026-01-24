@@ -13,7 +13,7 @@ const SUGGESTIONS = ["What's on my schedule today?", 'Find time for a meeting', 
 
 export function QuickSuggestions({ onSuggestionClick, className, disabled }: QuickSuggestionsProps) {
   return (
-    <div className={cn('flex flex-wrap gap-2 pt-3', className)}>
+    <div className={cn('flex flex-wrap gap-2 pb-3', className)}>
       {SUGGESTIONS.map((suggestion) => (
         <button
           key={suggestion}
