@@ -213,7 +213,6 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     queryKey: ['calendars-list'],
     queryFn: async () => {
       const response = await calendarsService.getCalendarList({
-        minAccessRole: 'owner',
         showDeleted: false,
         showHidden: false,
       })
