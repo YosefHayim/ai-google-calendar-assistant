@@ -33,9 +33,11 @@ import {
   resetRateLimit,
 } from "../services/rate-limiter"
 import {
+  clearProcessingIndicator,
   markAsRead,
   sendAudioMessage,
   sendTextMessage,
+  showProcessingIndicator,
 } from "../services/send-message"
 import { handleOnboarding, resolveWhatsAppUser } from "../services/user-linking"
 import type {
@@ -153,11 +155,13 @@ const processNaturalLanguageMessage = async (
   respondWithVoice: boolean,
   userEmail?: string
 ): Promise<void> => {
-  const { from, text, contactName } = processed
+  const { from, messageId, text, contactName } = processed
 
   if (!text) {
     return
   }
+
+  await showProcessingIndicator(from, messageId)
 
   try {
     const conversationContext = await whatsAppConversation.addMessageToContext(
@@ -209,6 +213,7 @@ const processNaturalLanguageMessage = async (
       logger.warn(`WhatsApp: DPO rejected request for user ${from}`, {
         reason: dpoResult.judgeOutput?.reasoning,
       })
+      await clearProcessingIndicator(from, messageId)
       await sendTextMessage(
         from,
         "Your request was flagged for safety review. Please rephrase your request."
@@ -246,6 +251,8 @@ const processNaturalLanguageMessage = async (
       finalOutput || "I couldn't process your request."
     )
 
+    await clearProcessingIndicator(from, messageId)
+
     if (respondWithVoice) {
       await tryVoiceResponse(from, formattedResponse)
       return
@@ -253,6 +260,8 @@ const processNaturalLanguageMessage = async (
 
     await sendTextMessage(from, formattedResponse)
   } catch (error) {
+    await clearProcessingIndicator(from, messageId)
+
     if (error instanceof InputGuardrailTripwireTriggered) {
       logger.warn(
         `WhatsApp: Guardrail triggered for user ${from}: ${error.message}`

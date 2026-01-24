@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AllyLogo } from '@/components/shared/logo'
 import { AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { ContactPicker } from '@/components/ui/contact-picker'
 import { eventsService } from '@/services/events-service'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
@@ -36,6 +37,7 @@ const MIN_TEXT_LENGTH = 5
 export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onClose, onEventCreated }) => {
   const { t } = useTranslation()
   const [text, setText] = useState('')
+  const [selectedAttendees, setSelectedAttendees] = useState<string[]>([])
   const [state, setState] = useState<DialogState>('input')
   const [parsedEvent, setParsedEvent] = useState<ParsedEventData | null>(null)
   const [conflicts, setConflicts] = useState<QuickAddConflict[]>([])
@@ -49,6 +51,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
   useEffect(() => {
     if (isOpen) {
       setText('')
+      setSelectedAttendees([])
       setState('input')
       setParsedEvent(null)
       setConflicts([])
@@ -125,13 +128,14 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
   }, [state, startRecording, stopRecording])
 
   const processText = useCallback(
-    async (inputText: string) => {
+    async (inputText: string, attendees: string[]) => {
       if (!inputText.trim() || inputText.length < MIN_TEXT_LENGTH) return
 
       setState('parsing')
       setAllyMessage(t('dialogs.quickEvent.understanding'))
 
-      const response = await eventsService.quickAdd({ text: inputText, forceCreate: false })
+      const fullText = attendees.length > 0 ? `${inputText}. Invite ${attendees.join(', ')}` : inputText
+      const response = await eventsService.quickAdd({ text: fullText, forceCreate: false })
 
       if (response.success) {
         const data = response.data
@@ -161,7 +165,8 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
     setState('creating')
     setAllyMessage(t('dialogs.quickEvent.creatingAnyway'))
 
-    const response = await eventsService.quickAdd({ text, forceCreate: true })
+    const fullText = selectedAttendees.length > 0 ? `${text}. Invite ${selectedAttendees.join(', ')}` : text
+    const response = await eventsService.quickAdd({ text: fullText, forceCreate: true })
 
     if (response.success) {
       setState('success')
@@ -176,7 +181,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       const errorMsg = response.requiresConfirmation ? t('dialogs.quickEvent.unexpectedConflict') : response.error
       setAllyMessage(errorMsg || t('dialogs.quickEvent.failedCreate'))
     }
-  }, [text, onEventCreated, t])
+  }, [text, selectedAttendees, onEventCreated, t])
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
@@ -192,7 +197,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       if (text.trim().length >= MIN_TEXT_LENGTH) {
-        processText(text)
+        processText(text, selectedAttendees)
       }
     }
   }
@@ -250,29 +255,38 @@ ${t('dialogs.quickEvent.examples')}
               </Button>
             </div>
 
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-muted-foreground">
-                {state === 'recording' ? t('dialogs.quickEvent.recording') : t('dialogs.quickEvent.pressEnter')}
-              </p>
-              <Button
-                onClick={() => processText(text)}
-                disabled={text.trim().length < MIN_TEXT_LENGTH || isDisabled}
-                variant="outline"
-                size="sm"
-                className="w-full sm:w-auto"
-              >
-                {state === 'parsing' || state === 'transcribing' ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('dialogs.quickEvent.processing')}
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    {t('dialogs.quickEvent.createEvent')}
-                  </>
-                )}
-              </Button>
+            <div className="mt-4 space-y-3">
+              <ContactPicker
+                selectedEmails={selectedAttendees}
+                onSelectionChange={setSelectedAttendees}
+                placeholder={t('dialogs.quickEvent.addAttendees', 'Add attendees (optional)')}
+                disabled={isDisabled}
+              />
+
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-muted-foreground">
+                  {state === 'recording' ? t('dialogs.quickEvent.recording') : t('dialogs.quickEvent.pressEnter')}
+                </p>
+                <Button
+                  onClick={() => processText(text, selectedAttendees)}
+                  disabled={text.trim().length < MIN_TEXT_LENGTH || isDisabled}
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                >
+                  {state === 'parsing' || state === 'transcribing' ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t('dialogs.quickEvent.processing')}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      {t('dialogs.quickEvent.createEvent')}
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
 
