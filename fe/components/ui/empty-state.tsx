@@ -7,23 +7,29 @@ import { cn } from '@/lib/utils'
 
 type EmptyStateSize = 'sm' | 'md' | 'lg'
 
-const sizeClasses: Record<EmptyStateSize, { container: string; icon: string; title: string; description: string }> = {
+const sizeClasses: Record<
+  EmptyStateSize,
+  { container: string; iconWrapper: string; icon: string; title: string; description: string }
+> = {
   sm: {
-    container: 'p-4 gap-2',
-    icon: '[&>svg]:w-8 [&>svg]:h-8',
+    container: 'p-4 gap-3',
+    iconWrapper: 'h-12 w-12',
+    icon: '[&>svg]:h-5 [&>svg]:w-5',
     title: 'text-sm',
     description: 'text-xs',
   },
   md: {
-    container: 'p-6 gap-3',
-    icon: '[&>svg]:w-12 [&>svg]:h-12',
+    container: 'p-6 gap-4',
+    iconWrapper: 'h-16 w-16',
+    icon: '[&>svg]:h-7 [&>svg]:w-7',
     title: 'text-base',
     description: 'text-sm',
   },
   lg: {
-    container: 'p-8 gap-4',
-    icon: '[&>svg]:w-16 [&>svg]:h-16',
-    title: 'text-lg',
+    container: 'p-10 gap-4',
+    iconWrapper: 'h-16 w-16',
+    icon: '[&>svg]:h-7 [&>svg]:w-7',
+    title: 'text-base',
     description: 'text-sm',
   },
 }
@@ -45,8 +51,16 @@ export function EmptyState({ icon, title, description, action, size = 'md', clas
 
   return (
     <div className={cn('flex flex-col items-center justify-center text-center', sizes.container, className)}>
-      <div className={cn('text-muted-foreground', sizes.icon)}>{icon}</div>
-      <p className={cn('font-medium text-foreground', sizes.title)}>{title}</p>
+      <div
+        className={cn(
+          'flex items-center justify-center rounded-full bg-muted text-muted-foreground',
+          sizes.iconWrapper,
+          sizes.icon,
+        )}
+      >
+        {icon}
+      </div>
+      <p className={cn('font-semibold text-foreground', sizes.title)}>{title}</p>
       {description && <p className={cn('max-w-xs text-muted-foreground', sizes.description)}>{description}</p>}
       {action && (
         <Button variant="link" size="sm" onClick={action.onClick} className="mt-2 h-auto p-0">

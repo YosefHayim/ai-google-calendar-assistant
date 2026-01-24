@@ -1,129 +1,86 @@
 'use client'
 
-import { ArrowRight, Briefcase, Code, GraduationCap, User, Users } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { ArrowRight, Brain, CalendarClock, Sparkles, Zap } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { OnboardingLayoutContent } from './layout'
-import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
-interface PersonaOption {
-  id: 'solopreneur' | 'developer' | 'manager' | 'student' | 'freelancer'
-  title: string
-  description: string
-  icon: React.ReactNode
-  features: string[]
-}
-
-const personaOptions: PersonaOption[] = [
+const FEATURES = [
   {
-    id: 'solopreneur',
-    title: 'Solopreneur',
-    description: 'Running your own business or consultancy',
-    icon: <User className="h-8 w-8" />,
-    features: ['Client scheduling', 'Gap recovery', 'Daily briefings', 'Invoice tracking'],
+    icon: CalendarClock,
+    text: 'Optimize meeting times based on your energy levels',
   },
   {
-    id: 'developer',
-    title: 'Developer',
-    description: 'Software engineer or programmer',
-    icon: <Code className="h-8 w-8" />,
-    features: ['Deep work blocks', 'Focus protection', 'Code reviews', 'Meeting buffers'],
+    icon: Brain,
+    text: 'Learn your scheduling preferences over time',
   },
   {
-    id: 'manager',
-    title: 'Manager',
-    description: 'Team lead or project manager',
-    icon: <Users className="h-8 w-8" />,
-    features: ['Meeting buffers', 'WhatsApp summaries', 'Conflict detection', 'Team updates'],
-  },
-  {
-    id: 'student',
-    title: 'Student',
-    description: 'College or university student',
-    icon: <GraduationCap className="h-8 w-8" />,
-    features: ['Study blocks', 'Assignment tracking', 'Exam preparation', 'Progress monitoring'],
-  },
-  {
-    id: 'freelancer',
-    title: 'Freelancer',
-    description: 'Independent contractor or consultant',
-    icon: <Briefcase className="h-8 w-8" />,
-    features: ['Client prep', 'Invoice reminders', 'Project tracking', 'Rate optimization'],
+    icon: Zap,
+    text: 'Suggest smart scheduling based on your habits',
   },
 ]
 
-export default function PersonaSelectionPage() {
-  const [selectedPersona, setSelectedPersona] = useState<PersonaOption['id'] | null>(null)
+export default function OnboardingWelcomePage() {
   const router = useRouter()
+  const [isNavigating, setIsNavigating] = useState(false)
 
-  const handleContinue = () => {
-    if (selectedPersona) {
-      // Store selected persona in localStorage for now
-      localStorage.setItem('onboarding_persona', selectedPersona)
-      router.push('/onboarding/pain-point')
-    }
+  const handleGetStarted = () => {
+    setIsNavigating(true)
+    router.push('/onboarding/work-style')
+  }
+
+  const handleSkip = () => {
+    localStorage.setItem('onboarding_skipped', 'true')
+    router.push('/dashboard')
   }
 
   return (
-    <OnboardingLayoutContent
-      currentStep={1}
-      totalSteps={4}
-      title="What best describes you?"
-      subtitle="We'll customize your experience based on your role"
-    >
-      <div className="space-y-6">
-        <div className="grid gap-4">
-          {personaOptions.map((persona, index) => (
+    <OnboardingLayoutContent currentStep={1} totalSteps={4}>
+      <div className="flex w-full flex-col items-center gap-12">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex h-20 w-20 items-center justify-center rounded-[20px] bg-secondary">
+            <Sparkles className="h-10 w-10 text-foreground" />
+          </div>
+          <h1 className="text-center text-[32px] font-bold text-foreground">Let's personalize Ally for you</h1>
+          <p className="text-center text-base leading-relaxed text-muted-foreground">
+            Answer a few quick questions so Ally can understand your work style and schedule smarter.
+          </p>
+        </div>
+
+        <div className="flex w-full flex-col gap-4">
+          {FEATURES.map((feature, index) => (
             <motion.div
-              key={persona.id}
-              initial={{ opacity: 0, y: 20 }}
+              key={feature.text}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: 0.1 + index * 0.1 }}
+              className="flex w-full items-center gap-4 rounded-xl border border-border bg-card px-5 py-4"
             >
-              <Card
-                className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  selectedPersona === persona.id ? 'bg-primary/5 ring-2 ring-primary' : 'hover:bg-muted/50'
-                }`}
-                onClick={() => setSelectedPersona(persona.id)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div
-                      className={`rounded-lg p-3 ${
-                        selectedPersona === persona.id ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                      }`}
-                    >
-                      {persona.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="mb-1 text-lg font-semibold">{persona.title}</h3>
-                      <p className="mb-3 text-muted-foreground">{persona.description}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {persona.features.slice(0, 3).map((feature) => (
-                          <span key={feature} className="rounded-full bg-muted px-2 py-1 text-xs">
-                            {feature}
-                          </span>
-                        ))}
-                        {persona.features.length > 3 && (
-                          <span className="text-xs text-muted-foreground">+{persona.features.length - 3} more</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <feature.icon className="h-6 w-6 text-primary" />
+              <span className="text-sm font-medium text-foreground">{feature.text}</span>
             </motion.div>
           ))}
         </div>
 
-        <div className="flex justify-end pt-4">
-          <Button onClick={handleContinue} disabled={!selectedPersona} size="lg" className="px-8">
-            Continue
-            <ArrowRight className="ml-2 h-4 w-4" />
+        <div className="flex w-full flex-col items-center gap-4">
+          <Button
+            onClick={handleGetStarted}
+            disabled={isNavigating}
+            size="lg"
+            className="w-full gap-2 py-4 text-base font-semibold"
+          >
+            Get Started
+            <ArrowRight className="h-[18px] w-[18px]" />
           </Button>
+          <button
+            onClick={handleSkip}
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Skip for now
+          </button>
         </div>
       </div>
     </OnboardingLayoutContent>

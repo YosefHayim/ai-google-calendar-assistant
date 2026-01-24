@@ -1,409 +1,197 @@
 'use client'
 
-import {
-  AlertCircle,
-  ArrowRight,
-  Brain,
-  Calendar,
-  Check,
-  Clock,
-  MessageCircle,
-  Mic,
-  Shield,
-  Smartphone,
-  X,
-  Zap,
-} from 'lucide-react'
+import { ArrowRight, Brain, Check, Minus, Smartphone, Sparkles, X, Zap, CalendarCheck } from 'lucide-react'
 
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
-import { motion } from 'framer-motion'
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } },
+const COMPETITORS = ['Ally', 'Google Cal', 'Calendly', 'Cal.com', 'Motion'] as const
+
+type FeatureSupport = 'full' | 'partial' | 'none'
+
+interface ComparisonRow {
+  feature: string
+  support: Record<(typeof COMPETITORS)[number], FeatureSupport>
 }
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-  },
-}
-
-const competitors = [
+const COMPARISON_DATA: ComparisonRow[] = [
   {
-    name: 'Ask Ally',
-    tagline: 'AI Google Calendar Assistant',
-    isAskAlly: true,
-    features: {
-      naturalLanguage: true,
-      voiceCommands: true,
-      multiPlatform: true,
-      gapRecovery: true,
-      aiInsights: true,
-      googleCalendar: true,
-      freeTier: true,
-      realtime: true,
-    },
+    feature: 'AI Chat Scheduling',
+    support: { Ally: 'full', 'Google Cal': 'none', Calendly: 'none', 'Cal.com': 'none', Motion: 'full' },
   },
   {
-    name: 'Calendly',
-    tagline: 'Scheduling Links',
-    isAskAlly: false,
-    features: {
-      naturalLanguage: false,
-      voiceCommands: false,
-      multiPlatform: false,
-      gapRecovery: false,
-      aiInsights: false,
-      googleCalendar: true,
-      freeTier: true,
-      realtime: false,
-    },
+    feature: 'Voice Commands',
+    support: { Ally: 'full', 'Google Cal': 'none', Calendly: 'none', 'Cal.com': 'none', Motion: 'none' },
   },
   {
-    name: 'Motion',
-    tagline: 'AI Task Scheduler',
-    isAskAlly: false,
-    features: {
-      naturalLanguage: false,
-      voiceCommands: false,
-      multiPlatform: false,
-      gapRecovery: false,
-      aiInsights: true,
-      googleCalendar: true,
-      freeTier: false,
-      realtime: false,
-    },
+    feature: 'Telegram & WhatsApp',
+    support: { Ally: 'full', 'Google Cal': 'none', Calendly: 'none', 'Cal.com': 'none', Motion: 'none' },
   },
   {
-    name: 'Reclaim.ai',
-    tagline: 'Smart Scheduling',
-    isAskAlly: false,
-    features: {
-      naturalLanguage: false,
-      voiceCommands: false,
-      multiPlatform: false,
-      gapRecovery: true,
-      aiInsights: true,
-      googleCalendar: true,
-      freeTier: true,
-      realtime: false,
-    },
+    feature: 'Natural Language Input',
+    support: { Ally: 'full', 'Google Cal': 'partial', Calendly: 'none', 'Cal.com': 'none', Motion: 'full' },
+  },
+  {
+    feature: 'Smart Conflict Resolution',
+    support: { Ally: 'full', 'Google Cal': 'none', Calendly: 'partial', 'Cal.com': 'partial', Motion: 'full' },
+  },
+  {
+    feature: 'Travel Time Awareness',
+    support: { Ally: 'full', 'Google Cal': 'partial', Calendly: 'none', 'Cal.com': 'none', Motion: 'full' },
+  },
+  {
+    feature: 'Learns Your Preferences',
+    support: { Ally: 'full', 'Google Cal': 'none', Calendly: 'none', 'Cal.com': 'none', Motion: 'full' },
+  },
+  {
+    feature: 'Free Tier Available',
+    support: { Ally: 'full', 'Google Cal': 'full', Calendly: 'full', 'Cal.com': 'full', Motion: 'none' },
   },
 ]
 
-const featureLabels: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
-  naturalLanguage: { label: 'Natural Language Commands', icon: MessageCircle },
-  voiceCommands: { label: 'Voice Input & Commands', icon: Mic },
-  multiPlatform: { label: 'Telegram & WhatsApp', icon: Smartphone },
-  gapRecovery: { label: 'Gap Recovery & Time Tracking', icon: Clock },
-  aiInsights: { label: 'AI-Powered Insights', icon: Brain },
-  googleCalendar: { label: 'Google Calendar Integration', icon: Calendar },
-  freeTier: { label: 'Free Tier Available', icon: Zap },
-  realtime: { label: 'Real-time Voice Conversations', icon: Mic },
+const DIFFERENTIATORS = [
+  {
+    icon: Brain,
+    title: 'Truly Understands Context',
+    description:
+      'Ally doesn\'t just match keywords. It understands "Schedule lunch with Sarah next week" means finding a mutual free slot, not creating an event called "lunch."',
+  },
+  {
+    icon: Smartphone,
+    title: 'Works Where You Are',
+    description:
+      "Web, voice, Telegram, WhatsApp, Slack. Ally meets you wherever you're most comfortable—no app switching required.",
+  },
+  {
+    icon: Sparkles,
+    title: 'Gets Smarter Over Time',
+    description:
+      'The more you use Ally, the better it knows your preferences—preferred meeting times, buffer needs, and how you like to structure your day.',
+  },
+]
+
+const SupportIcon = ({ support }: { support: FeatureSupport }) => {
+  if (support === 'full') {
+    return <Check className="h-5 w-5 text-green-500" />
+  }
+  if (support === 'partial') {
+    return <Minus className="h-5 w-5 text-muted-foreground" />
+  }
+  return <X className="h-5 w-5 text-muted-foreground" />
 }
 
 export default function ComparePage() {
   return (
     <MarketingLayout>
-      <section className="relative overflow-hidden px-4 py-24 sm:px-6 md:py-32">
-        <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 via-transparent to-transparent dark:from-orange-500/10" />
-        <div className="absolute left-1/4 top-20 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl" />
-        <div className="absolute bottom-20 right-1/4 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+      <section className="flex w-full flex-col items-center gap-6 px-4 pb-16 pt-20 sm:px-6 lg:px-20">
+        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-3.5 py-1.5">
+          <Zap className="h-3.5 w-3.5 text-foreground" />
+          <span className="text-[13px] font-medium text-foreground">See the Difference</span>
+        </div>
 
-        <motion.div
-          className="relative z-10 mx-auto max-w-4xl text-center"
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-        >
-          <motion.h1
-            variants={fadeInUp}
-            className="mb-6 text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground md:text-6xl lg:text-7xl"
-          >
-            Ask Ally vs
-            <br />
-            <span className="text-orange-500 dark:text-orange-400">Other Calendar Tools</span>
-          </motion.h1>
+        <h1 className="text-center text-4xl font-bold text-foreground sm:text-5xl lg:text-[56px]">Why Choose Ally?</h1>
 
-          <motion.p variants={fadeInUp} className="mx-auto max-w-3xl text-xl text-muted-foreground md:text-2xl">
-            Ask Ally, the AI Google Calendar Assistant, is a productivity SaaS tool for managing your calendar with
-            natural language and voice commands.
-          </motion.p>
-        </motion.div>
+        <p className="max-w-[700px] text-center text-lg leading-relaxed text-muted-foreground sm:text-xl">
+          Most calendar tools help you schedule. Ally understands how you work and manages your time intelligently.
+        </p>
       </section>
 
-      <section className="px-4 py-12 sm:px-6">
-        <motion.div
-          className="mx-auto max-w-4xl"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <div className="-orange-500/10 rounded-2xl border-orange-500/20 bg-orange-500/10 p-6 dark:bg-orange-500/5">
-            <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-orange-500/20">
-                <AlertCircle className="h-6 w-6 text-orange-500" />
-              </div>
-              <div>
-                <h2 className="mb-2 text-lg font-semibold text-foreground dark:text-primary-foreground">
-                  Looking for Ask Ally? You&apos;re in the right place.
-                </h2>
-                <p className="text-muted-foreground">
-                  <strong>Ask Ally</strong> is an <strong>AI-powered Google Calendar Assistant</strong> - a productivity
-                  software tool for scheduling and time management. While there are accessibility tools and consulting
-                  firms with similar names, Ask Ally is specifically a{' '}
-                  <strong>SaaS calendar automation platform</strong> designed to help professionals manage their Google
-                  Calendar using natural language, voice commands, and AI-powered insights.
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
+      <section className="flex w-full flex-col items-center gap-12 px-4 py-16 sm:px-6 lg:px-20">
+        <h2 className="text-2xl font-bold text-foreground sm:text-3xl">Feature Comparison</h2>
 
-      <section className="bg-muted px-4 py-16 dark:bg-secondary/50 sm:px-6 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <motion.div
-            className="mb-16 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="mb-4 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-5xl">
-              What is Ask Ally?
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Ask Ally is an AI Google Calendar Assistant - a productivity tool in the SaaS category
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-          >
-            {[
-              {
-                icon: Calendar,
-                title: 'Google Calendar Integration',
-                description: 'Deep integration with Google Calendar API for seamless event management',
-              },
-              {
-                icon: MessageCircle,
-                title: 'Natural Language Processing',
-                description: 'Tell Ally what you want in plain English - no complex commands needed',
-              },
-              {
-                icon: Mic,
-                title: 'Voice Commands',
-                description: 'Manage your calendar hands-free with voice input on web, Telegram, and WhatsApp',
-              },
-              {
-                icon: Brain,
-                title: 'AI-Powered Insights',
-                description: 'Get intelligent suggestions for time blocking, meeting optimization, and productivity',
-              },
-              {
-                icon: Clock,
-                title: 'Gap Recovery',
-                description: 'Automatically identify and reclaim lost time in your schedule',
-              },
-              {
-                icon: Shield,
-                title: 'Privacy-First',
-                description: 'Your calendar data stays secure with enterprise-grade encryption',
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                className="rounded-2xl bg-background p-6 transition-colors hover:border-orange-300 dark:bg-secondary dark:hover:border-orange-700"
-              >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/10">
-                  <feature.icon className="h-6 w-6 text-orange-500" />
+        <div className="w-full max-w-[1000px] overflow-x-auto">
+          <div className="min-w-[800px] overflow-hidden rounded-2xl border border-border bg-card">
+            <div className="flex items-center bg-muted px-6 py-4">
+              <div className="w-[280px] text-sm font-semibold text-foreground">Feature</div>
+              {COMPETITORS.map((competitor) => (
+                <div
+                  key={competitor}
+                  className={`flex w-[120px] items-center justify-center gap-2 first:w-[180px] ${
+                    competitor === 'Ally' ? 'text-foreground' : 'text-muted-foreground'
+                  }`}
+                >
+                  {competitor === 'Ally' && (
+                    <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
+                      <CalendarCheck className="h-3.5 w-3.5 text-primary-foreground" />
+                    </div>
+                  )}
+                  <span className="text-sm font-semibold">{competitor}</span>
                 </div>
-                <h3 className="mb-2 text-lg font-medium text-foreground dark:text-primary-foreground">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+              ))}
+            </div>
 
-      <section className="px-4 py-16 sm:px-6 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <motion.div
-            className="mb-16 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="mb-4 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-5xl">
-              Feature Comparison
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              See how Ask Ally compares to other calendar productivity tools
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="overflow-x-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <table className="w-full min-w-[800px]">
-              <thead>
-                <tr className="-zinc-700 border-b">
-                  <th className="px-4 py-4 text-left font-medium text-muted-foreground">Feature</th>
-                  {competitors.map((competitor) => (
-                    <th
-                      key={competitor.name}
-                      className={`px-4 py-4 text-center font-medium ${
-                        competitor.isAskAlly
-                          ? 'rounded-t-xl bg-orange-500/5 text-orange-500'
-                          : 'text-foreground dark:text-primary-foreground'
-                      }`}
-                    >
-                      <div>{competitor.name}</div>
-                      <div className="mt-1 text-xs font-normal text-muted-foreground">{competitor.tagline}</div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(featureLabels).map(([featureKey, { label, icon: Icon }], index) => (
-                  <tr
-                    key={featureKey}
-                    className={`-zinc-700 border-b ${index % 2 === 0 ? 'bg-muted/50 dark:bg-secondary/30' : ''}`}
+            {COMPARISON_DATA.map((row, index) => (
+              <div
+                key={row.feature}
+                className={`flex items-center border-t border-border px-6 py-4 ${
+                  index === COMPARISON_DATA.length - 1 ? '' : ''
+                }`}
+              >
+                <div className="w-[280px] text-sm font-medium text-foreground">{row.feature}</div>
+                {COMPETITORS.map((competitor) => (
+                  <div
+                    key={`${row.feature}-${competitor}`}
+                    className={`flex w-[120px] items-center justify-center first:w-[180px]`}
                   >
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-3">
-                        <Icon className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-foreground dark:text-primary-foreground">{label}</span>
-                      </div>
-                    </td>
-                    {competitors.map((competitor) => (
-                      <td
-                        key={`${competitor.name}-${featureKey}`}
-                        className={`px-4 py-4 text-center ${competitor.isAskAlly ? 'bg-orange-500/5' : ''}`}
-                      >
-                        {competitor.features[featureKey as keyof typeof competitor.features] ? (
-                          <Check className="mx-auto h-5 w-5 text-emerald-500" />
-                        ) : (
-                          <X className="mx-auto h-5 w-5 text-zinc-400" />
-                        )}
-                      </td>
-                    ))}
-                  </tr>
+                    <SupportIcon support={row.support[competitor]} />
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="bg-secondary px-4 py-16 dark:bg-secondary sm:px-6 md:py-24">
-        <div className="mx-auto max-w-4xl">
-          <motion.div
-            className="mb-12 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="mb-4 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-4xl">
-              Not to Be Confused With
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Ask Ally is a Google Calendar AI Assistant. Here&apos;s how we differ from other services with similar
-              names.
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="space-y-6"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-          >
-            {[
-              {
-                category: 'Accessibility Tools',
-                description:
-                  'Some accessibility platforms use "Ally" in their name. Ask Ally is NOT an accessibility widget or WCAG compliance tool. We are a calendar productivity SaaS.',
-              },
-              {
-                category: 'Consulting Firms',
-                description:
-                  'There are consulting companies with "Ally" branding. Ask Ally is NOT a consulting firm. We are an AI-powered software product for Google Calendar management.',
-              },
-              {
-                category: 'Financial Services',
-                description:
-                  'Ally Bank and other financial institutions exist. Ask Ally has no affiliation with any financial services. We are strictly a productivity software company.',
-              },
-            ].map((item, index) => (
-              <motion.div key={index} variants={fadeInUp} className="rounded-2xl bg-background p-6 dark:bg-zinc-800">
-                <h3 className="mb-2 text-lg font-semibold text-foreground dark:text-primary-foreground">
-                  {item.category}
-                </h3>
-                <p className="text-muted-foreground">{item.description}</p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
+        </div>
 
-          <motion.div
-            className="mt-12 rounded-2xl border-orange-500/20 bg-orange-500/10 p-6 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            <p className="text-lg font-medium text-foreground dark:text-primary-foreground">
-              <strong>Ask Ally</strong> = <strong>AI Google Calendar Assistant</strong> for{' '}
-              <strong>Productivity & Time Management</strong>
-            </p>
-          </motion.div>
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          <div className="flex items-center gap-2">
+            <Check className="h-4 w-4 text-green-500" />
+            <span className="text-[13px] text-muted-foreground">Full support</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Minus className="h-4 w-4 text-muted-foreground" />
+            <span className="text-[13px] text-muted-foreground">Partial support</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <X className="h-4 w-4 text-muted-foreground" />
+            <span className="text-[13px] text-muted-foreground">Not available</span>
+          </div>
         </div>
       </section>
 
-      <section className="bg-gradient-to-b from-zinc-50 to-white px-4 py-16 dark:from-zinc-900/50 dark:to-zinc-900/0 sm:px-6 md:py-24">
-        <motion.div
-          className="mx-auto max-w-4xl text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="mb-6 text-3xl font-medium text-foreground dark:text-primary-foreground md:text-5xl">
-            Ready to Transform Your Calendar?
-          </h2>
-          <p className="mx-auto mb-10 max-w-2xl text-xl text-muted-foreground">
-            Join thousands of professionals using Ask Ally, the AI Google Calendar Assistant, to save hours every week.
-          </p>
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link href="/register" className="w-full sm:w-auto">
-              <InteractiveHoverButton text="Get Started Free" className="h-14 w-full px-8 text-lg sm:w-auto" />
-            </Link>
-            <Link
-              href="/pricing"
-              className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-md px-8 text-lg font-medium text-foreground transition-colors hover:bg-muted dark:text-primary-foreground dark:hover:bg-secondary sm:w-auto"
-            >
-              View Pricing
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-          </div>
-        </motion.div>
+      <section className="flex w-full flex-col items-center gap-12 bg-muted px-4 py-20 sm:px-6 lg:px-20">
+        <h2 className="text-center text-2xl font-bold text-foreground sm:text-3xl">What Makes Ally Different</h2>
+
+        <div className="grid w-full max-w-[1280px] grid-cols-1 gap-6 md:grid-cols-3">
+          {DIFFERENTIATORS.map((diff) => (
+            <div key={diff.title} className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-8">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
+                <diff.icon className="h-6 w-6 text-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">{diff.title}</h3>
+              <p className="leading-relaxed text-muted-foreground">{diff.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex w-full flex-col items-center gap-8 px-4 py-20 sm:px-6 lg:px-20">
+        <h2 className="max-w-[600px] text-center text-3xl font-bold text-foreground sm:text-4xl">
+          Ready to Experience the Difference?
+        </h2>
+
+        <p className="max-w-[600px] text-center text-lg text-muted-foreground">
+          Join thousands who've upgraded from basic calendar tools to intelligent time management.
+        </p>
+
+        <div className="flex flex-col items-center gap-4">
+          <Link href="/register">
+            <Button size="lg" className="h-14 gap-2 rounded-lg px-8 text-base font-semibold">
+              <ArrowRight className="h-[18px] w-[18px]" />
+              Start Free Trial
+            </Button>
+          </Link>
+          <span className="text-sm text-muted-foreground">No credit card required</span>
+        </div>
       </section>
     </MarketingLayout>
   )

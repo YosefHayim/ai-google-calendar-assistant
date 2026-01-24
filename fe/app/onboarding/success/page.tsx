@@ -1,209 +1,133 @@
 'use client'
 
-import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { ArrowRight, Calendar, Check, Globe, Sunrise } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { OnboardingLayoutContent } from '../layout'
-import { applyAutoConfiguration } from '@/lib/onboarding/auto-configuration'
-import { motion } from 'framer-motion'
-import { personaDefaults } from '@/lib/validations/preferences'
 import { preferencesService } from '@/services/preferences-service'
-import { useRouter } from 'next/navigation'
 
-interface AutoConfiguredFeature {
-  category: string
-  features: string[]
+const WORK_STYLE_LABELS: Record<string, string> = {
+  early_bird: 'Early Bird - Morning meetings preferred',
+  night_owl: 'Night Owl - Afternoon meetings preferred',
+  flexible: 'Flexible - Available throughout the day',
 }
 
-// Persona to feature mapping
-const personaFeatureMap: Record<string, AutoConfiguredFeature[]> = {
-  solopreneur: [
-    {
-      category: 'Client Management',
-      features: ['Client scheduling links', 'Invoice reminders', 'Gap recovery'],
-    },
-    {
-      category: 'Productivity',
-      features: ['Daily briefings at 8 AM', 'Meeting efficiency tracking', 'Smart calendar insights'],
-    },
-  ],
-  developer: [
-    {
-      category: 'Focus & Deep Work',
-      features: ['2-4 hour deep work blocks', 'Focus time protection', 'Distraction blocking'],
-    },
-    {
-      category: 'Development Workflow',
-      features: ['Code review reminders', 'Meeting buffer time', 'Technical meeting prep'],
-    },
-  ],
-  manager: [
-    {
-      category: 'Team Coordination',
-      features: ['15-30 minute meeting buffers', 'Conflict detection', 'Team status reports'],
-    },
-    {
-      category: 'Communication',
-      features: ['WhatsApp summaries', 'Meeting prep automation', 'Priority notifications'],
-    },
-  ],
-  student: [
-    {
-      category: 'Academic Planning',
-      features: ['2-hour study blocks', 'Assignment deadline tracking', 'Exam preparation time'],
-    },
-    {
-      category: 'Progress Tracking',
-      features: ['Study progress monitoring', 'Reading schedule', 'Academic goal setting'],
-    },
-  ],
-  freelancer: [
-    {
-      category: 'Business Operations',
-      features: ['Client meeting prep', '7-day invoice reminders', 'Project time tracking'],
-    },
-    {
-      category: 'Client Relations',
-      features: ['Rate optimization alerts', 'Client feedback surveys', 'Contract deadline tracking'],
-    },
-  ],
+const MEETING_LOAD_LABELS: Record<string, string> = {
+  light: 'Light schedule - 0-3 meetings/day',
+  moderate: 'Moderate schedule - 4-6 meetings/day',
+  busy: 'Busy schedule - 7+ meetings/day',
 }
 
-export default function SuccessPage() {
-  const [isLoading, setIsLoading] = useState(false)
+const WORK_STYLE_ICONS: Record<string, typeof Sunrise> = {
+  early_bird: Sunrise,
+  night_owl: Sunrise,
+  flexible: Sunrise,
+}
+
+export default function OnboardingSuccessPage() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [workStyle, setWorkStyle] = useState<string | null>(null)
+  const [meetingLoad, setMeetingLoad] = useState<string | null>(null)
 
   useEffect(() => {
-    // Check if notifications were selected, redirect if not
-    const notifications = localStorage.getItem('onboarding_notifications')
-    if (!notifications) {
-      router.push('/onboarding/notifications')
+    const storedWorkStyle = localStorage.getItem('onboarding_work_style')
+    const storedMeetingLoad = localStorage.getItem('onboarding_meeting_load')
+
+    if (!storedWorkStyle || !storedMeetingLoad) {
+      router.push('/onboarding')
+      return
     }
+
+    setWorkStyle(storedWorkStyle)
+    setMeetingLoad(storedMeetingLoad)
   }, [router])
-
-  const persona = localStorage.getItem('onboarding_persona') as keyof typeof personaFeatureMap
-  const painPoints = JSON.parse(localStorage.getItem('onboarding_pain_points') || '[]')
-  const notificationFrequency = localStorage.getItem('onboarding_notifications')
-
-  const configuredFeatures = personaFeatureMap[persona] || []
 
   const handleComplete = async () => {
     setIsLoading(true)
     try {
-      // Apply auto-configuration based on persona and preferences
-      await applyAutoConfiguration(persona || '', painPoints, notificationFrequency || '')
-
-      // Save persona preferences
-      const personaData = {
-        ...personaDefaults,
-        persona: persona as 'solopreneur' | 'developer' | 'manager' | 'student' | 'freelancer' | null,
-        painPoint:
-          painPoints.length > 0
-            ? (painPoints[0] as 'too_many_meetings' | 'no_deep_work' | 'forgetting_tasks' | 'manual_scheduling')
-            : null,
-        notificationFrequency: notificationFrequency as 'realtime' | 'daily_digest' | 'weekly_summary',
+      await preferencesService.updatePersona({
+        workStyle: workStyle as 'early_bird' | 'night_owl' | 'flexible' | null,
+        meetingLoad: meetingLoad as 'light' | 'moderate' | 'busy' | null,
         onboardingCompleted: true,
         onboardingCompletedAt: new Date().toISOString(),
-      }
+      })
 
-      await preferencesService.updatePersona(personaData)
+      localStorage.removeItem('onboarding_work_style')
+      localStorage.removeItem('onboarding_meeting_load')
+      localStorage.removeItem('onboarding_skipped')
 
-      // Clear onboarding data
-      localStorage.removeItem('onboarding_persona')
-      localStorage.removeItem('onboarding_pain_points')
-      localStorage.removeItem('onboarding_notifications')
-
-      // Redirect to dashboard
       router.push('/dashboard')
     } catch (error) {
       console.error('Error completing onboarding:', error)
-      // Still redirect to dashboard even if onboarding fails
       router.push('/dashboard')
     }
   }
 
-  const getPersonaDisplayName = (personaId: string) => {
-    const names: Record<string, string> = {
-      solopreneur: 'Solopreneur',
-      developer: 'Developer',
-      manager: 'Manager',
-      student: 'Student',
-      freelancer: 'Freelancer',
-    }
-    return names[personaId] || personaId
+  if (!workStyle || !meetingLoad) {
+    return null
   }
 
-  return (
-    <OnboardingLayoutContent
-      currentStep={4}
-      totalSteps={4}
-      title="You're all set!"
-      subtitle={`Based on your profile as a ${getPersonaDisplayName(persona || '')}, we've configured:`}
-    >
-      <div className="space-y-6">
-        {/* Auto-configured features */}
-        <div className="space-y-4">
-          {configuredFeatures.map((category, index) => (
-            <motion.div
-              key={category.category}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                    {category.category}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {category.features.map((feature) => (
-                      <Badge key={feature} variant="secondary" className="text-sm">
-                        {feature}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+  const summaryItems = [
+    { icon: Sunrise, text: WORK_STYLE_LABELS[workStyle] || workStyle },
+    { icon: Calendar, text: MEETING_LOAD_LABELS[meetingLoad] || meetingLoad },
+    { icon: Globe, text: 'English language selected' },
+  ]
 
-        {/* Additional info */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <Card className="border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-3">
-                <Sparkles className="mt-0.5 h-6 w-6 text-primary" />
-                <div>
-                  <h3 className="mb-2 font-semibold">What's next?</h3>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>• Your calendar will be automatically optimized based on your preferences</li>
-                    <li>• You'll start receiving {notificationFrequency?.replace('_', ' ')} notifications</li>
-                    <li>• You can always adjust these settings in your preferences later</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+  return (
+    <OnboardingLayoutContent currentStep={4} totalSteps={4}>
+      <div className="flex w-full flex-col items-center gap-12">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col items-center gap-6"
+        >
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-500">
+            <Check className="h-12 w-12 text-white" />
+          </div>
+          <h1 className="text-center text-[32px] font-bold text-foreground">You're all set!</h1>
+          <p className="text-center text-base leading-relaxed text-muted-foreground">
+            Ally is now personalized to your work style. Start chatting to schedule your first meeting!
+          </p>
         </motion.div>
 
-        {/* Complete button */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="flex justify-center pt-4"
+          transition={{ delay: 0.2 }}
+          className="w-full rounded-2xl border border-border bg-card p-6"
         >
-          <Button onClick={handleComplete} disabled={isLoading} size="lg" className="px-12 py-3 text-lg">
-            {isLoading ? 'Setting up...' : 'Start using Ally'}
-            {!isLoading && <ArrowRight className="ml-2 h-5 w-5" />}
+          <span className="text-sm font-semibold text-muted-foreground">Your preferences</span>
+          <div className="mt-4 flex flex-col gap-3">
+            {summaryItems.map((item, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <item.icon className="h-[18px] w-[18px] text-primary" />
+                <span className="text-sm font-medium text-foreground">{item.text}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex w-full flex-col items-center gap-4"
+        >
+          <Button
+            onClick={handleComplete}
+            disabled={isLoading}
+            size="lg"
+            className="w-full gap-2 py-4 text-base font-semibold"
+          >
+            {isLoading ? 'Setting up...' : 'Go to Dashboard'}
+            {!isLoading && <ArrowRight className="h-[18px] w-[18px]" />}
           </Button>
+          <span className="text-[13px] text-muted-foreground">Edit preferences later in Settings</span>
         </motion.div>
       </div>
     </OnboardingLayoutContent>

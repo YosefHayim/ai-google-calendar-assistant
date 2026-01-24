@@ -10,9 +10,9 @@ import {
   ExternalLink,
   Hourglass,
   Info,
-  Link as LinkIcon,
   MapPin,
   RefreshCw,
+  Sparkles,
   User,
   Users,
   X,
@@ -68,9 +68,8 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="w-full max-w-xl gap-0 overflow-hidden border-none p-0 shadow-xl"
-        // Applying the dynamic border color to the top of the modal content
-        style={{ borderTop: `4px solid ${calendarColor}` }}
+        className="w-full max-w-xl gap-0 overflow-hidden rounded-2xl border p-0 shadow-xl"
+        style={{ borderTopColor: calendarColor, borderTopWidth: '4px' }}
       >
         {/* Scrollable Container */}
         <div className="max-h-[85vh] space-y-6 overflow-y-auto p-6">
@@ -245,7 +244,16 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
             </div>
           )}
 
-          {/* Footer Meta */}
+          <div className="flex flex-col gap-3 rounded-xl border border-green-300 bg-green-50 p-4 dark:border-green-700 dark:bg-green-950/30">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <span className="text-[13px] font-semibold text-green-700 dark:text-green-400">Ally&apos;s Insight</span>
+            </div>
+            <p className="text-[13px] leading-relaxed text-green-700 dark:text-green-400">
+              This meeting usually runs 5-10 minutes over. Consider blocking 10 extra minutes after.
+            </p>
+          </div>
+
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4">
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               {event.created && (

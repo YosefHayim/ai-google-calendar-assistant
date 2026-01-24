@@ -1,79 +1,43 @@
 'use client'
 
-import { Progress } from '@/components/ui/progress'
 import { ReactNode } from 'react'
 import { motion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
 interface OnboardingLayoutProps {
   children: ReactNode
   currentStep: number
   totalSteps: number
-  title: string
-  subtitle?: string
 }
 
-function OnboardingLayoutContent({ children, currentStep, totalSteps, title, subtitle }: OnboardingLayoutProps) {
-  const progress = (currentStep / totalSteps) * 100
-
+function ProgressBar({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) {
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Progress bar at top */}
-      <div className="w-full border-b bg-background/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-2xl px-6 py-4">
-          <div className="mb-2 flex items-center justify-between text-sm text-muted-foreground">
-            <span>
-              Step {currentStep} of {totalSteps}
-            </span>
-            <span>{Math.round(progress)}% complete</span>
-          </div>
-          <Progress value={progress} className="h-2" />
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex flex-1 items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mx-auto w-full max-w-2xl"
-        >
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mb-2 text-3xl font-bold tracking-tight"
-            >
-              {title}
-            </motion.h1>
-            {subtitle && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-lg text-muted-foreground"
-              >
-                {subtitle}
-              </motion.p>
-            )}
-          </div>
-
-          {/* Content */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            {children}
-          </motion.div>
-        </motion.div>
-      </div>
+    <div className="flex w-full gap-2">
+      {Array.from({ length: totalSteps }).map((_, index) => (
+        <div key={index} className={cn('h-1 flex-1 rounded-sm', index < currentStep ? 'bg-primary' : 'bg-muted')} />
+      ))}
     </div>
   )
 }
 
-// Export the content component for use in pages
+function OnboardingLayoutContent({ children, currentStep, totalSteps }: OnboardingLayoutProps) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex w-full max-w-[560px] flex-col items-center gap-10"
+      >
+        <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+        {children}
+      </motion.div>
+    </div>
+  )
+}
+
 export { OnboardingLayoutContent }
 
-// Default export for Next.js layout
 export default function OnboardingLayout({ children }: { children: ReactNode }) {
   return children
 }

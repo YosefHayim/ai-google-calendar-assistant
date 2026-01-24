@@ -64,8 +64,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
             position="bottom-center"
             toastOptions={{
               className:
-                'bg-background dark:bg-secondary text-foreground dark:text-primary-foreground w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[356px] sm:max-w-[420px] mx-auto',
+                'rounded-xl bg-card text-foreground border shadow-lg w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[356px] sm:max-w-[420px] mx-auto gap-3 p-4',
               duration: 4000,
+              classNames: {
+                success: 'border-green-300',
+                error: 'border-red-300',
+                warning: 'border-amber-300',
+                info: 'border-blue-300',
+                title: 'text-sm font-semibold text-foreground',
+                description: 'text-[13px] text-muted-foreground',
+              },
             }}
             richColors
             closeButton

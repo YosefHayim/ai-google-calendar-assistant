@@ -1,15 +1,14 @@
 'use client'
 
-import { AllyLogo, BetaBadge } from '@/components/shared/logo'
+import { Calendar } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+import { Button } from '@/components/ui/button'
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { ENV } from '@/lib/constants'
 import { FcGoogle } from 'react-icons/fc'
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
-import { TubesBackground } from '@/components/ui/neon-flow'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { usePostHog } from 'posthog-js/react'
 import { useTranslation } from 'react-i18next'
@@ -39,27 +38,60 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <TubesBackground className="min-h-screen duration-500 animate-in fade-in">
-      <div className="pointer-events-auto flex min-h-screen flex-col items-center justify-center p-8 lg:p-12">
-        <Link
-          href="/"
-          className="absolute left-8 top-8 z-50 flex items-center gap-2 transition-opacity hover:opacity-80"
-        >
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-background bg-secondary text-foreground shadow-lg">
-            <AllyLogo className="h-5 w-5" />
+    <div className="flex min-h-screen">
+      <div className="hidden w-1/2 flex-col justify-between bg-primary p-12 lg:flex">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-primary-foreground">
+            <Calendar className="h-5 w-5 text-primary" />
           </div>
-          <span className="flex items-center text-2xl font-medium tracking-normal text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">
-            Ally <BetaBadge />
-          </span>
+          <span className="text-2xl font-bold text-primary-foreground">Ally</span>
         </Link>
 
-        <div className="w-full max-w-md rounded-2xl bg-background/95 bg-secondary/95 p-8 shadow-2xl backdrop-blur-sm">
-          <h1 className="mb-4 overflow-hidden text-4xl font-medium tracking-normal text-foreground md:text-5xl">
-            {t('login.title')}
-          </h1>
-          <p className="mb-8 text-lg font-medium text-muted-foreground">{t('login.subtitle')}</p>
+        <div className="max-w-md space-y-6">
+          <blockquote className="text-2xl font-medium leading-relaxed text-primary-foreground">
+            &ldquo;Ally has completely transformed how I manage my schedule. It&apos;s like having a personal assistant
+            who never sleeps.&rdquo;
+          </blockquote>
+          <div className="space-y-1">
+            <p className="font-semibold text-primary-foreground">Sarah Chen</p>
+            <p className="text-sm text-primary-foreground/70">Product Manager at Stripe</p>
+          </div>
+        </div>
+
+        <div className="flex gap-8">
+          <div className="space-y-1">
+            <p className="text-3xl font-bold text-primary-foreground">10K+</p>
+            <p className="text-sm text-primary-foreground/70">Active users</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-3xl font-bold text-primary-foreground">4.9/5</p>
+            <p className="text-sm text-primary-foreground/70">User rating</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-3xl font-bold text-primary-foreground">12hrs</p>
+            <p className="text-sm text-primary-foreground/70">Saved weekly</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex w-full flex-col items-center justify-center bg-background p-8 lg:w-1/2 lg:p-16">
+        <Link href="/" className="mb-8 flex items-center gap-2.5 lg:hidden">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-primary">
+            <Calendar className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="text-2xl font-bold text-foreground">Ally</span>
+        </Link>
+
+        <div className="w-full max-w-[380px] space-y-8">
+          <div className="space-y-3 text-center">
+            <h1 className="text-3xl font-bold text-foreground">{t('login.title', 'Welcome back')}</h1>
+            <p className="text-base text-muted-foreground">
+              {t('login.subtitle', 'Sign in to continue managing your calendar with AI')}
+            </p>
+          </div>
+
           {error && (
-            <div className="bg-destructive/5/20 mb-6 rounded-lg border-destructive/20 p-4">
+            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4">
               <p className="text-sm font-medium text-destructive">
                 {error === 'no_token' && t('login.errors.noToken')}
                 {error === 'callback_failed' && t('login.errors.callbackFailed')}
@@ -75,25 +107,50 @@ const LoginPage: React.FC = () => {
               </p>
             </div>
           )}
-          <div className="space-y-2">
-            <InteractiveHoverButton
-              text={t('login.loginWithGoogle')}
-              loadingText={t('login.connecting')}
-              isLoading={isLoading}
-              Icon={<FcGoogle size={24} />}
-              className="h-14 w-full text-lg shadow-lg"
-              onClick={handleGoogleLogin}
-            />
+
+          <Button
+            variant="outline"
+            size="lg"
+            className="h-[52px] w-full gap-3 rounded-lg border text-[15px] font-medium shadow-sm"
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+            ) : (
+              <FcGoogle size={20} />
+            )}
+            {isLoading ? t('login.connecting', 'Connecting...') : t('login.loginWithGoogle', 'Continue with Google')}
+          </Button>
+
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-sm text-muted-foreground">or</span>
+            <div className="h-px flex-1 bg-border" />
           </div>
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            {t('login.noAccount')}{' '}
-            <Link href="/register" className="p-0 font-medium text-primary hover:underline">
-              {t('login.signUp')}
+
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">
+              {t('login.noAccount', "Don't have an account?")}{' '}
+              <Link href="/register" className="font-medium text-foreground hover:underline">
+                {t('login.signUp', 'Sign up')}
+              </Link>
+            </p>
+          </div>
+
+          <p className="text-center text-xs text-muted-foreground">
+            By continuing, you agree to our{' '}
+            <Link href="/terms" className="hover:underline">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link href="/privacy" className="hover:underline">
+              Privacy Policy
             </Link>
           </p>
         </div>
       </div>
-    </TubesBackground>
+    </div>
   )
 }
 

@@ -1,85 +1,28 @@
 'use client'
 
-import {
-  ArrowLeft,
-  ArrowRight,
-  BookOpen,
-  Calendar,
-  Check,
-  Clock,
-  Link as LinkIcon,
-  Linkedin,
-  Twitter,
-  User,
-} from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
+import { ArrowLeft, Calendar, Clock } from 'lucide-react'
 import { SITE_CONFIG, generateArticleSchema, generateBreadcrumbSchema } from '@/lib/constants/seo'
 import { getBlogPostBySlug, getRelatedPosts as getStaticRelatedPosts } from '@/lib/data/blog-posts'
 import { notFound, useParams } from 'next/navigation'
 import { useBlogPost, useRelatedPosts } from '@/hooks/queries'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { JsonLd } from '@/components/shared/JsonLd'
 import Link from 'next/link'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { Skeleton } from '@/components/ui/skeleton'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { formatBlogDate } from '@/lib/formatUtils'
 import { getBlogImageUrl } from '@/services/blog-service'
-import { useState } from 'react'
 
-function ShareButtons({ title, url }: { title: string; url: string }) {
-  const [showCopyCheck, setShowCopyCheck] = useState(false)
-  const [toastMessage, setToastMessage] = useState('')
+const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
+  Productivity: { bg: 'bg-blue-100', text: 'text-blue-800' },
+  'Tips & Tricks': { bg: 'bg-green-100', text: 'text-green-800' },
+  'Product News': { bg: 'bg-amber-100', text: 'text-amber-800' },
+  Tutorial: { bg: 'bg-purple-100', text: 'text-purple-800' },
+}
 
-  const encodedTitle = encodeURIComponent(title)
-  const encodedUrl = encodeURIComponent(url)
-
-  const showToast = (message: string) => {
-    setToastMessage(message)
-    setTimeout(() => setToastMessage(''), 3000)
-  }
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(url)
-    setShowCopyCheck(true)
-    showToast('Copied to clipboard!')
-    setTimeout(() => setShowCopyCheck(false), 1000)
-  }
-
-  const handleTwitterShare = () => {
-    window.open(`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`, '_blank')
-    showToast('Opening Twitter...')
-  }
-
-  const handleLinkedInShare = () => {
-    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`, '_blank')
-    showToast('Opening LinkedIn...')
-  }
-
-  return (
-    <>
-      <div className="flex items-center gap-2">
-        <span className="mr-2 text-sm text-muted-foreground dark:text-muted-foreground">Share:</span>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleTwitterShare}>
-          <Twitter className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleLinkedInShare}>
-          <Linkedin className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyToClipboard}>
-          {showCopyCheck ? <Check className="h-4 w-4 text-green-600" /> : <LinkIcon className="h-4 w-4" />}
-        </Button>
-      </div>
-
-      {toastMessage && (
-        <div className="fixed bottom-4 right-4 rounded-lg bg-secondary px-4 py-2 text-white shadow-lg duration-300 animate-in fade-in slide-in-from-bottom-2 dark:bg-secondary dark:text-foreground">
-          {toastMessage}
-        </div>
-      )}
-    </>
-  )
+const getCategoryColors = (category: string) => {
+  return CATEGORY_COLORS[category] || { bg: 'bg-secondary', text: 'text-secondary-foreground' }
 }
 
 export default function BlogPostPage() {
@@ -87,10 +30,10 @@ export default function BlogPostPage() {
   const slug = params.slug as string
 
   const { data: dynamicPost, isLoading, isError } = useBlogPost(slug)
-  const { data: dynamicRelated } = useRelatedPosts(slug, 3)
+  const { data: dynamicRelated } = useRelatedPosts(slug, 2)
 
   const staticPost = getBlogPostBySlug(slug)
-  const staticRelated = getStaticRelatedPosts(slug, 3)
+  const staticRelated = getStaticRelatedPosts(slug, 2)
 
   const useDynamicData = !isError && dynamicPost
   const post = useDynamicData ? dynamicPost : staticPost
@@ -99,8 +42,19 @@ export default function BlogPostPage() {
   if (isLoading) {
     return (
       <MarketingLayout>
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <LoadingSpinner size="lg" />
+        <div className="flex w-full justify-center px-4 py-12 sm:px-6 lg:px-20">
+          <div className="flex w-full max-w-[720px] flex-col gap-8">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-8 w-24 rounded-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-[400px] w-full rounded-xl" />
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+          </div>
         </div>
       </MarketingLayout>
     )
@@ -119,11 +73,18 @@ export default function BlogPostPage() {
   }
 
   const getAuthor = (p: typeof post) => {
-    if (!p) return { name: 'Ask Ally Team', role: 'Team' }
+    if (!p) return { name: 'Ally Team', role: 'Team', initials: 'AT' }
     if (typeof p.author === 'object' && p.author !== null) {
-      return p.author as { name: string; role: string }
+      const author = p.author as { name: string; role?: string }
+      const initials = author.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+      return { name: author.name, role: author.role || 'Team', initials }
     }
-    return { name: 'Ask Ally Team', role: 'Team' }
+    return { name: 'Ally Team', role: 'Team', initials: 'AT' }
   }
 
   const getReadTime = (p: typeof post) => {
@@ -150,6 +111,7 @@ export default function BlogPostPage() {
   const postUrl = `${SITE_CONFIG.url}/blog/${post.slug}`
   const author = getAuthor(post)
   const imageSrc = getImageSrc(post)
+  const categoryColors = getCategoryColors(post.category)
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: SITE_CONFIG.url },
@@ -170,151 +132,111 @@ export default function BlogPostPage() {
     <MarketingLayout>
       <JsonLd data={[breadcrumbSchema, articleSchema]} />
 
-      {imageSrc && (
-        <div className="relative h-[300px] w-full overflow-hidden md:h-[400px] lg:h-[500px]">
-          <Image src={imageSrc} alt={post.title} fill sizes="100vw" className="object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent dark:from-zinc-950" />
-        </div>
-      )}
-
-      <article className={`px-4 py-16 sm:px-6 md:py-24 ${imageSrc ? 'relative z-10 -mt-24' : ''}`}>
-        <div className="mx-auto max-w-3xl">
+      <article className="flex w-full justify-center px-4 py-12 sm:px-6 lg:px-20">
+        <div className="flex w-full max-w-[720px] flex-col gap-8">
           <Link
             href="/blog"
-            className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary dark:text-muted-foreground"
+            className="flex w-fit items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Blog
           </Link>
 
-          <header className="mb-12">
-            <div className="mb-6 flex items-center gap-3">
-              <Badge variant="default">{post.category}</Badge>
-              {post.featured && <Badge variant="secondary">Featured</Badge>}
-            </div>
+          <div className="flex flex-col gap-4">
+            <span
+              className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${categoryColors.bg} ${categoryColors.text}`}
+            >
+              {post.category}
+            </span>
 
-            <h1 className="mb-6 text-3xl font-medium leading-tight tracking-tight text-foreground dark:text-primary-foreground md:text-4xl lg:text-5xl">
+            <h1 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl lg:text-[40px]">
               {post.title}
             </h1>
 
-            <p className="mb-8 text-xl text-muted-foreground dark:text-muted-foreground">{post.excerpt}</p>
-
-            <div className="flex flex-wrap items-center gap-6 border border-b pb-8 text-sm text-muted-foreground dark:text-muted-foreground">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                  <User className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium text-foreground dark:text-primary-foreground">{author.name}</p>
-                  <p className="text-xs">{author.role}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                {formatBlogDate(getPublishedAt(post))}
+                <span>{formatBlogDate(getPublishedAt(post))}</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                {getReadTime(post)}
+                <span>{getReadTime(post)}</span>
               </div>
             </div>
-          </header>
+          </div>
+
+          <div className="relative h-[300px] w-full overflow-hidden rounded-xl bg-muted sm:h-[400px]">
+            {imageSrc ? (
+              <Image src={imageSrc} alt={post.title} fill sizes="720px" className="object-cover" priority />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <span className="text-muted-foreground">Featured Image</span>
+              </div>
+            )}
+          </div>
 
           <div
-            className="prose prose-lg prose-zinc max-w-none dark:prose-invert prose-headings:font-medium prose-headings:tracking-tight prose-h2:mb-4 prose-h2:mt-12 prose-h2:text-2xl prose-h3:mb-3 prose-h3:mt-8 prose-h3:text-xl prose-p:mb-4 prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:rounded-r-lg prose-blockquote:border-primary prose-blockquote:bg-muted prose-blockquote:px-6 prose-blockquote:py-1 prose-strong:text-foreground prose-code:rounded prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-primary prose-pre:border prose-pre:bg-secondary prose-ol:my-4 prose-ul:my-4 prose-li:leading-relaxed dark:prose-blockquote:bg-secondary dark:prose-strong:text-primary-foreground"
+            className="prose prose-lg max-w-none prose-headings:font-semibold prose-headings:text-foreground prose-h2:mt-8 prose-h2:text-2xl prose-p:leading-relaxed prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-ol:text-muted-foreground prose-ul:text-muted-foreground"
             dangerouslySetInnerHTML={{ __html: formatMarkdownToHtml(post.content) }}
           />
 
-          <div className="mt-12 border border-t pt-8">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-2 text-sm text-muted-foreground dark:text-muted-foreground">Tags:</span>
-              {post.tags.map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
-                  {tag}
-                </Badge>
-              ))}
+          <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-6">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary text-xl font-semibold text-primary-foreground">
+              {author.initials}
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-foreground">{author.name}</span>
+              <span className="text-sm leading-relaxed text-muted-foreground">
+                {author.role} at Ally. Passionate about productivity and helping people make the most of their time.
+              </span>
             </div>
           </div>
 
-          <div className="mt-8 flex items-center justify-between border-t pt-8">
-            <ShareButtons title={post.title} url={postUrl} />
-            <Link href="/register">
-              <Button className="gap-2">
-                Try Ask Ally Free
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+          {relatedPosts.length > 0 && (
+            <div className="flex flex-col gap-6">
+              <h2 className="text-2xl font-semibold text-foreground">Related Articles</h2>
+              <div className="grid gap-6 sm:grid-cols-2">
+                {relatedPosts.map((relatedPost) => {
+                  const relatedCategoryColors = getCategoryColors(relatedPost.category)
+                  const relatedImageSrc = getImageSrc(relatedPost)
+
+                  return (
+                    <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
+                      <article className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-muted-foreground/30">
+                        <div className="relative h-[140px] w-full bg-muted">
+                          {relatedImageSrc ? (
+                            <Image
+                              src={relatedImageSrc}
+                              alt={relatedPost.title}
+                              fill
+                              sizes="(max-width: 768px) 100vw, 360px"
+                              className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center">
+                              <span className="text-xs text-muted-foreground">Image</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2 p-4">
+                          <span
+                            className={`w-fit rounded-full px-2 py-0.5 text-[10px] font-medium ${relatedCategoryColors.bg} ${relatedCategoryColors.text}`}
+                          >
+                            {relatedPost.category}
+                          </span>
+                          <h3 className="line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                            {relatedPost.title}
+                          </h3>
+                        </div>
+                      </article>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </article>
-
-      {relatedPosts.length > 0 && (
-        <section className="bg-muted px-4 py-16 dark:bg-secondary/50 sm:px-6 md:py-24">
-          <div className="mx-auto max-w-6xl">
-            <h2 className="mb-8 text-2xl font-medium text-foreground dark:text-primary-foreground md:text-3xl">
-              Related Articles
-            </h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              {relatedPosts.map((relatedPost) => (
-                <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
-                  <Card className="group h-full overflow-hidden transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
-                    <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
-                      {getImageSrc(relatedPost) ? (
-                        <Image
-                          src={getImageSrc(relatedPost)!}
-                          alt={relatedPost.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <BookOpen className="h-12 w-12 text-zinc-300 transition-colors group-hover:text-primary/50 dark:text-zinc-700" />
-                        </div>
-                      )}
-                    </div>
-                    <CardContent className="p-5">
-                      <Badge variant="secondary" className="mb-3">
-                        {relatedPost.category}
-                      </Badge>
-                      <h3 className="mb-2 line-clamp-2 font-medium text-foreground transition-colors group-hover:text-primary dark:text-primary-foreground">
-                        {relatedPost.title}
-                      </h3>
-                      <p className="line-clamp-2 text-sm text-muted-foreground dark:text-muted-foreground">
-                        {relatedPost.excerpt}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className="px-4 py-16 sm:px-6 md:py-24">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-4 text-2xl font-medium text-foreground dark:text-primary-foreground md:text-3xl">
-            Ready to transform your calendar?
-          </h2>
-          <p className="mb-8 text-muted-foreground dark:text-muted-foreground">
-            Join thousands of professionals who use Ask Ally to manage their time more effectively.
-          </p>
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link href="/register">
-              <Button size="lg" className="w-full gap-2 sm:w-auto">
-                Get Started Free
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/blog">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Read More Articles
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
     </MarketingLayout>
   )
 }

@@ -727,85 +727,48 @@ function ChangelogPage() {
   return (
     <MarketingLayout>
       <JsonLd data={[breadcrumbSchema, pageSchema]} />
-      <section className="px-4 py-16 sm:px-6 md:py-24">
-        <div className="mx-auto max-w-4xl">
-          <div className="mb-16 text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-              <Sparkles className="h-4 w-4" />
-              What&apos;s New
-            </div>
-            <h1 className="mb-4 text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground md:text-5xl">
-              Changelog
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground dark:text-muted-foreground">
-              Stay up to date with the latest features, improvements, and fixes we&apos;ve shipped for Ask Ally.
-            </p>
-          </div>
+      <section className="px-4 py-20 sm:px-6 md:py-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">Changelog</h1>
+          <p className="text-lg text-muted-foreground md:text-xl">
+            Stay up to date with the latest features, improvements, and fixes.
+          </p>
+        </div>
+      </section>
 
-          <div className="relative">
-            <div className="absolute bottom-0 left-0 top-0 w-px bg-accent dark:bg-secondary md:left-1/2 md:-translate-x-1/2" />
+      <section className="px-4 pb-20 sm:px-6">
+        <div className="mx-auto max-w-3xl">
+          {CHANGELOG_DATA.map((entry, entryIndex) => (
+            <div
+              key={entry.version}
+              className={`py-8 ${entryIndex < CHANGELOG_DATA.length - 1 ? 'border-b border-border' : ''}`}
+            >
+              <div className="mb-4 flex items-center gap-4">
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                  {entry.date}
+                </span>
+                <span className="text-sm font-medium text-muted-foreground">v{entry.version}</span>
+              </div>
 
-            <div className="space-y-12">
-              {CHANGELOG_DATA.map((entry) => (
-                <div key={entry.version} className="relative">
-                  <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-12">
-                    <div className="md:w-1/2 md:pr-12 md:text-right">
-                      <div className="sticky top-24">
-                        <div className="mb-2 inline-flex items-center gap-3">
-                          <span className="text-2xl font-semibold text-foreground dark:text-primary-foreground">
-                            v{entry.version}
-                          </span>
-                        </div>
-                        <p className="text-sm text-muted-foreground dark:text-muted-foreground">{entry.date}</p>
-                      </div>
-                    </div>
+              <h2 className="mb-4 text-2xl font-semibold text-foreground">
+                {entry.changes[0]?.title || `Version ${entry.version}`}
+              </h2>
 
-                    <div className="-zinc-950 absolute left-0 top-2 z-10 h-3 w-3 rounded-full border-4 border-white bg-primary md:left-1/2 md:-translate-x-1/2" />
-
-                    <div className="space-y-4 pl-6 md:w-1/2 md:pl-12">
-                      {entry.changes.map((change, changeIndex) => (
-                        <div
-                          key={changeIndex}
-                          className="rounded-xl bg-background p-5 transition-colors hover:border-zinc-300 dark:bg-secondary dark:hover:border-zinc-700"
-                        >
-                          <div className="flex items-start gap-4">
-                            {change.icon && (
-                              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                                <change.icon className="h-5 w-5 text-primary" />
-                              </div>
-                            )}
-                            <div className="min-w-0 flex-1">
-                              <div className="mb-2 flex flex-wrap items-center gap-2">
-                                <Badge variant={BADGE_STYLES[change.type].variant}>
-                                  {BADGE_STYLES[change.type].label}
-                                </Badge>
-                                <h3 className="font-medium text-foreground dark:text-primary-foreground">
-                                  {change.title}
-                                </h3>
-                              </div>
-                              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-                                {change.description}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+              <div className="space-y-3">
+                {entry.changes.map((change, changeIndex) => (
+                  <div key={changeIndex} className="flex items-start gap-3">
+                    <Badge variant={BADGE_STYLES[change.type].variant} className="mt-0.5 shrink-0">
+                      {BADGE_STYLES[change.type].label}
+                    </Badge>
+                    <div>
+                      <span className="font-medium text-foreground">{change.title}</span>
+                      <span className="text-muted-foreground"> — {change.description}</span>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-
-          <div className="mt-16 text-center">
-            <p className="text-muted-foreground dark:text-muted-foreground">
-              Want to see what we&apos;re working on next?{' '}
-              <a href="/contact" className="text-primary hover:underline">
-                Get in touch
-              </a>{' '}
-              to share your feature requests.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
     </MarketingLayout>

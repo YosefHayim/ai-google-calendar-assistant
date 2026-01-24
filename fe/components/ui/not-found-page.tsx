@@ -1,17 +1,16 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Compass, Home } from 'lucide-react'
+import { CalendarX, Home, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 
 const PRIMARY_ORB_HORIZONTAL_OFFSET = 40
 const PRIMARY_ORB_VERTICAL_OFFSET = 20
 
 export function NotFoundPage() {
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_center,hsl(20_95%_49%/0.1),transparent_70%)] text-foreground">
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-background text-foreground">
       <div aria-hidden={true} className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div
           animate={{
@@ -40,30 +39,42 @@ export function NotFoundPage() {
         />
       </div>
 
-      <Empty>
-        <EmptyHeader>
-          <EmptyTitle className="text-8xl font-extrabold">404</EmptyTitle>
-          <EmptyDescription className="text-nowrap">
-            The page you&apos;re looking for might have been <br />
-            moved or doesn&apos;t exist.
-          </EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent>
-          <div className="flex gap-2">
-            <Button asChild>
-              <Link href="/">
-                <Home className="mr-2 h-4 w-4" /> Go Home
-              </Link>
-            </Button>
+      <div className="flex flex-col items-center justify-center gap-8 px-4">
+        <div className="flex h-[120px] w-[120px] items-center justify-center rounded-full bg-muted">
+          <CalendarX className="h-12 w-12 text-muted-foreground" />
+        </div>
 
-            <Button asChild variant="outline">
-              <Link href="/dashboard">
-                <Compass className="mr-2 h-4 w-4" /> Dashboard
-              </Link>
-            </Button>
-          </div>
-        </EmptyContent>
-      </Empty>
+        <div className="flex flex-col items-center gap-4">
+          <h1 className="text-7xl font-bold tracking-tight text-foreground">404</h1>
+          <h2 className="text-2xl font-semibold text-foreground">Page Not Found</h2>
+          <p className="max-w-md text-center text-base text-muted-foreground">
+            Oops! The page you&apos;re looking for doesn&apos;t exist or has been moved.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Button asChild size="lg" className="gap-2">
+            <Link href="/">
+              <Home className="h-4 w-4" />
+              Back to Home
+            </Link>
+          </Button>
+
+          <Button asChild variant="secondary" size="lg" className="gap-2 border border-border">
+            <Link href="/dashboard">
+              <LayoutDashboard className="h-4 w-4" />
+              Go to Dashboard
+            </Link>
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Need help?</span>
+          <Link href="/contact" className="text-sm font-medium text-primary hover:underline">
+            Contact Support
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
