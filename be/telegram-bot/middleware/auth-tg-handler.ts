@@ -128,6 +128,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
       if (userData?.email) {
         session.email = userData.email
+        session.userId = telegramUser.user_id
         session.pendingEmailVerification = undefined
         session.messageCount++
         return next()
@@ -265,6 +266,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
           return
         }
 
+        session.userId = userId
         await ctx.reply(t("auth.emailVerifiedSuccess"), { parse_mode: "HTML" })
         session.messageCount++
         return next()
