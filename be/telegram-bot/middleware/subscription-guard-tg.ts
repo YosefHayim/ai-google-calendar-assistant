@@ -12,14 +12,14 @@ export const subscriptionGuardTelegram: MiddlewareFn<GlobalContext> = async (
   ctx,
   next
 ) => {
-  const userId = ctx.session.userId
+  const supabaseUserId = ctx.session.supabaseUserId
   const email = ctx.session.email
 
-  if (!(userId && email)) {
+  if (!(supabaseUserId && email)) {
     return next()
   }
 
-  const access = await checkUserAccess(String(userId), email)
+  const access = await checkUserAccess(supabaseUserId, email)
 
   if (access.has_access || access.credits_remaining > 0) {
     return next()

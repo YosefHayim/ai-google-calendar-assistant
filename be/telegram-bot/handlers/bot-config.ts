@@ -49,6 +49,7 @@ export const configureSession = (bot: Bot<GlobalContext>): void => {
         email: undefined,
         messageCount: 0,
         userId: 0,
+        supabaseUserId: undefined,
         firstName: undefined,
         username: undefined,
         lastProcessedMsgId: 0,

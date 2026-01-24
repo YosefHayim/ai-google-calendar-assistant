@@ -1516,10 +1516,10 @@ export const handleSubscriptionCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang)
-  const userId = ctx.session.userId
+  const supabaseUserId = ctx.session.supabaseUserId
   const email = ctx.session.email
 
-  if (!(userId && email)) {
+  if (!(supabaseUserId && email)) {
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("💳", t("commands.subscription.header"))
@@ -1530,7 +1530,7 @@ export const handleSubscriptionCommand = async (
   }
 
   try {
-    const access = await checkUserAccess(String(userId), email)
+    const access = await checkUserAccess(supabaseUserId, email)
 
     const builder = ResponseBuilder.telegram()
       .direction(direction)

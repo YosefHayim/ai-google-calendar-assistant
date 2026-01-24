@@ -69,6 +69,7 @@ export type SessionData = {
   firstName: string | undefined
   username: string | undefined
   userId: number
+  supabaseUserId: string | undefined
   codeLang: string | undefined
   messageCount: number
   email: string | undefined
