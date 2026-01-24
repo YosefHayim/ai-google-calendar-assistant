@@ -58,7 +58,7 @@ DO NOT OPTIMIZE for:
 </optimization_principles>
 
 <critical_rules>
-- If optimization_type is "none", refined_prompt MUST equal the original
+- If optimizationType is "none", refinedPrompt MUST equal the original
 - Reasoning MUST explain the decision, not just describe it
 - Never fabricate user intent - only clarify what's present
 - High confidence (>0.8) requires clear evidence of ambiguity/risk
@@ -66,7 +66,7 @@ DO NOT OPTIMIZE for:
 
 You MUST respond with valid JSON matching this exact schema:
 {
-  "refined_prompt": "string - The enhanced prompt (or original if no optimization needed)",
+  "refinedPrompt": "string - The enhanced prompt (or original if no optimization needed)",
   "reasoning": "string - WHY the base prompt was insufficient (or why it's sufficient)",
   "confidence": "number between 0.0 and 1.0",
   "optimizationType": "one of: intent_clarification, safety_enhancement, context_injection, none",
