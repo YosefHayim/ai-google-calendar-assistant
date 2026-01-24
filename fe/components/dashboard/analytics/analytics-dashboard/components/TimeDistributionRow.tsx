@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import { Clock, Calendar, ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Calendar, ChevronRight, Clock } from 'lucide-react'
+
 import type { EnhancedAnalyticsData } from '@/types/analytics'
+import React from 'react'
 import type { UpcomingWeekData } from '@/hooks/queries/analytics/useUpcomingWeekData'
+import { cn } from '@/lib/utils'
 
 interface TimeDistributionRowProps {
   data: EnhancedAnalyticsData
@@ -94,6 +95,8 @@ function UpcomingWeek({ data, isLoading }: { data?: UpcomingWeekData; isLoading?
           totalHours: day.totalHours,
         }))
       : null
+
+  console.log('weekData', weekData)
 
   if (isLoading) {
     return (
