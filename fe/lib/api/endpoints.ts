@@ -592,9 +592,10 @@ export const ENDPOINTS = {
   // ============================================
 
   /**
-   * List contacts with pagination
-   * Methods: GET
-   * Query params: page, limit, sortBy, sortOrder, includeHidden
+   * List contacts with pagination / Create new contact
+   * Methods: GET, POST
+   * Query params (GET): page, limit, sortBy, sortOrder, includeHidden
+   * Body (POST): { email, display_name? }
    */
   CONTACTS: '/api/contacts',
 

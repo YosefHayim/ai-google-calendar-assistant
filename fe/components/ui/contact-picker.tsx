@@ -2,13 +2,16 @@
 
 import * as React from 'react'
 import { useCallback, useMemo, useState } from 'react'
-import { Check, Loader2, Search, Users, X } from 'lucide-react'
-import { useContacts } from '@/hooks/queries'
+import { Check, Loader2, Plus, Search, Users, X } from 'lucide-react'
+import { useContacts, useCreateContact } from '@/hooks/queries'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 import type { Contact } from '@/types/contacts'
 
 export interface ContactPickerContentProps {
@@ -33,10 +36,25 @@ export function ContactPickerContent({
   enabled = true,
 }: ContactPickerContentProps) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [newEmail, setNewEmail] = useState('')
+  const [newDisplayName, setNewDisplayName] = useState('')
 
   const { data: paginatedContacts, isLoading } = useContacts({
     params: { limit: 100, sortBy: 'meeting_count', sortOrder: 'desc' },
     enabled,
+  })
+
+  const { mutate: createContact, isPending: isCreating } = useCreateContact({
+    onSuccess: () => {
+      toast.success('Contact added successfully')
+      setShowAddDialog(false)
+      setNewEmail('')
+      setNewDisplayName('')
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : 'Failed to add contact')
+    },
   })
 
   const contactsList = useMemo((): Contact[] => {
@@ -96,36 +114,98 @@ export function ContactPickerContent({
     return contact.display_name || contact.email.split('@')[0]
   }
 
+  const handleCreateContact = () => {
+    if (!newEmail.trim() || !newEmail.includes('@')) {
+      toast.error('Please enter a valid email address')
+      return
+    }
+    createContact({
+      email: newEmail.trim(),
+      display_name: newDisplayName.trim() || undefined,
+    })
+  }
+
   return (
     <div className={cn('space-y-0', className)}>
       <div className="pb-2">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={placeholder}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="pl-9 pr-9"
-            autoFocus={autoFocus}
-            disabled={disabled}
-          />
-          {searchQuery && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
-              onClick={() => setSearchQuery('')}
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder={placeholder}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="pl-9 pr-9"
+              autoFocus={autoFocus}
               disabled={disabled}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
+                onClick={() => setSearchQuery('')}
+                disabled={disabled}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 shrink-0"
+            onClick={() => setShowAddDialog(true)}
+            disabled={disabled}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
         {searchQuery.includes('@') && !contactsList.some((c) => c.email === searchQuery.toLowerCase()) && (
           <p className="mt-2 text-xs text-muted-foreground">Press Enter to add "{searchQuery}" as attendee</p>
         )}
       </div>
+
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Contact</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email *</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="contact@example.com"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateContact()}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="displayName">Display Name (optional)</Label>
+              <Input
+                id="displayName"
+                placeholder="John Doe"
+                value={newDisplayName}
+                onChange={(e) => setNewDisplayName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateContact()}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddDialog(false)} disabled={isCreating}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateContact} disabled={isCreating || !newEmail.trim()}>
+              {isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Add Contact
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="max-h-60 overflow-y-auto border-t">
         {isLoading ? (

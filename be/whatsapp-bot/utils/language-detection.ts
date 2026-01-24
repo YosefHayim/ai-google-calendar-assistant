@@ -89,3 +89,44 @@ export const hasDetectableLanguage = (phoneNumber: string): boolean => {
   const countryCode = extractCountryCode(phoneNumber)
   return countryCode !== null && countryCode in PHONE_PREFIX_TO_LANGUAGE
 }
+
+// Unicode script ranges for language detection
+const HEBREW_REGEX = /[\u0590-\u05FF]/
+const ARABIC_REGEX = /[\u0600-\u06FF\u0750-\u077F]/
+const CYRILLIC_REGEX = /[\u0400-\u04FF]/
+const GERMAN_SPECIFIC_REGEX = /[äöüÄÖÜß]/
+const FRENCH_SPECIFIC_REGEX = /[éèêëàâùûîïôç]/i
+
+/**
+ * Detects language from message text based on character scripts.
+ * Returns the detected language or null if no specific language is detected.
+ */
+export const detectLanguageFromText = (
+  text: string
+): SupportedLocale | null => {
+  if (!text) {
+    return null
+  }
+
+  if (HEBREW_REGEX.test(text)) {
+    return "he"
+  }
+
+  if (ARABIC_REGEX.test(text)) {
+    return "ar"
+  }
+
+  if (CYRILLIC_REGEX.test(text)) {
+    return "ru"
+  }
+
+  if (GERMAN_SPECIFIC_REGEX.test(text)) {
+    return "de"
+  }
+
+  if (FRENCH_SPECIFIC_REGEX.test(text)) {
+    return "fr"
+  }
+
+  return null
+}

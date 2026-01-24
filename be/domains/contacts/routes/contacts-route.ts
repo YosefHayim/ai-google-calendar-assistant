@@ -10,6 +10,7 @@ const router = Router()
 router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh())
 
 router.get("/", contactsController.list)
+router.post("/", contactsController.create)
 router.get("/search", contactsController.search)
 router.get("/stats", contactsController.stats)
 router.get("/mining-status", contactsController.getMiningStatus)

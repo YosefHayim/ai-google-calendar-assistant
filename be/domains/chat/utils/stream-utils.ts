@@ -9,7 +9,7 @@ import {
   generateConversationTitle,
   summarizeMessages,
 } from "@/telegram-bot/utils/summarize"
-import type { MessageImageData } from "@/types"
+import type { MessageImageData, ToolOutput } from "@/types"
 
 export const EMBEDDING_THRESHOLD = 0.75
 export const EMBEDDING_LIMIT = 3
@@ -47,6 +47,7 @@ export type ConversationSaveParams = {
   conversationId: string | null
   isNewConversation: boolean
   images?: MessageImageData[]
+  toolOutputs?: ToolOutput[]
 }
 
 export async function buildChatPromptWithContext(

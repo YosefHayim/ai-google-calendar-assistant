@@ -1,4 +1,5 @@
 export { useContacts } from './useContacts'
+export { useCreateContact } from './useCreateContact'
 export { useSearchContacts } from './useSearchContacts'
 export { useContactStats } from './useContactStats'
 export { useUpdateContact } from './useUpdateContact'

@@ -3,6 +3,7 @@ import type {
   Contact,
   ContactSearchResult,
   ContactStats,
+  CreateContactBody,
   GetContactsParams,
   SearchContactsParams,
   UpdateContactBody,
@@ -299,4 +300,47 @@ export async function getContactMiningStatus(
   }
 
   return data?.contact_mining_enabled ?? true
+}
+
+export async function createContact(
+  userId: string,
+  body: CreateContactBody
+): Promise<Contact> {
+  const now = new Date().toISOString()
+
+  const { data: existing } = await SUPABASE.from("user_contacts")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("email", body.email.toLowerCase())
+    .single()
+
+  if (existing) {
+    throw new Error("Contact with this email already exists")
+  }
+
+  const { data, error } = await SUPABASE.from("user_contacts")
+    .insert({
+      user_id: userId,
+      email: body.email.toLowerCase(),
+      display_name: body.display_name ?? null,
+      first_seen_at: now,
+      last_seen_at: now,
+      meeting_count: 0,
+      total_duration_minutes: 0,
+      event_types: [],
+      common_summaries: [],
+      is_organizer_count: 0,
+      is_attendee_count: 0,
+      is_hidden: false,
+      is_favorite: false,
+      metadata: null,
+    })
+    .select("*")
+    .single()
+
+  if (error) {
+    throw new Error(`Failed to create contact: ${error.message}`)
+  }
+
+  return data as Contact
 }

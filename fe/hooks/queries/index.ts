@@ -106,6 +106,7 @@ export { useUploadAvatar, useUploadAttachment, useDeleteFile, useGetFileUrl, use
 // Contacts hooks
 export {
   useContacts,
+  useCreateContact,
   useSearchContacts,
   useContactStats,
   useUpdateContact,

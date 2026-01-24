@@ -39,6 +39,12 @@ import {
 import { createCreditTransaction } from "@/domains/payments/services/credit-service"
 import { sendR } from "@/lib/http"
 import { unifiedContextStore } from "@/shared/context"
+import type { ToolOutput } from "@/types"
+
+type StreamingResult = {
+  text: string
+  toolOutputs: ToolOutput[]
+}
 
 function parseToolOutput(
   output: unknown
@@ -53,28 +59,71 @@ function parseToolOutput(
   }
 }
 
-/**
- * Handles OpenAI agent streaming responses for chat conversations.
- * Manages the complete streaming lifecycle including agent handoffs, tool executions,
- * and real-time updates via Server-Sent Events (SSE). Processes the AI response stream
- * and forwards events to the client while tracking conversation state.
- *
- * @param res - Express response object for SSE streaming
- * @param userId - Unique identifier of the authenticated user
- * @param userEmail - Email address of the user for context
- * @param conversationId - Unique identifier for the conversation session
- * @param fullPrompt - Complete prompt with user context and conversation history
- * @returns Promise resolving to the complete AI response text
- */
+const TOOLS_TO_PERSIST = new Set([
+  "insert_event_direct",
+  "get_events_direct",
+  "update_event",
+  "delete_event",
+  "analyze_gaps_direct",
+])
+
+const MAX_OUTPUT_LENGTH = 2000
+
+function slimToolOutput(toolName: string, output: unknown): unknown | null {
+  if (!TOOLS_TO_PERSIST.has(toolName)) {
+    return null
+  }
+
+  const parsed =
+    typeof output === "string" ? JSON.parse(output) : (output as object)
+
+  if (toolName === "insert_event_direct" && parsed && typeof parsed === "object") {
+    const event = parsed as Record<string, unknown>
+    return {
+      id: event.id,
+      calendarId: event.calendarId,
+      summary: event.summary,
+      start: event.start,
+      end: event.end,
+      htmlLink: event.htmlLink,
+      status: event.status,
+    }
+  }
+
+  if (toolName === "get_events_direct" && parsed && typeof parsed === "object") {
+    const result = parsed as Record<string, unknown>
+    const events = Array.isArray(result.allEvents) ? result.allEvents : []
+    return {
+      totalEventsFound: result.totalEventsFound,
+      events: events.slice(0, 10).map((e: Record<string, unknown>) => ({
+        id: e.id,
+        calendarId: e.calendarId,
+        summary: e.summary,
+        start: e.start,
+        end: e.end,
+        htmlLink: e.htmlLink,
+      })),
+    }
+  }
+
+  const stringified = JSON.stringify(parsed)
+  if (stringified.length > MAX_OUTPUT_LENGTH) {
+    return { truncated: true, preview: stringified.slice(0, MAX_OUTPUT_LENGTH) }
+  }
+
+  return parsed
+}
+
 async function handleOpenAIStreaming(
   res: Response,
   userId: string,
   userEmail: string,
   conversationId: string,
   fullPrompt: string
-): Promise<string> {
+): Promise<StreamingResult> {
   let fullResponse = ""
   let currentAgent = ORCHESTRATOR_AGENT.name
+  const toolOutputs: ToolOutput[] = []
 
   const session = createAgentSession({
     userId,
@@ -127,18 +176,29 @@ async function handleOpenAIStreaming(
         const toolName = String(item.name) || "unknown"
         writeToolComplete(res, toolName, "success")
 
-        if (toolName === "update_user_brain" && "output" in item) {
-          const output = parseToolOutput(item.output)
-          if (output?.success && output?.message) {
-            const action = output.message.includes("updated")
-              ? "replaced"
-              : "added"
-            const PREVIEW_LENGTH = 100
-            writeMemoryUpdated(
-              res,
-              output.newInstructions?.slice(0, PREVIEW_LENGTH) || "",
-              action
-            )
+        if ("output" in item && item.output) {
+          const slimmedOutput = slimToolOutput(toolName, item.output)
+          if (slimmedOutput !== null) {
+            toolOutputs.push({
+              toolName,
+              output: slimmedOutput,
+              executedAt: new Date().toISOString(),
+            })
+          }
+
+          if (toolName === "update_user_brain") {
+            const output = parseToolOutput(item.output)
+            if (output?.success && output?.message) {
+              const action = output.message.includes("updated")
+                ? "replaced"
+                : "added"
+              const PREVIEW_LENGTH = 100
+              writeMemoryUpdated(
+                res,
+                output.newInstructions?.slice(0, PREVIEW_LENGTH) || "",
+                action
+              )
+            }
           }
         }
       }
@@ -155,7 +215,7 @@ async function handleOpenAIStreaming(
     writeTextDelta(res, fullResponse, fullResponse)
   }
 
-  return fullResponse
+  return { text: fullResponse, toolOutputs }
 }
 
 async function handleStreamingResponse(params: StreamingParams): Promise<void> {
@@ -218,13 +278,14 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
   try {
     const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`
 
-    fullResponse = await handleOpenAIStreaming(
+    const streamResult = await handleOpenAIStreaming(
       res,
       userId,
       userEmail,
       tempConversationId,
       effectivePrompt
     )
+    fullResponse = streamResult.text
 
     const messageImages = images?.map((img) => ({
       data: img.data,
@@ -238,6 +299,7 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
       conversationId,
       isNewConversation,
       images: messageImages,
+      toolOutputs: streamResult.toolOutputs,
     })
 
     if (fullResponse) {

@@ -2,6 +2,7 @@ import type { Request, Response } from "express"
 import { STATUS_RESPONSE } from "@/config"
 import { reqResAsyncHandler, sendR } from "@/lib/http"
 import {
+  createContact,
   deleteContact,
   getContactById,
   getContactMiningStatus,
@@ -12,14 +13,38 @@ import {
   updateContact,
 } from "../services/contact-query-service"
 import {
-  mineContactsFromCalendar,
-  mineContactsInBackground,
-} from "../services/contact-mining-service"
-import {
+  createContactSchema,
   getContactsSchema,
   searchContactsSchema,
   updateContactSchema,
 } from "../types"
+
+const create = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id
+  if (!userId) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+  }
+
+  const parseResult = createContactSchema.safeParse(req.body)
+  if (!parseResult.success) {
+    return sendR(
+      res,
+      STATUS_RESPONSE.BAD_REQUEST,
+      "Invalid contact data",
+      parseResult.error.errors
+    )
+  }
+
+  try {
+    const contact = await createContact(userId, parseResult.data)
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Contact created", contact)
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("already exists")) {
+      return sendR(res, STATUS_RESPONSE.CONFLICT, error.message)
+    }
+    throw error
+  }
+})
 
 const list = reqResAsyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id
@@ -248,6 +273,7 @@ const setMiningStatus = reqResAsyncHandler(
 )
 
 export const contactsController = {
+  create,
   list,
   search,
   stats,

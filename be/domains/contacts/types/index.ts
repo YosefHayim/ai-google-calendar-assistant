@@ -121,3 +121,10 @@ export const updateContactSchema = z.object({
 })
 
 export type UpdateContactBody = z.infer<typeof updateContactSchema>
+
+export const createContactSchema = z.object({
+  email: z.string().email(),
+  display_name: z.string().max(DISPLAY_NAME_MAX_LENGTH).optional(),
+})
+
+export type CreateContactBody = z.infer<typeof createContactSchema>

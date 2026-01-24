@@ -267,10 +267,25 @@ export type MessageImageData = {
   mimeType: "image/png" | "image/jpeg" | "image/webp" | "image/gif"
 }
 
+/**
+ * Tool output captured from AI agent tool executions.
+ * Used to persist tool results in conversation history for context.
+ */
+export type ToolOutput = {
+  /** Name of the tool that was executed */
+  toolName: string
+  /** Tool execution result (slimmed for storage) */
+  output: unknown
+  /** Timestamp when tool was executed */
+  executedAt: string
+}
+
 export type userAndAiMessageProps = {
   role: "user" | "assistant"
   content: string | undefined
   images?: MessageImageData[]
+  /** Tool outputs from this response (only for assistant messages) */
+  toolOutputs?: ToolOutput[]
 }
 
 export type TOOLS = keyof typeof AGENT_TOOLS

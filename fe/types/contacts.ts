@@ -83,3 +83,8 @@ export interface UpdateContactBody {
   is_favorite?: boolean
   display_name?: string
 }
+
+export interface CreateContactBody {
+  email: string
+  display_name?: string
+}

@@ -5,6 +5,7 @@ import type {
   Contact,
   ContactSearchResult,
   ContactStats,
+  CreateContactBody,
   GetContactsParams,
   PaginatedContacts,
   SearchContactsParams,
@@ -27,6 +28,11 @@ export interface SyncResult {
 export const contactsService = {
   async getContacts(params?: GetContactsParams): Promise<ApiResponse<PaginatedContacts>> {
     const { data } = await apiClient.get<ApiResponse<PaginatedContacts>>(ENDPOINTS.CONTACTS, { params })
+    return data
+  },
+
+  async createContact(body: CreateContactBody): Promise<ApiResponse<Contact>> {
+    const { data } = await apiClient.post<ApiResponse<Contact>>(ENDPOINTS.CONTACTS, body)
     return data
   },
 

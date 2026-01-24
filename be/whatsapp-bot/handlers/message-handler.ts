@@ -65,6 +65,7 @@ import {
   formatErrorForWhatsApp,
   htmlToWhatsApp,
 } from "../utils/format-response"
+import { detectLanguageFromText } from "../utils/language-detection"
 import {
   buildAgentPromptWithContext,
   summarizeMessages,
@@ -164,7 +165,9 @@ const processNaturalLanguageMessage = async (
 
   await markAsRead(messageId)
 
-  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const detectedLanguage = detectLanguageFromText(text)
+  const storedLanguageCode = await getLanguagePreferenceForWhatsApp(from)
+  const languageCode = detectedLanguage ?? storedLanguageCode
   const { t } = getTranslatorFromLanguageCode(languageCode)
   await sendTextMessage(from, t("status.processingRequest"))
 
