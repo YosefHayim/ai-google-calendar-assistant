@@ -5,9 +5,9 @@ import type { GlobalContext } from "../init-bot"
 /**
  * Maximum age of a message in seconds before it's considered stale.
  * Messages older than this threshold will be silently discarded.
- * Default: 60 seconds
+ * Increased to 300 seconds (5 minutes) to account for webhook delivery latency.
  */
-const STALE_MESSAGE_THRESHOLD_SECONDS = 60
+const STALE_MESSAGE_THRESHOLD_SECONDS = 300
 
 /**
  * Stale Message Filter Middleware

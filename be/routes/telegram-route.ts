@@ -8,6 +8,14 @@ const router = express.Router()
 
 // POST /webhook - Telegram webhook endpoint for receiving bot updates
 router.post("/webhook", async (req, res) => {
+  const updateId = req.body?.update_id
+  const messageText = req.body?.message?.text?.substring(0, 50)
+  const fromId = req.body?.message?.from?.id
+
+  logger.info(
+    `Telegram webhook: Received update ${updateId} from user ${fromId}: "${messageText || "(no text)"}"`
+  )
+
   try {
     const bot = getBot()
     if (!bot) {
