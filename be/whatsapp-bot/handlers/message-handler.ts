@@ -50,6 +50,7 @@ import {
   getLanguagePreferenceForWhatsApp,
   getVoicePreferenceForWhatsApp,
 } from "../utils/ally-brain"
+import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import {
   handleCommand,
   handleInteractiveReply,
@@ -161,7 +162,11 @@ const processNaturalLanguageMessage = async (
     return
   }
 
-  await showProcessingIndicator(from, messageId)
+  await markAsRead(messageId)
+
+  const languageCode = await getLanguagePreferenceForWhatsApp(from)
+  const { t } = getTranslatorFromLanguageCode(languageCode)
+  await sendTextMessage(from, t("status.processingRequest"))
 
   try {
     const conversationContext = await whatsAppConversation.addMessageToContext(
@@ -185,10 +190,9 @@ const processNaturalLanguageMessage = async (
       .filter(Boolean)
       .join("\n\n")
 
-    const [userId, allyBrain, languageCode] = await Promise.all([
+    const [userId, allyBrain] = await Promise.all([
       getUserIdFromWhatsApp(from),
       getAllyBrainForWhatsApp(from),
-      getLanguagePreferenceForWhatsApp(from),
     ])
 
     if (userId) {
@@ -213,7 +217,6 @@ const processNaturalLanguageMessage = async (
       logger.warn(`WhatsApp: DPO rejected request for user ${from}`, {
         reason: dpoResult.judgeOutput?.reasoning,
       })
-      await clearProcessingIndicator(from, messageId)
       await sendTextMessage(
         from,
         "Your request was flagged for safety review. Please rephrase your request."
@@ -251,8 +254,6 @@ const processNaturalLanguageMessage = async (
       finalOutput || "I couldn't process your request."
     )
 
-    await clearProcessingIndicator(from, messageId)
-
     if (respondWithVoice) {
       await tryVoiceResponse(from, formattedResponse)
       return
@@ -260,8 +261,6 @@ const processNaturalLanguageMessage = async (
 
     await sendTextMessage(from, formattedResponse)
   } catch (error) {
-    await clearProcessingIndicator(from, messageId)
-
     if (error instanceof InputGuardrailTripwireTriggered) {
       logger.warn(
         `WhatsApp: Guardrail triggered for user ${from}: ${error.message}`

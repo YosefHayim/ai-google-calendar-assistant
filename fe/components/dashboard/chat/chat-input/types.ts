@@ -22,6 +22,7 @@ export interface ChatInputProps {
   speechRecognitionError: string | null
   interimTranscription: string
   images?: ImageFile[]
+  selectedAttendees?: string[]
   onInputChange: (value: string) => void
   onSubmit: (e?: React.FormEvent) => void
   onToggleRecording: () => void
@@ -31,6 +32,7 @@ export interface ChatInputProps {
   onInterimResult?: (text: string) => void
   onCancel?: () => void
   onImagesChange?: (images: ImageFile[]) => void
+  onAttendeesChange?: (emails: string[]) => void
   shouldUseOCR?: (files: File[]) => boolean
   onOCRFilesSelected?: (files: ImageFile[]) => void
   isOCRUploading?: boolean

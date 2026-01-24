@@ -5,6 +5,7 @@ import { cn, getTextDirection } from '@/lib/utils'
 
 import { Loader2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 
 interface StreamingMessageProps {
@@ -38,15 +39,14 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
   const isRTL = textDirection === 'rtl'
 
   return (
-    <div className="mb-2 flex w-full justify-start">
-      <div className="flex max-w-[85%] flex-col items-start md:max-w-[75%]">
+    <div className="flex w-full justify-start">
+      <div className="flex max-w-[85%] flex-col items-start sm:max-w-[80%]">
         <div
-          className="rounded-md rounded-tl-none border-border bg-background bg-secondary px-4 py-3 text-sm leading-relaxed text-foreground shadow-sm"
+          className="overflow-hidden rounded-2xl rounded-bl-md bg-secondary px-4 py-3 text-sm leading-relaxed text-foreground"
           dir={content ? textDirection : undefined}
         >
           {showToolIndicator && (
             <div className="flex items-center gap-3">
-              {/* Mini pulsing orb with spinner */}
               <div className="relative flex h-6 w-6 items-center justify-center">
                 <div className="absolute inset-0 animate-pulse rounded-full bg-primary/20" />
                 <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -56,8 +56,17 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
           )}
 
           {content && (
-            <div className={cn('prose prose-sm prose-zinc prose-invert max-w-none', isRTL && 'text-right')}>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            <div
+              className={cn(
+                'prose prose-sm prose-zinc max-w-none break-words dark:prose-invert',
+                '[&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap [&_pre]:break-all',
+                '[&_a]:break-all [&_code]:break-all',
+                isRTL && 'text-right',
+              )}
+            >
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                {content}
+              </ReactMarkdown>
             </div>
           )}
 
@@ -65,7 +74,6 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
 
           {isStreaming && !content && !currentTool && (
             <div className="flex items-center gap-3">
-              {/* Mini pulsing orb */}
               <div className="relative flex h-6 w-6 items-center justify-center">
                 <div className="absolute inset-0 animate-ping rounded-full bg-primary/30" />
                 <div className="relative h-4 w-4 animate-pulse rounded-full bg-gradient-to-br from-primary to-orange-600 shadow-lg shadow-primary/40" />

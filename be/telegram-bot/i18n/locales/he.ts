@@ -356,6 +356,8 @@ export const he = {
   "errors.requestRejected":
     "הבקשה שלך סומנה לבדיקת בטיחות. אנא נסח מחדש את הבקשה שלך.",
 
+  "status.processingRequest": "מטפל בבקשה שלך...",
+
   "common.confirm": "אישור",
   "common.cancel": "ביטול",
   "common.yes": "כן",
@@ -460,10 +462,12 @@ export const he = {
   "commands.subscription.upgrade": "שדרג עכשיו",
   "commands.subscription.manageBilling": "נהל חיוב",
   "commands.subscription.freeTier": "חינם",
-  "commands.subscription.footerTip": "שדרג לקבלת יותר אינטראקציות ותכונות פרימיום.",
+  "commands.subscription.footerTip":
+    "שדרג לקבלת יותר אינטראקציות ותכונות פרימיום.",
   "commands.subscription.trialWarning":
     "תקופת הניסיון שלך מסתיימת בעוד {{days}} ימים. שדרג כדי להמשיך להשתמש ב-Ally.",
-  "commands.subscription.usageWarning": "השתמשת ב-{{percent}}% מהאינטראקציות החודשיות שלך.",
+  "commands.subscription.usageWarning":
+    "השתמשת ב-{{percent}}% מהאינטראקציות החודשיות שלך.",
   "commands.subscription.error": "לא ניתן לשלוף פרטי מנוי.",
   "botMenu.subscription": "צפה במנוי",
 

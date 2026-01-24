@@ -21,6 +21,7 @@ export const he: TranslationShape = {
     search: 'חיפוש',
     noData: 'אין נתונים זמינים',
     comingSoon: 'בקרוב',
+    dismiss: 'סגור',
     online: 'מחובר',
     offline: 'לא מחובר',
     event: 'אירוע',
@@ -1150,6 +1151,7 @@ export const he: TranslationShape = {
       aiInteractions: 'אינטראקציות AI',
       unlimited: 'ללא הגבלה',
       remaining: '{{count}} נותרו',
+      usedDuringTrial: '{{count}} נוצלו בתקופת הניסיון',
       creditBalance: 'יתרת קרדיטים',
       credits: '{{count}} קרדיטים',
     },
@@ -1478,5 +1480,10 @@ export const he: TranslationShape = {
       success: '{{count}} קרדיטים הוענקו בהצלחה ל-{{email}}',
       failed: 'נכשל בהענקת קרדיטים: {{error}}',
     },
+  },
+
+  subscriptionBanner: {
+    trialEndsIn: 'תקופת הניסיון מסתיימת בעוד {{time}}',
+    upgradeNow: 'שדרג עכשיו',
   },
 } as const

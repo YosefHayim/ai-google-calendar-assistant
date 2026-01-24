@@ -5,6 +5,7 @@ import { Clock, Sparkles, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { formatTimeRemaining } from '@/lib/formatUtils'
 import { useBillingData } from '@/hooks/queries/billing/useBilling'
 import { useTranslation } from 'react-i18next'
 
@@ -45,13 +46,13 @@ const PromoCountdown = ({ targetDate, onExpired }: PromoCountdownProps) => {
   }, [targetDate, onExpired])
 
   return (
-    <div className="flex items-center gap-2 font-mono text-sm">
+    <div className="flex flex-wrap items-center gap-2 font-mono text-sm">
       <Clock className="h-4 w-4" />
       <span className="font-bold text-primary">
         {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:
         {String(timeLeft.seconds).padStart(2, '0')}
       </span>
-      <span className="text-muted-foreground">{t('trial.remaining', 'remaining')}</span>
+      <span className="text-muted-foreground">{t('billing.trial.remaining')}</span>
     </div>
   )
 }
@@ -68,9 +69,8 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
 
   useEffect(() => {
     if (!isLoading && access) {
-      // Show banner if trial days left <= 14 and user is in trial
-      const shouldShow =
-        access.trial_days_left !== null && access.trial_days_left <= 14 && access.subscription_status === 'trialing'
+      const isTrialing = access.subscription_status === 'on_trial' || access.subscription_status === 'trialing'
+      const shouldShow = access.trial_days_left !== null && access.trial_days_left <= 14 && isTrialing
       setIsVisible(shouldShow)
     }
   }, [access, isLoading])
@@ -81,8 +81,8 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
 
   const isExpired = access.trial_days_left === 0
   const trialDaysLeft = access.trial_days_left || 0
+  const trialTimeDisplay = formatTimeRemaining(access.trial_end_date) ?? `${trialDaysLeft}d`
 
-  // Set promo end date to 24 hours from now for demo
   const promoEndDate = new Date(Date.now() + 24 * 60 * 60 * 1000)
 
   return (
@@ -95,32 +95,21 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
         className="-primary/30 w-full border-b border-primary/20 bg-gradient-to-r from-primary/10 via-orange-500/10 to-red-500/10"
       >
         <div className="mx-auto max-w-7xl px-4 py-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
                 <span className="font-semibold text-foreground">
-                  {isExpired
-                    ? t('trial.expired', 'Trial Expired')
-                    : t('trial.daysLeft', '{{count}} Day Left', { count: trialDaysLeft }).replace(
-                        '{{count}}',
-                        trialDaysLeft.toString(),
-                      )}
+                  {isExpired ? t('billing.trial.expired') : `${trialTimeDisplay} left`}
                 </span>
               </div>
 
               <div className="hidden text-sm text-muted-foreground sm:block">
-                {isExpired
-                  ? t('trial.expiredDescription', 'Your trial has expired – upgrade now to keep your access.')
-                  : t(
-                      'trial.activeDescription',
-                      "Your free trial ends in {{count}} day. Don't lose access to your AI assistant.",
-                      { count: trialDaysLeft },
-                    )}
+                {isExpired ? t('billing.trial.expiredDescription') : t('billing.trial.fullAccess')}
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               {!isExpired && (
                 <PromoCountdown
                   targetDate={promoEndDate}
@@ -135,7 +124,7 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
                 size="sm"
                 className="bg-gradient-to-r from-amber-500 to-orange-500 font-medium text-foreground shadow-sm hover:from-amber-600 hover:to-orange-600"
               >
-                {t('trial.getDeal', 'Get the Deal')}
+                {t('billing.trial.getDeal')}
               </Button>
 
               {onDismiss && (
@@ -154,15 +143,8 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
             </div>
           </div>
 
-          {/* Mobile text */}
           <div className="mt-2 text-sm text-muted-foreground sm:hidden">
-            {isExpired
-              ? t('trial.expiredDescription', 'Your trial has expired – upgrade now to keep your access.')
-              : t(
-                  'trial.activeDescription',
-                  "Your free trial ends in {{count}} day. Don't lose access to your AI assistant.",
-                  { count: trialDaysLeft },
-                )}
+            {isExpired ? t('billing.trial.expiredDescription') : t('billing.trial.fullAccess')}
           </div>
         </div>
       </motion.div>

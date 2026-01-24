@@ -45,13 +45,13 @@ export const EditableMessage: React.FC<EditableMessageProps> = ({
 
   return (
     <div className={cn('flex w-full', message.role === 'user' ? 'justify-end' : 'justify-start')}>
-      <div className="flex w-full max-w-[85%] flex-col gap-2 md:max-w-[75%]">
+      <div className="flex max-w-[85%] flex-col gap-2 sm:max-w-[80%]">
         <textarea
           ref={editInputRef}
           value={editText}
           onChange={(e) => onEditTextChange(e.target.value)}
           onKeyDown={onKeyDown}
-          className="min-h-[60px] w-full resize-none rounded-xl rounded-tr-none border-2 border-primary bg-primary/10 p-3 text-sm leading-relaxed text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
+          className="min-h-[60px] w-full resize-none rounded-2xl rounded-br-md border-2 border-primary bg-primary/10 p-3 text-sm leading-relaxed text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
           rows={Math.min(5, editText.split('\n').length + 1)}
         />
         <div className="flex justify-end gap-2">

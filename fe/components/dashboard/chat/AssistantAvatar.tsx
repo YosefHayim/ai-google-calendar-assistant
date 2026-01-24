@@ -37,7 +37,7 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({
       >
         <div
           className={cn(
-            'absolute inset-0 rounded-full bg-primary/20 blur-[100px] transition-all duration-1000',
+            'absolute inset-0 rounded-full bg-transparent blur-[100px] transition-all duration-1000',
             isSpeaking || isLoading ? 'scale-125 opacity-40' : 'scale-100 opacity-10',
           )}
         />

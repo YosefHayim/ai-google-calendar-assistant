@@ -20,6 +20,7 @@ export const ar: TranslationShape = {
     search: 'بحث',
     noData: 'لا توجد بيانات',
     comingSoon: 'قريباً',
+    dismiss: 'إغلاق',
     online: 'متصل',
     offline: 'غير متصل',
     event: 'حدث',
@@ -1112,6 +1113,7 @@ export const ar: TranslationShape = {
       aiInteractions: 'تفاعلات الذكاء الاصطناعي',
       unlimited: 'غير محدود',
       remaining: '{{count}} متبقٍ',
+      usedDuringTrial: '{{count}} مستخدمة خلال الفترة التجريبية',
       creditBalance: 'رصيد الائتمان',
       credits: '{{count}} رصيد',
     },
@@ -1390,5 +1392,10 @@ export const ar: TranslationShape = {
       success: 'تم منح {{count}} رصيد بنجاح إلى {{email}}',
       failed: 'فشل في منح الرصيد: {{error}}',
     },
+  },
+
+  subscriptionBanner: {
+    trialEndsIn: 'تنتهي الفترة التجريبية خلال {{time}}',
+    upgradeNow: 'ترقية الآن',
   },
 } as const

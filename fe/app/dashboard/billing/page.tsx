@@ -4,6 +4,7 @@ import React, { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
+import { formatTimeRemaining } from '@/lib/formatUtils'
 import { useQueryClient } from '@tanstack/react-query'
 import { usePostHog } from 'posthog-js/react'
 import { Card } from '@/components/ui/card'
@@ -36,7 +37,7 @@ import {
 import { PaymentMethodCard } from '@/components/dashboard/billing/PaymentMethodCard'
 import { TransactionHistoryTable } from '@/components/dashboard/billing/TransactionHistoryTable'
 import { ConfirmDialog } from '@/components/dashboard/shared/ConfirmDialog'
-import { useBillingData, billingKeys } from '@/hooks/queries/billing'
+import { useBillingData } from '@/hooks/queries/billing'
 
 export default function BillingPage() {
   return (
@@ -49,9 +50,9 @@ export default function BillingPage() {
 function BillingPageContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
-  const queryClient = useQueryClient()
   const posthog = usePostHog()
   const { access, plans, billingOverview, isLoading, refetchAll } = useBillingData()
+  const isTrialing = access?.subscription_status === 'on_trial' || access?.subscription_status === 'trialing'
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
   const [confirmDialog, setConfirmDialog] = useState<'cancel' | 'refund' | null>(null)
@@ -279,7 +280,7 @@ function BillingPageContent() {
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary" />
                 <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                  {t('billing.trial.daysLeft', { days: access.trial_days_left })}
+                  {formatTimeRemaining(access.trial_end_date) ?? `${access.trial_days_left}d`} left
                 </p>
               </div>
               <p className="mt-1 text-xs text-primary dark:text-blue-400">{t('billing.trial.fullAccess')}</p>
@@ -324,12 +325,17 @@ function BillingPageContent() {
                   {t('billing.usage.aiInteractions')}
                 </p>
                 <p className="mt-1 text-2xl font-bold text-foreground dark:text-white">
-                  {access?.interactions_remaining === null ? (
+                  {isTrialing || access?.interactions_remaining === null ? (
                     <span className="text-green-600">{t('billing.usage.unlimited')}</span>
                   ) : (
                     t('billing.usage.remaining', { count: access?.interactions_remaining || 0 })
                   )}
                 </p>
+                {isTrialing && access?.interactions_used !== null && access?.interactions_used !== undefined && (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {t('billing.usage.usedDuringTrial', { count: access.interactions_used })}
+                  </p>
+                )}
               </div>
               <div className="rounded-lg bg-muted p-4 dark:bg-secondary">
                 <p className="text-sm text-muted-foreground dark:text-muted-foreground">

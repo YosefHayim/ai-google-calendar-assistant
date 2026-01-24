@@ -20,6 +20,7 @@ export const ru: TranslationShape = {
     search: 'Поиск',
     noData: 'Нет данных',
     comingSoon: 'Скоро',
+    dismiss: 'Скрыть',
     online: 'Онлайн',
     offline: 'Офлайн',
     event: 'событие',
@@ -1138,6 +1139,7 @@ export const ru: TranslationShape = {
       aiInteractions: 'AI взаимодействия',
       unlimited: 'Без ограничений',
       remaining: 'Осталось {{count}}',
+      usedDuringTrial: '{{count}} использовано за пробный период',
       creditBalance: 'Баланс кредитов',
       credits: '{{count}} кредитов',
     },
@@ -1469,5 +1471,10 @@ export const ru: TranslationShape = {
       success: '{{count}} кредитов успешно предоставлено {{email}}',
       failed: 'Не удалось предоставить кредиты: {{error}}',
     },
+  },
+
+  subscriptionBanner: {
+    trialEndsIn: 'Пробный период заканчивается через {{time}}',
+    upgradeNow: 'Обновить сейчас',
   },
 } as const

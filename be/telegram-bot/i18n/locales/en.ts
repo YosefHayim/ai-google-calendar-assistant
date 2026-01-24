@@ -375,6 +375,8 @@ export const en = {
   "errors.requestRejected":
     "Your request was flagged for safety review. Please rephrase your request.",
 
+  "status.processingRequest": "Working on your request...",
+
   "common.confirm": "Confirm",
   "common.cancel": "Cancel",
   "common.yes": "Yes",

@@ -79,7 +79,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   }
 
   return (
-    <div className="absolute inset-0 z-10 flex flex-col items-center overflow-hidden bg-secondary p-4">
+    <div className="absolute inset-0 z-10 flex flex-col items-center overflow-hidden bg-transparent p-4">
       <div
         className={cn(
           'flex w-full shrink-0 flex-col items-center justify-center transition-all duration-700',

@@ -19,7 +19,7 @@ const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Chec
   succeeded: {
     label: 'Paid',
     icon: CheckCircle2,
-    className: 'bg-primary/5 text-primary border-primary/20',
+    className: 'bg-green-500/10 text-green-600 border-green-500/20 dark:text-green-400',
   },
   pending: {
     label: 'Pending',

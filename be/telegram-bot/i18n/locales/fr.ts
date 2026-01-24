@@ -416,6 +416,8 @@ export const fr = {
   "errors.tooManyImages":
     "Vous pouvez envoyer jusqu'à {{max}} images à la fois. Certaines images ont été ignorées.",
 
+  "status.processingRequest": "Je traite votre demande...",
+
   "common.confirm": "Confirmer",
   "common.cancel": "Annuler",
   "common.yes": "Oui",

@@ -365,6 +365,8 @@ export const ar = {
   "errors.tooManyImages":
     "يمكنك إرسال حتى {{max}} صور في المرة الواحدة. تم تخطي بعض الصور.",
 
+  "status.processingRequest": "جاري معالجة طلبك...",
+
   "common.confirm": "تأكيد",
   "common.cancel": "إلغاء",
   "common.yes": "نعم",

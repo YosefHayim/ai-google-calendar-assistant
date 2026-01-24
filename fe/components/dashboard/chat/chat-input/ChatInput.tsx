@@ -2,12 +2,16 @@
 
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES, MAX_IMAGE_SIZE_MB, MAX_INPUT_LENGTH } from './utils/constants'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUp, Mic, Paperclip, Pause, Trash2, X } from 'lucide-react'
+import { ArrowUp, Mic, Paperclip, Pause, Trash2, Users, X } from 'lucide-react'
 import type { ChatInputProps, ImageFile } from './types'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { ContactPickerContent } from '@/components/ui/contact-picker'
 import Image from 'next/image'
 import { ImageLightbox } from './components/ImageLightbox'
 import { Input } from '@/components/ui/input'
@@ -30,6 +34,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
       speechRecognitionError,
       interimTranscription: _interimTranscription,
       images = [],
+      selectedAttendees = [],
       onInputChange,
       onSubmit,
       onToggleRecording,
@@ -39,6 +44,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
       onInterimResult,
       onCancel,
       onImagesChange,
+      onAttendeesChange,
       shouldUseOCR,
       onOCRFilesSelected,
       isOCRUploading,
@@ -51,6 +57,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     const inputDirection = useMemo(() => getTextDirection(input), [input])
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+    const [contactsPopoverOpen, setContactsPopoverOpen] = useState(false)
 
     const inputValidation = useMemo(() => validateInputLength(input, MAX_INPUT_LENGTH), [input])
     const isInputTooLong = !inputValidation.isValid
@@ -274,7 +281,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     return (
       <div
         id="tour-chat-input"
-        className="sticky bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-background via-background/80 to-transparent p-3 sm:p-4"
+        className="sticky bottom-0 left-0 right-0 z-20 shrink-0 bg-gradient-to-t from-background via-background/95 to-transparent px-2 pb-2 pt-3 sm:p-4"
       >
         <AnimatePresence mode="popLayout">
           {images.length > 0 && (
@@ -331,6 +338,31 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           />
         )}
 
+        <AnimatePresence>
+          {selectedAttendees.length > 0 && onAttendeesChange && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="flex flex-wrap items-center gap-1.5 p-2"
+            >
+              <span className="text-xs text-muted-foreground">Inviting:</span>
+              {selectedAttendees.map((email) => (
+                <Badge key={email} variant="secondary" className="gap-1 py-0.5 pr-1 text-xs">
+                  <span className="max-w-[120px] truncate">{email}</span>
+                  <button
+                    type="button"
+                    onClick={() => onAttendeesChange(selectedAttendees.filter((e) => e !== email))}
+                    className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <AnimatePresence mode="wait">
           {isRecording ? (
             <motion.div
@@ -382,41 +414,94 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               <div className="flex items-end gap-1 p-1.5 sm:gap-2 sm:p-2">
                 <div className="flex flex-col gap-1 pb-0.5">
                   {imageUpload && (
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => fileInputRef.current?.click()}
-                      className={cn(
-                        'flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
-                        'text-muted-foreground hover:text-foreground',
-                        'hover:bg-secondary',
-                        (isDisabled || !canAddMoreImages) && 'cursor-not-allowed opacity-40',
-                      )}
-                      disabled={isDisabled || !canAddMoreImages}
-                      title={canAddMoreImages ? 'Add files' : `Max ${MAX_IMAGES} files`}
-                    >
-                      <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </motion.button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.button
+                          type="button"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => fileInputRef.current?.click()}
+                          className={cn(
+                            'flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
+                            'text-muted-foreground hover:text-foreground',
+                            'hover:bg-secondary',
+                            (isDisabled || !canAddMoreImages) && 'cursor-not-allowed opacity-40',
+                          )}
+                          disabled={isDisabled || !canAddMoreImages}
+                        >
+                          <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
+                        </motion.button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        {canAddMoreImages ? 'Attach files' : `Max ${MAX_IMAGES} files`}
+                      </TooltipContent>
+                    </Tooltip>
                   )}
 
                   {voiceInput && (
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={onToggleRecording}
-                      className={cn(
-                        'flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
-                        isRecording
-                          ? 'bg-destructive/5 text-destructive'
-                          : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
-                        (isDisabled || !speechRecognitionSupported) && 'cursor-not-allowed opacity-40',
-                      )}
-                      disabled={isDisabled || !speechRecognitionSupported}
-                    >
-                      <Mic className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </motion.button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <motion.button
+                          type="button"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={onToggleRecording}
+                          className={cn(
+                            'flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
+                            isRecording
+                              ? 'bg-destructive/5 text-destructive'
+                              : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+                            (isDisabled || !speechRecognitionSupported) && 'cursor-not-allowed opacity-40',
+                          )}
+                          disabled={isDisabled || !speechRecognitionSupported}
+                        >
+                          <Mic className="h-4 w-4 sm:h-5 sm:w-5" />
+                        </motion.button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">{isRecording ? 'Stop recording' : 'Voice input'}</TooltipContent>
+                    </Tooltip>
+                  )}
+
+                  {onAttendeesChange && (
+                    <Popover open={contactsPopoverOpen} onOpenChange={setContactsPopoverOpen}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <PopoverTrigger asChild>
+                            <motion.button
+                              type="button"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={cn(
+                                'relative flex h-8 w-8 items-center justify-center rounded-xl transition-colors sm:h-10 sm:w-10',
+                                selectedAttendees.length > 0
+                                  ? 'bg-primary/10 text-primary'
+                                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+                                isDisabled && 'cursor-not-allowed opacity-40',
+                              )}
+                              disabled={isDisabled}
+                            >
+                              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                              {selectedAttendees.length > 0 && (
+                                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                                  {selectedAttendees.length}
+                                </span>
+                              )}
+                            </motion.button>
+                          </PopoverTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">Add attendees</TooltipContent>
+                      </Tooltip>
+                      <PopoverContent className="w-80 p-3" align="start" side="top">
+                        <ContactPickerContent
+                          selectedEmails={selectedAttendees}
+                          onSelectionChange={onAttendeesChange}
+                          placeholder="Search contacts to invite..."
+                          disabled={isDisabled}
+                          autoFocus
+                          enabled={contactsPopoverOpen}
+                        />
+                      </PopoverContent>
+                    </Popover>
                   )}
                 </div>
 

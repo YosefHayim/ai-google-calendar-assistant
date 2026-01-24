@@ -20,6 +20,7 @@ export const fr: TranslationShape = {
     search: 'Rechercher',
     noData: 'Aucune donnée disponible',
     comingSoon: 'Bientôt disponible',
+    dismiss: 'Ignorer',
     online: 'En ligne',
     offline: 'Hors ligne',
     event: 'événement',
@@ -1154,6 +1155,7 @@ export const fr: TranslationShape = {
       aiInteractions: 'Interactions IA',
       unlimited: 'Illimité',
       remaining: '{{count}} restantes',
+      usedDuringTrial: "{{count}} utilisées pendant l'essai",
       creditBalance: 'Solde de crédits',
       credits: '{{count}} crédits',
     },
@@ -1487,5 +1489,10 @@ export const fr: TranslationShape = {
       success: '{{count}} crédits accordés avec succès à {{email}}',
       failed: "Échec de l'accord des crédits : {{error}}",
     },
+  },
+
+  subscriptionBanner: {
+    trialEndsIn: 'Votre essai se termine dans {{time}}',
+    upgradeNow: 'Mettre à niveau',
   },
 } as const

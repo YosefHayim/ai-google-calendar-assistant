@@ -7,6 +7,7 @@ import { cn, getTextDirection } from '@/lib/utils'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 
 interface MessageBubbleProps {
@@ -109,18 +110,17 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
 
   return (
     <>
-      <div className={cn('mb-2 flex w-full', isUser ? 'justify-end' : 'justify-start')}>
-        <div className={cn('flex max-w-[85%] flex-col md:max-w-[75%]', isUser ? 'items-end' : 'items-start')}>
+      <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
+        <div className={cn('flex max-w-[85%] flex-col sm:max-w-[80%]', isUser ? 'items-end' : 'items-start')}>
           <div
             className={cn(
-              'rounded-md px-4 py-3 text-sm leading-relaxed transition-all duration-200',
+              'overflow-hidden rounded-2xl px-4 py-3 text-sm leading-relaxed',
               isUser
-                ? 'rounded-tr-none bg-primary text-primary-foreground shadow-md'
-                : 'rounded-tl-none border-border bg-background bg-secondary text-foreground shadow-sm',
+                ? 'rounded-br-md bg-primary text-primary-foreground'
+                : 'rounded-bl-md bg-secondary text-foreground',
             )}
             dir={textDirection}
           >
-            {/* Render images if present */}
             {hasImages && (
               <div className={cn('flex flex-wrap gap-2', content && 'mb-3')}>
                 {images.map((image, index) => {
@@ -145,24 +145,29 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
             {content && (
               <div
                 className={cn(
-                  'prose prose-sm max-w-none',
-                  isUser ? 'prose-invert' : 'prose-zinc prose-invert',
+                  'prose prose-sm max-w-none break-words',
+                  '[&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap [&_pre]:break-all',
+                  '[&_a]:break-all [&_code]:break-all',
+                  isUser
+                    ? 'prose-invert [&_a]:text-primary-foreground [&_a]:underline'
+                    : 'prose-zinc dark:prose-invert',
                   isRTL && 'text-right',
                 )}
               >
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                  {content}
+                </ReactMarkdown>
               </div>
             )}
           </div>
           {!hideTimestamp && (
-            <span className={cn('mt-1 px-1 text-xs text-muted-foreground', isRTL && 'w-full text-right')}>
+            <span className={cn('mt-1 px-1 text-[11px] text-muted-foreground', isRTL && 'w-full text-right')}>
               {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}
         </div>
       </div>
 
-      {/* Image Lightbox */}
       {hasImages && (
         <MessageImageLightbox
           images={images}

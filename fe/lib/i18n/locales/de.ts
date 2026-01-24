@@ -20,6 +20,7 @@ export const de: TranslationShape = {
     search: 'Suchen',
     noData: 'Keine Daten verfügbar',
     comingSoon: 'Demnächst',
+    dismiss: 'Verwerfen',
     online: 'Online',
     offline: 'Offline',
     event: 'Ereignis',
@@ -1154,6 +1155,7 @@ export const de: TranslationShape = {
       aiInteractions: 'KI-Interaktionen',
       unlimited: 'Unbegrenzt',
       remaining: '{{count}} verbleibend',
+      usedDuringTrial: '{{count}} während der Testphase genutzt',
       creditBalance: 'Guthaben',
       credits: '{{count}} Credits',
     },
@@ -1485,5 +1487,10 @@ export const de: TranslationShape = {
       success: '{{count}} Guthaben erfolgreich an {{email}} gewährt',
       failed: 'Guthaben konnten nicht gewährt werden: {{error}}',
     },
+  },
+
+  subscriptionBanner: {
+    trialEndsIn: 'Ihre Testphase endet in {{time}}',
+    upgradeNow: 'Jetzt upgraden',
   },
 }

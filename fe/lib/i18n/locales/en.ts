@@ -19,6 +19,7 @@ export const en = {
     search: 'Search',
     noData: 'No data available',
     comingSoon: 'Coming Soon',
+    dismiss: 'Dismiss',
     online: 'Online',
     offline: 'Offline',
     event: 'event',
@@ -1203,6 +1204,7 @@ export const en = {
       aiInteractions: 'AI Interactions',
       unlimited: 'Unlimited',
       remaining: '{{count}} remaining',
+      usedDuringTrial: '{{count}} used during trial',
       creditBalance: 'Credit Balance',
       credits: '{{count}} credits',
     },
@@ -1544,6 +1546,11 @@ export const en = {
       success: 'Successfully granted {{count}} credits to {{email}}',
       failed: 'Failed to grant credits: {{error}}',
     },
+  },
+
+  subscriptionBanner: {
+    trialEndsIn: 'Your trial ends in {{time}}',
+    upgradeNow: 'Upgrade now',
   },
 } as const
 

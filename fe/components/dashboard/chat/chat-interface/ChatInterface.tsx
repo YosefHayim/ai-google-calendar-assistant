@@ -7,6 +7,7 @@ import type { ActiveTab } from './types'
 import { AvatarView } from '../AvatarView'
 import { ChatView } from '../ChatView'
 import { EventConfirmationCard } from '../EventConfirmationCard'
+import { SubscriptionBanner } from '../SubscriptionBanner'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Message } from '@/types'
 import type { SupportedMimeType } from '@/services/ocr-service'
@@ -42,6 +43,7 @@ export function ChatInterface() {
 
   const [input, setInput] = useState('')
   const [images, setImages] = useState<ImageFile[]>([])
+  const [selectedAttendees, setSelectedAttendees] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<ActiveTab>('chat')
   const [error, setError] = useState<string | null>(null)
 
@@ -303,19 +305,19 @@ export function ChatInterface() {
   return (
     <div className="relative flex h-full w-full overflow-hidden">
       <div className="relative mx-auto flex h-full w-full flex-1 flex-col overflow-hidden">
-        {/* Mobile header for tabs */}
-        <div className="flex h-14 shrink-0 items-center justify-center border-b border-border/50 bg-muted/80 bg-secondary/80 backdrop-blur-sm md:hidden">
+        <SubscriptionBanner />
+
+        <div className="relative z-20 flex h-12 shrink-0 items-center justify-center border-b border-border/50 bg-background/95 backdrop-blur-sm md:hidden">
           <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
-        {/* Desktop absolute positioned elements */}
         <div className="hidden md:block">
           <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
         {isLoadingConversation && <LoadingSpinner overlay />}
 
-        <div className="relative h-full flex-1 overflow-hidden">
+        <div className="relative min-h-0 flex-1 overflow-hidden">
           {activeTab === 'avatar' ? (
             <AvatarView
               messages={messages}
@@ -366,6 +368,7 @@ export function ChatInterface() {
           speechRecognitionError={speechRecognitionError}
           interimTranscription={interimTranscription}
           images={images}
+          selectedAttendees={selectedAttendees}
           onInputChange={setInput}
           onSubmit={handleSend}
           onToggleRecording={toggleRecording}
@@ -374,6 +377,7 @@ export function ChatInterface() {
           onCancelRecording={cancelRecording}
           onCancel={isLoading ? handleCancel : undefined}
           onImagesChange={setImages}
+          onAttendeesChange={setSelectedAttendees}
           shouldUseOCR={shouldUseOCR}
           onOCRFilesSelected={handleOCRFilesSelected}
           isOCRUploading={isOCRUploading}

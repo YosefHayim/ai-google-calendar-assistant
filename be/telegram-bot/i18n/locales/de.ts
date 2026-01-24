@@ -411,6 +411,8 @@ export const de = {
   "errors.tooManyImages":
     "Sie können bis zu {{max}} Bilder auf einmal senden. Einige Bilder wurden übersprungen.",
 
+  "status.processingRequest": "Ich bearbeite Ihre Anfrage...",
+
   "common.confirm": "Bestätigen",
   "common.cancel": "Abbrechen",
   "common.yes": "Ja",

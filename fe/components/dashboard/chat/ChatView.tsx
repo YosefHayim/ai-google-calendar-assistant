@@ -45,54 +45,54 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const isEmpty = messages.length === 0 && !isLoading
 
   return (
-    <div className="h-full overflow-y-auto px-3 pb-24 pt-20 sm:px-4 sm:pb-32 sm:pt-24">
-      {isEmpty ? (
-        <div className="flex h-full min-h-[250px] items-center justify-center px-4 sm:min-h-[300px]">
-          <EmptyState
-            icon={<MessageSquare />}
-            title="Start a conversation"
-            description="Ask Ally to help manage your calendar, schedule events, or find free time."
-            size="lg"
-          />
-        </div>
-      ) : (
-        <div id="tour-chat-history" className="space-y-4 sm:space-y-6">
-          {messages.map((msg) => {
-            const isEditing = editingMessageId === msg.id
+    <div className="flex h-full flex-col overflow-y-auto px-3 pb-20 pt-4 sm:px-4 sm:pb-28 sm:pt-6">
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col">
+        {isEmpty ? (
+          <div className="flex flex-1 items-center justify-center px-2 py-8 sm:px-4">
+            <EmptyState
+              icon={<MessageSquare />}
+              title="Start a conversation"
+              description="Ask Ally to help manage your calendar, schedule events, or find free time."
+              size="lg"
+            />
+          </div>
+        ) : (
+          <div id="tour-chat-history" className="space-y-4">
+            {messages.map((msg) => {
+              const isEditing = editingMessageId === msg.id
 
-            return (
-              <div key={msg.id} className="group mb-6 sm:mb-8">
-                <EditableMessage
-                  message={msg}
-                  isEditing={isEditing}
-                  editText={editText}
-                  editInputRef={editInputRef}
-                  onEditTextChange={setEditText}
-                  onKeyDown={handleKeyDown}
-                  onConfirm={confirmEdit}
-                  onCancel={cancelEdit}
-                />
-                {!isEditing && (
-                  <div className={cn('flex w-full', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
-                    <div className="w-full max-w-[90%] sm:max-w-[85%] md:max-w-[75%]">
-                      <MessageActions
-                        msg={msg}
-                        isSpeaking={isSpeaking && speakingMessageId === msg.id}
-                        onResend={onResend}
-                        onEdit={() => startEdit(msg.id, msg.content)}
-                        onSpeak={(text) => onSpeak(text, msg.id)}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            )
-          })}
-          {isLoading && <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />}
-        </div>
-      )}
-      <ChatError error={error} />
-      <div ref={scrollRef} />
+              return (
+                <div key={msg.id} className="group">
+                  <EditableMessage
+                    message={msg}
+                    isEditing={isEditing}
+                    editText={editText}
+                    editInputRef={editInputRef}
+                    onEditTextChange={setEditText}
+                    onKeyDown={handleKeyDown}
+                    onConfirm={confirmEdit}
+                    onCancel={cancelEdit}
+                  />
+                  {!isEditing && (
+                    <MessageActions
+                      msg={msg}
+                      isSpeaking={isSpeaking && speakingMessageId === msg.id}
+                      onResend={onResend}
+                      onEdit={() => startEdit(msg.id, msg.content)}
+                      onSpeak={(text) => onSpeak(text, msg.id)}
+                    />
+                  )}
+                </div>
+              )
+            })}
+            {isLoading && (
+              <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />
+            )}
+          </div>
+        )}
+        <ChatError error={error} />
+        <div ref={scrollRef} />
+      </div>
     </div>
   )
 }

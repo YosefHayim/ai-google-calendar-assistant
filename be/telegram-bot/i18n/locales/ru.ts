@@ -390,6 +390,8 @@ export const ru = {
   "errors.tooManyImages":
     "Вы можете отправить до {{max}} изображений за раз. Некоторые изображения были пропущены.",
 
+  "status.processingRequest": "Обрабатываю ваш запрос...",
+
   "common.confirm": "Подтвердить",
   "common.cancel": "Отменить",
   "common.yes": "Да",
