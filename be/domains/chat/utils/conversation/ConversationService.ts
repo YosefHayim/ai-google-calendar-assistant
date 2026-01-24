@@ -136,11 +136,13 @@ export class ConversationService {
         content: msg.content,
       };
 
-      // Extract images from metadata if present
-      if (msg.metadata && typeof msg.metadata === "object" && "images" in msg.metadata) {
-        const metadata = msg.metadata as { images?: unknown };
+      if (msg.metadata && typeof msg.metadata === "object") {
+        const metadata = msg.metadata as { images?: unknown; toolOutputs?: unknown };
         if (Array.isArray(metadata.images)) {
           message.images = metadata.images;
+        }
+        if (Array.isArray(metadata.toolOutputs)) {
+          message.toolOutputs = metadata.toolOutputs;
         }
       }
 
@@ -444,11 +446,18 @@ export class ConversationService {
       `addMessageAndMaybeSummarize: stateId=${stateId}, role=${message.role}, hasContent=${!!message.content}, contentLen=${message.content?.length || 0}, hasImages=${hasImages}, nextSeq=${nextSequence}`,
     );
 
-    if (message.content || hasImages) {
-      const metadata = hasImages ? { images: message.images } : undefined;
+    const hasToolOutputs = message.toolOutputs && message.toolOutputs.length > 0;
+    if (message.content || hasImages || hasToolOutputs) {
+      const metadata: Record<string, unknown> = {};
+      if (hasImages) {
+        metadata.images = message.images;
+      }
+      if (hasToolOutputs) {
+        metadata.toolOutputs = message.toolOutputs;
+      }
       const dbRole = mapRoleToDb(message.role);
 
-      logger.info(`addMessageAndMaybeSummarize: inserting message with role=${message.role}, dbRole=${dbRole}, conversationId=${stateId}`);
+      logger.info(`addMessageAndMaybeSummarize: inserting message with role=${message.role}, dbRole=${dbRole}, conversationId=${stateId}, hasToolOutputs=${hasToolOutputs}`);
 
       const { data: insertedMsg, error: insertError } = await SUPABASE.from("conversation_messages")
         .insert({
@@ -456,7 +465,7 @@ export class ConversationService {
           role: dbRole,
           content: message.content || "",
           sequence_number: nextSequence,
-          metadata,
+          metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
         })
         .select()
         .single();
@@ -540,7 +549,31 @@ export class ConversationService {
     }
 
     if (context.messages.length > 0) {
-      let messageHistory = context.messages.map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`).join("\n");
+      const messageLines = context.messages.map((msg) => {
+        const prefix = msg.role === "user" ? "User" : "Assistant";
+        let line = `${prefix}: ${msg.content}`;
+
+        if (msg.toolOutputs && msg.toolOutputs.length > 0) {
+          const toolSummary = msg.toolOutputs
+            .map((t) => {
+              const output = t.output as Record<string, unknown>;
+              if (t.toolName === "insert_event_direct") {
+                return `[Created event: "${output.summary}" (id: ${output.id}, link: ${output.htmlLink})]`;
+              }
+              if (t.toolName === "get_events_direct") {
+                const events = Array.isArray(output.events) ? output.events : [];
+                return `[Retrieved ${events.length} events]`;
+              }
+              return `[Tool: ${t.toolName}]`;
+            })
+            .join(" ");
+          line += `\n  ${toolSummary}`;
+        }
+
+        return line;
+      }).join("\n");
+
+      let messageHistory = messageLines;
       if (messageHistory.length > this.config.maxMessagesDisplayLength) {
         messageHistory = messageHistory.slice(-this.config.maxMessagesDisplayLength);
       }

@@ -109,11 +109,12 @@ export async function saveConversationMessages(
     conversationId,
     isNewConversation,
     images,
+    toolOutputs,
   } = params
 
   const LOG_PREVIEW_LEN = 50
   logger.info(
-    `saveConversationMessages: userId=${userId}, isNew=${isNewConversation}, msgLen=${message?.length || 0}, respLen=${fullResponse?.length || 0}, convId=${conversationId || "null"}, msgPreview="${message?.slice(0, LOG_PREVIEW_LEN) || ""}", respPreview="${fullResponse?.slice(0, LOG_PREVIEW_LEN) || ""}"`
+    `saveConversationMessages: userId=${userId}, isNew=${isNewConversation}, msgLen=${message?.length || 0}, respLen=${fullResponse?.length || 0}, convId=${conversationId || "null"}, toolOutputs=${toolOutputs?.length || 0}, msgPreview="${message?.slice(0, LOG_PREVIEW_LEN) || ""}", respPreview="${fullResponse?.slice(0, LOG_PREVIEW_LEN) || ""}"`
   )
 
   if (!fullResponse) {
@@ -121,12 +122,18 @@ export async function saveConversationMessages(
     return conversationId
   }
 
+  const assistantMessage = {
+    role: "assistant" as const,
+    content: fullResponse,
+    toolOutputs: toolOutputs?.length ? toolOutputs : undefined,
+  }
+
   if (isNewConversation) {
     try {
       const result = await webConversation.createConversationWithMessages(
         userId,
         { role: "user", content: message, images },
-        { role: "assistant", content: fullResponse },
+        assistantMessage,
         summarizeMessages
       )
       logger.info(
@@ -151,7 +158,7 @@ export async function saveConversationMessages(
     await webConversation.addMessageToConversation(
       conversationId,
       userId,
-      { role: "assistant", content: fullResponse },
+      assistantMessage,
       summarizeMessages
     )
   }
