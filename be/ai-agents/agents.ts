@@ -115,6 +115,7 @@ export const ORCHESTRATOR_AGENT = new Agent({
       toolName: "create_event_handoff",
     }),
     DIRECT_TOOLS.get_event_direct,
+    DIRECT_TOOLS.get_timezone_direct,
     DIRECT_TOOLS.summarize_events,
     HANDOFF_AGENTS.updateEventHandoff.asTool({
       toolName: "update_event_handoff",
