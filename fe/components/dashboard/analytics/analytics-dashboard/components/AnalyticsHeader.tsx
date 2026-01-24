@@ -4,12 +4,11 @@ import { CalendarFilterSelect } from '../../CalendarFilterSelect'
 import type { CalendarListEntry } from '@/types/api'
 import { DatePickerWithRange } from '@/components/ui/date-range-picker'
 import type { DateRange } from 'react-day-picker'
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import React from 'react'
-import { RotateCw } from 'lucide-react'
+import { Calendar, ChevronDown, Download, Sparkles } from 'lucide-react'
 import { format } from 'date-fns'
-import { getDaysBetween } from '@/lib/dateUtils'
-import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
 
 interface AnalyticsHeaderProps {
   date: DateRange | undefined
@@ -29,28 +28,28 @@ export function AnalyticsHeader({
   selectedCalendarIds,
   setSelectedCalendarIds,
   isCalendarsLoading,
-  isAnalyticsFetching,
-  onRefresh,
 }: AnalyticsHeaderProps) {
-  const { t } = useTranslation()
+  const router = useRouter()
+
+  const handleAskAlly = () => {
+    router.push('/dashboard')
+  }
+
+  const handleExport = () => {
+    console.log('Export analytics')
+  }
+
   return (
-    <header className="flex flex-col gap-2 sm:gap-3 md:gap-4">
-      {date?.from && date?.to && (
-        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-1.5 md:gap-2">
-          <span className="text-xs text-muted-foreground sm:text-sm md:text-base">{t('analytics.for')}</span>
-          <span className="truncate text-xs font-semibold text-foreground sm:text-sm md:text-base">
-            {format(date.from, 'MMM dd, yyyy')} - {format(date.to, 'MMM dd, yyyy')}
-          </span>
-          <span className="text-[10px] text-muted-foreground sm:text-xs md:text-sm">
-            ({getDaysBetween(date.from, date.to)} days)
-          </span>
-        </div>
-      )}
-      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 md:gap-3">
-        <div className="w-full sm:w-auto sm:min-w-[240px]">
-          <DatePickerWithRange date={date} setDate={setDate} />
-        </div>
-        <div className="w-full sm:w-auto sm:min-w-[200px]">
+    <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold text-foreground sm:text-[28px]">Analytics</h1>
+        <p className="text-sm text-muted-foreground">AI-powered insights to maximize your time</p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <DatePickerWithRange date={date} setDate={setDate} />
+
+        <div className="hidden sm:block">
           <CalendarFilterSelect
             calendars={calendarsData}
             selectedCalendarIds={selectedCalendarIds}
@@ -58,16 +57,16 @@ export function AnalyticsHeader({
             isLoading={isCalendarsLoading}
           />
         </div>
-        <div className="w-full sm:w-auto">
-          <InteractiveHoverButton
-            text="Refresh"
-            loadingText="Refreshing..."
-            isLoading={isAnalyticsFetching}
-            Icon={<RotateCw size={16} />}
-            onClick={onRefresh}
-            className="w-full sm:w-auto"
-          />
-        </div>
+
+        <Button onClick={handleAskAlly} className="gap-2">
+          <Sparkles className="h-4 w-4" />
+          Ask Ally
+        </Button>
+
+        <Button variant="secondary" onClick={handleExport} className="gap-2">
+          <Download className="h-4 w-4" />
+          Export
+        </Button>
       </div>
     </header>
   )

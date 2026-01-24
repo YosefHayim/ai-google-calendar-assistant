@@ -1,13 +1,19 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import dynamic from 'next/dynamic'
 import type { CalendarEvent } from '@/types/api'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ErrorState } from '@/components/ui/error-state'
 
-import { useAnalyticsTabs, STORAGE_KEY, type TabId } from './constants'
-import { AnalyticsHeader, AIInsightsSection } from './components'
+import {
+  AnalyticsHeader,
+  AIInsightsSection,
+  HeroStatsRow,
+  ChartsRow,
+  BottomRow,
+  HealthFocusRow,
+  TimeDistributionRow,
+  RecentDurationRow,
+} from './components'
 
 import AnalyticsDashboardSkeleton from '../AnalyticsDashboardSkeleton'
 import CalendarEventsDialog from '@/components/dialogs/CalendarEventsDialog'
@@ -18,96 +24,16 @@ import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
 import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
 import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
 
-// Dynamically import heavy chart components
-const BentoStatsGrid = dynamic(() => import('../BentoStatsGrid').then((mod) => ({ default: mod.BentoStatsGrid })), {
-  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const DailyAvailableHoursDashboard = dynamic(() => import('../DailyAvailableHoursDashboard'), {
-  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const EventDurationDashboard = dynamic(() => import('../EventDurationDashboard'), {
-  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const FocusTimeTracker = dynamic(() => import('../FocusTimeTracker'), {
-  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const ManageCalendars = dynamic(() => import('../ManageCalendars'), {
-  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const MonthlyPatternDashboard = dynamic(() => import('../MonthlyPatternDashboard'), {
-  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const RecentEvents = dynamic(() => import('../RecentEvents'), {
-  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const ScheduleHealthScore = dynamic(() => import('../ScheduleHealthScore'), {
-  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const TimeAllocationDashboard = dynamic(() => import('../TimeAllocationDashboard'), {
-  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const TimeDistributionChart = dynamic(() => import('../TimeDistributionChart'), {
-  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const UpcomingWeekPreview = dynamic(() => import('../UpcomingWeekPreview'), {
-  loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
-const WeeklyPatternDashboard = dynamic(() => import('../WeeklyPatternDashboard'), {
-  loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" />,
-  ssr: false,
-})
-
 interface AnalyticsDashboardProps {
   isLoading?: boolean
 }
 
 export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashboardProps) {
-  const analyticsTabs = useAnalyticsTabs()
-  const [activeTab, setActiveTabState] = useState<TabId>('overview')
   const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored && analyticsTabs.some((tab) => tab.id === stored)) {
-        setActiveTabState(stored as TabId)
-      }
-    } catch {
-      // localStorage may be unavailable in private browsing mode
-    }
     setIsHydrated(true)
   }, [])
-
-  const setActiveTab = (tab: TabId) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, tab)
-    } catch {
-      // localStorage may be unavailable in private browsing mode
-    }
-    setActiveTabState(tab)
-  }
 
   const {
     date,
@@ -134,28 +60,22 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
     calendarEvents,
     isCalendarEventsLoading,
     calendarTotalHours,
-    openCalendarEventsDialog,
     closeCalendarEventsDialog,
     isCalendarSettingsDialogOpen,
     selectedCalendarForSettings,
-    openCalendarSettingsDialog,
     closeCalendarSettingsDialog,
     isCreateCalendarDialogOpen,
-    openCreateCalendarDialog,
     closeCreateCalendarDialog,
     onCalendarCreated,
     isDayEventsDialogOpen,
     selectedDayDate,
     selectedDayHours,
     selectedDayEvents,
-    openDayEventsDialog,
     closeDayEventsDialog,
     handleActivityClick,
     handleCalendarEventClick,
     upcomingWeekData,
     isUpcomingWeekLoading,
-    isUpcomingWeekError,
-    refetchUpcomingWeek,
   } = useAnalyticsContext()
 
   const isLoading = initialLoading || isAnalyticsLoading || isCalendarsLoading
@@ -173,7 +93,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
 
   if (isAnalyticsError) {
     return (
-      <div className="mx-auto flex min-h-[50vh] w-full max-w-7xl flex-col items-center justify-center bg-muted bg-secondary p-6">
+      <div className="mx-auto flex min-h-[50vh] w-full max-w-7xl flex-col items-center justify-center bg-muted p-6">
         <ErrorState
           title="Error Loading Analytics"
           message={analyticsError?.message || 'Failed to fetch analytics data. Please try again.'}
@@ -188,19 +108,10 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
     return <AnalyticsDashboardSkeleton />
   }
 
-  const {
-    calendarBreakdown,
-    recentActivities,
-    dailyAvailableHours,
-    weeklyPattern,
-    monthlyPattern,
-    timeOfDayDistribution,
-    eventDurationCategories,
-    totalEvents,
-  } = processedData
+  const { recentActivities } = processedData
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-4 overflow-y-auto bg-muted bg-secondary p-3 duration-500 animate-in fade-in sm:space-y-6 sm:p-4">
+    <div className="mx-auto w-full max-w-7xl space-y-6 overflow-y-auto bg-muted p-4 duration-500 animate-in fade-in sm:p-6 md:p-8">
       <AnalyticsHeader
         date={date}
         setDate={setDate}
@@ -212,87 +123,34 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
         onRefresh={() => refetchAnalytics()}
       />
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabId)} className="w-full">
-        <TabsList className="grid h-10 w-full grid-cols-5 sm:h-11">
-          {analyticsTabs.map((tab) => (
-            <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              className="flex items-center gap-1 px-1 text-xs sm:gap-2 sm:px-3 sm:text-sm"
-            >
-              <tab.icon className="h-4 w-4" />
-              <span className="hidden sm:inline">{tab.label}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <HeroStatsRow data={processedData} comparison={comparison} isLoading={isAnalyticsFetching} />
 
-        <TabsContent value="overview" className="mt-4 space-y-4 sm:space-y-6">
-          <AIInsightsSection
-            insightsData={insightsData}
-            isLoading={isInsightsLoading}
-            isError={isInsightsError}
-            onRetry={() => refetchInsights()}
-          />
-          <BentoStatsGrid data={processedData} comparison={comparison} isLoading={isAnalyticsFetching} />
-          <RecentEvents
-            activities={recentActivities}
-            onActivityClick={handleActivityClick}
-            isLoading={isAnalyticsFetching}
-            layout="horizontal"
-          />
-        </TabsContent>
+      <AIInsightsSection
+        insightsData={insightsData}
+        isLoading={isInsightsLoading}
+        isError={isInsightsError}
+        onRetry={() => refetchInsights()}
+      />
 
-        <TabsContent value="patterns" className="mt-4 space-y-4 sm:space-y-6">
-          <WeeklyPatternDashboard data={weeklyPattern} isLoading={isAnalyticsFetching} />
-          <MonthlyPatternDashboard data={monthlyPattern} isLoading={isAnalyticsFetching} />
-          <TimeDistributionChart data={timeOfDayDistribution} isLoading={isAnalyticsFetching} />
-        </TabsContent>
+      <ChartsRow data={processedData} isLoading={isAnalyticsFetching} />
 
-        <TabsContent value="time" className="mt-4 space-y-4 sm:space-y-6">
-          <TimeAllocationDashboard
-            data={calendarBreakdown}
-            onCalendarClick={openCalendarEventsDialog}
-            isLoading={isAnalyticsFetching}
-          />
-          <DailyAvailableHoursDashboard
-            data={dailyAvailableHours}
-            onDayClick={openDayEventsDialog}
-            isLoading={isAnalyticsFetching}
-          />
-          <EventDurationDashboard
-            data={eventDurationCategories}
-            totalEvents={totalEvents}
-            isLoading={isAnalyticsFetching}
-          />
-        </TabsContent>
+      <BottomRow data={processedData} activities={recentActivities} isLoading={isAnalyticsFetching} />
 
-        <TabsContent value="calendars" className="mt-4 space-y-4 sm:space-y-6">
-          <ManageCalendars
-            calendars={calendarsData}
-            calendarMap={calendarMap}
-            onCalendarClick={openCalendarSettingsDialog}
-            onCreateCalendar={openCreateCalendarDialog}
-            isLoading={isAnalyticsFetching}
-          />
-        </TabsContent>
+      <HealthFocusRow data={processedData} isLoading={isAnalyticsFetching} />
 
-        <TabsContent value="health" className="mt-4 space-y-4 sm:space-y-6">
-          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <ScheduleHealthScore data={processedData} isLoading={isAnalyticsFetching} />
-            <FocusTimeTracker
-              data={processedData.focusTimeMetrics}
-              totalDays={processedData.totalDays}
-              isLoading={isAnalyticsFetching}
-            />
-            <UpcomingWeekPreview
-              data={upcomingWeekData}
-              isLoading={isUpcomingWeekLoading}
-              isError={isUpcomingWeekError}
-              onRetry={refetchUpcomingWeek}
-            />
-          </div>
-        </TabsContent>
-      </Tabs>
+      <TimeDistributionRow
+        data={processedData}
+        upcomingWeekData={upcomingWeekData}
+        isLoading={isAnalyticsFetching}
+        isUpcomingWeekLoading={isUpcomingWeekLoading}
+      />
+
+      <RecentDurationRow
+        data={processedData}
+        activities={recentActivities}
+        onActivityClick={handleActivityClick}
+        isLoading={isAnalyticsFetching}
+      />
 
       <EventDetailsDialog
         isOpen={isEventDialogOpen}

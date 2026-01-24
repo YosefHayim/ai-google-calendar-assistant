@@ -1,2 +1,8 @@
 export { AnalyticsHeader } from './AnalyticsHeader'
 export { AIInsightsSection } from './AIInsightsSection'
+export { HeroStatsRow } from './HeroStatsRow'
+export { ChartsRow } from './ChartsRow'
+export { BottomRow } from './BottomRow'
+export { HealthFocusRow } from './HealthFocusRow'
+export { TimeDistributionRow } from './TimeDistributionRow'
+export { RecentDurationRow } from './RecentDurationRow'

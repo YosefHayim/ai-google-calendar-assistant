@@ -80,7 +80,7 @@ export function useUpcomingWeekData({ calendarMap, enabled = true }: UseUpcoming
         const date = addDays(today, i)
         days.push({
           date,
-          dateStr: format(date, 'yyyy-MM-dd'),
+          dateStr: format(date, 'EEE, MMM d'),
           dayName: format(date, 'EEEE'),
           dayShort: format(date, 'EEE'),
           isToday: isToday(date),

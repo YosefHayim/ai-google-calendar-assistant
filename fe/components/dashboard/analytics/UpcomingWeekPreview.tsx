@@ -60,7 +60,9 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
           )}
 
           <span className="text-[10px] font-medium text-muted-foreground sm:text-xs">{day.dayShort}</span>
-          <span className="text-base font-bold text-foreground sm:text-lg">{format(day.date, 'd')}</span>
+          <span className="text-base font-bold text-foreground sm:text-lg">
+            {format(day.date instanceof Date ? day.date : new Date(day.date), 'd')}
+          </span>
 
           {/* Busyness indicator */}
           <div className="mt-0.5 flex gap-0.5 sm:mt-1">
