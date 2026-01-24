@@ -25,7 +25,7 @@ function AnimationPlayer({
     if (enabled && !frames && typeof window !== 'undefined') {
       import('./animation-frames.js').then((mod) => setFrames(mod.frames)).catch(() => setEnabled(false))
     }
-  }, [enabled, frames])
+  }, [enabled, frames, setEnabled])
 
   if (!frames) return <Skeleton />
   return <Canvas frames={frames} />
