@@ -1,8 +1,7 @@
 import { Agent, run } from "@openai/agents"
-
+import { z } from "zod"
 import { MODELS } from "@/config/constants/ai"
 import { logger } from "@/lib/logger"
-import { z } from "zod"
 
 export const OptimizerOutputSchema = z.object({
   refinedPrompt: z.string(),
@@ -76,6 +75,7 @@ export const OPTIMIZER_AGENT = new Agent({
   name: "prompt_optimizer_agent",
   model: MODELS.GPT_4_1_MINI,
   instructions: OPTIMIZER_INSTRUCTIONS,
+  outputType: OptimizerOutputSchema,
 })
 
 type RunOptimizerParams = {
@@ -108,42 +108,25 @@ ${userContext ? `<user_context>${userContext}</user_context>` : ""}
 Analyze this request and determine if the base prompt needs optimization.
 Return your analysis as JSON matching the output format.`
 
-  let result
   try {
-    result = await run(OPTIMIZER_AGENT, prompt)
+    const result = await run(OPTIMIZER_AGENT, prompt)
+    const timeMs = Date.now() - startTime
+
+    const output: OptimizerOutput = result.finalOutput ?? {
+      refinedPrompt: userQuery,
+      reasoning: "Optimizer returned no output - using original prompt",
+      confidence: 0,
+      optimizationType: "none",
+      detectedIntentCategory: "other",
+    }
+
+    return { output, timeMs }
   } catch (error) {
-    logger.error(`[OptimizerAgent] Optimizer agent execution failed`, {
+    logger.error("[OptimizerAgent] Optimizer agent execution failed", {
       error: error instanceof Error ? error.message : String(error),
     })
     throw new Error(
       `Optimizer agent execution failed: ${error instanceof Error ? error.message : "Unknown error"}`
     )
   }
-  const timeMs = Date.now() - startTime
-
-  let output: OptimizerOutput
-
-  try {
-    const parsed =
-      typeof result.finalOutput === "string"
-        ? JSON.parse(result.finalOutput)
-        : result.finalOutput
-
-    output = OptimizerOutputSchema.parse(parsed)
-  } catch (error) {
-    logger.error(`[OptimizerAgent] Failed to parse optimizer output`, {
-      error: error instanceof Error ? error.message : String(error),
-      rawOutput: result.finalOutput,
-      userQuery,
-    })
-    output = {
-      refinedPrompt: userQuery,
-      reasoning: "Failed to parse optimizer output - using original prompt",
-      confidence: 0,
-      optimizationType: "none",
-      detectedIntentCategory: "other",
-    }
-  }
-
-  return { output, timeMs }
 }

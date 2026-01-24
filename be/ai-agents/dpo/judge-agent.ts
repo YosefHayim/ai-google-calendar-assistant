@@ -1,7 +1,6 @@
 import { Agent, run } from "@openai/agents"
 import { z } from "zod"
 import { MODELS } from "@/config/constants/ai"
-import { logger } from "@/lib/logger"
 import type { OptimizerOutput } from "./optimizer-agent"
 
 export const JudgeOutputSchema = z.object({
@@ -76,6 +75,7 @@ export const JUDGE_AGENT = new Agent({
   name: "optimization_judge_agent",
   model: MODELS.GPT_4_1_MINI,
   instructions: JUDGE_INSTRUCTIONS,
+  outputType: JudgeOutputSchema,
 })
 
 type RunJudgeParams = {
@@ -114,11 +114,19 @@ export async function runJudge(
 Evaluate this optimization proposal and determine if it should be used.
 Return your judgment as JSON matching the output format.`
 
-  let result
   try {
-    result = await run(JUDGE_AGENT, prompt)
+    const result = await run(JUDGE_AGENT, prompt)
+    const timeMs = Date.now() - startTime
+
+    const output: JudgeOutput = result.finalOutput ?? {
+      approved: false,
+      reasoning: "Judge returned no output - defaulting to base prompt",
+      risk_level: "low",
+      recommendation: "use_base",
+    }
+
+    return { output, timeMs }
   } catch (error) {
-    // Return safe fallback if judge agent execution fails
     return {
       output: {
         approved: false,
@@ -129,37 +137,4 @@ Return your judgment as JSON matching the output format.`
       timeMs: Date.now() - startTime,
     }
   }
-  const timeMs = Date.now() - startTime
-
-  let output: JudgeOutput
-
-  try {
-    const parsed =
-      typeof result.finalOutput === "string"
-        ? JSON.parse(result.finalOutput)
-        : result.finalOutput
-
-    output = JudgeOutputSchema.parse(parsed)
-  } catch (error) {
-    logger.warn("Judge output parsing failed - falling back to safe defaults", {
-      error: error instanceof Error ? error.message : String(error),
-      rawOutput: result.finalOutput,
-      userQuery: params.userQuery,
-      originalPromptLength: params.originalPrompt.length,
-      optimizerOutput: {
-        confidence: params.optimizerOutput.confidence,
-        optimizationType: params.optimizerOutput.optimizationType,
-        detectedIntentCategory: params.optimizerOutput.detectedIntentCategory,
-      },
-    })
-
-    output = {
-      approved: false,
-      reasoning: "Failed to parse judge output - defaulting to base prompt",
-      risk_level: "low",
-      recommendation: "use_base",
-    }
-  }
-
-  return { output, timeMs }
 }
