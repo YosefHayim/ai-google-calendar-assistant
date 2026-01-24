@@ -12,7 +12,7 @@ import type {
 } from "./types";
 
 import { DEFAULT_CONVERSATION_CONFIG } from "./types";
-import type { Database } from "@/database.types";
+import type { Database, Json } from "@/database.types";
 import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import { isToday } from "@/lib/date/date-helpers";
 import { logger } from "@/lib/logger";
@@ -448,12 +448,16 @@ export class ConversationService {
 
     const hasToolOutputs = message.toolOutputs && message.toolOutputs.length > 0;
     if (message.content || hasImages || hasToolOutputs) {
-      const metadata: Record<string, unknown> = {};
-      if (hasImages) {
-        metadata.images = message.images;
-      }
-      if (hasToolOutputs) {
-        metadata.toolOutputs = message.toolOutputs;
+      let metadata: Json | undefined;
+      if (hasImages || hasToolOutputs) {
+        const metadataObj: { images?: unknown; toolOutputs?: unknown } = {};
+        if (hasImages) {
+          metadataObj.images = message.images;
+        }
+        if (hasToolOutputs) {
+          metadataObj.toolOutputs = message.toolOutputs;
+        }
+        metadata = metadataObj as Json;
       }
       const dbRole = mapRoleToDb(message.role);
 
@@ -465,7 +469,7 @@ export class ConversationService {
           role: dbRole,
           content: message.content || "",
           sequence_number: nextSequence,
-          metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+          metadata,
         })
         .select()
         .single();
