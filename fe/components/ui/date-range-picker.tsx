@@ -217,8 +217,8 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                   <span className="mb-2 block px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Custom Range
                   </span>
-                  <div className="space-y-2 px-1">
-                    <div>
+                  <div className="flex flex-row gap-2 px-1">
+                    <div className="flex-1">
                       <Label className="mb-1 block text-xs text-muted-foreground">From</Label>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -257,7 +257,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                         </PopoverContent>
                       </Popover>
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <Label className="mb-1 block text-xs text-muted-foreground">To</Label>
                       <Popover>
                         <PopoverTrigger asChild>
