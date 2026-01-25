@@ -5,8 +5,8 @@ import {
   run,
 } from "@openai/agents"
 import { z } from "zod"
-import { logger } from "@/lib/logger"
 import { MODELS } from "@/config/constants/ai"
+import { logger } from "@/lib/logger"
 
 const MAX_INPUT_LENGTH = 5000
 const LOG_SUBSTRING_LENGTH = 200

@@ -38,8 +38,8 @@ import {
 } from "@/domains/chat/utils/web-embeddings"
 import { createCreditTransaction } from "@/domains/payments/services/credit-service"
 import { sendR } from "@/lib/http"
-import { entityTracker } from "@/shared/context/entity-tracker"
 import { unifiedContextStore } from "@/shared/context"
+import { entityTracker } from "@/shared/context/entity-tracker"
 import type { ToolOutput } from "@/types"
 
 type StreamingResult = {
@@ -84,6 +84,27 @@ type EventOutput = {
   allEvents?: EventOutput[]
 }
 
+function extractEventTime(time?: { dateTime?: string; date?: string }): string {
+  return time?.dateTime || time?.date || ""
+}
+
+function trackSingleEvent(userId: string, event: EventOutput): void {
+  if (!(event.id && event.summary)) {
+    return
+  }
+  entityTracker.trackEvent(
+    userId,
+    {
+      id: event.id,
+      summary: event.summary,
+      start: { dateTime: extractEventTime(event.start) },
+      end: { dateTime: extractEventTime(event.end) },
+    },
+    event.calendarId || "primary",
+    "chat"
+  )
+}
+
 function trackEventFromToolOutput(
   userId: string,
   toolName: string,
@@ -98,40 +119,11 @@ function trackEventFromToolOutput(
       typeof output === "string" ? JSON.parse(output) : (output as EventOutput)
 
     if (toolName === "get_event_direct" && parsed.allEvents?.length) {
-      const firstEvent = parsed.allEvents[0]
-      if (firstEvent?.id && firstEvent?.summary) {
-        const start = firstEvent.start?.dateTime || firstEvent.start?.date || ""
-        const end = firstEvent.end?.dateTime || firstEvent.end?.date || ""
-        entityTracker.trackEvent(
-          userId,
-          {
-            id: firstEvent.id,
-            summary: firstEvent.summary,
-            start: { dateTime: start },
-            end: { dateTime: end },
-          },
-          firstEvent.calendarId || "primary",
-          "chat"
-        )
-      }
+      trackSingleEvent(userId, parsed.allEvents[0])
       return
     }
 
-    if (parsed.id && parsed.summary) {
-      const start = parsed.start?.dateTime || parsed.start?.date || ""
-      const end = parsed.end?.dateTime || parsed.end?.date || ""
-      entityTracker.trackEvent(
-        userId,
-        {
-          id: parsed.id,
-          summary: parsed.summary,
-          start: { dateTime: start },
-          end: { dateTime: end },
-        },
-        parsed.calendarId || "primary",
-        "chat"
-      )
-    }
+    trackSingleEvent(userId, parsed)
   } catch {
     /* intentionally ignored */
   }
@@ -145,7 +137,11 @@ function slimToolOutput(toolName: string, output: unknown): unknown | null {
   const parsed =
     typeof output === "string" ? JSON.parse(output) : (output as object)
 
-  if (toolName === "insert_event_direct" && parsed && typeof parsed === "object") {
+  if (
+    toolName === "insert_event_direct" &&
+    parsed &&
+    typeof parsed === "object"
+  ) {
     const event = parsed as Record<string, unknown>
     return {
       id: event.id,
@@ -158,7 +154,11 @@ function slimToolOutput(toolName: string, output: unknown): unknown | null {
     }
   }
 
-  if (toolName === "get_events_direct" && parsed && typeof parsed === "object") {
+  if (
+    toolName === "get_events_direct" &&
+    parsed &&
+    typeof parsed === "object"
+  ) {
     const result = parsed as Record<string, unknown>
     const events = Array.isArray(result.allEvents) ? result.allEvents : []
     return {

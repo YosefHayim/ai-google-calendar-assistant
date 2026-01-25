@@ -79,7 +79,9 @@ export async function buildChatPromptWithContext(
   parts.push(`User Timezone: ${userTimezone}`)
   const now = new Date()
   const localTimeStr = now.toLocaleString("en-US", { timeZone: userTimezone })
-  parts.push(`Current Time: ${now.toISOString()} (${localTimeStr} in ${userTimezone})`)
+  parts.push(
+    `Current Time: ${now.toISOString()} (${localTimeStr} in ${userTimezone})`
+  )
 
   if (conversationContext) {
     parts.push("\nToday's Conversation ")
