@@ -1,9 +1,11 @@
-import type { AllyBrainPreference } from "./ally-brain"
-import { MODELS } from "@/config/constants/ai"
 import OpenAI from "openai"
+import { MODELS } from "@/config/constants/ai"
 import { env } from "@/config/env"
 import { logger } from "@/lib/logger"
+import { entityTracker } from "@/shared/context/entity-tracker"
+import { getTimezoneHandler } from "@/shared/tools/handlers"
 import type { userAndAiMessageProps } from "@/types"
+import type { AllyBrainPreference } from "./ally-brain"
 
 const openai = new OpenAI({ apiKey: env.openAiApiKey })
 
@@ -30,14 +32,15 @@ type BuildPromptOptions = {
   allyBrain?: AllyBrainPreference | null
   languageCode?: string
   personalityNotes?: string
+  userId?: string
 }
 
-export const buildAgentPromptWithContext = (
+export const buildAgentPromptWithContext = async (
   email: string | undefined,
   message: string,
   conversationContext?: string,
   options?: BuildPromptOptions
-): string => {
+): Promise<string> => {
   const timestamp = new Date().toISOString()
   const parts: string[] = []
 
@@ -52,9 +55,24 @@ ${options.allyBrain.instructions}
 </user_instructions>`)
   }
 
+  let userTimezone = "UTC"
+  if (email) {
+    try {
+      const tzResult = await getTimezoneHandler({ email })
+      userTimezone = tzResult.timezone
+    } catch {
+      /* intentionally ignored */
+    }
+  }
+
+  const now = new Date()
+  const localTimeStr = now.toLocaleString("en-US", { timeZone: userTimezone })
+
   parts.push(`<context>
 <timestamp>${timestamp}</timestamp>
+<local_time>${localTimeStr} (${userTimezone})</local_time>
 <user>${email || "Not linked - calendar operations require account linking"}</user>
+<timezone>${userTimezone}</timezone>
 </context>`)
 
   if (options?.languageCode) {
@@ -75,6 +93,20 @@ ${options.allyBrain.instructions}
     parts.push(`<conversation_history>
 ${truncatedContext}
 </conversation_history>`)
+  }
+
+  if (options?.userId) {
+    const lastEvent = await entityTracker.resolveEventReference(options.userId)
+    if (lastEvent) {
+      parts.push(`<last_referenced_event>
+Event ID: ${lastEvent.eventId}
+Calendar ID: ${lastEvent.calendarId}
+Summary: ${lastEvent.summary}
+Start: ${lastEvent.start}
+End: ${lastEvent.end}
+</last_referenced_event>
+[When user says 'it', 'that event', 'the meeting', 'this one' - use the above event as reference]`)
+    }
   }
 
   parts.push(`<current_request>${message}</current_request>`)

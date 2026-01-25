@@ -267,13 +267,14 @@ const handleAgentCommand = async (
       await unifiedContextStore.touch(userId)
     }
 
-    const prompt = buildAgentPromptWithContext(
+    const prompt = await buildAgentPromptWithContext(
       email,
       agentCmd.prompt,
       fullContext,
       {
         allyBrain,
         languageCode,
+        userId: userId || undefined,
       }
     )
 

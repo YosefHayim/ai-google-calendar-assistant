@@ -20,6 +20,7 @@ import {
   type SupportedMimeType,
   storePendingEvents,
 } from "@/shared/ocr"
+import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import { updateLastActivity } from "../services/conversation-window"
 import {
   downloadMedia,
@@ -33,11 +34,9 @@ import {
   resetRateLimit,
 } from "../services/rate-limiter"
 import {
-  clearProcessingIndicator,
   markAsRead,
   sendAudioMessage,
   sendTextMessage,
-  showProcessingIndicator,
 } from "../services/send-message"
 import { handleOnboarding, resolveWhatsAppUser } from "../services/user-linking"
 import type {
@@ -50,7 +49,6 @@ import {
   getLanguagePreferenceForWhatsApp,
   getVoicePreferenceForWhatsApp,
 } from "../utils/ally-brain"
-import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import {
   handleCommand,
   handleInteractiveReply,
@@ -203,10 +201,16 @@ const processNaturalLanguageMessage = async (
       await unifiedContextStore.touch(userId)
     }
 
-    const prompt = buildAgentPromptWithContext(userEmail, text, fullContext, {
-      allyBrain,
-      languageCode,
-    })
+    const prompt = await buildAgentPromptWithContext(
+      userEmail,
+      text,
+      fullContext,
+      {
+        allyBrain,
+        languageCode,
+        userId: userId || undefined,
+      }
+    )
 
     const dpoResult = await runDPO({
       userId: userId || `whatsapp-${from}`,
