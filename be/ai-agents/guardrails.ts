@@ -127,7 +127,7 @@ const INJECTION_PATTERNS = [
   /<\/user_request>/i,
   /<\/current_request>/i,
   /<\/?(?:assistant|system|instructions?|prompt)>/i,
-  /jailbreak/i,
+  /\bjailbreak\b/i, // Word boundary prevents Hebrew false positives
   /do\s+anything\s+now/i,
   /dan\s+mode/i,
   /developer\s+mode/i,

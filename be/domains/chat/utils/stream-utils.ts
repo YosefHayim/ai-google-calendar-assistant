@@ -3,6 +3,7 @@ import { webConversation } from "@/domains/chat/utils/conversation/WebConversati
 import { writeTitleGenerated } from "@/domains/chat/utils/sse"
 import { getAllyBrainPreference } from "@/domains/settings/services/user-preferences-service"
 import { logger } from "@/lib/logger"
+import { entityTracker } from "@/shared/context/entity-tracker"
 import type { ImageContent } from "@/shared/llm"
 import { getTimezoneHandler } from "@/shared/tools/handlers"
 import {
@@ -95,6 +96,20 @@ export async function buildChatPromptWithContext(
   if (hasImages && imageCount) {
     parts.push(
       `\n[User has attached ${imageCount} image(s) to this message. Please analyze them and help with any calendar-related content you find.]`
+    )
+  }
+
+  const lastEvent = await entityTracker.resolveEventReference(userId)
+  if (lastEvent) {
+    parts.push("\n<last_referenced_event>")
+    parts.push(`Event ID: ${lastEvent.eventId}`)
+    parts.push(`Calendar ID: ${lastEvent.calendarId}`)
+    parts.push(`Summary: ${lastEvent.summary}`)
+    parts.push(`Start: ${lastEvent.start}`)
+    parts.push(`End: ${lastEvent.end}`)
+    parts.push("</last_referenced_event>")
+    parts.push(
+      "[When user says 'it', 'that event', 'the meeting', 'this one' - use the above event as reference]"
     )
   }
 

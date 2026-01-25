@@ -38,6 +38,7 @@ import {
 } from "@/domains/chat/utils/web-embeddings"
 import { createCreditTransaction } from "@/domains/payments/services/credit-service"
 import { sendR } from "@/lib/http"
+import { entityTracker } from "@/shared/context/entity-tracker"
 import { unifiedContextStore } from "@/shared/context"
 import type { ToolOutput } from "@/types"
 
@@ -68,6 +69,73 @@ const TOOLS_TO_PERSIST = new Set([
 ])
 
 const MAX_OUTPUT_LENGTH = 2000
+const EVENT_TRACKING_TOOLS = new Set([
+  "insert_event_direct",
+  "update_event",
+  "get_event_direct",
+])
+
+type EventOutput = {
+  id?: string
+  calendarId?: string
+  summary?: string
+  start?: { dateTime?: string; date?: string }
+  end?: { dateTime?: string; date?: string }
+  allEvents?: EventOutput[]
+}
+
+function trackEventFromToolOutput(
+  userId: string,
+  toolName: string,
+  output: unknown
+): void {
+  if (!EVENT_TRACKING_TOOLS.has(toolName)) {
+    return
+  }
+
+  try {
+    const parsed: EventOutput =
+      typeof output === "string" ? JSON.parse(output) : (output as EventOutput)
+
+    if (toolName === "get_event_direct" && parsed.allEvents?.length) {
+      const firstEvent = parsed.allEvents[0]
+      if (firstEvent?.id && firstEvent?.summary) {
+        const start = firstEvent.start?.dateTime || firstEvent.start?.date || ""
+        const end = firstEvent.end?.dateTime || firstEvent.end?.date || ""
+        entityTracker.trackEvent(
+          userId,
+          {
+            id: firstEvent.id,
+            summary: firstEvent.summary,
+            start: { dateTime: start },
+            end: { dateTime: end },
+          },
+          firstEvent.calendarId || "primary",
+          "chat"
+        )
+      }
+      return
+    }
+
+    if (parsed.id && parsed.summary) {
+      const start = parsed.start?.dateTime || parsed.start?.date || ""
+      const end = parsed.end?.dateTime || parsed.end?.date || ""
+      entityTracker.trackEvent(
+        userId,
+        {
+          id: parsed.id,
+          summary: parsed.summary,
+          start: { dateTime: start },
+          end: { dateTime: end },
+        },
+        parsed.calendarId || "primary",
+        "chat"
+      )
+    }
+  } catch {
+    /* intentionally ignored */
+  }
+}
 
 function slimToolOutput(toolName: string, output: unknown): unknown | null {
   if (!TOOLS_TO_PERSIST.has(toolName)) {
@@ -200,6 +268,8 @@ async function handleOpenAIStreaming(
               )
             }
           }
+
+          trackEventFromToolOutput(userId, toolName, item.output)
         }
       }
     }
