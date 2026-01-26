@@ -152,11 +152,7 @@ export const teamInviteController = {
   },
 
   async getReceivedInvites(req: Request, res: Response) {
-    const userEmail = req.user?.email
-
-    if (!userEmail) {
-      return sendR(res, 401, "Unauthorized", null)
-    }
+    const userEmail = req.user!.email!
 
     try {
       const { data: invitations, error } = await SUPABASE.from("invitations")

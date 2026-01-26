@@ -23,11 +23,7 @@ import { STATUS_RESPONSE } from "@/config/constants"
  * @returns Promise resolving to analyzed gaps with formatting options
  */
 const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userEmail = req.user?.email
-
-  if (!userEmail) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not available")
-  }
+  const userEmail = req.user!.email!
 
   const queryParams: GapQueryParams = {
     startDate: req.query.startDate as string,
@@ -83,15 +79,7 @@ const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getFormattedGaps = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userEmail = req.user?.email
-
-    if (!userEmail) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.UNAUTHORIZED,
-        "User email not available"
-      )
-    }
+    const userEmail = req.user!.email!
 
     try {
       const gaps = await analyzeGapsForUser({

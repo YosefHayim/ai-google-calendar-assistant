@@ -450,11 +450,7 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
     timeMin?: string
     timeMax?: string
   }
-  const userEmail = req.user?.email
-
-  if (!userEmail) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userEmail = req.user!.email!
 
   if (!(timeMin && timeMax)) {
     return sendR(

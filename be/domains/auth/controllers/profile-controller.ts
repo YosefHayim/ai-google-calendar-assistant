@@ -186,10 +186,6 @@ const deActivateUser = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user!.id
 
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
-
     const deletionResults = {
       oauthTokens: false,
       conversations: 0,
