@@ -59,7 +59,7 @@
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.0",
-    "googleapis": "^105.0.0",
+    "googleapis": "^170.1.0",
     "grammy": "^1.38.3",
     "helmet": "^8.0.0",
     "i18next": "^25.7.3",
