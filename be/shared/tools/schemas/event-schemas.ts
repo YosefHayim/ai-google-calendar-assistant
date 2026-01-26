@@ -49,24 +49,28 @@ export const attendeeSchema = z.object({
   email: z.string().email({ message: "Invalid attendee email address" }),
   displayName: z.coerce
     .string()
-    .optional()
+    .nullable()
+    .default(null)
     .describe("Display name for the attendee"),
   optional: z.coerce
     .boolean()
-    .optional()
+    .nullable()
+    .default(null)
     .describe("Whether the attendee is optional"),
   responseStatus: z
     .enum(["needsAction", "declined", "tentative", "accepted"])
-    .optional()
+    .nullable()
+    .default(null)
     .describe("The attendee response status"),
 })
 
 export const attendeesSchema = z
   .array(attendeeSchema)
   .max(MAX_ATTENDEES, `Maximum ${MAX_ATTENDEES} attendees allowed`)
-  .optional()
+  .nullable()
+  .default(null)
   .describe(
-    "List of attendees to invite. Use when user wants to invite people to the event."
+    "List of attendees to invite. Use when user wants to invite people to the event. Null if no attendees."
   )
 
 export const getEventSchema = z
@@ -76,20 +80,20 @@ export const getEventSchema = z
         description: "Minimum date-time for events, RFC3339 format.",
       })
       .nullable()
-      .optional(),
+      .default(null),
     timeMax: z.coerce
       .string({
         description:
           "Maximum date-time for events, RFC3339 format. IMPORTANT: Always set to limit query scope.",
       })
       .nullable()
-      .optional(),
+      .default(null),
     q: z.coerce
       .string({
         description: "Free-text search query across all event fields.",
       })
       .nullable()
-      .optional(),
+      .default(null),
     searchAllCalendars: z.coerce
       .boolean({
         description:
@@ -102,7 +106,7 @@ export const getEventSchema = z
           "Specific calendar ID. Only used when searchAllCalendars is false.",
       })
       .nullable()
-      .optional(),
+      .default(null),
   })
   .describe("Fetch events with optional filters. Email provided from context.")
 
@@ -113,11 +117,11 @@ export const insertEventSchema = z
     description: z.coerce
       .string({ description: "Description of the event." })
       .nullable()
-      .optional(),
+      .default(null),
     location: z.coerce
       .string({ description: "Geographic location of the event." })
       .nullable()
-      .optional(),
+      .default(null),
     start: eventTimeSchema,
     end: eventTimeSchema,
     attendees: attendeesSchema,
@@ -212,8 +216,8 @@ export const checkConflictsAllCalendarsSchema = z
     excludeEventId: z.coerce
       .string()
       .nullable()
-      .optional()
-      .describe("Event ID to exclude (the event being moved)."),
+      .default(null)
+      .describe("Event ID to exclude (the event being moved). Null if not excluding any event."),
   })
   .describe("Check conflicts across ALL calendars.")
 

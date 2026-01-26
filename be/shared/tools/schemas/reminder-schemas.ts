@@ -43,7 +43,7 @@ export const setEventRemindersSchema = z
     calendarId: z.coerce
       .string()
       .nullable()
-      .optional()
+      .default(null)
       .transform((val) => {
         if (!val || val === "/" || val.trim() === "") {
           return null

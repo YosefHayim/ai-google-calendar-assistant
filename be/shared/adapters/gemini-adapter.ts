@@ -72,6 +72,7 @@ function buildCreateEventParams(args: Record<string, unknown>) {
       date: (args.endDate as string) || null,
       timeZone: (args.timeZone as string) || null,
     },
+    attendees: null,
     addMeetLink: Boolean(args.addMeetLink),
   }
 }
@@ -90,6 +91,7 @@ function buildUpdateEventParams(args: Record<string, unknown>) {
     end: args.endDateTime
       ? { dateTime: args.endDateTime as string, date: null, timeZone }
       : null,
+    attendees: null,
     addMeetLink: Boolean(args.addMeetLink),
   }
 }

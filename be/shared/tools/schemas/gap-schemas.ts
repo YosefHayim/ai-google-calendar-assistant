@@ -31,13 +31,13 @@ export const fillGapSchema = z
     description: z.coerce
       .string()
       .nullable()
-      .optional()
-      .describe("Description for the new event."),
+      .default(null)
+      .describe("Description for the new event. Null if none."),
     location: z.coerce
       .string()
       .nullable()
-      .optional()
-      .describe("Location for the new event."),
+      .default(null)
+      .describe("Location for the new event. Null if none."),
     calendarId: z.coerce
       .string()
       .default("primary")

@@ -134,11 +134,21 @@ const selectEventsToCreate = (
 
 const convertAttendeesToFormat = (
   attendees: string[] | undefined
-): Array<{ email: string }> | undefined => {
+): Array<{
+  email: string
+  displayName: string | null
+  optional: boolean | null
+  responseStatus: "needsAction" | "declined" | "tentative" | "accepted" | null
+}> | null => {
   if (!attendees || attendees.length === 0) {
-    return undefined
+    return null
   }
-  return attendees.map((email) => ({ email }))
+  return attendees.map((email) => ({
+    email,
+    displayName: null,
+    optional: null,
+    responseStatus: null,
+  }))
 }
 
 const createSingleEvent = async (
