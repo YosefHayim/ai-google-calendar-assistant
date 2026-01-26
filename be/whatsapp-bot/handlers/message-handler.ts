@@ -276,7 +276,12 @@ const processNaturalLanguageMessage = async (
       return
     }
 
-    logger.error(`WhatsApp: Error processing message from ${from}: ${error}`)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    const errorStack = error instanceof Error ? error.stack : undefined
+    logger.error(`WhatsApp: Error processing message from ${from}`, {
+      error: errorMessage,
+      stack: errorStack,
+    })
     await sendTextMessage(
       from,
       formatErrorForWhatsApp(

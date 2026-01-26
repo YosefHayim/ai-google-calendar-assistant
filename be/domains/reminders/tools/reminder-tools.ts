@@ -8,7 +8,6 @@ import {
   getUserReminders,
   type OriginModality,
 } from "@/domains/reminders/services/reminder-service"
-import { getEmailFromContext } from "@/shared/adapters/openai-adapter"
 import { type AgentContext, stringifyError } from "@/shared/types"
 import {
   cancelReminderSchema,
@@ -29,45 +28,55 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
     "Parse relative times (e.g., 'in 2 hours', 'tomorrow at 3pm') using the user's timezone.",
   parameters: createReminderSchema,
   execute: async (params, runContext) => {
-    const email = getEmailFromContext(runContext, "create_reminder")
-    const userId = await getUserIdByEmail(email)
+    try {
+      const email = runContext?.context?.email
+      if (!email) {
+        return {
+          success: false,
+          error: "Please link your account first to use reminders.",
+        }
+      }
 
-    if (!userId) {
-      return { success: false, error: "User not found" }
-    }
+      const userId = await getUserIdByEmail(email)
+      if (!userId) {
+        return { success: false, error: "User not found" }
+      }
 
-    const scheduledAt = new Date(params.scheduledAt)
-    if (Number.isNaN(scheduledAt.getTime())) {
-      return { success: false, error: "Invalid scheduled time format" }
-    }
+      const scheduledAt = new Date(params.scheduledAt)
+      if (Number.isNaN(scheduledAt.getTime())) {
+        return { success: false, error: "Invalid scheduled time format" }
+      }
 
-    if (scheduledAt <= new Date()) {
-      return { success: false, error: "Scheduled time must be in the future" }
-    }
+      if (scheduledAt <= new Date()) {
+        return { success: false, error: "Scheduled time must be in the future" }
+      }
 
-    const reminder = await createReminder({
-      userId,
-      message: params.message,
-      scheduledAt,
-      deliveryChannel: params.deliveryChannel as DeliveryChannel,
-      originModality: "web" as OriginModality,
-      eventId: params.relatedEventId,
-    })
+      const reminder = await createReminder({
+        userId,
+        message: params.message,
+        scheduledAt,
+        deliveryChannel: params.deliveryChannel as DeliveryChannel,
+        originModality: "web" as OriginModality,
+        eventId: params.relatedEventId,
+      })
 
-    if (!reminder) {
-      return { success: false, error: "Failed to create reminder" }
-    }
+      if (!reminder) {
+        return { success: false, error: "Failed to create reminder" }
+      }
 
-    return {
-      success: true,
-      reminder: {
-        id: reminder.id,
-        message: reminder.message,
-        scheduledAt: reminder.scheduled_at,
-        deliveryChannel: reminder.delivery_channel,
-        status: reminder.status,
-      },
-      confirmationMessage: `Reminder set for ${scheduledAt.toLocaleString()}: "${params.message}"`,
+      return {
+        success: true,
+        reminder: {
+          id: reminder.id,
+          message: reminder.message,
+          scheduledAt: reminder.scheduled_at,
+          deliveryChannel: reminder.delivery_channel,
+          status: reminder.status,
+        },
+        confirmationMessage: `Reminder set for ${scheduledAt.toLocaleString()}: "${params.message}"`,
+      }
+    } catch (err) {
+      return { success: false, error: stringifyError(err) }
     }
   },
   errorFunction: (_, error) => `create_reminder: ${stringifyError(error)}`,
@@ -80,29 +89,40 @@ export const list_reminders = tool<typeof listRemindersSchema, AgentContext>({
     "Use when user asks 'show my reminders', 'what reminders do I have', or 'list pending reminders'.",
   parameters: listRemindersSchema,
   execute: async (params, runContext) => {
-    const email = getEmailFromContext(runContext, "list_reminders")
-    const userId = await getUserIdByEmail(email)
+    try {
+      const email = runContext?.context?.email
+      if (!email) {
+        return {
+          success: false,
+          error: "Please link your account first to use reminders.",
+          reminders: [],
+        }
+      }
 
-    if (!userId) {
-      return { success: false, error: "User not found", reminders: [] }
-    }
+      const userId = await getUserIdByEmail(email)
+      if (!userId) {
+        return { success: false, error: "User not found", reminders: [] }
+      }
 
-    const reminders = await getUserReminders(userId, {
-      status: params.status,
-      limit: params.limit ?? DEFAULT_REMINDER_LIMIT,
-    })
+      const reminders = await getUserReminders(userId, {
+        status: params.status,
+        limit: params.limit ?? DEFAULT_REMINDER_LIMIT,
+      })
 
-    return {
-      success: true,
-      reminders: reminders.map((r) => ({
-        id: r.id,
-        message: r.message,
-        scheduledAt: r.scheduled_at,
-        deliveryChannel: r.delivery_channel,
-        status: r.status,
-        sentAt: r.sent_at,
-      })),
-      count: reminders.length,
+      return {
+        success: true,
+        reminders: reminders.map((r) => ({
+          id: r.id,
+          message: r.message,
+          scheduledAt: r.scheduled_at,
+          deliveryChannel: r.delivery_channel,
+          status: r.status,
+          sentAt: r.sent_at,
+        })),
+        count: reminders.length,
+      }
+    } catch (err) {
+      return { success: false, error: stringifyError(err), reminders: [] }
     }
   },
   errorFunction: (_, error) => `list_reminders: ${stringifyError(error)}`,
@@ -115,26 +135,36 @@ export const cancel_reminder = tool<typeof cancelReminderSchema, AgentContext>({
     "Use when user says 'cancel reminder [id]' or 'remove that reminder'.",
   parameters: cancelReminderSchema,
   execute: async (params, runContext) => {
-    const email = getEmailFromContext(runContext, "cancel_reminder")
-    const userId = await getUserIdByEmail(email)
-
-    if (!userId) {
-      return { success: false, error: "User not found" }
-    }
-
-    const success = await cancelReminder(params.reminderId, userId)
-
-    if (!success) {
-      return {
-        success: false,
-        error:
-          "Failed to cancel reminder. It may not exist, already been sent, or already cancelled.",
+    try {
+      const email = runContext?.context?.email
+      if (!email) {
+        return {
+          success: false,
+          error: "Please link your account first to use reminders.",
+        }
       }
-    }
 
-    return {
-      success: true,
-      message: `Reminder ${params.reminderId} has been cancelled.`,
+      const userId = await getUserIdByEmail(email)
+      if (!userId) {
+        return { success: false, error: "User not found" }
+      }
+
+      const success = await cancelReminder(params.reminderId, userId)
+
+      if (!success) {
+        return {
+          success: false,
+          error:
+            "Failed to cancel reminder. It may not exist, already been sent, or already cancelled.",
+        }
+      }
+
+      return {
+        success: true,
+        message: `Reminder ${params.reminderId} has been cancelled.`,
+      }
+    } catch (err) {
+      return { success: false, error: stringifyError(err) }
     }
   },
   errorFunction: (_, error) => `cancel_reminder: ${stringifyError(error)}`,
@@ -147,32 +177,42 @@ export const get_reminder = tool<typeof getReminderSchema, AgentContext>({
     "Use when user wants to see details about a particular reminder.",
   parameters: getReminderSchema,
   execute: async (params, runContext) => {
-    const email = getEmailFromContext(runContext, "get_reminder")
-    const userId = await getUserIdByEmail(email)
+    try {
+      const email = runContext?.context?.email
+      if (!email) {
+        return {
+          success: false,
+          error: "Please link your account first to use reminders.",
+        }
+      }
 
-    if (!userId) {
-      return { success: false, error: "User not found" }
-    }
+      const userId = await getUserIdByEmail(email)
+      if (!userId) {
+        return { success: false, error: "User not found" }
+      }
 
-    const reminder = await getReminder(params.reminderId, userId)
+      const reminder = await getReminder(params.reminderId, userId)
 
-    if (!reminder) {
-      return { success: false, error: "Reminder not found" }
-    }
+      if (!reminder) {
+        return { success: false, error: "Reminder not found" }
+      }
 
-    return {
-      success: true,
-      reminder: {
-        id: reminder.id,
-        message: reminder.message,
-        scheduledAt: reminder.scheduled_at,
-        deliveryChannel: reminder.delivery_channel,
-        status: reminder.status,
-        sentAt: reminder.sent_at,
-        errorMessage: reminder.error_message,
-        relatedEventId: reminder.related_event_id,
-        createdAt: reminder.created_at,
-      },
+      return {
+        success: true,
+        reminder: {
+          id: reminder.id,
+          message: reminder.message,
+          scheduledAt: reminder.scheduled_at,
+          deliveryChannel: reminder.delivery_channel,
+          status: reminder.status,
+          sentAt: reminder.sent_at,
+          errorMessage: reminder.error_message,
+          relatedEventId: reminder.related_event_id,
+          createdAt: reminder.created_at,
+        },
+      }
+    } catch (err) {
+      return { success: false, error: stringifyError(err) }
     }
   },
   errorFunction: (_, error) => `get_reminder: ${stringifyError(error)}`,
