@@ -5,16 +5,14 @@ import {
   createAgentSession,
 } from "@/ai-agents/sessions/session-factory"
 import type { AgentContext } from "@/ai-agents/tool-registry"
-import type { AGENTS_LIST } from "@/types"
 import { asyncHandler } from "@/lib/http/async-handlers"
 import { logger } from "@/lib/logger"
+import type { AGENTS_LIST } from "@/types"
 
 export type ActivateAgentOptions = {
-  /** Session for persistent memory - can be a Session instance or config to create one */
   session?: Session | CreateSessionOptions
-  /** User email for tool authentication - REQUIRED for calendar operations */
   email?: string
-  /** Additional context to pass to the agent (merged with email) */
+  modality?: "chat" | "voice" | "telegram" | "whatsapp" | "api"
   context?: Record<string, unknown>
 }
 
@@ -86,9 +84,9 @@ export const activateAgent = asyncHandler(
     // Build run options with context containing email
     const runOptions: { session?: Session; context?: AgentContext } = {}
 
-    // Build context - email is REQUIRED for calendar tools
     const context: AgentContext = {
       email: options?.email || "",
+      modality: options?.modality,
       ...(options?.context as Partial<AgentContext>),
     }
     runOptions.context = context

@@ -19,10 +19,12 @@ export type HandlerContext = {
  * Extracted using getEmailFromContext() in adapters.
  * @example
  * const agent = new Agent<AgentContext>({ ... })
- * runner.run(agent, { context: { email: userEmail } })
+ * runner.run(agent, { context: { email: userEmail, modality: "whatsapp" } })
  */
 export type AgentContext = {
   email: string
+  /** The interaction modality where the request originated (for reminder delivery) */
+  modality?: Modality
 }
 
 /**

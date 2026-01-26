@@ -301,6 +301,7 @@ const handleAgentCommand = async (
       dpoResult.effectivePrompt,
       {
         email,
+        modality: "whatsapp",
         session: userId
           ? {
               userId,

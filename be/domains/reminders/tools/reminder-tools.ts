@@ -8,7 +8,12 @@ import {
   getUserReminders,
   type OriginModality,
 } from "@/domains/reminders/services/reminder-service"
-import { type AgentContext, stringifyError } from "@/shared/types"
+import { logger } from "@/lib/logger"
+import {
+  type AgentContext,
+  type Modality,
+  stringifyError,
+} from "@/shared/types"
 import {
   cancelReminderSchema,
   createReminderSchema,
@@ -17,6 +22,20 @@ import {
 } from "./reminder-schemas"
 
 const DEFAULT_REMINDER_LIMIT = 20
+const LOG_MESSAGE_PREVIEW_LENGTH = 50
+
+function modalityToOrigin(modality?: Modality): OriginModality {
+  switch (modality) {
+    case "telegram":
+      return "telegram"
+    case "whatsapp":
+      return "whatsapp"
+    case "api":
+      return "slack"
+    default:
+      return "web"
+  }
+}
 
 export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
   name: "create_reminder",
@@ -30,6 +49,15 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
   execute: async (params, runContext) => {
     try {
       const email = runContext?.context?.email
+      const modality = runContext?.context?.modality
+
+      logger.debug("create_reminder called", {
+        hasEmail: !!email,
+        modality,
+        scheduledAt: params.scheduledAt,
+        message: params.message?.slice(0, LOG_MESSAGE_PREVIEW_LENGTH),
+      })
+
       if (!email) {
         return {
           success: false,
@@ -44,25 +72,42 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
 
       const scheduledAt = new Date(params.scheduledAt)
       if (Number.isNaN(scheduledAt.getTime())) {
+        logger.warn("create_reminder: Invalid scheduled time", {
+          scheduledAt: params.scheduledAt,
+        })
         return { success: false, error: "Invalid scheduled time format" }
       }
 
       if (scheduledAt <= new Date()) {
+        logger.warn("create_reminder: Time in past", {
+          scheduledAt: scheduledAt.toISOString(),
+          now: new Date().toISOString(),
+        })
         return { success: false, error: "Scheduled time must be in the future" }
       }
+
+      const originModality = modalityToOrigin(modality)
 
       const reminder = await createReminder({
         userId,
         message: params.message,
         scheduledAt,
         deliveryChannel: params.deliveryChannel as DeliveryChannel,
-        originModality: "web" as OriginModality,
+        originModality,
         eventId: params.relatedEventId,
       })
 
       if (!reminder) {
+        logger.error("create_reminder: Database insert failed", { userId })
         return { success: false, error: "Failed to create reminder" }
       }
+
+      logger.info("Reminder created successfully", {
+        reminderId: reminder.id,
+        userId,
+        scheduledAt: reminder.scheduled_at,
+        originModality,
+      })
 
       return {
         success: true,
@@ -76,6 +121,7 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
         confirmationMessage: `Reminder set for ${scheduledAt.toLocaleString()}: "${params.message}"`,
       }
     } catch (err) {
+      logger.error("create_reminder: Unexpected error", { error: err })
       return { success: false, error: stringifyError(err) }
     }
   },

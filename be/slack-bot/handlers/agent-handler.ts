@@ -132,6 +132,7 @@ export const handleAgentRequest = async (
       dpoResult.effectivePrompt,
       {
         email,
+        modality: "api",
         session: userUuid
           ? {
               userId: userUuid,
@@ -252,6 +253,7 @@ export const handleConfirmation = async (
 
     const result = await activateAgent(ORCHESTRATOR_AGENT, effectivePrompt, {
       email,
+      modality: "api",
       session: userUuid
         ? {
             userId: userUuid,

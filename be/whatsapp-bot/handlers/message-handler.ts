@@ -236,6 +236,7 @@ const processNaturalLanguageMessage = async (
       dpoResult.effectivePrompt,
       {
         email: userEmail,
+        modality: "whatsapp",
         session: userId
           ? {
               userId,

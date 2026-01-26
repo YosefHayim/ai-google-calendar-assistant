@@ -119,6 +119,7 @@ export const handleAgentRequest = async (
 
     const result = await activateAgent(ORCHESTRATOR_AGENT, effectivePrompt, {
       email: ctx.session.email,
+      modality: "telegram",
       session: userUuid
         ? {
             userId: userUuid,
@@ -234,6 +235,7 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
 
     const result = await activateAgent(ORCHESTRATOR_AGENT, effectivePrompt, {
       email: ctx.session.email,
+      modality: "telegram",
       session: userUuid
         ? {
             userId: userUuid,
