@@ -17,29 +17,32 @@ export const createReminderSchema = z.object({
     ),
   relatedEventId: z.coerce
     .string()
-    .optional()
+    .nullable()
+    .default(null)
     .describe(
-      "Optional Google Calendar event ID if this reminder is related to an event"
+      "Google Calendar event ID if this reminder is related to an event. Null if not related to any event"
     ),
 })
 
 export const listRemindersSchema = z.object({
   status: z
     .enum(["pending", "sent", "failed", "cancelled"])
-    .optional()
-    .describe("Filter reminders by status. If omitted, returns all statuses"),
+    .nullable()
+    .default(null)
+    .describe("Filter reminders by status. If null, returns all statuses"),
   limit: z.coerce
     .number()
-    .optional()
-    .describe("Maximum number of reminders to return. Default is 20"),
+    .nullable()
+    .default(null)
+    .describe("Maximum number of reminders to return. Default is 20 if null"),
 })
 
 export const cancelReminderSchema = z.object({
-  reminderId: z.coerce
-    .string()
-    .describe("The UUID of the reminder to cancel"),
+  reminderId: z.coerce.string().describe("The UUID of the reminder to cancel"),
 })
 
 export const getReminderSchema = z.object({
-  reminderId: z.coerce.string().describe("The UUID of the reminder to retrieve"),
+  reminderId: z.coerce
+    .string()
+    .describe("The UUID of the reminder to retrieve"),
 })

@@ -94,7 +94,7 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
         scheduledAt,
         deliveryChannel: params.deliveryChannel as DeliveryChannel,
         originModality,
-        eventId: params.relatedEventId,
+        eventId: params.relatedEventId ?? undefined,
       })
 
       if (!reminder) {
@@ -151,7 +151,7 @@ export const list_reminders = tool<typeof listRemindersSchema, AgentContext>({
       }
 
       const reminders = await getUserReminders(userId, {
-        status: params.status,
+        status: params.status ?? undefined,
         limit: params.limit ?? DEFAULT_REMINDER_LIMIT,
       })
 
