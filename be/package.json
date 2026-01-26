@@ -41,7 +41,7 @@
     "@openai/agents-core": "^0.3.7",
     "@react-email/components": "^1.0.4",
     "@slack/bolt": "^4.6.0",
-    "@supabase/supabase-js": "^2.80.0",
+    "@supabase/supabase-js": "^2.91.1",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
