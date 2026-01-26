@@ -1,4 +1,3 @@
-import type { RunContext } from "@openai/agents"
 import { tool } from "@openai/agents"
 import { getUserIdByEmail } from "@/domains/auth/utils/google-token"
 import {
@@ -9,6 +8,7 @@ import {
   getUserReminders,
   type OriginModality,
 } from "@/domains/reminders/services/reminder-service"
+import { getEmailFromContext } from "@/shared/adapters/openai-adapter"
 import { type AgentContext, stringifyError } from "@/shared/types"
 import {
   cancelReminderSchema,
@@ -18,30 +18,6 @@ import {
 } from "./reminder-schemas"
 
 const DEFAULT_REMINDER_LIMIT = 20
-const AUTH_REQUIRED_ERROR =
-  "I need to verify your account to set reminders. Please make sure your account is properly linked."
-
-function getEmailSafe(
-  runContext: RunContext<AgentContext> | undefined
-): string | null {
-  return runContext?.context?.email ?? null
-}
-
-async function resolveUserId(
-  runContext: RunContext<AgentContext> | undefined
-): Promise<{ userId: string | null; error?: string }> {
-  const email = getEmailSafe(runContext)
-  if (!email) {
-    return { userId: null, error: AUTH_REQUIRED_ERROR }
-  }
-
-  const userId = await getUserIdByEmail(email)
-  if (!userId) {
-    return { userId: null, error: "User account not found" }
-  }
-
-  return { userId }
-}
 
 export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
   name: "create_reminder",
@@ -53,9 +29,11 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
     "Parse relative times (e.g., 'in 2 hours', 'tomorrow at 3pm') using the user's timezone.",
   parameters: createReminderSchema,
   execute: async (params, runContext) => {
-    const { userId, error } = await resolveUserId(runContext)
+    const email = getEmailFromContext(runContext, "create_reminder")
+    const userId = await getUserIdByEmail(email)
+
     if (!userId) {
-      return { success: false, error }
+      return { success: false, error: "User not found" }
     }
 
     const scheduledAt = new Date(params.scheduledAt)
@@ -102,9 +80,11 @@ export const list_reminders = tool<typeof listRemindersSchema, AgentContext>({
     "Use when user asks 'show my reminders', 'what reminders do I have', or 'list pending reminders'.",
   parameters: listRemindersSchema,
   execute: async (params, runContext) => {
-    const { userId, error } = await resolveUserId(runContext)
+    const email = getEmailFromContext(runContext, "list_reminders")
+    const userId = await getUserIdByEmail(email)
+
     if (!userId) {
-      return { success: false, error, reminders: [] }
+      return { success: false, error: "User not found", reminders: [] }
     }
 
     const reminders = await getUserReminders(userId, {
@@ -135,9 +115,11 @@ export const cancel_reminder = tool<typeof cancelReminderSchema, AgentContext>({
     "Use when user says 'cancel reminder [id]' or 'remove that reminder'.",
   parameters: cancelReminderSchema,
   execute: async (params, runContext) => {
-    const { userId, error } = await resolveUserId(runContext)
+    const email = getEmailFromContext(runContext, "cancel_reminder")
+    const userId = await getUserIdByEmail(email)
+
     if (!userId) {
-      return { success: false, error }
+      return { success: false, error: "User not found" }
     }
 
     const success = await cancelReminder(params.reminderId, userId)
@@ -165,9 +147,11 @@ export const get_reminder = tool<typeof getReminderSchema, AgentContext>({
     "Use when user wants to see details about a particular reminder.",
   parameters: getReminderSchema,
   execute: async (params, runContext) => {
-    const { userId, error } = await resolveUserId(runContext)
+    const email = getEmailFromContext(runContext, "get_reminder")
+    const userId = await getUserIdByEmail(email)
+
     if (!userId) {
-      return { success: false, error }
+      return { success: false, error: "User not found" }
     }
 
     const reminder = await getReminder(params.reminderId, userId)
