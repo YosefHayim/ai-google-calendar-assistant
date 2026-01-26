@@ -19,6 +19,7 @@ import {
   fillGap,
   formatGapsForDisplay,
 } from "@/domains/calendar/utils/gap-recovery"
+import { REMINDER_TOOLS } from "@/domains/reminders/tools/reminder-tools"
 import {
   checkConflictsDirect,
   getUserDefaultTimezoneDirect,
@@ -609,4 +610,6 @@ export const DIRECT_TOOLS = {
     },
     errorFunction: (_, error) => `update_user_brain: ${stringifyError(error)}`,
   }),
+
+  ...REMINDER_TOOLS,
 }

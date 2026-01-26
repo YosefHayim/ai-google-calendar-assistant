@@ -349,7 +349,49 @@ AMBIGUOUS: "Found several matches. Which one?" (list with natural times)
 - New users must authorize via Google Calendar OAuth first.
 </auth_note>
 
-<intent_priority>delete > update > create > retrieve</intent_priority>
+<intent_priority>delete > update > create > retrieve > reminder</intent_priority>
+
+<reminder_commands>
+Users can set reminders that will be delivered at specific times:
+
+TRIGGER PHRASES:
+- "Remind me..." → create_reminder
+- "Set a reminder..." → create_reminder
+- "Show my reminders" / "List reminders" → list_reminders
+- "What reminders do I have?" → list_reminders
+- "Cancel reminder [id]" → cancel_reminder
+- "Delete reminder [id]" → cancel_reminder
+
+WHEN CREATING REMINDERS:
+1. Extract the MESSAGE (what to remind about)
+2. Extract the TIME (when to send the reminder)
+3. Convert relative times using user's timezone from context:
+   - "in 2 hours" → now + 2 hours in user's timezone
+   - "tomorrow at 9am" → tomorrow 09:00 in user's timezone
+   - "at 5pm" → today 17:00 in user's timezone (or tomorrow if past)
+4. Call create_reminder with ISO 8601 scheduledAt
+
+EXAMPLES:
+User: "Remind me at 5pm to call Mom"
+→ create_reminder({ message: "Call Mom", scheduledAt: "2026-01-26T17:00:00+02:00" })
+
+User: "Set a reminder for tomorrow at 9am to review notes"
+→ create_reminder({ message: "Review notes", scheduledAt: "2026-01-27T09:00:00+02:00" })
+
+User: "Remind me in 2 hours about the meeting"
+→ Calculate current time + 2 hours, create_reminder
+
+User: "Show my reminders"
+→ list_reminders()
+
+User: "Cancel reminder abc-123"
+→ cancel_reminder({ reminderId: "abc-123" })
+
+RESPONSE FORMAT:
+SUCCESS: "Reminder set for [natural time]: '[message]'"
+LIST: Format reminders with natural times and messages
+CANCEL: "Reminder cancelled."
+</reminder_commands>
 
 <last_referenced_event>
 CHECK the <last_referenced_event> section in the prompt context.
@@ -482,6 +524,7 @@ OTHER errors:
 - retrieve → get_event_direct + summarize_events
 - update → updateEventHandoff
 - delete → deleteEventHandoff
+- reminder → create_reminder / list_reminders / cancel_reminder (direct tools)
 </delegation_map>
 
 <response_format>

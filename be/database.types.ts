@@ -774,6 +774,54 @@ export type Database = {
           },
         ]
       }
+      scheduled_reminders: {
+        Row: {
+          created_at: string
+          delivery_channel: string
+          error_message: string | null
+          id: string
+          message: string
+          metadata: Json | null
+          origin_modality: string
+          related_event_id: string | null
+          scheduled_at: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_channel: string
+          error_message?: string | null
+          id?: string
+          message: string
+          metadata?: Json | null
+          origin_modality: string
+          related_event_id?: string | null
+          scheduled_at: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delivery_channel?: string
+          error_message?: string | null
+          id?: string
+          message?: string
+          metadata?: Json | null
+          origin_modality?: string
+          related_event_id?: string | null
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       slack_users: {
         Row: {
           created_at: string

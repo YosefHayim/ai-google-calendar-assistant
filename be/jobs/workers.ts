@@ -6,6 +6,7 @@ import {
   handleDailyDigestJob,
   handleEventReminderJob,
 } from "./handlers/notifications"
+import { handleScheduledReminderCheck } from "./handlers/reminders"
 import { handleStaleConversationsCleanup } from "./handlers/stale-conversations"
 import { handleTokenRefreshCheck } from "./handlers/token-refresh"
 import { handleUsageReset } from "./handlers/usage-reset"
@@ -84,6 +85,8 @@ export function startWorkers(): void {
           return handleEventReminderJob(job)
         case "daily-digest-send":
           return handleDailyDigestJob(job)
+        case "scheduled-reminder-check":
+          return handleScheduledReminderCheck(job)
         default:
           logger.warn(`Unknown notification job: ${job.name}`)
           return Promise.resolve(null)

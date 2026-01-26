@@ -130,6 +130,10 @@ export const ORCHESTRATOR_AGENT = new Agent({
       toolName: "generate_google_auth_url",
     }),
     DIRECT_TOOLS.update_user_brain,
+    DIRECT_TOOLS.create_reminder,
+    DIRECT_TOOLS.list_reminders,
+    DIRECT_TOOLS.cancel_reminder,
+    DIRECT_TOOLS.get_reminder,
   ],
   inputGuardrails: [calendarSafetyGuardrail],
 })

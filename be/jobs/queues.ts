@@ -142,6 +142,16 @@ export async function scheduleRecurringJobs(): Promise<void> {
   )
   logger.info("  - Scheduled: daily-digest-send (daily at 8 AM)")
 
+  await notificationQueue.add(
+    "scheduled-reminder-check",
+    {},
+    {
+      repeat: { pattern: "* * * * *" },
+      jobId: "scheduled-reminder-check",
+    }
+  )
+  logger.info("  - Scheduled: scheduled-reminder-check (every minute)")
+
   logger.info("BullMQ: All recurring jobs scheduled")
 }
 
