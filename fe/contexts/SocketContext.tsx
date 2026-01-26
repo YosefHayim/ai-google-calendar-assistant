@@ -116,15 +116,12 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       })
     })
 
-    socket.on('pong', () => {})
-
     return () => {
       socket.off('connect')
       socket.off('disconnect')
       socket.off('connect_error')
       socket.off('notification')
       socket.off('server-shutdown')
-      socket.off('pong')
       socket.disconnect()
       socketRef.current = null
       setIsConnected(false)

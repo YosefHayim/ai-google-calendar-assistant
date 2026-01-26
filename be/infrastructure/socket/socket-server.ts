@@ -23,12 +23,10 @@ export type NotificationPayload = {
 
 type ServerToClientEvents = {
   notification: (payload: NotificationPayload) => void
-  pong: (data: { timestamp: string }) => void
   "server-shutdown": (data: { message: string; reconnectDelay: number }) => void
 }
 
 type ClientToServerEvents = {
-  ping: () => void
   "subscribe-notifications": () => void
 }
 
@@ -77,10 +75,6 @@ function handleConnection(socket: TypedSocket): void {
     logger.debug(
       `[Socket] User disconnected: ${email} (${socket.id}), reason: ${reason}`
     )
-  })
-
-  socket.on("ping", () => {
-    socket.emit("pong", { timestamp: new Date().toISOString() })
   })
 
   socket.on("subscribe-notifications", () => {
