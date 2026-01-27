@@ -92,11 +92,11 @@ async function sendEmailReminder(
     const { error } = await resend.emails.send({
       from: env.resend.fromEmail,
       to: email,
-      subject: "Reminder from Ally",
-      text: reminderMessage,
+      subject: "Friendly Reminder from Ally",
+      text: `Hey! Just a friendly reminder: ${reminderMessage}`,
       html: `<div style="font-family: sans-serif; padding: 20px;">
-        <h2 style="color: #4F46E5;">Reminder</h2>
-        <p style="font-size: 16px; color: #374151;">${reminderMessage}</p>
+        <p style="font-size: 18px; color: #374151;">Hey! 👋</p>
+        <p style="font-size: 16px; color: #374151;">Just a friendly reminder: <strong>${reminderMessage}</strong></p>
         <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 20px 0;" />
         <p style="font-size: 12px; color: #9CA3AF;">This reminder was set via Ask Ally</p>
       </div>`,
@@ -126,13 +126,14 @@ async function sendTelegramReminder(
   }
 
   try {
-    const formattedMessage = `🔔 <b>Reminder</b>\n\n${message}`
+    const formattedMessage = `Hey! Just a friendly reminder: <b>${message}</b>`
     await bot.api.sendMessage(chatId, formattedMessage, {
       parse_mode: "HTML",
     })
     return { success: true }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
     logger.error(`Reminder Telegram failed for chat ${chatId}:`, error)
     return { success: false, error: errorMessage }
   }
@@ -143,7 +144,7 @@ async function sendWhatsAppReminder(
   message: string
 ): Promise<DispatchResult> {
   try {
-    const formattedMessage = `🔔 *Reminder*\n\n${message}`
+    const formattedMessage = `Hey! Just a friendly reminder: *${message}*`
     const result = await sendTextMessage(phone, formattedMessage)
 
     if (!result.success) {
@@ -152,7 +153,8 @@ async function sendWhatsAppReminder(
 
     return { success: true }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
     logger.error(`Reminder WhatsApp failed for ${phone}:`, error)
     return { success: false, error: errorMessage }
   }
@@ -172,7 +174,7 @@ async function sendSlackReminder(
 
     const result = await client.chat.postMessage({
       channel: slackUserId,
-      text: `🔔 Reminder\n\n${message}`,
+      text: `Hey! Just a friendly reminder: *${message}*`,
       mrkdwn: true,
     })
 
@@ -182,7 +184,8 @@ async function sendSlackReminder(
 
     return { success: true }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
     logger.error(`Reminder Slack failed for ${slackUserId}:`, error)
     return { success: false, error: errorMessage }
   }
