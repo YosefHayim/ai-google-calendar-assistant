@@ -1,6 +1,10 @@
 import { tool } from "@openai/agents"
 import { getUserIdByEmail } from "@/domains/auth/utils/google-token"
 import {
+  type ReminderModality,
+  storePendingReminderConfirmation,
+} from "@/domains/reminders/services/reminder-confirmation"
+import {
   cancelReminder,
   createReminder,
   type DeliveryChannel,
@@ -15,6 +19,7 @@ import {
   stringifyError,
 } from "@/shared/types"
 import {
+  cancelAllRemindersSchema,
   cancelReminderSchema,
   createReminderSchema,
   getReminderSchema,
@@ -264,9 +269,130 @@ export const get_reminder = tool<typeof getReminderSchema, AgentContext>({
   errorFunction: (_, error) => `get_reminder: ${stringifyError(error)}`,
 })
 
+function modalityToReminderModality(modality?: Modality): ReminderModality {
+  switch (modality) {
+    case "telegram":
+      return "telegram"
+    case "whatsapp":
+      return "whatsapp"
+    case "api":
+      return "slack"
+    default:
+      return "web"
+  }
+}
+
+export const cancel_all_reminders = tool<
+  typeof cancelAllRemindersSchema,
+  AgentContext
+>({
+  name: "cancel_all_reminders",
+  description:
+    "Cancel ALL pending reminders for the user. This is a high-stakes action. " +
+    "First call with confirm=false to get a list of reminders that will be cancelled. " +
+    "Then call with confirm=true to actually cancel them after user confirms. " +
+    "Use when user says 'cancel all my reminders' or 'delete all reminders'.",
+  parameters: cancelAllRemindersSchema,
+  execute: async (params, runContext) => {
+    try {
+      const email = runContext?.context?.email
+      const modality = runContext?.context?.modality
+
+      if (!email) {
+        return {
+          success: false,
+          error: "Please link your account first to use reminders.",
+        }
+      }
+
+      const userId = await getUserIdByEmail(email)
+      if (!userId) {
+        return { success: false, error: "User not found" }
+      }
+
+      const pendingReminders = await getUserReminders(userId, {
+        status: "pending",
+      })
+
+      if (pendingReminders.length === 0) {
+        return {
+          success: true,
+          message: "You have no pending reminders to cancel.",
+          cancelledCount: 0,
+        }
+      }
+
+      if (!params.confirm) {
+        const reminderModality = modalityToReminderModality(modality)
+        const reminderList = pendingReminders
+          .map(
+            (r) =>
+              `• "${r.message}" - ${new Date(r.scheduled_at).toLocaleString()}`
+          )
+          .join("\n")
+
+        await storePendingReminderConfirmation(
+          userId,
+          reminderModality,
+          "cancel_all_reminders",
+          {
+            reminderIds: pendingReminders.map((r) => r.id),
+            actionDescription: `${pendingReminders.length} reminder(s):\n${reminderList}`,
+          }
+        )
+
+        return {
+          success: true,
+          needsConfirmation: true,
+          message: `You have ${pendingReminders.length} pending reminder(s) that will be cancelled:\n\n${reminderList}\n\nReply "yes" to confirm or "no" to cancel.`,
+          reminderCount: pendingReminders.length,
+        }
+      }
+
+      let cancelledCount = 0
+      const errors: string[] = []
+
+      for (const reminder of pendingReminders) {
+        const success = await cancelReminder(reminder.id, userId)
+        if (success) {
+          cancelledCount++
+        } else {
+          errors.push(`Failed to cancel: "${reminder.message}"`)
+        }
+      }
+
+      logger.info("cancel_all_reminders completed", {
+        userId,
+        cancelledCount,
+        errorCount: errors.length,
+      })
+
+      if (errors.length > 0) {
+        return {
+          success: false,
+          message: `Cancelled ${cancelledCount} reminder(s), but some failed.`,
+          cancelledCount,
+          errors,
+        }
+      }
+
+      return {
+        success: true,
+        message: `Successfully cancelled ${cancelledCount} reminder(s).`,
+        cancelledCount,
+      }
+    } catch (err) {
+      logger.error("cancel_all_reminders: Unexpected error", { error: err })
+      return { success: false, error: stringifyError(err) }
+    }
+  },
+  errorFunction: (_, error) => `cancel_all_reminders: ${stringifyError(error)}`,
+})
+
 export const REMINDER_TOOLS = {
   create_reminder,
   list_reminders,
   cancel_reminder,
+  cancel_all_reminders,
   get_reminder,
 }

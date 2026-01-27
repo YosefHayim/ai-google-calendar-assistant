@@ -7,6 +7,10 @@ import {
   transcribeAudio,
 } from "@/domains/analytics/utils"
 import { checkUserAccess } from "@/domains/payments/services/lemonsqueezy-service"
+import {
+  executeReminderConfirmation,
+  getPendingReminderConfirmation,
+} from "@/domains/reminders/services/reminder-confirmation"
 import { logger } from "@/lib/logger"
 import { unifiedContextStore } from "@/shared/context"
 import {
@@ -20,7 +24,7 @@ import {
   type SupportedMimeType,
   storePendingEvents,
 } from "@/shared/ocr"
-import { getTranslatorFromLanguageCode } from "../i18n/translator"
+
 import { updateLastActivity } from "../services/conversation-window"
 import {
   downloadMedia,
@@ -34,9 +38,11 @@ import {
   resetRateLimit,
 } from "../services/rate-limiter"
 import {
+  clearProcessingIndicator,
   markAsRead,
   sendAudioMessage,
   sendTextMessage,
+  showProcessingIndicator,
 } from "../services/send-message"
 import { handleOnboarding, resolveWhatsAppUser } from "../services/user-linking"
 import type {
@@ -166,8 +172,7 @@ const processNaturalLanguageMessage = async (
   const detectedLanguage = detectLanguageFromText(text)
   const storedLanguageCode = await getLanguagePreferenceForWhatsApp(from)
   const languageCode = detectedLanguage ?? storedLanguageCode
-  const { t } = getTranslatorFromLanguageCode(languageCode)
-  await sendTextMessage(from, t("status.processingRequest"))
+  await showProcessingIndicator(from, messageId)
 
   try {
     const conversationContext = await whatsAppConversation.addMessageToContext(
@@ -262,6 +267,8 @@ const processNaturalLanguageMessage = async (
       finalOutput || "I couldn't process your request."
     )
 
+    await clearProcessingIndicator(from, messageId)
+
     if (respondWithVoice) {
       await tryVoiceResponse(from, formattedResponse)
       return
@@ -269,6 +276,8 @@ const processNaturalLanguageMessage = async (
 
     await sendTextMessage(from, formattedResponse)
   } catch (error) {
+    await clearProcessingIndicator(from, messageId)
+
     if (error instanceof InputGuardrailTripwireTriggered) {
       logger.warn(
         `WhatsApp: Guardrail triggered for user ${from}: ${error.message}`
@@ -647,6 +656,41 @@ const hasPendingOCREvents = async (from: string): Promise<boolean> => {
   return pending !== null
 }
 
+const hasPendingReminderConfirmation = async (
+  from: string
+): Promise<boolean> => {
+  const userId = await getUserIdFromWhatsApp(from)
+  const pending = await getPendingReminderConfirmation(
+    userId || from,
+    MODALITY
+  )
+  return pending !== null
+}
+
+const handleReminderConfirmation = async (
+  from: string,
+  action: "confirm" | "cancel"
+): Promise<boolean> => {
+  const userId = await getUserIdFromWhatsApp(from)
+  const pending = await getPendingReminderConfirmation(
+    userId || from,
+    MODALITY
+  )
+
+  if (!pending) {
+    return false
+  }
+
+  const result = await executeReminderConfirmation(
+    userId || from,
+    MODALITY,
+    action
+  )
+
+  await sendTextMessage(from, result.message)
+  return true
+}
+
 export const handleIncomingMessage = async (
   message: WhatsAppIncomingMessage,
   contact?: WhatsAppContact
@@ -726,8 +770,7 @@ export const handleIncomingMessage = async (
         return
       }
 
-      const hasPendingOCR = await hasPendingOCREvents(phoneNumber)
-      if (hasPendingOCR && processed.text) {
+      if (processed.text) {
         const lowerText = processed.text.toLowerCase()
         const isConfirm =
           lowerText === "yes" || lowerText === "confirm" || lowerText === "y"
@@ -735,14 +778,30 @@ export const handleIncomingMessage = async (
           lowerText === "no" || lowerText === "cancel" || lowerText === "n"
 
         if (isConfirm || isCancel) {
-          await markAsRead(message.id)
-          const handled = await handleOCRConfirmation(
-            phoneNumber,
-            isConfirm ? "confirm" : "cancel",
-            resolution.email
-          )
-          if (handled) {
-            return
+          const hasPendingOCR = await hasPendingOCREvents(phoneNumber)
+          if (hasPendingOCR) {
+            await markAsRead(message.id)
+            const handled = await handleOCRConfirmation(
+              phoneNumber,
+              isConfirm ? "confirm" : "cancel",
+              resolution.email
+            )
+            if (handled) {
+              return
+            }
+          }
+
+          const hasPendingReminder =
+            await hasPendingReminderConfirmation(phoneNumber)
+          if (hasPendingReminder) {
+            await markAsRead(message.id)
+            const handled = await handleReminderConfirmation(
+              phoneNumber,
+              isConfirm ? "confirm" : "cancel"
+            )
+            if (handled) {
+              return
+            }
           }
         }
       }

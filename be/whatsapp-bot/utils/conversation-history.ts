@@ -10,9 +10,10 @@ import type { userAndAiMessageProps } from "@/types"
 import { isToday } from "@/lib/date/date-helpers"
 import { logger } from "@/lib/logger"
 
-const MAX_CONTEXT_LENGTH = 1500
-const MAX_SUMMARY_LENGTH = 1000
-const MAX_MESSAGES_BEFORE_SUMMARIZE = 6
+const MAX_CONTEXT_LENGTH = 6000
+const MAX_SUMMARY_LENGTH = 1500
+const MAX_MESSAGES_BEFORE_SUMMARIZE = 10
+const MIN_MESSAGES_TO_KEEP = 4
 
 type MessageRole = Database["public"]["Enums"]["message_role"]
 
@@ -443,14 +444,13 @@ export const addMessageToContext = async (
 
   const totalLength = calculateContextLength(context.messages)
   const shouldSummarize =
-    (totalLength > MAX_CONTEXT_LENGTH ||
-      context.messages.length > MAX_MESSAGES_BEFORE_SUMMARIZE) &&
-    context.messages.length > 2 &&
+    totalLength > MAX_CONTEXT_LENGTH &&
+    context.messages.length > MAX_MESSAGES_BEFORE_SUMMARIZE &&
     userId
 
   if (shouldSummarize) {
-    const messagesToSummarize = context.messages.slice(0, -2)
-    const recentMessages = context.messages.slice(-2)
+    const messagesToSummarize = context.messages.slice(0, -MIN_MESSAGES_TO_KEEP)
+    const recentMessages = context.messages.slice(-MIN_MESSAGES_TO_KEEP)
 
     try {
       const newSummary = await summarizeFn(messagesToSummarize)

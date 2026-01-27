@@ -46,3 +46,13 @@ export const getReminderSchema = z.object({
     .string()
     .describe("The UUID of the reminder to retrieve"),
 })
+
+export const cancelAllRemindersSchema = z.object({
+  confirm: z
+    .boolean()
+    .default(false)
+    .describe(
+      "Must be true to actually cancel all reminders. " +
+        "If false, returns list of reminders that would be cancelled for user confirmation"
+    ),
+})
