@@ -78,7 +78,7 @@ export const EXECUTION_TOOLS = {
    * @param params.name - Optional user's name
    * @returns Promise resolving to registration status with auth URL
    */
-  registerUser: asyncHandler((params: { email: string; name?: string }) => {
+  registerUser: asyncHandler((params: { email: string; name: string | null }) => {
     if (!params.email) {
       throw new Error("Email is required for registration.")
     }

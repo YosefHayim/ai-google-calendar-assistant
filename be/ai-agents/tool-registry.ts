@@ -142,9 +142,9 @@ export const DIRECT_TOOLS = {
   // Select calendar - email from context
   select_calendar_direct: tool<
     z.ZodObject<{
-      summary: z.ZodOptional<z.ZodString>
-      description: z.ZodOptional<z.ZodString>
-      location: z.ZodOptional<z.ZodString>
+      summary: z.ZodDefault<z.ZodNullable<z.ZodString>>
+      description: z.ZodDefault<z.ZodNullable<z.ZodString>>
+      location: z.ZodDefault<z.ZodNullable<z.ZodString>>
     }>,
     AgentContext
   >({
@@ -152,13 +152,17 @@ export const DIRECT_TOOLS = {
     description:
       "Selects best calendar for event using rules-based matching. Returns { calendarId, calendarName, matchReason }. Email is automatically provided from user context.",
     parameters: z.object({
-      summary: z.coerce.string().optional(),
-      description: z.coerce.string().optional(),
-      location: z.coerce.string().optional(),
+      summary: z.coerce.string().nullable().default(null),
+      description: z.coerce.string().nullable().default(null),
+      location: z.coerce.string().nullable().default(null),
     }),
     execute: async ({ summary, description, location }, runContext) => {
       const email = getEmailFromContext(runContext, "select_calendar_direct")
-      return selectCalendarByRules(email, { summary, description, location })
+      return selectCalendarByRules(email, {
+        summary: summary ?? undefined,
+        description: description ?? undefined,
+        location: location ?? undefined,
+      })
     },
     errorFunction: (_, error) =>
       `select_calendar_direct: ${stringifyError(error)}`,
@@ -236,7 +240,7 @@ export const DIRECT_TOOLS = {
       start: ReturnType<typeof makeEventTime>
       end: ReturnType<typeof makeEventTime>
       addMeetLink: z.ZodDefault<z.ZodBoolean>
-      reminders: z.ZodOptional<
+      reminders: z.ZodDefault<
         z.ZodNullable<
           typeof PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
         >
@@ -262,7 +266,7 @@ export const DIRECT_TOOLS = {
         ),
       reminders: PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
         .nullable()
-        .optional(),
+        .default(null),
     }),
     execute: async (params, runContext) => {
       const email = getEmailFromContext(runContext, "insert_event_direct")
@@ -271,7 +275,7 @@ export const DIRECT_TOOLS = {
       let remindersToApply = params.reminders
       if (!remindersToApply && userId) {
         const userPreferences = await getUserReminderPreferences(userId)
-        remindersToApply = resolveRemindersForEvent(userPreferences, null)
+        remindersToApply = resolveRemindersForEvent(userPreferences, null) ?? null
       }
 
       return EXECUTION_TOOLS.insertEvent({

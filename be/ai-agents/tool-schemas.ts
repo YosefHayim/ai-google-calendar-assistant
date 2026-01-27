@@ -109,7 +109,7 @@ const makeFullEventParams = () =>
         .nullable(),
       start: makeEventTime(),
       end: makeEventTime(),
-      reminders: eventRemindersSchema.nullable().optional(),
+      reminders: eventRemindersSchema.nullable().default(null),
     })
     .describe(
       "Full event parameters including summary, description, location, start, end times, and optional reminders. Email is automatically provided from user context."
@@ -120,7 +120,7 @@ export const PARAMETERS_TOOLS = {
   // Registration still needs email as user provides it
   registerUserParameters: z.object({
     email: emailSchema.describe("The email address of the user."),
-    name: z.string().optional().describe("Optional name of the user."),
+    name: z.string().nullable().default(null).describe("Name of the user. Null if not provided."),
   }),
   // GET events - no email needed, uses authenticated context
   getEventParameters: z
@@ -288,13 +288,13 @@ export const PARAMETERS_TOOLS = {
       description: z.coerce
         .string()
         .nullable()
-        .optional()
-        .describe("Description for the new event."),
+        .default(null)
+        .describe("Description for the new event. Null if none."),
       location: z.coerce
         .string()
         .nullable()
-        .optional()
-        .describe("Location for the new event."),
+        .default(null)
+        .describe("Location for the new event. Null if none."),
       calendarId: z.coerce
         .string()
         .default("primary")
@@ -316,9 +316,9 @@ export const PARAMETERS_TOOLS = {
       excludeEventId: z.coerce
         .string()
         .nullable()
-        .optional()
+        .default(null)
         .describe(
-          "Event ID to exclude from conflict check (the event being moved)."
+          "Event ID to exclude from conflict check (the event being moved). Null if not excluding any event."
         ),
     })
     .describe(
