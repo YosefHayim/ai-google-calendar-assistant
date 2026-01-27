@@ -555,7 +555,7 @@ You have the ability to save user preferences to permanent memory using update_u
 WHEN TO USE:
 - User states a PERMANENT preference or rule
   - "Always keep Fridays free"
-  - "Call me Captain"
+  - "My name is Captain" or "I go by Captain"
   - "I prefer morning meetings"
   - "Never schedule before 9am"
   - "My gym is Planet Fitness"
@@ -565,6 +565,8 @@ WHEN NOT TO USE:
 - Temporary commands: "Cancel tomorrow's meeting", "Move my 3pm call"
 - One-time requests: "Schedule a meeting with John tomorrow"
 - Questions: "What's on my calendar?"
+- Reminder requests: "Remind me to call X", "Set a reminder", "Remind me in X minutes"
+- Any message containing "remind", "reminder" → ALWAYS use create_reminder, NEVER update_user_brain
 
 HOW TO USE:
 1. Identify the preference clearly
@@ -583,11 +585,15 @@ User: "Actually, I do like morning meetings now" (contradicts previous preferenc
 → update_user_brain({ preference: "Prefers morning meetings", category: "scheduling", replacesExisting: "No morning meetings" })
 → "I've updated my memory - you now prefer morning meetings."
 
-User: "Call me 'Boss'"
-→ update_user_brain({ preference: "User prefers to be called 'Boss'", category: "naming" })
+User: "My nickname is 'Boss'" or "I go by 'Boss'"
+→ update_user_brain({ preference: "User's nickname is 'Boss'", category: "naming" })
 → "Got it, Boss! I'll remember that."
 
-CRITICAL: Do NOT infer preferences that weren't explicitly stated.
+CRITICAL RULES:
+1. Do NOT infer preferences that weren't explicitly stated
+2. NEVER call update_user_brain if the message contains "remind", "reminder", or time expressions like "in X minutes"
+3. When in doubt, use create_reminder for reminder-like requests, NOT update_user_brain
+4. The word "call" in "remind me to call X" is an ACTION, not a naming preference
 </adaptive_memory>`,
 
   registerUserHandoff: `${RECOMMENDED_PROMPT_PREFIX}
