@@ -5,6 +5,10 @@ import { logger } from "@/lib/logger"
 import { getClientForTeam } from "@/slack-bot/init-bot"
 import { getBot } from "@/telegram-bot/init-bot"
 import { sendTextMessage } from "@/whatsapp-bot/services/send-message"
+import {
+  generateReminderMessage,
+  type ReminderFormat,
+} from "./reminder-message-generator"
 import type {
   DeliveryChannel,
   OriginModality,
@@ -82,7 +86,8 @@ async function getChannelIdentifiers(
 
 async function sendEmailReminder(
   email: string,
-  reminderMessage: string
+  aiMessage: string,
+  originalMessage: string
 ): Promise<DispatchResult> {
   if (!env.resend.isEnabled) {
     return { success: false, error: "Email service not configured" }
@@ -93,12 +98,12 @@ async function sendEmailReminder(
       from: env.resend.fromEmail,
       to: email,
       subject: "Friendly Reminder from Ally",
-      text: `Hey! Just a friendly reminder: ${reminderMessage}`,
+      text: aiMessage,
       html: `<div style="font-family: sans-serif; padding: 20px;">
-        <p style="font-size: 18px; color: #374151;">Hey! 👋</p>
-        <p style="font-size: 16px; color: #374151;">Just a friendly reminder: <strong>${reminderMessage}</strong></p>
+        <p style="font-size: 16px; color: #374151; line-height: 1.6;">${aiMessage}</p>
         <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 20px 0;" />
-        <p style="font-size: 12px; color: #9CA3AF;">This reminder was set via Ask Ally</p>
+        <p style="font-size: 12px; color: #9CA3AF;">Original reminder: "${originalMessage}"</p>
+        <p style="font-size: 12px; color: #9CA3AF;">Set via Ask Ally</p>
       </div>`,
     })
 
@@ -117,7 +122,7 @@ async function sendEmailReminder(
 
 async function sendTelegramReminder(
   chatId: number,
-  message: string
+  aiMessage: string
 ): Promise<DispatchResult> {
   const bot = getBot()
 
@@ -126,8 +131,7 @@ async function sendTelegramReminder(
   }
 
   try {
-    const formattedMessage = `Hey! Just a friendly reminder: <b>${message}</b>`
-    await bot.api.sendMessage(chatId, formattedMessage, {
+    await bot.api.sendMessage(chatId, aiMessage, {
       parse_mode: "HTML",
     })
     return { success: true }
@@ -141,11 +145,10 @@ async function sendTelegramReminder(
 
 async function sendWhatsAppReminder(
   phone: string,
-  message: string
+  aiMessage: string
 ): Promise<DispatchResult> {
   try {
-    const formattedMessage = `Hey! Just a friendly reminder: *${message}*`
-    const result = await sendTextMessage(phone, formattedMessage)
+    const result = await sendTextMessage(phone, aiMessage)
 
     if (!result.success) {
       return { success: false, error: result.error }
@@ -163,7 +166,7 @@ async function sendWhatsAppReminder(
 async function sendSlackReminder(
   slackUserId: string,
   teamId: string,
-  message: string
+  aiMessage: string
 ): Promise<DispatchResult> {
   try {
     const client = await getClientForTeam(teamId)
@@ -174,7 +177,7 @@ async function sendSlackReminder(
 
     const result = await client.chat.postMessage({
       channel: slackUserId,
-      text: `Hey! Just a friendly reminder: *${message}*`,
+      text: aiMessage,
       mrkdwn: true,
     })
 
@@ -212,6 +215,19 @@ function resolveDeliveryChannel(
   return deliveryChannel
 }
 
+function channelToFormat(channel: DeliveryChannel): ReminderFormat {
+  switch (channel) {
+    case "telegram":
+      return "telegram"
+    case "whatsapp":
+      return "whatsapp"
+    case "slack":
+      return "slack"
+    default:
+      return "email"
+  }
+}
+
 export async function dispatchReminder(
   reminder: ScheduledReminder
 ): Promise<DispatchResult> {
@@ -226,21 +242,24 @@ export async function dispatchReminder(
     reminder.origin_modality as OriginModality
   )
 
+  const format = channelToFormat(channel)
+  const aiMessage = await generateReminderMessage(reminder.message, format)
+
   switch (channel) {
     case "email":
-      return sendEmailReminder(identifiers.email, reminder.message)
+      return sendEmailReminder(identifiers.email, aiMessage, reminder.message)
 
     case "telegram":
       if (!identifiers.telegramChatId) {
         return { success: false, error: "Telegram not linked" }
       }
-      return sendTelegramReminder(identifiers.telegramChatId, reminder.message)
+      return sendTelegramReminder(identifiers.telegramChatId, aiMessage)
 
     case "whatsapp":
       if (!identifiers.whatsappPhone) {
         return { success: false, error: "WhatsApp not linked" }
       }
-      return sendWhatsAppReminder(identifiers.whatsappPhone, reminder.message)
+      return sendWhatsAppReminder(identifiers.whatsappPhone, aiMessage)
 
     case "slack":
       if (!(identifiers.slackUserId && identifiers.slackTeamId)) {
@@ -249,7 +268,7 @@ export async function dispatchReminder(
       return sendSlackReminder(
         identifiers.slackUserId,
         identifiers.slackTeamId,
-        reminder.message
+        aiMessage
       )
 
     case "push":
