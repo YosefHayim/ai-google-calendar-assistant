@@ -334,7 +334,7 @@ export const en = {
   "auth.welcomePrompt":
     "👋 <b>Welcome to Ally!</b>\n\nI'm your AI-powered calendar assistant. I can help you:\n\n📅 Schedule and manage events using natural language\n🔍 Find free time and check your schedule\n📊 Get insights about how you spend your time\n\n<b>Let's get you set up in 2 quick steps:</b>\n\n<b>Step 1:</b> Verify your email\n<b>Step 2:</b> Connect your Google Calendar\n\nPlease enter your email address to begin:",
   "auth.enterOtpPrompt":
-    "📧 <b>Check your inbox!</b>\n\nI've sent a 6-digit verification code to <b>{{email}}</b>.\n\nPlease enter the code below (valid for 10 minutes).\n\n<i>Wrong email? Just type the correct one instead.</i>",
+    "📧 <b>Check your inbox!</b>\n\nI've sent a 6-digit verification code to <b>{{email}}</b>.\n\nPlease enter the code below (valid for 10 minutes).\n\n<i>Can't find it? Check your spam/junk folder.\nWrong email? Just type the correct one instead.</i>",
   "auth.otpExpired":
     "⏰ Verification code expired.\n\nPlease enter your email address again:",
   "auth.otpInvalidError":
@@ -346,7 +346,7 @@ export const en = {
   "auth.enterOtpOrNewEmail":
     "Please enter the 6-digit verification code, or type a different email address:",
   "auth.otpSentToNewEmail":
-    "📧 Verification code sent to <b>{{email}}</b>.\n\nPlease enter the 6-digit code (valid for 10 minutes):",
+    "📧 Verification code sent to <b>{{email}}</b>.\n\nPlease enter the 6-digit code (valid for 10 minutes).\n\n<i>Can't find it? Check your spam/junk folder.</i>",
   "auth.otpSendFailed":
     "Failed to send verification code: {{error}}\n\nPlease try again with a different email.",
   "auth.googleCalendarConnect":
@@ -532,6 +532,51 @@ export const en = {
     "Your 14-day free trial has ended.\n\nUpgrade to Pro or Executive to continue using Ally:\n{{upgradeUrl}}",
   "subscription.required":
     "You need an active subscription to use Ally.\n\nStart your free trial or upgrade:\n{{upgradeUrl}}",
+
+  // WhatsApp Onboarding
+  "whatsapp.onboarding.welcomeHeader": "Welcome to Ally!",
+  "whatsapp.onboarding.welcomeText":
+    "I'm Ally, your AI calendar assistant. I can help you manage your schedule, create events, and more.\n\nTo get started, I need to link your account. Do you already have an Ally account?",
+  "whatsapp.onboarding.buttonYesLink": "Yes, link account",
+  "whatsapp.onboarding.buttonNoCreate": "No, create new",
+  "whatsapp.onboarding.choiceUnclear":
+    "I didn't quite catch that. Do you have an existing Ally account you'd like to link?",
+  "whatsapp.onboarding.enterEmail":
+    "Please enter your email address to continue:\n\n(I'll send you a verification code)",
+  "whatsapp.onboarding.invalidEmail":
+    "That doesn't look like a valid email address. Please enter a valid email:",
+  "whatsapp.onboarding.otpSent":
+    "I've sent a 6-digit verification code to *{{email}}*.\n\nPlease enter the code here.\n\n_Can't find it? Check your spam/junk folder.\nDidn't receive it? Type 'resend' to get a new code._",
+  "whatsapp.onboarding.otpSendFailed":
+    "Sorry, I couldn't send the verification code. Please try again or use a different email.",
+  "whatsapp.onboarding.otpResent":
+    "I've sent a new verification code to *{{email}}*.",
+  "whatsapp.onboarding.otpResendFailed":
+    "Sorry, I couldn't resend the code. Please try again in a moment.",
+  "whatsapp.onboarding.otpEnterPrompt":
+    "Please enter the 6-digit code from your email.\n\n_Type 'resend' if you need a new code._",
+  "whatsapp.onboarding.otpInvalid":
+    "That code didn't work. Please check and try again, or type 'resend' for a new code.",
+  "whatsapp.onboarding.linkFailed":
+    "Sorry, something went wrong linking your account. Please try again.",
+  "whatsapp.onboarding.accountNotFound":
+    "Sorry, we couldn't find your account. Please start over by saying 'hi'.",
+  "whatsapp.onboarding.alreadyVerified":
+    "Your account is already verified! Try asking me about your calendar.",
+  "whatsapp.onboarding.noEmailOnFile":
+    "I don't have an email on file. Let's start over. What's your email?",
+  "whatsapp.onboarding.somethingWrong":
+    "Something went wrong. Let's start over. What's your email?",
+  "whatsapp.onboarding.successWithCalendar":
+    "*Account linked successfully!* Your Google Calendar is already connected.\n\nTry asking me:\n- _What's on my calendar today?_\n- _Schedule a meeting tomorrow at 2pm_\n- _Show me my week_",
+  "whatsapp.onboarding.emailVerified":
+    "*Email verified!*\n\nNow let's connect your Google Calendar. Tap the link below to authorize:\n\n{{authUrl}}\n\n_Once you've connected, send me any message to continue._",
+  "whatsapp.onboarding.waitingForGoogle":
+    "I'm still waiting for you to connect your Google Calendar.\n\nTap here to connect:\n{{authUrl}}",
+  "whatsapp.onboarding.allSet":
+    "*You're all set!* Your Google Calendar is now connected.\n\nTry asking me:\n- _What's on my calendar today?_\n- _Schedule a meeting tomorrow at 2pm_\n- _Show me my week_",
+  "whatsapp.onboarding.completeSetupFirst":
+    "Please complete the account setup first. Send me a text message to continue.",
 } as const
 
 export type TranslationKey = keyof typeof en

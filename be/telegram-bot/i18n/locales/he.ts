@@ -315,7 +315,7 @@ export const he = {
   "auth.welcomePrompt":
     '👋 <b>ברוכים הבאים ל-Ally!</b>\n\nאני העוזרת החכמה שלך ליומן. אני יכולה לעזור לך:\n\n📅 לתזמן ולנהל אירועים בשפה טבעית\n🔍 למצוא זמנים פנויים ולבדוק את הלו"ז שלך\n📊 לקבל תובנות על איך אתה מבלה את הזמן שלך\n\n<b>בוא נתחיל בשני צעדים קצרים:</b>\n\n<b>שלב 1:</b> אימות האימייל שלך\n<b>שלב 2:</b> חיבור יומן Google\n\nאנא הזן את כתובת האימייל שלך כדי להתחיל:',
   "auth.enterOtpPrompt":
-    "📧 <b>בדוק את תיבת הדואר שלך!</b>\n\nשלחתי קוד אימות בן 6 ספרות ל-<b>{{email}}</b>.\n\nאנא הזן את הקוד למטה (תקף ל-10 דקות).\n\n<i>אימייל לא נכון? פשוט הקלד את הנכון.</i>",
+    "📧 <b>בדוק את תיבת הדואר שלך!</b>\n\nשלחתי קוד אימות בן 6 ספרות ל-<b>{{email}}</b>.\n\nאנא הזן את הקוד למטה (תקף ל-10 דקות).\n\n<i>לא מוצא? בדוק בתיקיית הספאם/דואר זבל.\nאימייל לא נכון? פשוט הקלד את הנכון.</i>",
   "auth.otpExpired":
     "⏰ קוד האימות פג תוקף.\n\nאנא הזן את כתובת האימייל שלך שוב:",
   "auth.otpInvalidError":
@@ -327,7 +327,7 @@ export const he = {
   "auth.enterOtpOrNewEmail":
     "אנא הזן את קוד האימות בן 6 הספרות, או הקלד כתובת אימייל אחרת:",
   "auth.otpSentToNewEmail":
-    "📧 קוד אימות נשלח ל-<b>{{email}}</b>.\n\nאנא הזן את הקוד בן 6 הספרות (תקף ל-10 דקות):",
+    "📧 קוד אימות נשלח ל-<b>{{email}}</b>.\n\nאנא הזן את הקוד בן 6 הספרות (תקף ל-10 דקות).\n\n<i>לא מוצא? בדוק בתיקיית הספאם/דואר זבל.</i>",
   "auth.otpSendFailed":
     "שליחת קוד האימות נכשלה: {{error}}\n\nאנא נסה עם כתובת אימייל אחרת.",
   "auth.googleCalendarConnect":
@@ -487,4 +487,47 @@ export const he = {
     "תקופת הניסיון של 14 ימים הסתיימה.\n\nשדרג ל-Pro או Executive כדי להמשיך להשתמש ב-Ally:\n{{upgradeUrl}}",
   "subscription.required":
     "דרוש מנוי פעיל כדי להשתמש ב-Ally.\n\nהתחל את תקופת הניסיון שלך או שדרג:\n{{upgradeUrl}}",
+
+  "whatsapp.onboarding.welcomeHeader": "ברוכים הבאים ל-Ally!",
+  "whatsapp.onboarding.welcomeText":
+    "אני Ally, העוזרת החכמה שלך ליומן. אני יכולה לעזור לך לנהל את הלו״ז, ליצור אירועים ועוד.\n\nכדי להתחיל, אני צריכה לקשר את החשבון שלך. יש לך כבר חשבון Ally?",
+  "whatsapp.onboarding.buttonYesLink": "כן, קשר חשבון",
+  "whatsapp.onboarding.buttonNoCreate": "לא, צור חדש",
+  "whatsapp.onboarding.choiceUnclear":
+    "לא הבנתי בדיוק. יש לך חשבון Ally קיים שתרצה לקשר?",
+  "whatsapp.onboarding.enterEmail":
+    "אנא הזן את כתובת האימייל שלך כדי להמשיך:\n\n(אשלח לך קוד אימות)",
+  "whatsapp.onboarding.invalidEmail":
+    "זה לא נראה כמו כתובת אימייל תקינה. אנא הזן אימייל תקין:",
+  "whatsapp.onboarding.otpSent":
+    "שלחתי קוד אימות בן 6 ספרות ל-*{{email}}*.\n\nאנא הזן את הקוד כאן.\n\n_לא מוצא? בדוק בתיקיית הספאם/דואר זבל.\nלא קיבלת? כתוב 'resend' לקבלת קוד חדש._",
+  "whatsapp.onboarding.otpSendFailed":
+    "מצטער, לא הצלחתי לשלוח את קוד האימות. אנא נסה שוב או השתמש באימייל אחר.",
+  "whatsapp.onboarding.otpResent": "שלחתי קוד אימות חדש ל-*{{email}}*.",
+  "whatsapp.onboarding.otpResendFailed":
+    "מצטער, לא הצלחתי לשלוח מחדש את הקוד. אנא נסה שוב בעוד רגע.",
+  "whatsapp.onboarding.otpEnterPrompt":
+    "אנא הזן את הקוד בן 6 הספרות מהאימייל.\n\n_כתוב 'resend' אם צריך קוד חדש._",
+  "whatsapp.onboarding.otpInvalid":
+    "הקוד לא עבד. אנא בדוק ונסה שוב, או כתוב 'resend' לקוד חדש.",
+  "whatsapp.onboarding.linkFailed":
+    "מצטער, משהו השתבש בקישור החשבון. אנא נסה שוב.",
+  "whatsapp.onboarding.accountNotFound":
+    "מצטער, לא הצלחנו למצוא את החשבון שלך. אנא התחל מחדש ואמור 'שלום'.",
+  "whatsapp.onboarding.alreadyVerified":
+    "החשבון שלך כבר מאומת! נסה לשאול אותי על היומן שלך.",
+  "whatsapp.onboarding.noEmailOnFile":
+    "אין לי אימייל רשום. בוא נתחיל מחדש. מה האימייל שלך?",
+  "whatsapp.onboarding.somethingWrong":
+    "משהו השתבש. בוא נתחיל מחדש. מה האימייל שלך?",
+  "whatsapp.onboarding.successWithCalendar":
+    "*החשבון קושר בהצלחה!* יומן Google שלך כבר מחובר.\n\nנסה לשאול אותי:\n- _מה יש לי היום ביומן?_\n- _קבע פגישה מחר ב-14:00_\n- _הראה לי את השבוע_",
+  "whatsapp.onboarding.emailVerified":
+    "*האימייל אומת!*\n\nעכשיו בוא נחבר את יומן Google. לחץ על הקישור למטה לאישור:\n\n{{authUrl}}\n\n_אחרי שחיברת, שלח לי הודעה כלשהי כדי להמשיך._",
+  "whatsapp.onboarding.waitingForGoogle":
+    "אני עדיין מחכה שתחבר את יומן Google שלך.\n\nלחץ כאן להתחברות:\n{{authUrl}}",
+  "whatsapp.onboarding.allSet":
+    "*הכל מוכן!* יומן Google שלך מחובר עכשיו.\n\nנסה לשאול אותי:\n- _מה יש לי היום ביומן?_\n- _קבע פגישה מחר ב-14:00_\n- _הראה לי את השבוע_",
+  "whatsapp.onboarding.completeSetupFirst":
+    "אנא השלם קודם את הגדרת החשבון. שלח לי הודעת טקסט כדי להמשיך.",
 } as const

@@ -1,11 +1,19 @@
 import type { MiddlewareFn } from "grammy"
 import validator from "validator"
+import { run } from "@openai/agents"
+import { SALES_AGENT } from "@/ai-agents/agents"
 import { SUPABASE } from "@/config"
 import { auditLogger } from "@/lib/audit-logger"
 import { logger } from "@/lib/logger"
+import {
+  buildUnauthContextPrompt,
+  getUnauthMessagesForContext,
+  markUnauthUserConverted,
+  storeUnauthMessage,
+} from "@/shared/context"
 import { getTranslatorFromLanguageCode } from "../i18n"
 import type { GlobalContext } from "../init-bot"
-import { resetRateLimit } from "./rate-limiter"
+import { checkUnauthenticatedRateLimit, resetRateLimit } from "./rate-limiter"
 
 const MINUTES_IN_OTP_EXPIRY = 10
 const SECONDS_IN_MINUTE = 60
@@ -266,6 +274,8 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
           return
         }
 
+        await markUnauthUserConverted("telegram", from.id.toString())
+
         session.supabaseUserId = userId
         await ctx.reply(t("auth.emailVerifiedSuccess"), { parse_mode: "HTML" })
         session.messageCount++
@@ -299,30 +309,76 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
       return
     }
 
-    if (!(text && validator.isEmail(text))) {
-      await ctx.reply(t("auth.welcomePrompt"), { parse_mode: "HTML" })
+    if (text && validator.isEmail(text)) {
+      const emailToVerify = text.toLowerCase().trim()
+      const otpResult = await sendEmailOtp(emailToVerify)
+
+      if (!otpResult.success) {
+        await ctx.reply(
+          t("auth.otpSendFailed", { error: otpResult.error || "" }),
+          { parse_mode: "HTML" }
+        )
+        return
+      }
+
+      session.pendingEmailVerification = {
+        email: emailToVerify,
+        expiresAt: Date.now() + OTP_EXPIRY_MS,
+      }
+
+      await ctx.reply(t("auth.enterOtpPrompt", { email: emailToVerify }), {
+        parse_mode: "HTML",
+      })
       return
     }
 
-    const emailToVerify = text.toLowerCase().trim()
-    const otpResult = await sendEmailOtp(emailToVerify)
+    if (text) {
+      const unauthLimit = await checkUnauthenticatedRateLimit(from.id)
+      if (!unauthLimit.allowed) {
+        await ctx.reply(unauthLimit.message ?? "", { parse_mode: "HTML" })
+        return
+      }
 
-    if (!otpResult.success) {
-      await ctx.reply(
-        t("auth.otpSendFailed", { error: otpResult.error || "" }),
-        { parse_mode: "HTML" }
-      )
+      try {
+        const telegramId = from.id.toString()
+        const now = new Date().toISOString()
+
+        await storeUnauthMessage("telegram", telegramId, {
+          role: "user",
+          content: text,
+          timestamp: now,
+        })
+
+        const previousMessages = await getUnauthMessagesForContext("telegram", telegramId)
+        const contextPrompt = buildUnauthContextPrompt(
+          previousMessages.slice(0, -1)
+        )
+
+        const fullPrompt = contextPrompt
+          ? `${contextPrompt}\n\nUser: ${text}`
+          : text
+
+        const result = await run(SALES_AGENT, fullPrompt)
+        const response = result.finalOutput || ""
+
+        if (response) {
+          await storeUnauthMessage("telegram", telegramId, {
+            role: "assistant",
+            content: response,
+            timestamp: new Date().toISOString(),
+          })
+          await ctx.reply(response, { parse_mode: "HTML" })
+        } else {
+          await ctx.reply(t("auth.welcomePrompt"), { parse_mode: "HTML" })
+        }
+      } catch (salesError) {
+        logger.error(`Telegram Bot: Sales agent error: ${salesError}`)
+        await ctx.reply(t("auth.welcomePrompt"), { parse_mode: "HTML" })
+      }
       return
     }
 
-    session.pendingEmailVerification = {
-      email: emailToVerify,
-      expiresAt: Date.now() + OTP_EXPIRY_MS,
-    }
-
-    await ctx.reply(t("auth.enterOtpPrompt", { email: emailToVerify }), {
-      parse_mode: "HTML",
-    })
+    await ctx.reply(t("auth.welcomePrompt"), { parse_mode: "HTML" })
     return
   } catch (err) {
     logger.error(`Telegram Bot: Auth: Unexpected error: ${err}`)

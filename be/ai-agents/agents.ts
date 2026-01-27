@@ -16,6 +16,12 @@ function getPrompt(
   return getAgentPromptSync(agentId) || AGENT_INSTRUCTIONS[fallbackKey]
 }
 
+export const SALES_AGENT = new Agent({
+  name: "sales_agent",
+  instructions: AGENT_INSTRUCTIONS.salesAgent,
+  model: FAST_MODEL,
+})
+
 export const AGENTS = {
   generateGoogleAuthUrl: new Agent({
     name: "generate_google_auth_url_agent",

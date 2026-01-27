@@ -374,7 +374,7 @@ export const fr = {
   "auth.welcomePrompt":
     "👋 <b>Bienvenue sur Ally !</b>\n\nJe suis votre assistant calendrier intelligent. Je peux vous aider à :\n\n📅 Planifier et gérer des événements en langage naturel\n🔍 Trouver du temps libre et consulter votre agenda\n📊 Obtenir des insights sur la gestion de votre temps\n\n<b>Commençons en 2 étapes rapides :</b>\n\n<b>Étape 1 :</b> Vérifier votre e-mail\n<b>Étape 2 :</b> Connecter votre Google Agenda\n\nVeuillez entrer votre adresse e-mail pour commencer :",
   "auth.enterOtpPrompt":
-    "📧 <b>Vérifiez votre boîte de réception !</b>\n\nJ'ai envoyé un code de vérification à 6 chiffres à <b>{{email}}</b>.\n\nVeuillez entrer le code ci-dessous (valide 10 minutes).\n\n<i>Mauvais e-mail ? Tapez simplement le bon.</i>",
+    "📧 <b>Vérifiez votre boîte de réception !</b>\n\nJ'ai envoyé un code de vérification à 6 chiffres à <b>{{email}}</b>.\n\nVeuillez entrer le code ci-dessous (valide 10 minutes).\n\n<i>Vous ne le trouvez pas ? Vérifiez votre dossier spam/indésirables.\nMauvais e-mail ? Tapez simplement le bon.</i>",
   "auth.otpExpired":
     "⏰ Code de vérification expiré.\n\nVeuillez entrer votre adresse e-mail à nouveau :",
   "auth.otpInvalidError":
@@ -387,7 +387,7 @@ export const fr = {
   "auth.enterOtpOrNewEmail":
     "Veuillez entrer le code à 6 chiffres, ou tapez une autre adresse e-mail :",
   "auth.otpSentToNewEmail":
-    "📧 Code de vérification envoyé à <b>{{email}}</b>.\n\nVeuillez entrer le code à 6 chiffres (valide 10 minutes) :",
+    "📧 Code de vérification envoyé à <b>{{email}}</b>.\n\nVeuillez entrer le code à 6 chiffres (valide 10 minutes).\n\n<i>Vous ne le trouvez pas ? Vérifiez votre dossier spam/indésirables.</i>",
   "auth.otpSendFailed":
     "Échec de l'envoi du code : {{error}}\n\nVeuillez réessayer avec un autre e-mail.",
   "auth.googleCalendarConnect":
@@ -512,6 +512,49 @@ export const fr = {
     "Aucune modification n'a été apportée à votre calendrier.",
   "commands.reschedule.keepOriginal": "Garder l'original",
   "botMenu.reschedule": "Replanification intelligente",
+
+  "whatsapp.onboarding.welcomeHeader": "Bienvenue chez Ally !",
+  "whatsapp.onboarding.welcomeText":
+    "Je suis Ally, votre assistante IA pour le calendrier. Je peux vous aider à gérer votre emploi du temps, créer des événements et plus encore.\n\nPour commencer, je dois lier votre compte. Avez-vous déjà un compte Ally ?",
+  "whatsapp.onboarding.buttonYesLink": "Oui, lier le compte",
+  "whatsapp.onboarding.buttonNoCreate": "Non, créer nouveau",
+  "whatsapp.onboarding.choiceUnclear":
+    "Je n'ai pas bien compris. Avez-vous un compte Ally existant que vous souhaitez lier ?",
+  "whatsapp.onboarding.enterEmail":
+    "Veuillez entrer votre adresse e-mail pour continuer :\n\n(Je vous enverrai un code de vérification)",
+  "whatsapp.onboarding.invalidEmail":
+    "Cela ne ressemble pas à une adresse e-mail valide. Veuillez entrer un e-mail valide :",
+  "whatsapp.onboarding.otpSent":
+    "J'ai envoyé un code de vérification à 6 chiffres à *{{email}}*.\n\nVeuillez entrer le code ici.\n\n_Vous ne le trouvez pas ? Vérifiez votre dossier spam/indésirables.\nVous ne l'avez pas reçu ? Tapez 'resend' pour obtenir un nouveau code._",
+  "whatsapp.onboarding.otpSendFailed":
+    "Désolé, je n'ai pas pu envoyer le code de vérification. Veuillez réessayer ou utiliser un autre e-mail.",
+  "whatsapp.onboarding.otpResent": "J'ai envoyé un nouveau code de vérification à *{{email}}*.",
+  "whatsapp.onboarding.otpResendFailed":
+    "Désolé, je n'ai pas pu renvoyer le code. Veuillez réessayer dans un instant.",
+  "whatsapp.onboarding.otpEnterPrompt":
+    "Veuillez entrer le code à 6 chiffres de votre e-mail.\n\n_Tapez 'resend' si vous avez besoin d'un nouveau code._",
+  "whatsapp.onboarding.otpInvalid":
+    "Ce code n'a pas fonctionné. Veuillez vérifier et réessayer, ou tapez 'resend' pour un nouveau code.",
+  "whatsapp.onboarding.linkFailed":
+    "Désolé, quelque chose s'est mal passé lors de la liaison de votre compte. Veuillez réessayer.",
+  "whatsapp.onboarding.accountNotFound":
+    "Désolé, nous n'avons pas pu trouver votre compte. Veuillez recommencer en disant 'bonjour'.",
+  "whatsapp.onboarding.alreadyVerified":
+    "Votre compte est déjà vérifié ! Essayez de me demander à propos de votre calendrier.",
+  "whatsapp.onboarding.noEmailOnFile":
+    "Je n'ai pas d'e-mail enregistré. Recommençons. Quel est votre e-mail ?",
+  "whatsapp.onboarding.somethingWrong":
+    "Quelque chose s'est mal passé. Recommençons. Quel est votre e-mail ?",
+  "whatsapp.onboarding.successWithCalendar":
+    "*Compte lié avec succès !* Votre calendrier Google est déjà connecté.\n\nEssayez de me demander :\n- _Qu'y a-t-il dans mon calendrier aujourd'hui ?_\n- _Planifie une réunion demain à 14h_\n- _Montre-moi ma semaine_",
+  "whatsapp.onboarding.emailVerified":
+    "*E-mail vérifié !*\n\nMaintenant, connectons votre calendrier Google. Appuyez sur le lien ci-dessous pour autoriser :\n\n{{authUrl}}\n\n_Une fois connecté, envoyez-moi n'importe quel message pour continuer._",
+  "whatsapp.onboarding.waitingForGoogle":
+    "J'attends toujours que vous connectiez votre calendrier Google.\n\nAppuyez ici pour vous connecter :\n{{authUrl}}",
+  "whatsapp.onboarding.allSet":
+    "*Tout est prêt !* Votre calendrier Google est maintenant connecté.\n\nEssayez de me demander :\n- _Qu'y a-t-il dans mon calendrier aujourd'hui ?_\n- _Planifie une réunion demain à 14h_\n- _Montre-moi ma semaine_",
+  "whatsapp.onboarding.completeSetupFirst":
+    "Veuillez d'abord terminer la configuration du compte. Envoyez-moi un message texte pour continuer.",
 } as const
 
 export type TranslationKey = keyof typeof fr

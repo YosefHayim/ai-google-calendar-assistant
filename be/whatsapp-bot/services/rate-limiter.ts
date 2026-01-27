@@ -9,18 +9,23 @@ import { logger } from "@/lib/logger"
 const RATE_LIMITS = {
   auth: {
     maxAttempts: 10,
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 15 * 60 * 1000,
     keyPrefix: "wa:rate:auth:",
   },
   messages: {
     maxAttempts: 30,
-    windowMs: 60 * 1000, // 1 minute
+    windowMs: 60 * 1000,
     keyPrefix: "wa:rate:msg:",
   },
   voice: {
     maxAttempts: 10,
-    windowMs: 60 * 1000, // 1 minute (voice is more expensive)
+    windowMs: 60 * 1000,
     keyPrefix: "wa:rate:voice:",
+  },
+  unauthenticated: {
+    maxAttempts: 20,
+    windowMs: 60 * 60 * 1000,
+    keyPrefix: "wa:rate:unauth:",
   },
 } as const
 
@@ -148,9 +153,6 @@ export const checkMessageRateLimit = async (
   return { allowed: true }
 }
 
-/**
- * Check voice message rate limit (stricter limit for expensive operations)
- */
 export const checkVoiceRateLimit = async (
   phoneNumber: string
 ): Promise<{ allowed: boolean; message?: string }> => {
@@ -169,4 +171,28 @@ export const checkVoiceRateLimit = async (
   }
 
   return { allowed: true }
+}
+
+export const checkUnauthenticatedRateLimit = async (
+  phoneNumber: string
+): Promise<{ allowed: boolean; remaining: number; message?: string }> => {
+  const { allowed, remaining, resetInMs } = await checkRateLimit(
+    phoneNumber,
+    "unauthenticated"
+  )
+
+  if (!allowed) {
+    const resetInMinutes = Math.ceil(resetInMs / 60_000)
+    logger.warn(
+      `WhatsApp Rate Limit: Unauthenticated limit hit for ${phoneNumber}, resets in ${resetInMinutes}m`
+    )
+
+    return {
+      allowed: false,
+      remaining: 0,
+      message: `You've reached the message limit for guests (20 per hour). Sign up to continue chatting with Ally! Try again in ${resetInMinutes} minute(s).`,
+    }
+  }
+
+  return { allowed: true, remaining }
 }

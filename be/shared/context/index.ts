@@ -4,6 +4,21 @@ export {
   type TrackedEvent,
 } from "./entity-tracker"
 export {
+  buildUnauthContextPrompt,
+  clearUnauthConversation,
+  getDailyUnauthStats,
+  getUnauthConversation,
+  getUnauthMessagesForContext,
+  getUnauthUserAnalytics,
+  markUnauthUserConverted,
+  storeUnauthMessage,
+  type UnauthAnalytics,
+  type UnauthConversation,
+  type UnauthMessage,
+  type UnauthPlatform,
+  unauthConversation,
+} from "./unauthenticated-conversation"
+export {
   type CalendarReference,
   type ContextSnapshot,
   type ConversationContext,

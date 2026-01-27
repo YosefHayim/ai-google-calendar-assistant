@@ -1,5 +1,5 @@
-import { InputGuardrailTripwireTriggered } from "@openai/agents"
-import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import { InputGuardrailTripwireTriggered, run } from "@openai/agents"
+import { ORCHESTRATOR_AGENT, SALES_AGENT } from "@/ai-agents/agents"
 import { runDPO } from "@/ai-agents/dpo"
 import {
   activateAgent,
@@ -12,7 +12,12 @@ import {
   getPendingReminderConfirmation,
 } from "@/domains/reminders/services/reminder-confirmation"
 import { logger } from "@/lib/logger"
-import { unifiedContextStore } from "@/shared/context"
+import {
+  buildUnauthContextPrompt,
+  getUnauthMessagesForContext,
+  storeUnauthMessage,
+  unifiedContextStore,
+} from "@/shared/context"
 import {
   executeConfirmation,
   extractEventsFromFiles,
@@ -34,6 +39,7 @@ import {
 import {
   checkAuthRateLimit,
   checkMessageRateLimit,
+  checkUnauthenticatedRateLimit,
   checkVoiceRateLimit,
   resetRateLimit,
 } from "../services/rate-limiter"
@@ -67,6 +73,7 @@ import {
   formatErrorForWhatsApp,
   htmlToWhatsApp,
 } from "../utils/format-response"
+import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import { detectLanguageFromText } from "../utils/language-detection"
 import {
   buildAgentPromptWithContext,
@@ -94,6 +101,77 @@ const isDuplicateMessage = (messageId: string): boolean => {
 
   processedMessages.set(messageId, Date.now())
   return false
+}
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const OTP_REGEX = /^\d{6}$/
+
+const looksLikeEmailOrOtp = (text: string): boolean => {
+  const trimmed = text.trim()
+  return EMAIL_REGEX.test(trimmed) || OTP_REGEX.test(trimmed)
+}
+
+const handleUnauthenticatedSalesChat = async (
+  phoneNumber: string,
+  text: string
+): Promise<void> => {
+  logger.info(
+    `WhatsApp: Processing unauthenticated message from ${phoneNumber}`
+  )
+
+  try {
+    const now = new Date().toISOString()
+    await storeUnauthMessage("whatsapp", phoneNumber, {
+      role: "user",
+      content: text,
+      timestamp: now,
+    })
+
+    const previousMessages = await getUnauthMessagesForContext("whatsapp", phoneNumber)
+    const contextPrompt = buildUnauthContextPrompt(
+      previousMessages.slice(0, -1)
+    )
+
+    const fullPrompt = contextPrompt
+      ? `${contextPrompt}\n\nUser: ${text}`
+      : text
+
+    const result = await run(SALES_AGENT, fullPrompt)
+    const response = result.finalOutput || ""
+
+    if (response) {
+      await storeUnauthMessage("whatsapp", phoneNumber, {
+        role: "assistant",
+        content: response,
+        timestamp: new Date().toISOString(),
+      })
+
+      const formattedResponse = htmlToWhatsApp(response)
+      await sendTextMessage(phoneNumber, formattedResponse)
+    } else {
+      const fallbackResponse =
+        "Hi! I'm Ally, your AI calendar assistant. I can help you manage your " +
+        "schedule, create events, and more. To get started with full features, " +
+        "just reply with your email address to sign up!"
+
+      await storeUnauthMessage("whatsapp", phoneNumber, {
+        role: "assistant",
+        content: fallbackResponse,
+        timestamp: new Date().toISOString(),
+      })
+
+      await sendTextMessage(phoneNumber, fallbackResponse)
+    }
+  } catch (error) {
+    logger.error(
+      `WhatsApp: Error processing unauthenticated message: ${error}`
+    )
+    await sendTextMessage(
+      phoneNumber,
+      "I'm having trouble processing your message right now. " +
+        "To get started with Ally, please reply with your email address."
+    )
+  }
 }
 
 export const processIncomingMessage = (
@@ -700,38 +778,71 @@ export const handleIncomingMessage = async (
 
   const resolution = await resolveWhatsAppUser(
     phoneNumber,
-    processed.contactName
+    processed.contactName,
+    processed.text
   )
 
   if (resolution.needsOnboarding) {
-    const authLimit = await checkAuthRateLimit(phoneNumber)
-    if (!authLimit.allowed) {
+    const isActiveOnboarding =
+      resolution.onboardingStep === "email_input" ||
+      resolution.onboardingStep === "otp_verification" ||
+      resolution.onboardingStep === "google_auth"
+
+    const messageText = processed.text || ""
+    const isOnboardingMessage =
+      looksLikeEmailOrOtp(messageText) ||
+      message.type === "interactive" ||
+      isActiveOnboarding
+
+    if (isOnboardingMessage) {
+      const authLimit = await checkAuthRateLimit(phoneNumber)
+      if (!authLimit.allowed) {
+        await markAsRead(message.id)
+        await sendTextMessage(phoneNumber, authLimit.message ?? "")
+        return
+      }
+
+      if (message.type === "text" || message.type === "interactive") {
+        const interactiveReply = message.interactive
+        const result = await handleOnboarding(
+          phoneNumber,
+          messageText,
+          resolution.onboardingStep,
+          interactiveReply
+        )
+
+        if (result.handled) {
+          if (result.nextStep === "complete") {
+            await resetRateLimit(phoneNumber, "auth")
+          }
+          await markAsRead(message.id)
+          return
+        }
+      }
+    }
+
+    if (message.type === "text" && messageText && !isOnboardingMessage) {
+      const unauthLimit = await checkUnauthenticatedRateLimit(phoneNumber)
+      if (!unauthLimit.allowed) {
+        await markAsRead(message.id)
+        await sendTextMessage(phoneNumber, unauthLimit.message ?? "")
+        return
+      }
+
       await markAsRead(message.id)
-      await sendTextMessage(phoneNumber, authLimit.message ?? "")
+      await handleUnauthenticatedSalesChat(phoneNumber, messageText)
       return
     }
 
-    if (message.type === "text" || message.type === "interactive") {
-      const interactiveReply = message.interactive
-      const result = await handleOnboarding(
-        phoneNumber,
-        processed.text || "",
-        resolution.onboardingStep,
-        interactiveReply
-      )
-
-      if (result.handled) {
-        if (result.nextStep === "complete") {
-          await resetRateLimit(phoneNumber, "auth")
-        }
-        await markAsRead(message.id)
-        return
-      }
-    } else {
+    if (message.type !== "text" && message.type !== "interactive") {
       await markAsRead(message.id)
+      const detectedLang = messageText
+        ? detectLanguageFromText(messageText)
+        : null
+      const { t } = getTranslatorFromLanguageCode(detectedLang ?? undefined)
       await sendTextMessage(
         phoneNumber,
-        "Please complete the account setup first. Send me a text message to continue."
+        t("whatsapp.onboarding.completeSetupFirst")
       )
       return
     }

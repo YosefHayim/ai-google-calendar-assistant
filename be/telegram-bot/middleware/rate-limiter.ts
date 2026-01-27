@@ -4,17 +4,21 @@ import { auditLogger } from "@/lib/audit-logger"
 import { logger } from "@/lib/logger"
 import type { GlobalContext } from "../init-bot"
 
-// Rate limit configurations
 const RATE_LIMITS = {
   auth: {
     maxAttempts: 10,
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 15 * 60 * 1000,
     keyPrefix: "tg:rate:auth:",
   },
   messages: {
     maxAttempts: 30,
-    windowMs: 60 * 1000, // 1 minute
+    windowMs: 60 * 1000,
     keyPrefix: "tg:rate:msg:",
+  },
+  unauthenticated: {
+    maxAttempts: 20,
+    windowMs: 60 * 60 * 1000,
+    keyPrefix: "tg:rate:unauth:",
   },
 } as const
 
@@ -148,7 +152,29 @@ export const messageRateLimiter: MiddlewareFn<GlobalContext> = async (
     await ctx.reply(
       `You're sending messages too quickly. Please wait ${resetInSeconds} seconds.`
     )
-    return // Stop middleware chain
+    return
   }
   return next()
+}
+
+export const checkUnauthenticatedRateLimit = async (
+  userId: number
+): Promise<{ allowed: boolean; remaining: number; message?: string }> => {
+  const { allowed, remaining, resetInMs } = await checkRateLimit(
+    userId,
+    "unauthenticated"
+  )
+
+  if (!allowed) {
+    const resetInMinutes = Math.ceil(resetInMs / 60_000)
+    auditLogger.rateLimitHit(userId, "unauthenticated", resetInMinutes * 60)
+
+    return {
+      allowed: false,
+      remaining: 0,
+      message: `You've reached the message limit for guests (20 per hour). Sign up to continue chatting with Ally! Try again in ${resetInMinutes} minute(s).`,
+    }
+  }
+
+  return { allowed: true, remaining }
 }

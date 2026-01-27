@@ -11,19 +11,36 @@ const MESSAGE_WINDOW_MS = 60 * 1000
 const AUTH_LIMIT = 5
 const AUTH_WINDOW_MS = 60 * 1000
 
+const UNAUTH_LIMIT = 20
+const UNAUTH_WINDOW_MS = 60 * 60 * 1000
+
 const rateLimits = new Map<string, RateLimitEntry>()
 
-const getRateLimitKey = (userId: string, type: "message" | "auth"): string =>
+type RateLimitType = "message" | "auth" | "unauthenticated"
+
+const getRateLimitKey = (userId: string, type: RateLimitType): string =>
   `${type}:${userId}`
+
+const getLimitConfig = (
+  type: RateLimitType
+): { limit: number; window: number } => {
+  switch (type) {
+    case "auth":
+      return { limit: AUTH_LIMIT, window: AUTH_WINDOW_MS }
+    case "unauthenticated":
+      return { limit: UNAUTH_LIMIT, window: UNAUTH_WINDOW_MS }
+    default:
+      return { limit: MESSAGE_LIMIT, window: MESSAGE_WINDOW_MS }
+  }
+}
 
 export const checkRateLimit = (
   userId: string,
-  type: "message" | "auth" = "message"
+  type: RateLimitType = "message"
 ): { allowed: boolean; resetIn?: number } => {
   const key = getRateLimitKey(userId, type)
   const now = Date.now()
-  const limit = type === "auth" ? AUTH_LIMIT : MESSAGE_LIMIT
-  const window = type === "auth" ? AUTH_WINDOW_MS : MESSAGE_WINDOW_MS
+  const { limit, window } = getLimitConfig(type)
 
   let entry = rateLimits.get(key)
 
@@ -45,10 +62,27 @@ export const checkRateLimit = (
 
 export const resetRateLimit = (
   userId: string,
-  type: "message" | "auth" = "message"
+  type: RateLimitType = "message"
 ): void => {
   const key = getRateLimitKey(userId, type)
   rateLimits.delete(key)
+}
+
+export const checkUnauthenticatedRateLimit = (
+  userId: string
+): { allowed: boolean; remaining: number; message?: string } => {
+  const result = checkRateLimit(userId, "unauthenticated")
+
+  if (!result.allowed) {
+    const resetInMinutes = Math.ceil((result.resetIn || 60) / 60)
+    return {
+      allowed: false,
+      remaining: 0,
+      message: `You've reached the message limit for guests (20 per hour). Sign up to continue chatting with Ally! Try again in ${resetInMinutes} minute(s).`,
+    }
+  }
+
+  return { allowed: true, remaining: UNAUTH_LIMIT }
 }
 
 setInterval(

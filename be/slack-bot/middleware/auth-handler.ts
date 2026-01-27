@@ -1,7 +1,16 @@
 import type { WebClient } from "@slack/web-api"
 import validator from "validator"
+import { run } from "@openai/agents"
+import { SALES_AGENT } from "@/ai-agents/agents"
 import { SUPABASE } from "@/config"
 import { logger } from "@/lib/logger"
+import {
+  buildUnauthContextPrompt,
+  getUnauthMessagesForContext,
+  markUnauthUserConverted,
+  storeUnauthMessage,
+} from "@/shared/context"
+import { checkUnauthenticatedRateLimit } from "./rate-limiter"
 import {
   getSession,
   type SlackSessionData,
@@ -220,7 +229,7 @@ export const handleSlackAuth = async (
           success: false,
           session,
           needsAuth: true,
-          authMessage: `Verification code sent to ${newEmail}. Please enter the 6-digit code.`,
+          authMessage: `Verification code sent to ${newEmail}. Please enter the 6-digit code.\n\nCan't find it? Check your spam/junk folder.`,
         }
       }
 
@@ -281,7 +290,58 @@ export const handleSlackAuth = async (
         success: false,
         session,
         needsAuth: true,
-        authMessage: `Verification code sent to ${emailToVerify}. Please enter the 6-digit code.`,
+        authMessage: `Verification code sent to ${emailToVerify}. Please enter the 6-digit code.\n\nCan't find it? Check your spam/junk folder.`,
+      }
+    }
+
+    if (messageText && !validator.isEmail(extractEmailFromSlackFormat(messageText))) {
+      const unauthLimit = checkUnauthenticatedRateLimit(slackUserId)
+      if (!unauthLimit.allowed) {
+        return {
+          success: false,
+          session,
+          needsAuth: true,
+          authMessage: unauthLimit.message ?? "",
+        }
+      }
+
+      try {
+        const now = new Date().toISOString()
+
+        await storeUnauthMessage("slack", slackUserId, {
+          role: "user",
+          content: messageText,
+          timestamp: now,
+        })
+
+        const previousMessages = await getUnauthMessagesForContext("slack", slackUserId)
+        const contextPrompt = buildUnauthContextPrompt(
+          previousMessages.slice(0, -1)
+        )
+
+        const fullPrompt = contextPrompt
+          ? `${contextPrompt}\n\nUser: ${messageText}`
+          : messageText
+
+        const result = await run(SALES_AGENT, fullPrompt)
+        const response = result.finalOutput || ""
+
+        if (response) {
+          await storeUnauthMessage("slack", slackUserId, {
+            role: "assistant",
+            content: response,
+            timestamp: new Date().toISOString(),
+          })
+
+          return {
+            success: false,
+            session,
+            needsAuth: true,
+            authMessage: response,
+          }
+        }
+      } catch (salesError) {
+        logger.error(`Slack Bot: Sales agent error: ${salesError}`)
       }
     }
 
@@ -440,6 +500,8 @@ const linkSlackUserDirect = async (
         `Slack Bot: Inserted new slack_users record for ${slackUserId}`
       )
     }
+
+    await markUnauthUserConverted("slack", slackUserId)
 
     updateSession(slackUserId, teamId, {
       email,
