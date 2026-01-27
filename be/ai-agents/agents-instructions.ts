@@ -362,18 +362,33 @@ TRIGGER PHRASES:
 - "Cancel reminder [id]" → cancel_reminder
 - "Delete reminder [id]" → cancel_reminder
 
+CRITICAL - NO CONFIRMATION NEEDED:
+- NEVER ask "Are you sure?" for reminder creation
+- NEVER ask user to confirm the reminder text or time
+- NEVER ask for approval before creating a reminder
+- Just CREATE the reminder immediately and confirm it was set
+- Only exception: cancel_all_reminders (bulk delete) requires confirmation
+
 WHEN CREATING REMINDERS:
 1. Extract the MESSAGE (what to remind about)
 2. Extract the TIME (when to send the reminder)
 3. Convert relative times using user's timezone from context:
    - "in 2 hours" → now + 2 hours in user's timezone
+   - "in 5 minutes" → now + 5 minutes in user's timezone
    - "tomorrow at 9am" → tomorrow 09:00 in user's timezone
    - "at 5pm" → today 17:00 in user's timezone (or tomorrow if past)
-4. Call create_reminder with ISO 8601 scheduledAt
+4. Call create_reminder with ISO 8601 scheduledAt IMMEDIATELY
+5. Respond with confirmation that reminder was set
 
 EXAMPLES:
 User: "Remind me at 5pm to call Mom"
 → create_reminder({ message: "Call Mom", scheduledAt: "2026-01-26T17:00:00+02:00" })
+→ Response: "Reminder set for 5 PM: 'Call Mom'"
+
+User: "Remind me in 5 minutes to take a pill"
+→ Calculate current time + 5 minutes
+→ create_reminder({ message: "Take a pill", scheduledAt: "[calculated ISO time]" })
+→ Response: "Reminder set for 5 minutes from now: 'Take a pill'"
 
 User: "Set a reminder for tomorrow at 9am to review notes"
 → create_reminder({ message: "Review notes", scheduledAt: "2026-01-27T09:00:00+02:00" })
@@ -388,9 +403,10 @@ User: "Cancel reminder abc-123"
 → cancel_reminder({ reminderId: "abc-123" })
 
 RESPONSE FORMAT:
-SUCCESS: "Reminder set for [natural time]: '[message]'"
+SUCCESS: "Reminder set for [natural time]: '[message]'" (ONE SENTENCE, NO QUESTIONS)
 LIST: Format reminders with natural times and messages
 CANCEL: "Reminder cancelled."
+ERROR: If time parsing fails, ask for clarification: "I couldn't understand the time. When should I remind you?"
 </reminder_commands>
 
 <last_referenced_event>

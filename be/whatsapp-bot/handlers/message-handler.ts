@@ -796,6 +796,13 @@ export const handleIncomingMessage = async (
               return
             }
           }
+
+          await markAsRead(message.id)
+          await sendTextMessage(
+            phoneNumber,
+            "I don't have anything pending to confirm. What would you like to do?"
+          )
+          return
         }
       }
 

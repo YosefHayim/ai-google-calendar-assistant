@@ -28,6 +28,7 @@ import {
 
 const DEFAULT_REMINDER_LIMIT = 20
 const LOG_MESSAGE_PREVIEW_LENGTH = 50
+const MS_PER_MINUTE = 60_000
 
 function modalityToOrigin(modality?: Modality): OriginModality {
   switch (modality) {
@@ -80,15 +81,25 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
         logger.warn("create_reminder: Invalid scheduled time", {
           scheduledAt: params.scheduledAt,
         })
-        return { success: false, error: "Invalid scheduled time format" }
+        return {
+          success: false,
+          error: `Could not parse the time "${params.scheduledAt}". Please provide a valid time like "in 5 minutes", "at 3pm", or "tomorrow at 9am".`,
+        }
       }
 
-      if (scheduledAt <= new Date()) {
+      const now = new Date()
+      if (scheduledAt <= now) {
+        const timeDiff = now.getTime() - scheduledAt.getTime()
+        const minutesAgo = Math.round(timeDiff / MS_PER_MINUTE)
         logger.warn("create_reminder: Time in past", {
           scheduledAt: scheduledAt.toISOString(),
-          now: new Date().toISOString(),
+          now: now.toISOString(),
+          minutesAgo,
         })
-        return { success: false, error: "Scheduled time must be in the future" }
+        return {
+          success: false,
+          error: `That time has already passed (${minutesAgo} minute${minutesAgo !== 1 ? "s" : ""} ago). Please provide a future time.`,
+        }
       }
 
       const originModality = modalityToOrigin(modality)
@@ -104,7 +115,10 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
 
       if (!reminder) {
         logger.error("create_reminder: Database insert failed", { userId })
-        return { success: false, error: "Failed to create reminder" }
+        return {
+          success: false,
+          error: "Could not save the reminder. Please try again in a moment.",
+        }
       }
 
       logger.info("Reminder created successfully", {
@@ -127,10 +141,15 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
       }
     } catch (err) {
       logger.error("create_reminder: Unexpected error", { error: err })
-      return { success: false, error: stringifyError(err) }
+      return {
+        success: false,
+        error:
+          "Something went wrong while creating your reminder. Please try again.",
+      }
     }
   },
-  errorFunction: (_, error) => `create_reminder: ${stringifyError(error)}`,
+  errorFunction: () =>
+    "Something went wrong while creating your reminder. Please try again.",
 })
 
 export const list_reminders = tool<typeof listRemindersSchema, AgentContext>({
