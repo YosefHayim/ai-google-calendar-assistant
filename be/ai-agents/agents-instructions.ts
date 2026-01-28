@@ -87,6 +87,8 @@ For all-day events:
 </output_format>
 
 <parsing_rules>
+- "now", "from now", "מעכשיו", "עכשיו" → use the local_time from context as the start time (extract the exact time from <local_time> tag)
+- "from now until X" / "מעכשיו עד X" → start = current local_time from context, end = X
 - "1am-3am" → extract start and end times
 - Single time mentioned → assume 60 minute duration
 - Date + duration (no time) → start at 09:00 local time
