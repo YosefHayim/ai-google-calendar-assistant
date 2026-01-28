@@ -1,12 +1,16 @@
 import type { Job } from "bullmq"
 import { SUPABASE } from "@/config/clients"
+import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/domains/calendar/utils/init"
 import {
   formatDailyDigest,
   formatEventReminder,
   getTelegramUsersForNotifications,
   sendTelegramNotification,
 } from "@/domains/notifications/services/notification-service"
-import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/domains/calendar/utils/init"
+import {
+  type EventRemindersPreference,
+  getPreference,
+} from "@/domains/settings/services/user-preferences-service"
 import { redisClient } from "@/infrastructure/redis/redis"
 import { logger } from "@/lib/logger"
 import { userRepository } from "@/lib/repositories/UserRepository"
@@ -38,6 +42,88 @@ const END_OF_DAY_HOURS = 23
 const END_OF_DAY_MINUTES = 59
 const END_OF_DAY_SECONDS = 59
 const END_OF_DAY_MS = 999
+
+async function shouldSendEventReminders(userId: string): Promise<boolean> {
+  const pref = await getPreference<EventRemindersPreference>(
+    userId,
+    "event_reminders"
+  )
+  return pref?.enabled === true && pref.channels?.includes("telegram") === true
+}
+
+type TelegramUserWithEmail = {
+  user_id: string
+  telegram_chat_id: number
+  users: { email: string }
+}
+
+type ProcessUserResult = { sent: number; failed: number; error?: string }
+
+async function processUserEventReminders(
+  telegramUser: TelegramUserWithEmail,
+  reminderWindowStart: Date,
+  reminderWindowEnd: Date,
+  jobId: string | undefined
+): Promise<ProcessUserResult> {
+  const shouldSend = await shouldSendEventReminders(telegramUser.user_id)
+  if (!shouldSend) {
+    return { sent: 0, failed: 0 }
+  }
+
+  const { data: tokens } = await userRepository.findUserWithGoogleTokens(
+    telegramUser.users.email
+  )
+  if (!tokens) {
+    return { sent: 0, failed: 0 }
+  }
+
+  const calendar =
+    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokens)
+
+  const eventsResponse = await calendar.events.list({
+    calendarId: "primary",
+    timeMin: reminderWindowStart.toISOString(),
+    timeMax: reminderWindowEnd.toISOString(),
+    singleEvents: true,
+    orderBy: "startTime",
+  })
+
+  const upcomingEvents = eventsResponse.data.items || []
+  let sent = 0
+  let failed = 0
+
+  for (const event of upcomingEvents) {
+    if (!event.id) {
+      continue
+    }
+
+    const alreadySent = await hasReminderBeenSent(
+      event.id,
+      telegramUser.telegram_chat_id
+    )
+    if (alreadySent) {
+      logger.debug(
+        `[Job ${jobId}] Skipping already-sent reminder for event ${event.id}`
+      )
+      continue
+    }
+
+    const message = formatEventReminder(event)
+    const sendResult = await sendTelegramNotification(
+      telegramUser.telegram_chat_id,
+      message
+    )
+
+    if (sendResult.success) {
+      await markReminderAsSent(event.id, telegramUser.telegram_chat_id)
+      sent++
+    } else {
+      failed++
+    }
+  }
+
+  return { sent, failed }
+}
 
 export type EventReminderJobData = Record<string, never>
 
@@ -78,59 +164,14 @@ export async function handleEventReminderJob(
 
   for (const telegramUser of telegramUsers) {
     try {
-      const { data: tokens } = await userRepository.findUserWithGoogleTokens(
-        telegramUser.users.email
+      const userResult = await processUserEventReminders(
+        telegramUser,
+        reminderWindowStart,
+        reminderWindowEnd,
+        job.id
       )
-
-      if (!tokens) {
-        continue
-      }
-
-      const calendar =
-        await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokens)
-
-      const eventsResponse = await calendar.events.list({
-        calendarId: "primary",
-        timeMin: reminderWindowStart.toISOString(),
-        timeMax: reminderWindowEnd.toISOString(),
-        singleEvents: true,
-        orderBy: "startTime",
-      })
-
-      const upcomingEvents = eventsResponse.data.items || []
-
-      for (const event of upcomingEvents) {
-        if (!event.id) {
-          continue
-        }
-
-        const alreadySent = await hasReminderBeenSent(
-          event.id,
-          telegramUser.telegram_chat_id
-        )
-        if (alreadySent) {
-          logger.debug(
-            `[Job ${job.id}] Skipping already-sent reminder for event ${event.id}`
-          )
-          continue
-        }
-
-        const message = formatEventReminder(event)
-        const sendResult = await sendTelegramNotification(
-          telegramUser.telegram_chat_id,
-          message
-        )
-
-        if (sendResult.success) {
-          await markReminderAsSent(event.id, telegramUser.telegram_chat_id)
-          result.sent++
-        } else {
-          result.failed++
-          result.errors.push(
-            `Failed for ${telegramUser.users.email}: ${sendResult.error}`
-          )
-        }
-      }
+      result.sent += userResult.sent
+      result.failed += userResult.failed
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error"
