@@ -23,6 +23,7 @@ export type PreferenceKey =
   | "notification_settings"
   | "display_preferences"
   | "persona"
+  | "event_reminders"
 
 export type AllyBrainPreference = {
   enabled: boolean
@@ -104,6 +105,14 @@ export type PersonaPreference = {
   onboardingCompletedAt?: string
 }
 
+export type EventRemindersChannel = "telegram" | "email" | "push"
+
+export type EventRemindersPreference = {
+  enabled: boolean
+  minutesBefore: number
+  channels: EventRemindersChannel[]
+}
+
 export type PreferenceValue =
   | AllyBrainPreference
   | ContextualSchedulingPreference
@@ -115,6 +124,7 @@ export type PreferenceValue =
   | NotificationSettingsPreference
   | DisplayPreference
   | PersonaPreference
+  | EventRemindersPreference
 
 export type PreferenceResult<T> = {
   value: T
@@ -158,6 +168,11 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
     notificationFrequency: "daily_digest",
     onboardingCompleted: false,
   },
+  event_reminders: {
+    enabled: false,
+    minutesBefore: 15,
+    channels: ["telegram"],
+  },
 }
 
 export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
@@ -171,6 +186,7 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "notification_settings",
   "display_preferences",
   "persona",
+  "event_reminders",
 ]
 
 // ============================================
