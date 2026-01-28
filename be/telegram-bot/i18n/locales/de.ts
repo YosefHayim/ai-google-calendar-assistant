@@ -381,6 +381,8 @@ export const de = {
     "Fehler beim Speichern der E-Mail. Bitte versuchen Sie es erneut.",
   "auth.enterOtpOrNewEmail":
     "Bitte geben Sie den 6-stelligen Code ein, oder tippen Sie eine andere E-Mail-Adresse:",
+  "auth.enterEmailFirst":
+    "Es sieht so aus, als hätten Sie einen Bestätigungscode eingegeben, aber ich habe Ihre E-Mail noch nicht.\n\nBitte geben Sie zuerst Ihre E-Mail-Adresse ein, und ich sende Ihnen einen neuen Code.",
   "auth.otpSentToNewEmail":
     "📧 Bestätigungscode an <b>{{email}}</b> gesendet.\n\nBitte geben Sie den 6-stelligen Code ein (gültig für 10 Minuten).\n\n<i>Nicht gefunden? Prüfen Sie Ihren Spam-/Junk-Ordner.</i>",
   "auth.otpSendFailed":

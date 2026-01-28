@@ -326,6 +326,8 @@ export const he = {
   "auth.dbSaveError": "שגיאה בשמירת האימייל. אנא נסה שוב.",
   "auth.enterOtpOrNewEmail":
     "אנא הזן את קוד האימות בן 6 הספרות, או הקלד כתובת אימייל אחרת:",
+  "auth.enterEmailFirst":
+    "נראה שהזנת קוד אימות, אבל עדיין אין לי את האימייל שלך.\n\nאנא הזן קודם את כתובת האימייל שלך, ואשלח לך קוד חדש.",
   "auth.otpSentToNewEmail":
     "📧 קוד אימות נשלח ל-<b>{{email}}</b>.\n\nאנא הזן את הקוד בן 6 הספרות (תקף ל-10 דקות).\n\n<i>לא מוצא? בדוק בתיקיית הספאם/דואר זבל.</i>",
   "auth.otpSendFailed":

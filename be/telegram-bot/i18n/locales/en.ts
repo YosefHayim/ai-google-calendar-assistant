@@ -345,6 +345,8 @@ export const en = {
   "auth.dbSaveError": "Error saving email. Please try again.",
   "auth.enterOtpOrNewEmail":
     "Please enter the 6-digit verification code, or type a different email address:",
+  "auth.enterEmailFirst":
+    "It looks like you entered a verification code, but I don't have your email yet.\n\nPlease enter your email address first, and I'll send you a new code.",
   "auth.otpSentToNewEmail":
     "📧 Verification code sent to <b>{{email}}</b>.\n\nPlease enter the 6-digit code (valid for 10 minutes).\n\n<i>Can't find it? Check your spam/junk folder.</i>",
   "auth.otpSendFailed":

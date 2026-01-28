@@ -121,10 +121,10 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   try {
     const { data: telegramUser, error } = await SUPABASE.from("telegram_users")
       .select("user_id, first_name")
-      .eq("telegram_user_id", from.id)
-      .single()
+      .or(`telegram_user_id.eq.${from.id},telegram_chat_id.eq.${from.id}`)
+      .maybeSingle()
 
-    if (error && error.code !== "PGRST116") {
+    if (error) {
       logger.error(`Telegram Bot: Auth: DB Error: ${error.message}`)
     }
 
@@ -333,6 +333,11 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     }
 
     if (text) {
+      if (isOtpCode(text)) {
+        await ctx.reply(t("auth.enterEmailFirst"), { parse_mode: "HTML" })
+        return
+      }
+
       const unauthLimit = await checkUnauthenticatedRateLimit(from.id)
       if (!unauthLimit.allowed) {
         await ctx.reply(unauthLimit.message ?? "", { parse_mode: "HTML" })

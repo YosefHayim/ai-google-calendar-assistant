@@ -7,6 +7,7 @@ import {
   sendTelegramNotification,
 } from "@/domains/notifications/services/notification-service"
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/domains/calendar/utils/init"
+import { redisClient } from "@/infrastructure/redis/redis"
 import { logger } from "@/lib/logger"
 import { userRepository } from "@/lib/repositories/UserRepository"
 
@@ -14,6 +15,24 @@ const REMINDER_MINUTES_BEFORE = 15
 const SECONDS_PER_MINUTE = 60
 const MS_PER_SECOND = 1000
 const MINUTES_TO_MS = SECONDS_PER_MINUTE * MS_PER_SECOND
+const SENT_REMINDER_TTL_SECONDS = 3600
+
+async function hasReminderBeenSent(
+  eventId: string,
+  chatId: number
+): Promise<boolean> {
+  const key = `event-reminder:${chatId}:${eventId}`
+  const exists = await redisClient.exists(key)
+  return exists === 1
+}
+
+async function markReminderAsSent(
+  eventId: string,
+  chatId: number
+): Promise<void> {
+  const key = `event-reminder:${chatId}:${eventId}`
+  await redisClient.setex(key, SENT_REMINDER_TTL_SECONDS, "1")
+}
 
 const END_OF_DAY_HOURS = 23
 const END_OF_DAY_MINUTES = 59
@@ -81,6 +100,21 @@ export async function handleEventReminderJob(
       const upcomingEvents = eventsResponse.data.items || []
 
       for (const event of upcomingEvents) {
+        if (!event.id) {
+          continue
+        }
+
+        const alreadySent = await hasReminderBeenSent(
+          event.id,
+          telegramUser.telegram_chat_id
+        )
+        if (alreadySent) {
+          logger.debug(
+            `[Job ${job.id}] Skipping already-sent reminder for event ${event.id}`
+          )
+          continue
+        }
+
         const message = formatEventReminder(event)
         const sendResult = await sendTelegramNotification(
           telegramUser.telegram_chat_id,
@@ -88,6 +122,7 @@ export async function handleEventReminderJob(
         )
 
         if (sendResult.success) {
+          await markReminderAsSent(event.id, telegramUser.telegram_chat_id)
           result.sent++
         } else {
           result.failed++

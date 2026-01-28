@@ -295,6 +295,16 @@ export const handleSlackAuth = async (
     }
 
     if (messageText && !validator.isEmail(extractEmailFromSlackFormat(messageText))) {
+      if (isOtpCode(messageText)) {
+        return {
+          success: false,
+          session,
+          needsAuth: true,
+          authMessage:
+            "It looks like you entered a verification code, but I don't have your email yet.\n\nPlease enter your email address first, and I'll send you a new code.",
+        }
+      }
+
       const unauthLimit = checkUnauthenticatedRateLimit(slackUserId)
       if (!unauthLimit.allowed) {
         return {

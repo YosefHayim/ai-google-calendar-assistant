@@ -386,6 +386,8 @@ export const fr = {
     "Erreur lors de l'enregistrement de l'e-mail. Veuillez réessayer.",
   "auth.enterOtpOrNewEmail":
     "Veuillez entrer le code à 6 chiffres, ou tapez une autre adresse e-mail :",
+  "auth.enterEmailFirst":
+    "Il semble que vous ayez entré un code de vérification, mais je n'ai pas encore votre e-mail.\n\nVeuillez d'abord entrer votre adresse e-mail, et je vous enverrai un nouveau code.",
   "auth.otpSentToNewEmail":
     "📧 Code de vérification envoyé à <b>{{email}}</b>.\n\nVeuillez entrer le code à 6 chiffres (valide 10 minutes).\n\n<i>Vous ne le trouvez pas ? Vérifiez votre dossier spam/indésirables.</i>",
   "auth.otpSendFailed":
