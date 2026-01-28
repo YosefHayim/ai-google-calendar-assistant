@@ -13,6 +13,7 @@ import {
   type OriginModality,
 } from "@/domains/reminders/services/reminder-service"
 import { logger } from "@/lib/logger"
+import { getTimezoneHandler } from "@/shared/tools/handlers"
 import {
   type AgentContext,
   type Modality,
@@ -29,6 +30,29 @@ import {
 const DEFAULT_REMINDER_LIMIT = 20
 const LOG_MESSAGE_PREVIEW_LENGTH = 50
 const MS_PER_MINUTE = 60_000
+const DEFAULT_TIMEZONE = "UTC"
+
+async function getUserTimezone(email: string): Promise<string> {
+  try {
+    const result = await getTimezoneHandler({ email })
+    return result.timezone
+  } catch {
+    return DEFAULT_TIMEZONE
+  }
+}
+
+function formatDateInTimezone(date: Date | string, timezone: string): string {
+  const d = typeof date === "string" ? new Date(date) : date
+  return d.toLocaleString("en-US", {
+    timeZone: timezone,
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
+}
 
 function modalityToOrigin(modality?: Modality): OriginModality {
   switch (modality) {
@@ -103,6 +127,7 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
       }
 
       const originModality = modalityToOrigin(modality)
+      const userTimezone = await getUserTimezone(email)
 
       const reminder = await createReminder({
         userId,
@@ -128,6 +153,7 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
         originModality,
       })
 
+      const formattedTime = formatDateInTimezone(scheduledAt, userTimezone)
       return {
         success: true,
         reminder: {
@@ -137,7 +163,7 @@ export const create_reminder = tool<typeof createReminderSchema, AgentContext>({
           deliveryChannel: reminder.delivery_channel,
           status: reminder.status,
         },
-        confirmationMessage: `Reminder set for ${scheduledAt.toLocaleString()}: "${params.message}"`,
+        confirmationMessage: `Reminder set for ${formattedTime}: "${params.message}"`,
       }
     } catch (err) {
       logger.error("create_reminder: Unexpected error", { error: err })
@@ -156,7 +182,9 @@ export const list_reminders = tool<typeof listRemindersSchema, AgentContext>({
   name: "list_reminders",
   description:
     "List the user's scheduled reminders. Can filter by status (pending, sent, failed, cancelled). " +
-    "Use when user asks 'show my reminders', 'what reminders do I have', or 'list pending reminders'.",
+    "Returns isOverdue=true and overdueMinutes for pending reminders whose scheduled time has passed. " +
+    "Use when user asks 'show my reminders', 'what reminders do I have', or 'list pending reminders'. " +
+    "When listing, check isOverdue flag and inform user about overdue reminders.",
   parameters: listRemindersSchema,
   execute: async (params, runContext) => {
     try {
@@ -179,17 +207,37 @@ export const list_reminders = tool<typeof listRemindersSchema, AgentContext>({
         limit: params.limit ?? DEFAULT_REMINDER_LIMIT,
       })
 
+      const userTimezone = await getUserTimezone(email)
+      const now = new Date()
+
       return {
         success: true,
-        reminders: reminders.map((r) => ({
-          id: r.id,
-          message: r.message,
-          scheduledAt: r.scheduled_at,
-          deliveryChannel: r.delivery_channel,
-          status: r.status,
-          sentAt: r.sent_at,
-        })),
+        reminders: reminders.map((r) => {
+          const scheduledDate = new Date(r.scheduled_at)
+          const isOverdue = r.status === "pending" && scheduledDate < now
+          const overdueMinutes = isOverdue
+            ? Math.round(
+                (now.getTime() - scheduledDate.getTime()) / MS_PER_MINUTE
+              )
+            : 0
+
+          return {
+            id: r.id,
+            message: r.message,
+            scheduledAt: r.scheduled_at,
+            scheduledAtFormatted: formatDateInTimezone(
+              r.scheduled_at,
+              userTimezone
+            ),
+            deliveryChannel: r.delivery_channel,
+            status: r.status,
+            sentAt: r.sent_at,
+            isOverdue,
+            overdueMinutes,
+          }
+        }),
         count: reminders.length,
+        userTimezone,
       }
     } catch (err) {
       return { success: false, error: stringifyError(err), reminders: [] }
@@ -343,10 +391,11 @@ export const cancel_all_reminders = tool<
 
       if (!params.confirm) {
         const reminderModality = modalityToReminderModality(modality)
+        const userTimezone = await getUserTimezone(email)
         const reminderList = pendingReminders
           .map(
             (r) =>
-              `• "${r.message}" - ${new Date(r.scheduled_at).toLocaleString()}`
+              `• "${r.message}" - ${formatDateInTimezone(r.scheduled_at, userTimezone)}`
           )
           .join("\n")
 

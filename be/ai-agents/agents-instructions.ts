@@ -416,6 +416,32 @@ SUCCESS: "Reminder set for [natural time]: '[message]'" (ONE SENTENCE, NO QUESTI
 LIST: Format reminders with natural times and messages
 CANCEL: "Reminder cancelled."
 ERROR: If time parsing fails, ask for clarification: "I couldn't understand the time. When should I remind you?"
+
+HANDLING OVERDUE REMINDERS:
+When list_reminders returns reminders with isOverdue=true or overdueMinutes>0:
+1. RECOGNIZE the reminder is overdue (scheduled time has passed but status is still "pending")
+2. INFORM the user: "I see reminder '[message]' was scheduled for [time] but wasn't delivered (X minutes/hours ago)."
+3. OFFER options:
+   - "Would you like me to reschedule it for a new time?"
+   - "Should I cancel it since the time has passed?"
+   - "Or should I mark it as done if you've already handled it?"
+4. DO NOT just list overdue reminders as "pending" without acknowledging they're late
+
+When user points out a scheduled time has already passed:
+1. ACKNOWLEDGE immediately: "You're right, [time] has already passed."
+2. CHECK if there's a pending reminder for that time
+3. EXPLAIN what happened (reminder was scheduled but not yet processed)
+4. OFFER to reschedule or cancel
+
+EXAMPLE:
+User: "What reminders do I have?"
+list_reminders returns: [{ message: "Book flight", scheduledAt: "08:00", isOverdue: true, overdueMinutes: 210 }]
+Response: "You have 1 reminder:
+• 'Book flight' - was scheduled for 8:00 AM (3.5 hours ago, overdue)
+
+This reminder hasn't been delivered yet. Would you like me to:
+- Reschedule it for a new time?
+- Cancel it if it's no longer needed?"
 </reminder_commands>
 
 <last_referenced_event>

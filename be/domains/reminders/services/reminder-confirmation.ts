@@ -13,10 +13,11 @@
  */
 
 import { redisClient } from "@/infrastructure/redis/redis"
+import { SUPABASE } from "@/infrastructure/supabase/supabase"
 import { logger } from "@/lib/logger"
 import {
-  cancelReminder,
   type CreateReminderInput,
+  cancelReminder,
   createReminder,
   getUserReminders,
   type ScheduledReminder,
@@ -25,6 +26,32 @@ import {
 const LOG_PREFIX = "[ReminderConfirmation]"
 const PENDING_KEY_PREFIX = "reminder:pending"
 const MS_PER_SECOND = 1000
+const DEFAULT_TIMEZONE = "UTC"
+
+async function getUserTimezoneById(userId: string): Promise<string> {
+  try {
+    const { data } = await SUPABASE.from("users")
+      .select("timezone")
+      .eq("id", userId)
+      .single()
+    return data?.timezone || DEFAULT_TIMEZONE
+  } catch {
+    return DEFAULT_TIMEZONE
+  }
+}
+
+function formatDateInTimezone(date: Date | string, timezone: string): string {
+  const d = typeof date === "string" ? new Date(date) : date
+  return d.toLocaleString("en-US", {
+    timeZone: timezone,
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
+}
 
 /**
  * TTL for pending confirmations (5 minutes)
@@ -243,9 +270,15 @@ const executeCreateReminder = async (
     }
   }
 
+  const userTimezone = await getUserTimezoneById(pending.userId)
+  const formattedTime = formatDateInTimezone(
+    reminder.scheduled_at,
+    userTimezone
+  )
+
   return {
     success: true,
-    message: `Reminder set for ${new Date(reminder.scheduled_at).toLocaleString()}: "${reminder.message}"`,
+    message: `Reminder set for ${formattedTime}: "${reminder.message}"`,
     reminder,
     affectedCount: 1,
   }
@@ -272,7 +305,8 @@ const executeCancelReminder = async (
   if (!success) {
     return {
       success: false,
-      message: "Failed to cancel reminder. It may have already been sent or cancelled.",
+      message:
+        "Failed to cancel reminder. It may have already been sent or cancelled.",
     }
   }
 
@@ -289,7 +323,9 @@ const executeCancelReminder = async (
 const executeCancelAllReminders = async (
   pending: PendingReminderConfirmation
 ): Promise<ReminderConfirmationResult> => {
-  const reminders = await getUserReminders(pending.userId, { status: "pending" })
+  const reminders = await getUserReminders(pending.userId, {
+    status: "pending",
+  })
 
   if (reminders.length === 0) {
     return {

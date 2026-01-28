@@ -7,7 +7,9 @@ export const createReminderSchema = z.object({
   scheduledAt: z.coerce
     .string()
     .describe(
-      "ISO 8601 datetime string for when to send the reminder (e.g., '2025-01-26T17:00:00Z')"
+      "ISO 8601 datetime string with timezone offset for when to send the reminder. " +
+        "MUST include the user's timezone offset from context (e.g., '2025-01-26T17:00:00+02:00' for Asia/Jerusalem). " +
+        "NEVER use 'Z' (UTC) - always use the user's actual timezone offset."
     ),
   deliveryChannel: z
     .enum(["origin", "telegram", "whatsapp", "slack", "email", "push"])
