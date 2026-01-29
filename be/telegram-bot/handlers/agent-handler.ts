@@ -19,9 +19,52 @@ import { getAllyBrainForTelegram } from "../utils/ally-brain"
 import type { GlobalContext } from "./bot-config"
 
 const CONFLICT_PARTS_MIN_LENGTH = 3
+const SEMANTIC_CONTEXT_THRESHOLD = 0.75
+const SEMANTIC_CONTEXT_LIMIT = 3
 
 export type AgentRequestOptions = {
   images?: ImageContent[]
+}
+
+const buildFullContext = async (
+  chatId: number,
+  telegramUserId: number,
+  message: string
+): Promise<string> => {
+  const conversationContext = await telegramConversation.addMessageToContext(
+    chatId,
+    telegramUserId,
+    { role: "user", content: message },
+    summarizeMessages
+  )
+
+  storeEmbeddingAsync(chatId, telegramUserId, message, "user")
+
+  const contextPrompt =
+    telegramConversation.buildContextPrompt(conversationContext)
+
+  const semanticContext = await getRelevantContext(telegramUserId, message, {
+    threshold: SEMANTIC_CONTEXT_THRESHOLD,
+    limit: SEMANTIC_CONTEXT_LIMIT,
+  })
+
+  return [contextPrompt, semanticContext].filter(Boolean).join("\n\n")
+}
+
+const storeAgentResponse = async (
+  chatId: number,
+  telegramUserId: number,
+  finalOutput: string
+): Promise<void> => {
+  if (finalOutput) {
+    await telegramConversation.addMessageToContext(
+      chatId,
+      telegramUserId,
+      { role: "assistant", content: finalOutput },
+      summarizeMessages
+    )
+    storeEmbeddingAsync(chatId, telegramUserId, finalOutput, "assistant")
+  }
 }
 
 /**
@@ -58,27 +101,7 @@ export const handleAgentRequest = async (
   }
 
   try {
-    const conversationContext = await telegramConversation.addMessageToContext(
-      chatId,
-      telegramUserId,
-      { role: "user", content: message },
-      summarizeMessages
-    )
-
-    storeEmbeddingAsync(chatId, telegramUserId, message, "user")
-
-    const contextPrompt =
-      telegramConversation.buildContextPrompt(conversationContext)
-
-    const semanticContext = await getRelevantContext(telegramUserId, message, {
-      threshold: 0.75,
-      limit: 3,
-    })
-
-    const fullContext = [contextPrompt, semanticContext]
-      .filter(Boolean)
-      .join("\n\n")
-
+    const fullContext = await buildFullContext(chatId, telegramUserId, message)
     const allyBrain = await getAllyBrainForTelegram(telegramUserId)
 
     const prompt = await buildAgentPromptWithContext(
@@ -130,15 +153,7 @@ export const handleAgentRequest = async (
     })
     const finalOutput = result.finalOutput || ""
 
-    if (finalOutput) {
-      await telegramConversation.addMessageToContext(
-        chatId,
-        telegramUserId,
-        { role: "assistant", content: finalOutput },
-        summarizeMessages
-      )
-      storeEmbeddingAsync(chatId, telegramUserId, finalOutput, "assistant")
-    }
+    await storeAgentResponse(chatId, telegramUserId, finalOutput)
 
     if (finalOutput?.startsWith("CONFLICT_DETECTED::")) {
       await handleConflictResponse(ctx, finalOutput)

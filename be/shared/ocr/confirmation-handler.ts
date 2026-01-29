@@ -154,6 +154,70 @@ const convertAttendeesToFormat = (
   }))
 }
 
+const buildEventPayload = (event: ExtractedEvent, userTimezone: string) => ({
+  calendarId: null,
+  summary: event.title,
+  description: event.description ?? null,
+  location: event.location ?? null,
+  start: {
+    date: event.isAllDay ? event.startTime.split("T")[0] : null,
+    dateTime: event.isAllDay ? null : event.startTime,
+    timeZone: event.isAllDay ? null : userTimezone,
+  },
+  end: {
+    date: event.isAllDay
+      ? (event.endTime ?? event.startTime).split("T")[0]
+      : null,
+    dateTime: event.isAllDay ? null : (event.endTime ?? event.startTime),
+    timeZone: event.isAllDay ? null : userTimezone,
+  },
+  attendees: convertAttendeesToFormat(event.attendees),
+  addMeetLink: false,
+})
+
+const isSuccessfulInsert = (
+  result: unknown
+): result is { success: true; event: { id?: string } } =>
+  result !== null &&
+  typeof result === "object" &&
+  "success" in result &&
+  (result as { success: boolean }).success === true &&
+  "event" in result &&
+  (result as { event: unknown }).event !== null
+
+const extractEventId = (createdEvent: { id?: string }): string | undefined =>
+  typeof createdEvent === "object" &&
+  createdEvent !== null &&
+  "id" in createdEvent
+    ? createdEvent.id
+    : undefined
+
+const handleInsertSuccess = (
+  event: ExtractedEvent,
+  insertResult: { event: { id?: string } },
+  results: ConfirmationExecution
+): void => {
+  results.createdCount++
+  results.createdEvents.push({
+    id: event.id,
+    title: event.title,
+    googleEventId: extractEventId(insertResult.event),
+  })
+}
+
+const handleInsertFailure = (
+  event: ExtractedEvent,
+  results: ConfirmationExecution,
+  errorMsg?: string
+): void => {
+  results.failedCount++
+  results.errors.push(
+    errorMsg
+      ? `Error creating "${event.title}": ${errorMsg}`
+      : `Failed to create "${event.title}"`
+  )
+}
+
 const createSingleEvent = async (
   event: ExtractedEvent,
   email: string,
@@ -161,63 +225,17 @@ const createSingleEvent = async (
   userTimezone: string
 ): Promise<void> => {
   try {
-    const insertResult = await insertEventHandler(
-      {
-        calendarId: null,
-        summary: event.title,
-        description: event.description ?? null,
-        location: event.location ?? null,
-        start: {
-          date: event.isAllDay ? event.startTime.split("T")[0] : null,
-          dateTime: event.isAllDay ? null : event.startTime,
-          timeZone: event.isAllDay ? null : userTimezone,
-        },
-        end: {
-          date: event.isAllDay
-            ? (event.endTime ?? event.startTime).split("T")[0]
-            : null,
-          dateTime: event.isAllDay ? null : (event.endTime ?? event.startTime),
-          timeZone: event.isAllDay ? null : userTimezone,
-        },
-        attendees: convertAttendeesToFormat(event.attendees),
-        addMeetLink: false,
-      },
-      { email }
-    )
+    const payload = buildEventPayload(event, userTimezone)
+    const insertResult = await insertEventHandler(payload, { email })
 
-    const insertSuccess =
-      insertResult !== null &&
-      typeof insertResult === "object" &&
-      "success" in insertResult &&
-      insertResult.success
-    const hasEvent =
-      insertResult !== null &&
-      typeof insertResult === "object" &&
-      "event" in insertResult &&
-      insertResult.event !== null
-
-    if (insertSuccess && hasEvent) {
-      results.createdCount++
-      const createdEvent = (insertResult as { event: { id?: string } }).event
-      const eventId =
-        typeof createdEvent === "object" &&
-        createdEvent !== null &&
-        "id" in createdEvent
-          ? (createdEvent.id as string)
-          : undefined
-      results.createdEvents.push({
-        id: event.id,
-        title: event.title,
-        googleEventId: eventId,
-      })
+    if (isSuccessfulInsert(insertResult)) {
+      handleInsertSuccess(event, insertResult, results)
     } else {
-      results.failedCount++
-      results.errors.push(`Failed to create "${event.title}"`)
+      handleInsertFailure(event, results)
     }
   } catch (error) {
-    results.failedCount++
     const errorMsg = error instanceof Error ? error.message : "Unknown error"
-    results.errors.push(`Error creating "${event.title}": ${errorMsg}`)
+    handleInsertFailure(event, results, errorMsg)
   }
 }
 
