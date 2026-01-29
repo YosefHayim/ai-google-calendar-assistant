@@ -1,3 +1,6 @@
+import { redisClient } from "@/infrastructure/redis/redis"
+import { logger } from "@/lib/logger"
+import { insertEventHandler } from "@/shared/tools/handlers"
 import type {
   ConfirmationAction,
   ExtractedEvent,
@@ -5,11 +8,7 @@ import type {
   Modality,
   PendingOCREvents,
 } from "./types"
-
 import { PENDING_EVENTS_TTL_SECONDS } from "./types"
-import { insertEventHandler } from "@/shared/tools/handlers"
-import { logger } from "@/lib/logger"
-import { redisClient } from "@/infrastructure/redis/redis"
 
 const LOG_PREFIX = "[OCRConfirmation]"
 const PENDING_KEY_PREFIX = "ocr:pending"
@@ -43,7 +42,11 @@ export const storePendingEvents = async (
     createdAt: now,
   }
 
-  await redisClient.setex(key, PENDING_EVENTS_TTL_SECONDS, JSON.stringify(pending))
+  await redisClient.setex(
+    key,
+    PENDING_EVENTS_TTL_SECONDS,
+    JSON.stringify(pending)
+  )
 
   logger.info(
     `${LOG_PREFIX} Stored ${result.events.length} pending events for user ${userId}`
@@ -154,7 +157,8 @@ const convertAttendeesToFormat = (
 const createSingleEvent = async (
   event: ExtractedEvent,
   email: string,
-  results: ConfirmationExecution
+  results: ConfirmationExecution,
+  userTimezone: string
 ): Promise<void> => {
   try {
     const insertResult = await insertEventHandler(
@@ -166,14 +170,14 @@ const createSingleEvent = async (
         start: {
           date: event.isAllDay ? event.startTime.split("T")[0] : null,
           dateTime: event.isAllDay ? null : event.startTime,
-          timeZone: null,
+          timeZone: event.isAllDay ? null : userTimezone,
         },
         end: {
           date: event.isAllDay
             ? (event.endTime ?? event.startTime).split("T")[0]
             : null,
           dateTime: event.isAllDay ? null : (event.endTime ?? event.startTime),
-          timeZone: null,
+          timeZone: event.isAllDay ? null : userTimezone,
         },
         attendees: convertAttendeesToFormat(event.attendees),
         addMeetLink: false,
@@ -196,7 +200,9 @@ const createSingleEvent = async (
       results.createdCount++
       const createdEvent = (insertResult as { event: { id?: string } }).event
       const eventId =
-        typeof createdEvent === "object" && createdEvent !== null && "id" in createdEvent
+        typeof createdEvent === "object" &&
+        createdEvent !== null &&
+        "id" in createdEvent
           ? (createdEvent.id as string)
           : undefined
       results.createdEvents.push({
@@ -210,8 +216,7 @@ const createSingleEvent = async (
     }
   } catch (error) {
     results.failedCount++
-    const errorMsg =
-      error instanceof Error ? error.message : "Unknown error"
+    const errorMsg = error instanceof Error ? error.message : "Unknown error"
     results.errors.push(`Error creating "${event.title}": ${errorMsg}`)
   }
 }
@@ -248,7 +253,7 @@ export const executeConfirmation = async (
   const email = userEmail || pending.userId
 
   for (const event of eventsToCreate) {
-    await createSingleEvent(event, email, results)
+    await createSingleEvent(event, email, results, pending.userTimezone)
   }
 
   await clearPendingEvents(userId, modality)
@@ -281,8 +286,7 @@ export const formatEventsForConfirmation = (
       : formatTimeRange(event.startTime, event.endTime)
     const location = event.location ? `\n   📍 ${event.location}` : ""
     const recurrence = event.recurrence ? "\n   🔄 Recurring" : ""
-    const confidence =
-      event.confidence === "low" ? "\n   ⚠️ Low confidence" : ""
+    const confidence = event.confidence === "low" ? "\n   ⚠️ Low confidence" : ""
 
     if (modality === "telegram") {
       return `${num}. <b>${escapeHtml(event.title)}</b>\n   🕐 ${time}${location}${recurrence}${confidence}`
@@ -322,7 +326,4 @@ const formatTimeRange = (start: string, end?: string): string => {
 }
 
 const escapeHtml = (text: string): string =>
-  text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
+  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")

@@ -81,7 +81,7 @@ export const handleAgentRequest = async (
 
     const allyBrain = await getAllyBrainForTelegram(telegramUserId)
 
-    const prompt = buildAgentPromptWithContext(
+    const prompt = await buildAgentPromptWithContext(
       ctx.session.email,
       message,
       fullContext,

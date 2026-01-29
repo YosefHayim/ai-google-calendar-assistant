@@ -1,4 +1,5 @@
 import { logger } from "@/lib/logger"
+import { getTimezoneHandler } from "@/shared/tools/handlers"
 import type { AllyBrainPreference } from "./ally-brain"
 
 const MAX_PROMPT_LENGTH = 3500
@@ -38,12 +39,12 @@ type BuildPromptOptions = {
   personalityNotes?: string
 }
 
-export const buildAgentPromptWithContext = (
+export const buildAgentPromptWithContext = async (
   email: string | undefined,
   message: string,
   conversationContext?: string,
   options?: BuildPromptOptions
-): string => {
+): Promise<string> => {
   const timestamp = new Date().toISOString()
   const parts: string[] = []
 
@@ -57,9 +58,24 @@ ${options.allyBrain.instructions}
 </user_instructions>`)
   }
 
+  let userTimezone = "UTC"
+  if (email) {
+    try {
+      const tzResult = await getTimezoneHandler({ email })
+      userTimezone = tzResult.timezone
+    } catch {
+      /* intentionally ignored */
+    }
+  }
+
+  const now = new Date()
+  const localTimeStr = now.toLocaleString("en-US", { timeZone: userTimezone })
+
   parts.push(`<context>
 <timestamp>${timestamp}</timestamp>
-<user>${email}</user>
+<local_time>${localTimeStr} (${userTimezone})</local_time>
+<user>${email || "Not linked - calendar operations require account linking"}</user>
+<timezone>${userTimezone}</timezone>
 </context>`)
 
   if (options?.languageCode) {

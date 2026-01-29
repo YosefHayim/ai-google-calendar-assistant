@@ -29,7 +29,8 @@ import {
   type SupportedMimeType,
   storePendingEvents,
 } from "@/shared/ocr"
-
+import { getTimezoneHandler } from "@/shared/tools/handlers"
+import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import { updateLastActivity } from "../services/conversation-window"
 import {
   downloadMedia,
@@ -73,7 +74,6 @@ import {
   formatErrorForWhatsApp,
   htmlToWhatsApp,
 } from "../utils/format-response"
-import { getTranslatorFromLanguageCode } from "../i18n/translator"
 import { detectLanguageFromText } from "../utils/language-detection"
 import {
   buildAgentPromptWithContext,
@@ -127,7 +127,10 @@ const handleUnauthenticatedSalesChat = async (
       timestamp: now,
     })
 
-    const previousMessages = await getUnauthMessagesForContext("whatsapp", phoneNumber)
+    const previousMessages = await getUnauthMessagesForContext(
+      "whatsapp",
+      phoneNumber
+    )
     const contextPrompt = buildUnauthContextPrompt(
       previousMessages.slice(0, -1)
     )
@@ -163,9 +166,7 @@ const handleUnauthenticatedSalesChat = async (
       await sendTextMessage(phoneNumber, fallbackResponse)
     }
   } catch (error) {
-    logger.error(
-      `WhatsApp: Error processing unauthenticated message: ${error}`
-    )
+    logger.error(`WhatsApp: Error processing unauthenticated message: ${error}`)
     await sendTextMessage(
       phoneNumber,
       "I'm having trouble processing your message right now. " +
@@ -517,7 +518,7 @@ const MODALITY = "whatsapp" as const
 
 export const handleDocumentMessage = async (
   processed: ProcessedMessage,
-  _userEmail?: string
+  userEmail?: string
 ): Promise<void> => {
   const { from, messageId, mediaId, mediaMimeType, contactName } = processed
 
@@ -538,6 +539,17 @@ export const handleDocumentMessage = async (
 
   logger.info(`WhatsApp: Processing document from ${from}: ${mimeType}`)
   await markAsRead(messageId)
+
+  // Fetch user timezone for event creation
+  let userTimezone = "UTC"
+  if (userEmail) {
+    try {
+      const tzResult = await getTimezoneHandler({ email: userEmail })
+      userTimezone = tzResult.timezone
+    } catch {
+      /* intentionally ignored */
+    }
+  }
 
   try {
     const downloadResult = await downloadMedia(mediaId)
@@ -583,7 +595,7 @@ export const handleDocumentMessage = async (
         userId: userId || from,
         modality: MODALITY,
         result,
-        userTimezone: "UTC",
+        userTimezone,
         fileNames: ["document"],
       })
 
@@ -609,7 +621,7 @@ export const handleDocumentMessage = async (
     const files: FileContent[] = [processResult.content]
     const extractionResult = await extractEventsFromFiles({
       files,
-      userTimezone: "UTC",
+      userTimezone,
       additionalContext: `Document from WhatsApp user ${contactName || from}`,
     })
 
@@ -639,7 +651,7 @@ export const handleDocumentMessage = async (
       userId: userId || from,
       modality: MODALITY,
       result: extractedResult,
-      userTimezone: "UTC",
+      userTimezone,
       fileNames: ["document"],
     })
 
@@ -731,10 +743,7 @@ const hasPendingReminderConfirmation = async (
   from: string
 ): Promise<boolean> => {
   const userId = await getUserIdFromWhatsApp(from)
-  const pending = await getPendingReminderConfirmation(
-    userId || from,
-    MODALITY
-  )
+  const pending = await getPendingReminderConfirmation(userId || from, MODALITY)
   return pending !== null
 }
 
@@ -743,10 +752,7 @@ const handleReminderConfirmation = async (
   action: "confirm" | "cancel"
 ): Promise<boolean> => {
   const userId = await getUserIdFromWhatsApp(from)
-  const pending = await getPendingReminderConfirmation(
-    userId || from,
-    MODALITY
-  )
+  const pending = await getPendingReminderConfirmation(userId || from, MODALITY)
 
   if (!pending) {
     return false
